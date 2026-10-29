@@ -1,0 +1,556 @@
+{
+  "_catatan": "Entitas `profil_prodi` (F10, di luar PRD/SDD §13 — lihat SDD-F10-eksplorasi-tujuan.md §C.5). Satu entri = satu prodi yang sudah diriset mendalam. `id` dan `nama` WAJIB sama persis dengan data/prodi.json supaya hasil F3 selalu bisa dilanjutkan ke F10. TIDAK ADA field gaji: untuk hampir semua prodi angkanya berstatus TIDAK DITEMUKAN di laporan riset, jadi bawaannya adalah tidak menampilkan angka sama sekali, bukan mengarang kisaran.",
+  "_status_sumber": "Objek per kelompok data, bukan satu status untuk seluruh entri: peminat, mata_kuliah, profesi, kampus dinilai sendiri-sendiri. 'Terverifikasi' = sumber resmi (SNPMB, dokumen kurikulum resmi kampus). 'Perkiraan' = sumber sekunder atau gambaran umum.",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "diperiksa_pada": "2026-08-31",
+  "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+  "status": "terverifikasi_sebagian",
+  "asal": "riset",
+  "_asal": "Isi berkas ini berasal dari docs/riset-top-prodi-lengkap.md (data SNBP 2025/2026 & SNBT 2026 dari SNPMB, ditambah dokumen kurikulum dan laman resmi kampus). Bagian yang tidak ditemukan di sumber resmi ditandai 'Perkiraan' pada status_sumber, bukan dinaikkan diam-diam jadi 'Terverifikasi'.",
+  "data": [
+    {
+      "id": "k3",
+      "nama": "Keselamatan dan Kesehatan Kerja (K3)",
+      "jenjang": "D4",
+      "rumpun": "Teknologi & Rekayasa",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 5582, "kampus": "UNS", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 43,
+      "mata_kuliah": [
+        "Higiene Industri",
+        "Keselamatan Kerja",
+        "K3 Lingkungan",
+        "Pengendalian Proses",
+        "Instrumentasi",
+        "Pertolongan Pertama"
+      ],
+      "profesi": [
+        "Safety Officer / HSE Officer",
+        "Safety Inspector",
+        "Environmental Specialist",
+        "Auditor K3"
+      ],
+      "kampus": [
+        { "nama": "UNS", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "PPNS (Politeknik Perkapalan Negeri Surabaya)", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "UNAIR", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "Universitas Binawan", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Prodi peminat terbanyak SNBT 2026 di PTN akademik. Daftar mata kuliah dari sumber sekunder (belum dokumen kurikulum resmi)."
+    },
+    {
+      "id": "administrasi-bisnis",
+      "nama": "Administrasi Bisnis",
+      "jenjang": "D3",
+      "rumpun": "Ekonomi & Bisnis",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 5059, "kampus": "UB", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 116,
+      "mata_kuliah": [
+        "Korespondensi Bisnis",
+        "Administrasi Perkantoran Digital (E-Office)",
+        "Digital Marketing",
+        "Manajemen SDM",
+        "Komunikasi Organisasi"
+      ],
+      "profesi": [
+        "Administration Officer",
+        "Digital Marketer",
+        "Asisten Manajer",
+        "Wirausaha"
+      ],
+      "kampus": [
+        { "nama": "UB", "jenis": "PTN Akademik", "jalur_masuk": ["SNBT"] },
+        { "nama": "Polban", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "PNJ", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "Polmed", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "Politeknik LP3I Bandung", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Mata kuliah gabungan sumber kampus (Polines) dan sumber sekunder (LP3I) — ditandai Perkiraan."
+    },
+    {
+      "id": "teknik-informatika",
+      "nama": "Teknik Informatika",
+      "jenjang": "D3/D4",
+      "rumpun": "Teknologi & Rekayasa",
+      "badge_relevan_smk": true,
+      "peminat": { "jumlah": 2796, "kampus": "PNJ", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 45,
+      "mata_kuliah": [
+        "Dasar Pemrograman & Praktikum",
+        "Algoritma dan Struktur Data",
+        "Basis Data & Basis Data Lanjut",
+        "Pemrograman Web & Framework",
+        "Pemrograman Mobile",
+        "Rekayasa Perangkat Lunak"
+      ],
+      "profesi": [
+        "Software Engineer / Programmer",
+        "Database Administrator",
+        "System Analyst",
+        "QA / Software Tester"
+      ],
+      "kampus": [
+        { "nama": "PNJ", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "Polban", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "Polinema", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Terverifikasi", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": "Jenjang D4 berbobot 144 SKS dan bergelar S.Tr.Kom / S.ST.",
+      "_catatan_data": "Semua kampus rekomendasi berjenis PTN Vokasi — laporan riset tidak menemukan padanan PTN akademik untuk D3/D4 Teknik Informatika. Ini pengecualian yang disengaja terhadap aturan diversifikasi, bukan data yang kurang. Mata kuliah dari Dokumen Kurikulum D4 TI Polinema 2021 (resmi)."
+    },
+    {
+      "id": "teknik-mesin",
+      "nama": "Teknik Mesin",
+      "jenjang": "D3",
+      "rumpun": "Teknologi & Rekayasa",
+      "badge_relevan_smk": true,
+      "peminat": { "jumlah": 2383, "kampus": "Polban", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 48,
+      "mata_kuliah": [
+        "Gambar Teknik",
+        "Proses Manufaktur (Konvensional & CNC)",
+        "Material Teknik & Pengujian Bahan",
+        "Elemen Mesin",
+        "Perawatan & Perbaikan Mesin",
+        "Otomasi Industri"
+      ],
+      "profesi": [
+        "Supervisor / Teknisi Pemesinan",
+        "Teknisi Perawatan Mesin",
+        "Operator CNC",
+        "Quality Control Manufaktur"
+      ],
+      "kampus": [
+        { "nama": "Polban", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "PNJ", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "Polibatam", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] },
+        { "nama": "ITPLN", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Tidak ada padanan PTN akademik untuk D3 Teknik Mesin di laporan riset — pengecualian diversifikasi yang sama seperti Teknik Informatika."
+    },
+    {
+      "id": "keperawatan",
+      "nama": "Keperawatan",
+      "jenjang": "D3",
+      "rumpun": "Kesehatan",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 5216, "kampus": "UNAIR", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 60,
+      "mata_kuliah": [
+        "Anatomi & Fisiologi",
+        "Keperawatan Dasar",
+        "Keperawatan Medikal Bedah (KMB)",
+        "Keperawatan Gawat Darurat"
+      ],
+      "profesi": [
+        "Perawat pelaksana rumah sakit",
+        "Perawat klinik",
+        "Perawat puskesmas"
+      ],
+      "kampus": [
+        { "nama": "UNAIR", "jenis": "PTN Akademik", "jalur_masuk": ["SNBT"] },
+        { "nama": "Poltekkes Kemenkes", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT", "Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Perkiraan", "kampus": "Terverifikasi" },
+      "catatan_studi": "Perlu lulus uji kompetensi dan punya STR sebelum praktik penuh.",
+      "_catatan_data": "Kurikulum resmi satu kampus tidak ditemukan di laporan riset; mata kuliah memakai gambaran umum. Hanya 2 kampus yang bisa dipastikan — di bawah target 3-5."
+    },
+    {
+      "id": "perpajakan",
+      "nama": "Perpajakan",
+      "jenjang": "D3",
+      "rumpun": "Ekonomi & Bisnis",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 4570, "kampus": "UNAIR", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 60,
+      "mata_kuliah": [
+        "Pengantar Pajak",
+        "PPh I & PPh II",
+        "PPN",
+        "Akuntansi Keuangan",
+        "Akuntansi Biaya",
+        "Hukum Pajak"
+      ],
+      "profesi": [
+        "Staf / Konsultan Pajak",
+        "Pegawai Ditjen Pajak atau Bea Cukai",
+        "Tax Officer perusahaan"
+      ],
+      "kampus": [
+        { "nama": "UNAIR (Fakultas Vokasi)", "jenis": "PTN Akademik", "jalur_masuk": ["SNBT"] },
+        { "nama": "ULM", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "Universitas Pancasila", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Tidak ada politeknik negeri di daftar riset; program vokasi di sini ditempuh lewat Fakultas Vokasi UNAIR — jenis kampus tetap ditulis PTN Akademik karena yang dinilai adalah jenis institusinya."
+    },
+    {
+      "id": "keperawatan-anestesiologi",
+      "nama": "Keperawatan Anestesiologi",
+      "jenjang": "D4",
+      "rumpun": "Kesehatan",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 4766, "kampus": "UNS", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 23,
+      "mata_kuliah": [
+        "Keperawatan Anestesi",
+        "Keselamatan Pasien"
+      ],
+      "profesi": [
+        "Penata anestesi rumah sakit",
+        "Asisten anestesi kamar operasi"
+      ],
+      "kampus": [
+        { "nama": "UNS", "jenis": "PTN Akademik", "jalur_masuk": ["SNBT"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Perkiraan", "kampus": "Terverifikasi" },
+      "catatan_studi": "Perlu registrasi profesi penata anestesi sebelum praktik.",
+      "_catatan_data": "Keketatan tertinggi di daftar ini. Kurikulum resmi tidak ditemukan — hanya 2 topik umum yang bisa disebut, sengaja tidak ditambal sampai 4. Hanya 1 kampus terverifikasi; perlu riset lanjutan untuk melengkapi 3-5 kampus."
+    },
+    {
+      "id": "humas-komunikasi-digital",
+      "nama": "Humas & Komunikasi Digital",
+      "jenjang": "D4",
+      "rumpun": "Sosial & Humaniora",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 4346, "kampus": "UNJ", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 45,
+      "mata_kuliah": [
+        "Kehumasan (Public Relations)",
+        "Media Digital",
+        "Manajemen Media Sosial"
+      ],
+      "profesi": [
+        "Public Relations",
+        "Digital Content Specialist",
+        "Social Media Officer",
+        "Media Relations"
+      ],
+      "kampus": [
+        { "nama": "UNJ", "jenis": "PTN Akademik", "jalur_masuk": ["SNBT"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Perkiraan", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Kurikulum resmi UNJ tidak ditemukan di laporan riset. Hanya 1 kampus terverifikasi — perlu riset lanjutan."
+    },
+    {
+      "id": "manajemen-bisnis",
+      "nama": "Manajemen Bisnis",
+      "jenjang": "D4",
+      "rumpun": "Ekonomi & Bisnis",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 2521, "kampus": "Polmed", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 69,
+      "mata_kuliah": [
+        "Manajemen Operasional",
+        "Manajemen Keuangan",
+        "Manajemen Pemasaran",
+        "Administrasi & Korespondensi Bisnis"
+      ],
+      "profesi": [
+        "Staf / Asisten Manajer Bisnis",
+        "Business Development",
+        "Wirausaha"
+      ],
+      "kampus": [
+        { "nama": "Polmed", "jenis": "PTN Vokasi", "jalur_masuk": ["SNBT"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Perkiraan", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Kurikulum resmi spesifik tidak ditemukan; mata kuliah disusun dari kemiripan dengan Administrasi Bisnis, ditandai Perkiraan. Hanya 1 kampus terverifikasi."
+    },
+    {
+      "id": "informatika",
+      "nama": "Informatika",
+      "jenjang": "S1",
+      "rumpun": "Teknologi & Rekayasa",
+      "badge_relevan_smk": true,
+      "peminat": { "jumlah": 1157, "kampus": "UNS", "tahun": 2025, "jalur": "SNBP", "sumber": "SNPMB" },
+      "diterima": null,
+      "mata_kuliah": [
+        "Algoritma & Pemrograman",
+        "Struktur Data",
+        "Basis Data",
+        "Jaringan Komputer",
+        "Kecerdasan Buatan",
+        "Rekayasa Perangkat Lunak"
+      ],
+      "profesi": [
+        "Software Developer / Programmer",
+        "Data Scientist",
+        "Cyber Security Analyst",
+        "IT Consultant"
+      ],
+      "kampus": [
+        { "nama": "UNS", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "ITB", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UPI", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "Telkom University", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Angka diterima untuk pasangan peminat ini tidak tersedia di laporan riset, jadi rasio keketatan tidak bisa dihitung dan ditampilkan sebagai tanda pisah. Prospek kerja berbasis tracer study Telkom University (masa tunggu 1,8 bulan, kesesuaian bidang 89%)."
+    },
+    {
+      "id": "manajemen",
+      "nama": "Manajemen",
+      "jenjang": "S1",
+      "rumpun": "Ekonomi & Bisnis",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 1590, "kampus": "UNS", "tahun": 2025, "jalur": "SNBP", "sumber": "SNPMB" },
+      "diterima": null,
+      "mata_kuliah": [
+        "Manajemen SDM",
+        "Manajemen Keuangan",
+        "Manajemen Pemasaran",
+        "Manajemen Operasional",
+        "Manajemen Strategi",
+        "Kewirausahaan"
+      ],
+      "profesi": [
+        "Staf / Manajer HRD",
+        "Marketing",
+        "Business Development",
+        "Analis Keuangan"
+      ],
+      "kampus": [
+        { "nama": "UNPAD", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UI", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UGM", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "Telkom University", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Perkiraan", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Angka diterima tidak tersedia. Tidak ada padanan PTN vokasi — diversifikasi memakai PTN + PTS. Kampus sumber angka peminat (UNS) tidak masuk daftar rekomendasi karena laporan riset menyebut kampus lain sebagai rujukan prodi ini."
+    },
+    {
+      "id": "ilmu-hukum",
+      "nama": "Ilmu Hukum",
+      "jenjang": "S1",
+      "rumpun": "Sosial & Humaniora",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 4685, "kampus": "UNDIP", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 287,
+      "mata_kuliah": [
+        "Pengantar Ilmu Hukum",
+        "Pengantar Hukum Indonesia",
+        "Hukum Pidana",
+        "Hukum Perdata",
+        "Hukum Tata Negara",
+        "Hukum Administrasi Negara"
+      ],
+      "profesi": [
+        "Advokat (perlu PKPA)",
+        "Hakim atau Jaksa (lewat pendidikan khusus)",
+        "Legal Officer perusahaan",
+        "PNS Kemenkumham atau Kejaksaan"
+      ],
+      "kampus": [
+        { "nama": "UNDIP", "jenis": "PTN Akademik", "jalur_masuk": ["SNBT"] },
+        { "nama": "UNPAD", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UI", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UK Parahyangan", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Terverifikasi", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Tidak ada padanan PTN vokasi — diversifikasi memakai PTN + PTS."
+    },
+    {
+      "id": "teknik-pertambangan",
+      "nama": "Teknik Pertambangan & Perminyakan",
+      "jenjang": "S1",
+      "rumpun": "Teknologi & Rekayasa",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 4789, "kampus": "ITB", "tahun": 2026, "jalur": "SNBT", "sumber": "SNPMB" },
+      "diterima": 115,
+      "mata_kuliah": [
+        "Geologi Pertambangan",
+        "Teknik Pengeboran & Peledakan",
+        "Desain Tambang",
+        "Pemrosesan Mineral",
+        "Ekonomi Pertambangan",
+        "K3 Pertambangan"
+      ],
+      "profesi": [
+        "Mine Plan Engineer",
+        "Ahli Geologi / Hidrogeologi Tambang",
+        "Konsultan Tambang",
+        "Karyawan BUMN tambang"
+      ],
+      "kampus": [
+        { "nama": "ITB", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UPN Veteran Yogyakarta", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "Universitas Trisakti", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Peminat nomor satu nasional SNBP 2026 juga (2.022 pendaftar, 95 diterima, keketatan sekitar 4,7%). Angka yang ditampilkan memakai jalur SNBT 2026 supaya satu prodi memakai satu pasangan angka. Tidak ada padanan PTN vokasi."
+    },
+    {
+      "id": "kedokteran",
+      "nama": "Kedokteran (Pendidikan Dokter)",
+      "jenjang": "S1 + profesi",
+      "rumpun": "Kesehatan",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 1943, "kampus": "UI", "tahun": 2026, "jalur": "SNBP", "sumber": "SNPMB" },
+      "diterima": 60,
+      "mata_kuliah": [
+        "Ilmu Kedokteran Dasar (anatomi, fisiologi, biokimia)",
+        "Patologi & Farmakologi",
+        "Ilmu Penyakit Dalam",
+        "Ilmu Bedah",
+        "Kepaniteraan Klinik (koas)"
+      ],
+      "profesi": [
+        "Dokter umum (setelah UKMPPD & STR)",
+        "Dokter layanan primer",
+        "Dosen atau peneliti kedokteran"
+      ],
+      "kampus": [
+        { "nama": "UI", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UNPAD", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UGM", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UK Maranatha", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": "Tahap akademik sekitar 3,5 tahun (kurikulum berbasis kompetensi/SKDI), lalu tahap profesi (koas) sekitar 2 tahun. Wajib lulus UKMPPD sebelum praktik.",
+      "_catatan_data": "Laporan riset memverifikasi STRUKTUR studi (SKDI, koas, UKMPPD), bukan daftar mata kuliah per semester — daftar di sini gambaran umum, ditandai Perkiraan. Kedokteran UGM sebagai pembanding: 1.899 pendaftar, 53 diterima."
+    },
+    {
+      "id": "farmasi",
+      "nama": "Farmasi",
+      "jenjang": "S1 + profesi",
+      "rumpun": "Kesehatan",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 1621, "kampus": "UNPAD", "tahun": 2026, "jalur": "SNBP", "sumber": "SNPMB" },
+      "diterima": 50,
+      "mata_kuliah": [
+        "Kimia Organik",
+        "Biokimia",
+        "Analisis Obat",
+        "Farmakologi",
+        "Farmasetika",
+        "Praktek Belajar Lapangan"
+      ],
+      "profesi": [
+        "Apoteker (setelah pendidikan profesi)",
+        "Tenaga Teknis Kefarmasian",
+        "QA / QC industri farmasi",
+        "PNS BPOM atau Kemenkes"
+      ],
+      "kampus": [
+        { "nama": "UNPAD", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UNSOED", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UGM", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "IIK Bhakti Wiyata", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Terverifikasi", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": "Lulus S1 dulu (S.Farm.), baru lanjut pendidikan profesi Apoteker.",
+      "_catatan_data": "Mata kuliah dari kurikulum S1 Farmasi UNSOED (145 SKS). Tidak ada padanan PTN vokasi."
+    },
+    {
+      "id": "ilmu-keperawatan",
+      "nama": "Ilmu Keperawatan",
+      "jenjang": "S1 + Ners",
+      "rumpun": "Kesehatan",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 1603, "kampus": "UNPAD", "tahun": 2026, "jalur": "SNBP", "sumber": "SNPMB" },
+      "diterima": 58,
+      "mata_kuliah": [
+        "Anatomi & Fisiologi",
+        "Ilmu Biomedik",
+        "Keperawatan Medikal Bedah",
+        "Manajemen Keperawatan",
+        "Etika Keperawatan",
+        "Praktik Klinik"
+      ],
+      "profesi": [
+        "Perawat profesional (setelah profesi Ners & STR)",
+        "Perawat rumah sakit, ICU, atau IGD",
+        "Perawat home care",
+        "Dosen atau instruktur klinis"
+      ],
+      "kampus": [
+        { "nama": "UNPAD", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UI", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UGM", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": "S1 Keperawatan dilanjutkan pendidikan profesi Ners; perlu STR untuk praktik.",
+      "_catatan_data": "Pembanding agregat: USK SNBP 2025 sebanyak 1.343 peminat. Tidak ada padanan PTN vokasi dan belum ada PTS di daftar riset — baru 3 kampus."
+    },
+    {
+      "id": "ilmu-komunikasi",
+      "nama": "Ilmu Komunikasi",
+      "jenjang": "S1",
+      "rumpun": "Sosial & Humaniora",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 1465, "kampus": "UPI", "tahun": 2025, "jalur": "SNBP", "sumber": "SNPMB" },
+      "diterima": 20,
+      "mata_kuliah": [
+        "Pengantar Ilmu Komunikasi",
+        "Teori Komunikasi",
+        "Psikologi Komunikasi",
+        "Komunikasi Massa dan Media",
+        "Komunikasi Digital",
+        "Perencanaan Komunikasi"
+      ],
+      "profesi": [
+        "Public Relations / Digital PR",
+        "Jurnalis",
+        "Content Creator / Social Media Specialist",
+        "Produser atau kru broadcasting"
+      ],
+      "kampus": [
+        { "nama": "UPI", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UNPAD", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP", "SNBT"] },
+        { "nama": "UNS", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "Telkom University", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Terverifikasi", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Peminat terbanyak ke-2 nasional SNBP 2025. Mata kuliah dari kurikulum resmi UNPAD (144 SKS). Tidak ada padanan PTN vokasi."
+    },
+    {
+      "id": "akuntansi",
+      "nama": "Akuntansi",
+      "jenjang": "S1",
+      "rumpun": "Ekonomi & Bisnis",
+      "badge_relevan_smk": false,
+      "peminat": { "jumlah": 1206, "kampus": "UNS", "tahun": 2025, "jalur": "SNBP", "sumber": "SNPMB" },
+      "diterima": null,
+      "mata_kuliah": [
+        "Akuntansi Keuangan Menengah",
+        "Akuntansi Biaya",
+        "Perpajakan",
+        "Auditing",
+        "Sistem Informasi Akuntansi",
+        "Anggaran Perusahaan"
+      ],
+      "profesi": [
+        "Akuntan Publik",
+        "Auditor Internal",
+        "Konsultan Pajak",
+        "Analis Keuangan"
+      ],
+      "kampus": [
+        { "nama": "UNPAD", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UI", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "UGM", "jenis": "PTN Akademik", "jalur_masuk": ["SNBP"] },
+        { "nama": "Telkom University", "jenis": "PTS", "jalur_masuk": ["Mandiri"] }
+      ],
+      "status_sumber": { "peminat": "Terverifikasi", "mata_kuliah": "Perkiraan", "profesi": "Terverifikasi", "kampus": "Terverifikasi" },
+      "catatan_studi": null,
+      "_catatan_data": "Angka diterima tidak tersedia. Profesi 'PNS Kemenkeu/DJP/BPKP' ada di laporan riset tapi dipangkas supaya daftar tetap 3-4 butir sesuai spec. Tidak ada padanan PTN vokasi."
+    }
+  ]
+}

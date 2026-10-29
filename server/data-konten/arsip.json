@@ -1,0 +1,147 @@
+{
+  "_catatan": "Entitas `kartu` (PRD/SDD §13): id, pemilik_id, mapel_id, judul, isi, jawaban, sumber, dibuat_pada. Semua kartu di bawah bersumber 'resmi' — artinya kurasi tim. PRD F6 mewajibkan arsip SUDAH berisi kartu kurasi tim sebelum pengguna menambah apa pun; kerangka kosong yang menunggu diisi pengguna akan tetap kosong.",
+  "_sumber_kartu": {
+    "resmi": "dikurasi tim — lencana 'Resmi'",
+    "pengguna": "dibuat pengguna — lencana tetap 'Diunggah pengguna, belum diverifikasi tim' (salinan teks §4.5)",
+    "mitra": "dari Bank Soal Mitra — identitas penyedia wajib tampil (PRD F9)"
+  },
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "data": [
+    {
+      "id": "k-mtk-1",
+      "pemilik_id": null,
+      "mapel_id": "matematika",
+      "kategori": "catatan",
+      "judul": "Turunan fungsi aljabar",
+      "isi": "Turunan dari f(x) = 3x² + 5x adalah...",
+      "jawaban": "f'(x) = 6x + 5",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-12"
+    },
+    {
+      "id": "k-mtk-2",
+      "pemilik_id": null,
+      "mapel_id": "matematika",
+      "kategori": "catatan",
+      "judul": "Logaritma dasar",
+      "isi": "Nilai dari log₂ 8 adalah...",
+      "jawaban": "3",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-12"
+    },
+    {
+      "id": "k-mtk-3",
+      "pemilik_id": null,
+      "mapel_id": "matematika",
+      "kategori": "soal",
+      "judul": "Deret aritmetika",
+      "isi": "Jumlah 5 suku pertama deret 2, 4, 6, 8, ... adalah...",
+      "jawaban": "30",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-12"
+    },
+    {
+      "id": "k-mtk-4",
+      "pemilik_id": null,
+      "mapel_id": "matematika",
+      "kategori": "soal",
+      "judul": "Akar persamaan kuadrat",
+      "isi": "Akar-akar dari x² − 5x + 6 = 0 adalah...",
+      "jawaban": "x = 2 atau x = 3",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-13"
+    },
+    {
+      "id": "k-ing-1",
+      "pemilik_id": null,
+      "mapel_id": "bahasa-inggris",
+      "kategori": "soal",
+      "judul": "Simple present",
+      "isi": "Choose the correct form: She ___ to school every day.",
+      "jawaban": "goes",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-13"
+    },
+    {
+      "id": "k-ing-2",
+      "pemilik_id": null,
+      "mapel_id": "bahasa-inggris",
+      "kategori": "soal",
+      "judul": "Sinonim",
+      "isi": "Synonym of 'huge' is...",
+      "jawaban": "enormous",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-13"
+    },
+    {
+      "id": "k-ing-3",
+      "pemilik_id": null,
+      "mapel_id": "bahasa-inggris",
+      "kategori": "catatan",
+      "judul": "Past tense",
+      "isi": "Past tense of 'write' is...",
+      "jawaban": "wrote",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-13"
+    },
+    {
+      "id": "k-ing-4",
+      "pemilik_id": null,
+      "mapel_id": "bahasa-inggris",
+      "kategori": "soal",
+      "judul": "Preposisi waktu",
+      "isi": "Fill in: I have lived here ___ 2019.",
+      "jawaban": "since",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-14"
+    },
+    {
+      "id": "k-inf-1",
+      "pemilik_id": null,
+      "mapel_id": "informatika",
+      "kategori": "soal",
+      "judul": "Struktur data dasar",
+      "isi": "Struktur data yang bekerja dengan aturan LIFO adalah...",
+      "jawaban": "Stack (tumpukan)",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-14"
+    },
+    {
+      "id": "k-inf-2",
+      "pemilik_id": null,
+      "mapel_id": "informatika",
+      "kategori": "soal",
+      "judul": "Sistem bilangan",
+      "isi": "Bilangan biner 1011 sama dengan berapa dalam desimal?",
+      "jawaban": "11",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-14"
+    },
+    {
+      "id": "k-inf-3",
+      "pemilik_id": null,
+      "mapel_id": "informatika",
+      "kategori": "catatan",
+      "judul": "Basis data",
+      "isi": "Kunci yang menghubungkan satu tabel ke tabel lain disebut...",
+      "jawaban": "Foreign key (kunci tamu)",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-15"
+    },
+    {
+      "id": "k-inf-4",
+      "pemilik_id": null,
+      "mapel_id": "informatika",
+      "kategori": "catatan",
+      "judul": "Algoritma",
+      "isi": "Kompleksitas waktu pencarian biner pada data terurut adalah...",
+      "jawaban": "O(log n)",
+      "sumber": "resmi",
+      "dibuat_pada": "2026-08-15"
+    }
+  ],
+  "asal": "contoh",
+  "status": "belum_diverifikasi",
+  "_asal": "Isi contoh yang ditulis tim untuk mengisi kerangka, belum ditinjau. diperiksa_pada sengaja null."
+}

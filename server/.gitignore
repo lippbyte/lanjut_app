@@ -5,8 +5,7 @@ node_modules/
 !.env.production.example
 !.env.railway.contoh
 *.log
-# Salinan MVP-PWA/data untuk server (README §6) — sumbernya tetap MVP-PWA/data.
-data-konten/
+# Salinan MVP-PWA/data untuk server (README §6) — disertakan agar repo mandiri siap deploy
+!data-konten/
 # Folder dump cadangan basis data
 cadangan/
-

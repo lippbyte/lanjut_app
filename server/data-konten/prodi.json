@@ -1,0 +1,126 @@
+{
+  "_catatan": "Entitas `prodi` (PRD/SDD §13): id, nama, rumpun. Diselaraskan ke 18 prodi hasil riset (SDD-F10-eksplorasi-tujuan.md §D, Opsi A) supaya tiap hasil F3 (Penolong Pilih Mapel) punya lanjutan F10 (Eksplorasi Tujuan) yang lengkap. `id` dan `nama` WAJIB sama persis dengan app/data/profil-prodi.json. Kolom `jenjang` ditambahkan di luar PRD §13 (sama alasan dengan kolom `kategori` di checklist.json): tanpa itu 'Keperawatan (D3)' dan 'Ilmu Keperawatan (S1 + Ners)' tidak bisa dibedakan di satu daftar F3. `teknik-elektro` SENGAJA dipertahankan walau di luar 18 prodi hasil riset F10 (SDD §D.4 opsi 2, menunggu konfirmasi PM/user sebelum dihapus) — prodi ini tidak akan punya profil F10 dan mengandalkan penjaga 'prodi tidak dikenal' di pasangEksplorasiTujuan()/pasangPilihMapel() supaya pengguna lama yang sudah menyimpan prodi_impian:'teknik-elektro' tidak nyangkut di layar kosong.",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+  "data": [
+    {
+      "id": "k3",
+      "nama": "Keselamatan dan Kesehatan Kerja (K3)",
+      "jenjang": "D4",
+      "rumpun": "Teknologi & Rekayasa"
+    },
+    {
+      "id": "teknik-informatika",
+      "nama": "Teknik Informatika",
+      "jenjang": "D3/D4",
+      "rumpun": "Teknologi & Rekayasa"
+    },
+    {
+      "id": "teknik-mesin",
+      "nama": "Teknik Mesin",
+      "jenjang": "D3",
+      "rumpun": "Teknologi & Rekayasa"
+    },
+    {
+      "id": "informatika",
+      "nama": "Informatika",
+      "jenjang": "S1",
+      "rumpun": "Teknologi & Rekayasa"
+    },
+    {
+      "id": "teknik-pertambangan",
+      "nama": "Teknik Pertambangan & Perminyakan",
+      "jenjang": "S1",
+      "rumpun": "Teknologi & Rekayasa"
+    },
+    {
+      "id": "teknik-elektro",
+      "nama": "Teknik Elektro",
+      "jenjang": "S1",
+      "rumpun": "Teknologi & Rekayasa"
+    },
+    {
+      "id": "keperawatan",
+      "nama": "Keperawatan",
+      "jenjang": "D3",
+      "rumpun": "Kesehatan"
+    },
+    {
+      "id": "keperawatan-anestesiologi",
+      "nama": "Keperawatan Anestesiologi",
+      "jenjang": "D4",
+      "rumpun": "Kesehatan"
+    },
+    {
+      "id": "kedokteran",
+      "nama": "Kedokteran (Pendidikan Dokter)",
+      "jenjang": "S1 + profesi",
+      "rumpun": "Kesehatan"
+    },
+    {
+      "id": "farmasi",
+      "nama": "Farmasi",
+      "jenjang": "S1 + profesi",
+      "rumpun": "Kesehatan"
+    },
+    {
+      "id": "ilmu-keperawatan",
+      "nama": "Ilmu Keperawatan",
+      "jenjang": "S1 + Ners",
+      "rumpun": "Kesehatan"
+    },
+    {
+      "id": "administrasi-bisnis",
+      "nama": "Administrasi Bisnis",
+      "jenjang": "D3",
+      "rumpun": "Ekonomi & Bisnis"
+    },
+    {
+      "id": "perpajakan",
+      "nama": "Perpajakan",
+      "jenjang": "D3",
+      "rumpun": "Ekonomi & Bisnis"
+    },
+    {
+      "id": "manajemen-bisnis",
+      "nama": "Manajemen Bisnis",
+      "jenjang": "D4",
+      "rumpun": "Ekonomi & Bisnis"
+    },
+    {
+      "id": "manajemen",
+      "nama": "Manajemen",
+      "jenjang": "S1",
+      "rumpun": "Ekonomi & Bisnis"
+    },
+    {
+      "id": "akuntansi",
+      "nama": "Akuntansi",
+      "jenjang": "S1",
+      "rumpun": "Ekonomi & Bisnis"
+    },
+    {
+      "id": "ilmu-hukum",
+      "nama": "Ilmu Hukum",
+      "jenjang": "S1",
+      "rumpun": "Sosial & Humaniora"
+    },
+    {
+      "id": "ilmu-komunikasi",
+      "nama": "Ilmu Komunikasi",
+      "jenjang": "S1",
+      "rumpun": "Sosial & Humaniora"
+    },
+    {
+      "id": "humas-komunikasi-digital",
+      "nama": "Humas & Komunikasi Digital",
+      "jenjang": "D4",
+      "rumpun": "Sosial & Humaniora"
+    }
+  ],
+  "asal": "mockup",
+  "status": "belum_diverifikasi",
+  "_asal": "Nilai di berkas ini berasal dari mockup desain, bukan dari sumber resmi. diperiksa_pada sengaja null: belum ada yang benar-benar dicek. Isi tanggalnya hanya setelah seseorang membuka url_sumber dan mencocokkannya. Kepala berkas TIDAK diubah walau isi `data` naik ke 19 entri (SDD §D.2): pemetaan prodi ke rumpun dan ke mapel belum diverifikasi ke sumber resmi, dan tools/check.js aturan 9 menolak diperiksa_pada terisi selagi status masih belum_diverifikasi."
+}

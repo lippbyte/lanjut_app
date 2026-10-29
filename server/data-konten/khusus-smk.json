@@ -1,0 +1,60 @@
+{
+  "_catatan": "Entitas `butir_khusus_smk` (PRD/SDD §13): id, judul, apa_yang_beda, apa_yang_bisa_dilakukan, url_sumber, diperiksa_pada. PRD F2 mewajibkan minimal 5 butir saat rilis dan tiap butir HARUS berpasangan — 'apa yang berbeda' + 'apa yang bisa dilakukan'. Butir yang hanya menjelaskan masalah tanpa langkah lanjutan tidak boleh tayang.",
+  "_nada": "Salinan teks §0 kaidah 3: jangan menyalahkan sekolah. Bingkainya informasi yang tersebar, bukan sekolah yang lalai. Periksa ulang tiap kali menambah butir.",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "data": [
+    {
+      "id": "nilai-rapor",
+      "judul": "Nilai rapor mapel pendukung SNBP",
+      "apa_yang_beda": "PDSS menilai rata-rata rapor pada mapel pendukung program studi, sementara sebagian mapel itu memang tidak ada di struktur kurikulum SMK.",
+      "apa_yang_bisa_dilakukan": "Cek mapel pengganti yang diakui lewat Penolong Pilih Mapel, lalu konfirmasi ke BK sebelum PDSS diisi.",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "portofolio",
+      "judul": "Sertifikat kompetensi keahlian dan PKL",
+      "apa_yang_beda": "SMK punya Uji Kompetensi Keahlian dan sertifikat industri dari PKL yang tidak dimiliki lulusan SMA.",
+      "apa_yang_bisa_dilakukan": "Lampirkan sertifikat UKK dan PKL sebagai nilai tambah di jalur seleksi mandiri kampus.",
+      "url_sumber": "https://vokasi.kemdikbud.go.id/",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "kuota-eligible",
+      "judul": "Kuota siswa eligible SNBP",
+      "apa_yang_beda": "Jumlah siswa yang eligible SNBP dihitung dari akreditasi dan jumlah siswa per sekolah, bukan dari nilai tiap siswa saja.",
+      "apa_yang_bisa_dilakukan": "Tanyakan kuota eligible sekolahmu ke BK di awal semester, sebelum menyusun urutan pilihan.",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "jalur-vokasi",
+      "judul": "Jalur vokasi Politeknik (D3/D4)",
+      "apa_yang_beda": "Lulusan SMK punya opsi tambahan lewat jalur vokasi yang menghitung nilai mapel produktif kejuruan secara langsung.",
+      "apa_yang_bisa_dilakukan": "Bandingkan pilihan D4 Politeknik dengan S1 sebelum menentukan urutan pilihan SNBP.",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "mapel-tka-tidak-ada",
+      "judul": "Mapel pilihan TKA yang tidak diajarkan di SMK",
+      "apa_yang_beda": "Sosiologi, Geografi, dan Antropologi umumnya tidak ada di struktur kurikulum SMK, padahal beberapa prodi memakainya sebagai mapel pendukung.",
+      "apa_yang_bisa_dilakukan": "Pilih dua mapel pilihan TKA dari yang benar-benar diajarkan di sekolahmu lewat Penolong Pilih Mapel.",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "jadwal-pkl",
+      "judul": "Jadwal PKL berdekatan dengan pendaftaran",
+      "apa_yang_beda": "Praktik Kerja Lapangan kelas 12 kadang berjalan bersamaan dengan periode pendaftaran SNBP dan UTBK.",
+      "apa_yang_bisa_dilakukan": "Koordinasikan jadwal PKL dengan panitia sekolah lebih awal supaya tidak bentrok dengan jadwal ujian atau pendaftaran.",
+      "url_sumber": "https://vokasi.kemdikbud.go.id/",
+      "diperiksa_pada": null
+    }
+  ],
+  "asal": "mockup",
+  "status": "belum_diverifikasi",
+  "_asal": "Nilai di berkas ini berasal dari mockup desain, bukan dari sumber resmi. diperiksa_pada sengaja null: belum ada yang benar-benar dicek. Isi tanggalnya hanya setelah seseorang membuka url_sumber dan mencocokkannya."
+}

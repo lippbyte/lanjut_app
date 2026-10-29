@@ -1,0 +1,73 @@
+{
+  "_catatan": "Entitas `tahapan_linimasa` (PRD/SDD §13): id, judul, tanggal_mulai, tanggal_selesai, jalur, url_sumber, diperiksa_pada.",
+  "_peringatan": "Butir ber-asal 'mockup' tanggalnya disalin dari mockup desain, BUKAN dari laman resmi. PRD F1 melarang menampilkan tanggal yang belum diverifikasi. Butir ber-asal 'resmi' (daftar-akun-tka, pelaksanaan-tka, susulan-tka) tanggalnya diambil dari siaran pers Kemendikdasmen 7 Juli 2026 (dicek 27 Sep 2026, LANJUT_019/020). SNBP/SNBT 2027 belum dirilis per 27 Sep 2026.",
+  "_url_sumber_artinya": "url_sumber adalah TEMPAT MEMVERIFIKASI, bukan tempat data ini diambil. Selama asal masih 'mockup', jangan pernah menulis 'Sumber: Laman resmi SNPMB' di antarmuka — itu klaim yang tidak benar. TKA diumumkan Kemendikdasmen, bukan SNPMB.",
+  "_cara_memverifikasi": "Ganti tanggal dengan yang resmi dan ubah asal butir menjadi 'resmi' di sini, jalankan `npm run benih` (server/), cocokkan ke sumber resmi, lalu tandai lewat `npm run verifikasi-konten` (lihat LANJUT_App/server/README.md §2a). Status & diperiksa_pada di berkas ini TIDAK dipakai untuk baris yang sudah ada di basis data. Mengubah isi butir yang sudah ditandai membuat tandanya kembali 'belum diverifikasi' saat benih dijalankan.",
+  "status": "belum_diverifikasi",
+  "asal": "mockup",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "data": [
+    {
+      "id": "sosialisasi",
+      "judul": "Sosialisasi jalur TKA/SNBP/SNBT di sekolah",
+      "tanggal_mulai": "2026-07-01",
+      "tanggal_selesai": "2026-07-31",
+      "jalur": "TKA",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    },
+    {
+      "id": "daftar-akun-tka",
+      "judul": "Pendaftaran akun TKA",
+      "tanggal_mulai": "2026-07-27",
+      "tanggal_selesai": "2026-09-27",
+      "jalur": "TKA",
+      "url_sumber": "https://www.kemendikdasmen.go.id/siaran-pers/15707-kemendikdasmen-tetapkan-pendaftaran-tka-2026-dimulai-pada-27-juli-2026",
+      "diperiksa_pada": null,
+      "asal": "resmi"
+    },
+    {
+      "id": "pelaksanaan-tka",
+      "judul": "Pelaksanaan TKA",
+      "tanggal_mulai": "2026-10-26",
+      "tanggal_selesai": "2026-11-08",
+      "jalur": "TKA",
+      "url_sumber": "https://www.kemendikdasmen.go.id/siaran-pers/15707-kemendikdasmen-tetapkan-pendaftaran-tka-2026-dimulai-pada-27-juli-2026",
+      "diperiksa_pada": null,
+      "asal": "resmi"
+    },
+    {
+      "id": "susulan-tka",
+      "judul": "Pelaksanaan susulan TKA",
+      "tanggal_mulai": "2026-11-16",
+      "tanggal_selesai": "2026-11-29",
+      "jalur": "TKA",
+      "url_sumber": "https://www.kemendikdasmen.go.id/siaran-pers/15707-kemendikdasmen-tetapkan-pendaftaran-tka-2026-dimulai-pada-27-juli-2026",
+      "diperiksa_pada": null,
+      "asal": "resmi"
+    },
+    {
+      "id": "pdss",
+      "judul": "Pengisian PDSS oleh sekolah",
+      "tanggal_mulai": "2026-12-01",
+      "tanggal_selesai": "2026-12-31",
+      "jalur": "SNBP",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    },
+    {
+      "id": "daftar-snbp",
+      "judul": "Pendaftaran SNBP",
+      "tanggal_mulai": "2027-02-04",
+      "tanggal_selesai": "2027-02-18",
+      "jalur": "SNBP",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    }
+  ]
+}

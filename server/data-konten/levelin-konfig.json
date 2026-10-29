@@ -1,0 +1,30 @@
+{
+  "_catatan": "Ambang kerja Level-In. SDD-LevelIn.md §3.6, PRD §7.1: angka di bawah adalah perkiraan awal, BUKAN hasil uji dengan data pemakaian nyata. Wajib ditinjau ulang setelah ada pemakaian pasca-rilis. akses.tampilan_agregat_mapel = gratis per keputusan Khalifa 2 Okt 2026 (LANJUT_042). level_akurasi dipakai server LANJUT_App (bukan PWA).",
+  "versi": 1,
+  "aturan_versi": 1,
+  "ambang": {
+    "ambang_overconfident": 0.40,
+    "minimum_kartu": 5,
+    "jendela_per_mapel": 50
+  },
+  "klasifikasi": {
+    "keyakinan_tinggi_minimal": 4,
+    "keyakinan_rendah_maksimal": 2
+  },
+  "akses": {
+    "ringkasan_kalibrasi_sesi": "gratis",
+    "tampilan_agregat_mapel": "gratis"
+  },
+  "level_akurasi": {
+    "minimum_kartu": 10,
+    "batas_bawah": 0.50,
+    "batas_atas": 0.75,
+    "dasar": "Tabel fallback keputusan Khalifa, 2 Okt 2026 (LANJUT_042): < 10 kartu dijawab = belum cukup data; benar < 50% = perlu penguatan dasar; 50–75% = cukup, lanjut latihan; > 75% = sudah kuat. Perkiraan, belum diuji dengan data pemakaian nyata."
+  },
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "asal": "perkiraan",
+  "status": "belum_diverifikasi",
+  "dasar": "Perkiraan awal tim untuk v1. Belum diuji dengan data pemakaian nyata."
+}

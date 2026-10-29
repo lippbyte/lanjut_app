@@ -1,0 +1,37 @@
+{
+  "_catatan": "Entitas `cerita_alumni` (PRD/SDD §13). DUA CERITA DI BAWAH ADALAH CONTOH, BUKAN ORANG NYATA — ditandai sumber:'contoh', izin_tayang:false, tayang:false. PRD F4 mewajibkan izin tertulis dari narasumber sebelum tayang, jadi jangan pernah mengubah tayang menjadi true untuk baris bertanda contoh. Rilis butuh minimal 3 cerita nyata (PRD F4); mengumpulkannya adalah Risiko §10 yang paling mendesak.",
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "data": [
+    {
+      "id": "contoh-1",
+      "nama": "Alumni contoh A",
+      "asal_smk": "SMKN 4 Bandung",
+      "jurusan_smk": "Rekayasa Perangkat Lunak",
+      "ptn": "Telkom University",
+      "prodi": "Informatika",
+      "jalur": "SNBP",
+      "hambatan": "Nilai mapel pendukung sempat di bawah rata-rata karena Fisika tidak diajarkan sedalam di SMA.",
+      "yang_dilakukan": "Belajar mandiri dari modul daring dan ikut bimbingan daring tiga kali seminggu selama satu semester.",
+      "izin_tayang": false,
+      "tayang": false,
+      "sumber": "contoh"
+    },
+    {
+      "id": "contoh-2",
+      "nama": "Alumni contoh B",
+      "asal_smk": "SMKN 1 Cimahi",
+      "jurusan_smk": "Akuntansi dan Keuangan Lembaga",
+      "ptn": "Universitas Padjadjaran",
+      "prodi": "Akuntansi",
+      "jalur": "SNBT (UTBK)",
+      "hambatan": "Belum pernah ikut try out UTBK karena biayanya dianggap mahal.",
+      "yang_dilakukan": "Ikut try out gratis dari komunitas alumni dan latihan soal dari Arsip Belajar tiap malam.",
+      "izin_tayang": false,
+      "tayang": false,
+      "sumber": "contoh"
+    }
+  ],
+  "asal": "contoh",
+  "status": "belum_diverifikasi"
+}

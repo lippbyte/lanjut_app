@@ -1,0 +1,397 @@
+{
+  "_catatan": "Tabel penghubung `prodi_mapel` (PRD/SDD §13) — jantung F3. Relasinya many-to-many: satu prodi butuh beberapa mapel, satu mapel mendukung banyak prodi. Kolom `bobot` 1–3 menyatakan seberapa kuat mapel itu mendukung prodi (3 = paling menentukan). Dua mapel berbobot 3 pada tiap prodi itulah yang nanti dijadikan saran '2 mapel pilihan TKA'.",
+  "_bobot": {
+    "3": "mapel penentu — masuk saran 2 mapel pilihan TKA",
+    "2": "mendukung",
+    "1": "menyinggung"
+  },
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+  "data": [
+    {
+      "prodi_id": "teknik-informatika",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-informatika",
+      "mapel_id": "informatika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-informatika",
+      "mapel_id": "fisika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "teknik-informatika",
+      "mapel_id": "kimia",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "teknik-elektro",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-elektro",
+      "mapel_id": "fisika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-elektro",
+      "mapel_id": "informatika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "teknik-elektro",
+      "mapel_id": "kimia",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "keperawatan",
+      "mapel_id": "biologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "keperawatan",
+      "mapel_id": "kimia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "keperawatan",
+      "mapel_id": "matematika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "keperawatan",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "farmasi",
+      "mapel_id": "kimia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "farmasi",
+      "mapel_id": "biologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "farmasi",
+      "mapel_id": "matematika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "farmasi",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "akuntansi",
+      "mapel_id": "ekonomi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "akuntansi",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "akuntansi",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "akuntansi",
+      "mapel_id": "sosiologi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "k3",
+      "mapel_id": "fisika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "k3",
+      "mapel_id": "kimia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "k3",
+      "mapel_id": "matematika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "k3",
+      "mapel_id": "biologi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "administrasi-bisnis",
+      "mapel_id": "ekonomi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "administrasi-bisnis",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "administrasi-bisnis",
+      "mapel_id": "matematika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "administrasi-bisnis",
+      "mapel_id": "sosiologi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "teknik-mesin",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-mesin",
+      "mapel_id": "fisika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-mesin",
+      "mapel_id": "informatika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "teknik-mesin",
+      "mapel_id": "kimia",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "perpajakan",
+      "mapel_id": "ekonomi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "perpajakan",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "perpajakan",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "perpajakan",
+      "mapel_id": "sosiologi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "keperawatan-anestesiologi",
+      "mapel_id": "biologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "keperawatan-anestesiologi",
+      "mapel_id": "kimia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "keperawatan-anestesiologi",
+      "mapel_id": "fisika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "keperawatan-anestesiologi",
+      "mapel_id": "matematika",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "humas-komunikasi-digital",
+      "mapel_id": "bahasa-indonesia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "humas-komunikasi-digital",
+      "mapel_id": "sosiologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "humas-komunikasi-digital",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "humas-komunikasi-digital",
+      "mapel_id": "informatika",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "manajemen-bisnis",
+      "mapel_id": "ekonomi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "manajemen-bisnis",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "manajemen-bisnis",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "manajemen-bisnis",
+      "mapel_id": "sosiologi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "informatika",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "informatika",
+      "mapel_id": "informatika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "informatika",
+      "mapel_id": "fisika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "informatika",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "manajemen",
+      "mapel_id": "ekonomi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "manajemen",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "manajemen",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "manajemen",
+      "mapel_id": "sosiologi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "ilmu-hukum",
+      "mapel_id": "sosiologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "ilmu-hukum",
+      "mapel_id": "bahasa-indonesia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "ilmu-hukum",
+      "mapel_id": "ekonomi",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "ilmu-hukum",
+      "mapel_id": "geografi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "teknik-pertambangan",
+      "mapel_id": "matematika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-pertambangan",
+      "mapel_id": "fisika",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "teknik-pertambangan",
+      "mapel_id": "kimia",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "teknik-pertambangan",
+      "mapel_id": "geografi",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "kedokteran",
+      "mapel_id": "biologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "kedokteran",
+      "mapel_id": "kimia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "kedokteran",
+      "mapel_id": "fisika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "kedokteran",
+      "mapel_id": "matematika",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "ilmu-keperawatan",
+      "mapel_id": "biologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "ilmu-keperawatan",
+      "mapel_id": "kimia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "ilmu-keperawatan",
+      "mapel_id": "matematika",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "ilmu-keperawatan",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 1
+    },
+    {
+      "prodi_id": "ilmu-komunikasi",
+      "mapel_id": "bahasa-indonesia",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "ilmu-komunikasi",
+      "mapel_id": "sosiologi",
+      "bobot": 3
+    },
+    {
+      "prodi_id": "ilmu-komunikasi",
+      "mapel_id": "bahasa-inggris",
+      "bobot": 2
+    },
+    {
+      "prodi_id": "ilmu-komunikasi",
+      "mapel_id": "ekonomi",
+      "bobot": 1
+    }
+  ],
+  "asal": "mockup",
+  "status": "belum_diverifikasi",
+  "_asal": "Nilai di berkas ini berasal dari mockup desain, bukan dari sumber resmi. diperiksa_pada sengaja null: belum ada yang benar-benar dicek. Isi tanggalnya hanya setelah seseorang membuka url_sumber dan mencocokkannya. 14 prodi ditambahkan mengikuti penyelarasan data/prodi.json ke 18 prodi F10 (SDD-F10-eksplorasi-tujuan.md §D.3, Opsi A) supaya tidak ada prodi yang menghasilkan layar hasil F3 kosong. Pemetaan mapel untuk baris baru ini SAMA REDAKSIONALNYA dengan baris lama — belum diverifikasi ke ketentuan mapel pendukung SNPMB resmi, jadi status TIDAK dinaikkan walau jumlah barisnya bertambah."
+}
