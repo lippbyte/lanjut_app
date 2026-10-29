@@ -1,0 +1,132 @@
+{
+  "_catatan": "DRAF, belum disetujui Khalifa. Panduan fitur LANJUT untuk chatbot Ngobrol: hanya fitur yang benar-benar ada untuk jenjang siswa, dengan nama dan letak persis seperti di app. Dikirim ke penyedia AI sebagai bagian instruksi sistem (bukan data akun). Persiapan Event, pencarian web, dan mikrofon sengaja tidak dicantumkan (saklar mati). Diperiksa terhadap lib/beranda.ts, lib/jenjangSaya.ts, lib/navigasi.ts, lib/mapelPilihan.ts. Dibaca saat server menyala; ubah lalu restart.",
+  "versi": 1,
+  "jenjang": {
+    "smp": "SMP (kelas 7–9)",
+    "kelas10_11": "SMA/SMK/MA kelas 10–11",
+    "kelas12": "SMA/SMK/MA kelas 12",
+    "umum": "kelas belum diisi"
+  },
+  "fitur": [
+    {
+      "nama": "Ngobrol Bareng LANJUT",
+      "letak": "tab tengah bergambar kelinci",
+      "guna": "tempat kamu ngobrol sekarang. Tautan \"Butuh bicara dengan orang?\" di atas obrolan membuka daftar layanan bantuan.",
+      "untuk": ["smp", "kelas10_11", "kelas12", "umum"]
+    },
+    {
+      "nama": "Arsip Belajar",
+      "letak": "Beranda, kartu Arsip Belajar",
+      "guna": "menyimpan catatan atau soal sebagai kartu per mapel (tombol \"Tambah kartu\") dan mengunggah materi dari guru (bagian Modul, tombol \"Unggah modul\"; berkas .txt, .md, atau PDF berisi teks). Modul yang diunggah bisa dipakai Ngobrol untuk menjawab pertanyaan materi.",
+      "untuk": ["smp", "kelas10_11", "kelas12", "umum"]
+    },
+    {
+      "nama": "Latihan",
+      "letak": "Arsip Belajar, tombol \"Mulai latihan\"; atau tombol \"Mulai latihan\" di kartu \"Latihan berikutnya\" di Beranda",
+      "guna": "mengulang kartu buatanmu sendiri satu per satu. Sebelum membuka jawaban, pilih \"Seberapa yakin kamu?\". Butuh kartu di Arsip Belajar dulu.",
+      "untuk": ["smp", "kelas10_11", "kelas12", "umum"]
+    },
+    {
+      "nama": "Level-In",
+      "letak": "Beranda, kartu Level-In",
+      "guna": "melihat seberapa kuat kamu di tiap mapel dari hasil Latihan, apakah rasa yakinmu sudah pas dengan hasilnya, dan saran latihan hari ini. Level-In tidak berisi soal; latihannya di Latihan.",
+      "untuk": ["smp", "kelas10_11", "kelas12", "umum"]
+    },
+    {
+      "nama": "Data Akun",
+      "letak": "ikon profil di kanan atas, tombol \"Ubah\"",
+      "guna": "mengubah nama tampilan, kelas, jenis sekolah, dan target prodi.",
+      "untuk": ["smp", "kelas10_11", "kelas12", "umum"]
+    },
+    {
+      "nama": "Cerita Alumni",
+      "letak": "Beranda, kartu Cerita Alumni",
+      "guna": "cerita kakak alumni. Saat ini belum ada cerita yang tayang, jadi jangan menjanjikan isinya.",
+      "untuk": ["smp", "kelas10_11", "kelas12", "umum"]
+    },
+    {
+      "nama": "Jenjang Saya",
+      "letak": "tab Jenjang Saya",
+      "guna": "gambaran pilihan sesudah SMP (SMA, SMK, atau MA) dan pintu ke fitur yang cocok untuk jenjangmu.",
+      "untuk": ["smp"]
+    },
+    {
+      "nama": "Eksplorasi Kampus",
+      "letak": "Beranda, kartu Eksplorasi Kampus (judul layarnya \"Kenali Minatmu\")",
+      "guna": "memilih sampai 5 bidang minat dan membaca gambaran tiap bidang, tanpa daftar prodi.",
+      "untuk": ["smp"]
+    },
+    {
+      "nama": "Gaya Belajar",
+      "letak": "Beranda, kartu Gaya Belajar; atau tautan \"Gaya belajarmu\" di layar Ngobrol",
+      "guna": "memilih cara belajar yang paling cocok (visual, auditori, kinestetik, atau baca-tulis). Pilihannya ikut dipakai Ngobrol untuk menyesuaikan saran.",
+      "untuk": ["smp", "kelas10_11"]
+    },
+    {
+      "nama": "Mapel Saya",
+      "letak": "tab Pilih Mapel",
+      "guna": "memilih sampai 5 mapel yang kamu sukai atau ingin diperdalam; mapel itu tampil lebih dulu di Arsip Belajar dan Latihan.",
+      "untuk": ["smp"]
+    },
+    {
+      "nama": "Jenjang Saya",
+      "letak": "tab Jenjang Saya",
+      "guna": "pintu ke Pilih Mapel, Eksplorasi Kampus, Arsip Belajar, Level-In, dan Daftar Periksa untuk kelas 10–11.",
+      "untuk": ["kelas10_11"]
+    },
+    {
+      "nama": "Pilih Mapel",
+      "letak": "tab Pilih Mapel (juga tombol \"Mulai dari Sini\" di Beranda)",
+      "guna": "bagian atas \"Mapel Saya\": pilih sampai 5 mapel favorit. Di bawahnya Penolong Pilih Mapel: pilih prodi tujuan, lalu lihat mapel pendukungnya dan apakah mapel itu ada di SMK; tombol \"Simpan ke Daftar Periksa\" mencatatnya.",
+      "untuk": ["kelas10_11"]
+    },
+    {
+      "nama": "Eksplorasi Kampus",
+      "letak": "Beranda, kartu Eksplorasi Kampus (judul layarnya \"Jalur dan Bidangmu\")",
+      "guna": "gambaran umum jalur masuk kuliah (berlabel Perkiraan, belum dicek ke sumber resmi) dan memilih sampai 3 bidang minat.",
+      "untuk": ["kelas10_11"]
+    },
+    {
+      "nama": "Daftar Periksa",
+      "letak": "tab Daftar Periksa",
+      "guna": "langkah yang kamu simpan dari Pilih Mapel. Belum ada tempat menulis target bebas di sini; untuk catatan bebas pakai kartu di Arsip Belajar.",
+      "untuk": ["kelas10_11"]
+    },
+    {
+      "nama": "Jalur Saya",
+      "letak": "Beranda, kartu Jalur Saya (juga tombol \"Mulai dari Sini\")",
+      "guna": "melihat tahap persiapan masuk kuliahmu (Posisi Kamu), fokus sekarang, langkah berikutnya, dan memilih 1–3 rumpun favorit. Di bagian \"Kesiapan Ujian\" kamu bisa memilih seberapa siap kamu menghadapi ujian (TKA atau UTBK-SNBT) untuk mendapat saran latihan; jawabannya tidak mengubah tahapmu.",
+      "untuk": ["kelas12"]
+    },
+    {
+      "nama": "Daftar Periksa",
+      "letak": "tab Daftar Periksa",
+      "guna": "daftar langkah persiapan masuk kuliah (SNBP, SNBT, TKA) yang bisa dicentang satu per satu; persentasenya ikut tampil di Jalur Saya. Butir dari Pilih Mapel juga masuk ke sini. Untuk jalur TKA atau SNBT ada kategori \"Persiapan Ujian\": ikut tryout, ikut simulasi atau gladi TKA kalau sekolah mengadakannya, dan cek Level-In. Itu saran LANJUT, bukan syarat resmi pendaftaran.",
+      "untuk": ["kelas12"]
+    },
+    {
+      "nama": "Pilih Mapel",
+      "letak": "tab Pilih Mapel",
+      "guna": "bagian atas \"Mapel pilihanmu\": pilih sampai 5 mapel dari rumpun favoritmu (pengelompokannya belum dicek ke sumber resmi). Di bawahnya Penolong Pilih Mapel: pilih prodi tujuan, lihat mapel pendukungnya dan saran 2 mapel pilihan TKA, lalu \"Simpan ke Daftar Periksa\"; dari situ ada tombol \"Lihat prospek & kampus\".",
+      "untuk": ["kelas12"]
+    },
+    {
+      "nama": "Eksplorasi Kampus",
+      "letak": "Beranda, kartu Eksplorasi Kampus; atau \"Lihat prospek & kampus\" dari Pilih Mapel",
+      "guna": "profil prodi: prospek, mata kuliah, dan kampus. Sebagian besar profil masih berstatus \"sedang kami cek\".",
+      "untuk": ["kelas12"]
+    },
+    {
+      "nama": "Info Penting",
+      "letak": "Beranda, bagian Info Penting",
+      "guna": "tahapan seleksi yang sudah dicek ke sumber resmi. Isinya masih sedikit; tanggal yang tidak ada di sini harus dicek ke situs resmi SNPMB.",
+      "untuk": ["kelas12"]
+    },
+    {
+      "nama": "Gaya Belajar",
+      "letak": "tautan \"Gaya belajarmu\" di layar Ngobrol",
+      "guna": "memilih cara belajar yang paling cocok; pilihannya ikut dipakai Ngobrol untuk menyesuaikan saran.",
+      "untuk": ["kelas12"]
+    }
+  ]
+}

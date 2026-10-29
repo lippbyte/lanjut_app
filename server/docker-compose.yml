@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: lanjut_db_local
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: password_rahasia_lokal
+      MYSQL_DATABASE: lanjut_db
+      MYSQL_USER: lanjut_user
+      MYSQL_PASSWORD: password_rahasia_lokal
+    ports:
+      - "3308:3306"
+    volumes:
+      - lanjut_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword_rahasia_lokal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lanjut_api_local
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 4000
+      NODE_ENV: development
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: lanjut_user
+      DB_PASSWORD: password_rahasia_lokal
+      DB_NAME: lanjut_db
+      CORS_ORIGINS: http://localhost:5500,http://localhost:8081
+      TRUST_PROXY: 0
+      OPENROUTER_API_KEY: ""
+    ports:
+      - "4000:4000"
+
+volumes:
+  lanjut_db_data:

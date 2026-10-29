@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+!.env.production.example
+!.env.railway.contoh
+*.log
+# Salinan MVP-PWA/data untuk server (README §6) — sumbernya tetap MVP-PWA/data.
+data-konten/
+# Folder dump cadangan basis data
+cadangan/
+

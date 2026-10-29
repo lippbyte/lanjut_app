@@ -1,0 +1,107 @@
+# ==============================================================================
+# Contoh Konfigurasi Nginx Reverse Proxy untuk API LANJUT (Jalur B VPS)
+# Ganti "api.GANTI-DOMAIN" dengan nama domain produksi sesungguhnya.
+# Salin ke: /etc/nginx/sites-available/api.GANTI-DOMAIN
+# Aktifkan: ln -s /etc/nginx/sites-available/api.GANTI-DOMAIN /etc/nginx/sites-enabled/
+# ==============================================================================
+
+# Zona pembatasan laju di lapis Nginx untuk melindungi dari serangan DDoS
+limit_req_zone $binary_remote_addr zone=lanjut_api_limit:10m rate=30r/s;
+
+# Blok HTTP (Port 80): Pengalihan otomatis ke HTTPS
+server {
+    listen 80;
+    listen [::]:80;
+    server_name api.GANTI-DOMAIN;
+
+    # Validasi Let's Encrypt Certbot
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Blok HTTPS (Port 443)
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name api.GANTI-DOMAIN;
+
+    # Sertifikat SSL Let's Encrypt (dihasilkan oleh certbot)
+    ssl_certificate /etc/letsencrypt/live/api.GANTI-DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.GANTI-DOMAIN/privkey.pem;
+
+    # Protokol & sandi SSL yang aman
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    # Header keamanan tambahan di lapis reverse proxy
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options DENY always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Batas ukuran badan permintaan (sesuai batas Express 1mb)
+    client_max_body_size 1M;
+
+    # ==============================================================================
+    # OPSI A: Topologi Satu Domain (Web SPA di / dan API Backend di /api/)
+    # Direktori berkas hasil 'npm run build:web': /var/www/LANJUT_App/dist
+    # ==============================================================================
+    root /var/www/EDILAKSO-LANJUT-repo/LANJUT_App/dist;
+    index index.html;
+
+    # Endpoint kesehatan untuk pemantauan uptime tanpa batas laju Nginx
+    location = /health {
+        proxy_pass http://127.0.0.1:4000/health;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Proxy ke API backend Express (PM2)
+    location /api/ {
+        # Batasi laju permintaan per IP
+        limit_req zone=lanjut_api_limit burst=20 nodelay;
+
+        proxy_pass http://127.0.0.1:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+    }
+
+    # Berkas statis SPA ber-hash (aset, font, skrip ber-hash boleh di-cache lama)
+    location ~* \.(?:css|js|woff2?|ttf|png|jpe?g|gif|ico|svg)$ {
+        expires 1y;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    # index.html jangan di-cache agar pembaruan bundel langsung diterima siswa
+    location = /index.html {
+        add_header Cache-Control "no-store, no-cache, must-revalidate";
+    }
+
+    # Cadangan rute dalam (deep linking SPA): semua rute web yang tidak berupa
+    # berkas fisik diarahkan ke index.html agar router klien (Expo Router) mengambil alih
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

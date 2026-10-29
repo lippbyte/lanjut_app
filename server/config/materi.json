@@ -1,0 +1,44 @@
+{
+  "status": "DRAF (LANJUT_055). Aturan sederhana pengenal pertanyaan materi untuk pengambilan potongan modul dan pencarian web. Mengubah berkas ini perlu menyalakan ulang server.",
+  "cara_kerja": "Pesan dinormalisasi (huruf kecil, tanpa tanda baca). Urutan: ada kata jalur masuk → jalur_masuk (tanpa modul, tanpa web; angka hanya dari DATA TERVERIFIKASI). Ada nama mapel → materi (dipersempit ke mapel itu). Ada kata rencana → obrolan. Ada kata tanya atau tanda tanya, DAN minimal satu kata kunci bermakna (bukan kata henti/obrolan, minimal 3 huruf) → materi. Selain itu → obrolan (tanpa modul, tanpa web).",
+  "kata_tanya": [
+    "apa", "apakah", "bagaimana", "gimana", "gmn", "kenapa", "mengapa", "knp", "kok",
+    "jelaskan", "jelasin", "terangkan", "uraikan", "maksud", "maksudnya", "arti", "artinya",
+    "pengertian", "definisi", "beda", "bedanya", "perbedaan", "contoh", "contohnya", "rumus",
+    "cara", "proses", "fungsi", "manfaat", "sebutkan", "hitung", "buktikan"
+  ],
+  "kata_jalur_masuk": [
+    "snbp", "snbt", "utbk", "kuota", "ukt", "daya tampung", "pendaftaran", "jalur masuk", "jalur",
+    "beasiswa", "kip", "kipk", "seleksi", "passing grade", "nilai minimum", "eligible", "mandiri"
+  ],
+  "kata_rencana": [
+    "jurusan", "kuliah", "kampus", "prodi", "kerja", "karier", "karir", "universitas", "univ",
+    "ptn", "pts", "cita", "minat", "rencana", "lulus", "kelas berapa"
+  ],
+  "kata_obrolan": [
+    "halo", "hai", "hallo", "hi", "kabar", "makasih", "terima", "kasih", "oke", "ok", "siap", "sip",
+    "wkwk", "haha", "hehe", "pagi", "siang", "sore", "malam",
+    "jujur", "manusia", "robot", "bot", "beneran", "curhat", "teman", "temen", "psikolog", "guru", "bk"
+  ],
+  "kata_henti": [
+    "yang", "dan", "di", "ke", "dari", "itu", "ini", "adalah", "ialah", "dengan", "untuk", "pada", "dalam",
+    "atau", "juga", "bisa", "dapat", "ada", "tidak", "gak", "ga", "nggak", "enggak", "sama", "saat", "ketika",
+    "kalau", "jika", "maka", "karena", "seperti", "tentang", "soal", "materi", "pelajaran", "bab", "tolong",
+    "dong", "sih", "deh", "ya", "yah", "aku", "saya", "gue", "gw", "kamu", "kita", "kami", "mereka", "dia",
+    "mau", "ingin", "pengen", "lebih", "sudah", "udah", "belum", "akan", "oleh", "para", "secara", "banget",
+    "aja", "saja", "lagi", "tadi", "nih", "tuh", "kah", "pun", "lah", "jadi", "harus", "boleh", "buat",
+    "bikin", "nya", "mana", "siapa", "kapan", "berapa", "the", "of", "and", "is", "what", "how", "why"
+  ],
+  "mapel": {
+    "fisika": ["fisika"],
+    "biologi": ["biologi", "bio"],
+    "kimia": ["kimia"],
+    "matematika": ["matematika", "mtk", "matek"],
+    "ekonomi": ["ekonomi"],
+    "sosiologi": ["sosiologi", "sosio"],
+    "geografi": ["geografi", "geo"],
+    "informatika": ["informatika", "tik"],
+    "bahasa-indonesia": ["bahasa indonesia", "b indo", "bindo"],
+    "bahasa-inggris": ["bahasa inggris", "b inggris", "english"]
+  }
+}

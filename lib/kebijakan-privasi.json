@@ -1,0 +1,195 @@
+{
+  "_catatan": "LANJUT_047; isi diperbarui LANJUT_056 menjadi draf v2 (fitur AI, modul, pencarian web). DRAF — wajib direview ahli hukum sebelum dipakai. Satu-satunya sumber teks kebijakan privasi di app (ringkasan di layar Daftar dan halaman lengkap /kebijakan-privasi). docs/kebijakan-privasi-DRAF.md memuat teks yang sama persis (dijaga server/tests/kebijakan-privasi.test.js). `versi` SENGAJA masih 1: menaikkannya tanpa migrasi yang menaikkan persetujuan_versi_kebijakan membuat pendaftaran ditolak. Saat rilis: app dengan teks ini dirilis dulu, lalu `versi` di sini dan persetujuan_versi_kebijakan di server dinaikkan bersama. Setiap klaim tentang data dicocokkan dengan kode di docs/kebijakan-v2-klaim-vs-kode.md. Bagian [ISI: ...] menunggu diisi; pengisinya tercatat di dokumen itu.",
+  "versi": 1,
+  "status": "DRAF — belum berlaku. Wajib direview ahli hukum sebelum dipakai.",
+  "ringkasan": [
+    "Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, modul yang kamu unggah, dan hasil latihan) supaya kemajuanmu tidak hilang.",
+    "Kata sandimu disimpan dalam bentuk acak, bukan teks aslinya.",
+    "Fitur AI di Ngobrol Bareng LANJUT mengirim pesanmu, riwayat obrolan, dan profil belajarmu (kelas, jenis sekolah, prodi impian, gaya belajar) ke penyedia AI pihak ketiga yang dapat memproses data di luar Indonesia. Untuk pertanyaan pelajaran, potongan modulmu yang berkaitan bisa ikut dikirim. Nama, nama pengguna, dan email dari akunmu tidak ikut dikirim, dan isi obrolan tidak disimpan di server LANJUT. Fitur AI baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah.",
+    "Kamu dan orang tua atau walimu berhak melihat, membetulkan, dan meminta penghapusan datamu, serta mencabut persetujuan."
+  ],
+  "isi": [
+    {
+      "judul": "Tentang kebijakan ini",
+      "paragraf": [
+        "Kebijakan ini menjelaskan data apa yang dikumpulkan LANJUT, untuk apa, ke mana data itu dikirim, siapa yang bisa melihatnya, dan apa hakmu serta hak orang tua atau walimu.",
+        "LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya]."
+      ]
+    },
+    {
+      "judul": "Data yang kami simpan di server",
+      "butir": [
+        "Akun: nama pengguna, nama tampilan, email (kalau kamu isi), dan kata sandi. Kata sandi disimpan dalam bentuk acak (hash), jadi tidak bisa dibaca, termasuk oleh tim LANJUT.",
+        "Jalur belajarmu: kelas, jenis sekolah (SMP, SMA, SMK, atau MA), prodi impian, dan gaya belajar yang kamu pilih.",
+        "Kemajuan: butir Daftar Periksa yang kamu centang, dan butir yang kamu simpan dari Pilih Mapel atau Eksplorasi Tujuan.",
+        "Arsip Belajar: kartu yang kamu tulis (mapel, judul, isi, dan jawaban). Isinya teks bebas, jadi sebaiknya jangan menulis data pribadi di kartu.",
+        "Modul: teks materi pelajaran yang kamu unggah ke Arsip Belajar (dari berkas .txt, .md, atau PDF, atau yang kamu tempel), beserta judul, mapel, nama berkas, dan waktu unggah. Berkas aslinya tidak disimpan, hanya teksnya. Teks itu juga dibelah menjadi potongan supaya bisa kamu cari dan supaya potongan yang berkaitan bisa dipakai fitur AI. Modul bisa kamu hapus permanen kapan saja; teks dan semua potongannya ikut terhapus.",
+        "Latihan: kapan sesi latihan dimulai dan selesai, mapel yang dilatih, kartu yang kamu jawab, benar atau salahnya jawabanmu, dan seberapa yakin kamu (kalau kamu mengisinya).",
+        "Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.",
+        "Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).",
+        "Catatan teknis server: setiap permintaan ke server mencatat fitur yang dibuka, hasilnya, lama prosesnya, dan ID akunmu (bukan namamu). Alamat IP perangkatmu dipakai sementara untuk membatasi permintaan yang terlalu sering, dan tidak disimpan di basis data. [ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]",
+        "Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi saat ini masih tersimpan di server (modul tidak termasuk: modul dihapus permanen). [ISI: kapan data yang dihapus benar-benar dihapus permanen.]"
+      ]
+    },
+    {
+      "judul": "Data yang hanya ada di HP atau browsermu",
+      "butir": [
+        "Tanda masuk dan salinan data akunmu, supaya kamu tidak perlu masuk ulang setiap membuka aplikasi.",
+        "Kelas dan jalur yang kamu pilih di Daftar Periksa.",
+        "Riwayat obrolan di Ngobrol Bareng LANJUT: hanya ada di memori aplikasi selama aplikasi terbuka, lalu hilang saat aplikasi ditutup, kamu keluar, atau berganti akun. Riwayat ini tidak disimpan di HP-mu maupun di server LANJUT. Tetapi setiap kali kamu mengirim pesan, riwayat ini ikut dikirim ke penyedia AI (lihat bagian Fitur AI)."
+      ]
+    },
+    {
+      "judul": "Yang tidak kami kumpulkan",
+      "butir": [
+        "Lokasi, kontak, foto, rekaman suara, nomor HP, tanggal lahir atau usia, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan, di kartu, di modul, atau di pesan Ngobrol).",
+        "Saat ini LANJUT tidak memakai layanan analitik atau iklan dari pihak ketiga."
+      ]
+    },
+    {
+      "judul": "Untuk apa datanya dipakai",
+      "butir": [
+        "Menampilkan isi yang sesuai kelas dan jenis sekolahmu, misalnya jadwal SNBP, SNBT, dan TKA hanya untuk kelas 12.",
+        "Menyimpan kemajuan, kartu, dan hasil latihanmu supaya tidak hilang saat ganti HP.",
+        "Memberi saran mapel dan latihan dari prodi impian dan hasil latihanmu.",
+        "Menjawab pesanmu di Ngobrol Bareng LANJUT lewat penyedia AI (lihat bagian Fitur AI).",
+        "Menjaga keamanan akun.",
+        "[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]"
+      ]
+    },
+    {
+      "judul": "Siapa yang bisa melihat datamu",
+      "butir": [
+        "Kamu sendiri, lewat aplikasi. Akun lain tidak bisa melihat datamu, termasuk modulmu.",
+        "Tim pengelola LANJUT yang mengurus server. [ISI: siapa saja dan untuk keperluan apa.]",
+        "Penyedia server dan basis data tempat LANJUT berjalan. [ISI: nama penyedia dan lokasi servernya.]",
+        "Penyedia AI pihak ketiga, tetapi hanya data yang dikirim untuk fitur AI (lihat bagian Fitur AI).",
+        "Sekolah hanya mencatat persetujuan orang tua atau wali ke akunmu. Saat ini tidak ada fitur bagi sekolah atau guru untuk melihat data siswa. [ISI: konfirmasi apakah ini akan berubah.]"
+      ]
+    },
+    {
+      "judul": "Fitur AI: siapa penyedianya",
+      "paragraf": [
+        "Balasan di Ngobrol Bareng LANJUT dibuat oleh AI, bukan oleh manusia, dan bisa keliru.",
+        "Untuk membuat balasan itu, server LANJUT mengirim data ke OpenRouter, layanan perantara pihak ketiga yang meneruskan permintaan ke perusahaan yang menjalankan model AI. Model AI yang dipakai saat ini buatan Anthropic. Perusahaan yang menjalankan model itu dipilih oleh OpenRouter, dan pilihan ini bisa dibatasi lewat pengaturan di server LANJUT. [ISI: penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.]",
+        "Penyedia AI itu dapat memproses datamu di luar Indonesia. [ISI: negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.]",
+        "Kami mengirim data ke penyedia AI hanya untuk dibuatkan balasan atas pesanmu."
+      ]
+    },
+    {
+      "judul": "Fitur AI: apa yang dikirim",
+      "paragraf": [
+        "Setiap kali kamu mengirim pesan di Ngobrol Bareng LANJUT, yang dikirim ke penyedia AI adalah:"
+      ],
+      "butir": [
+        "Pesan terbarumu, setelah sebagian data pribadi disamarkan (lihat bagian berikut).",
+        "Riwayat obrolan di sesi itu, hingga 20 pesan terakhir, termasuk balasan sebelumnya. Riwayat juga disamarkan dulu. Salam pembuka yang memuat nama tampilanmu tidak ikut dikirim.",
+        "Profil belajarmu dari akun: kelas, jenis sekolah, nama prodi impian, dan gaya belajar (kalau sudah kamu isi).",
+        "Untuk pertanyaan materi pelajaran: potongan modul yang berkaitan, dan hasil pencarian web bila fitur itu diaktifkan (lihat bagian Pertanyaan pelajaran)."
+      ]
+    },
+    {
+      "judul": "Fitur AI: apa yang tidak dikirim",
+      "butir": [
+        "Nama tampilan, nama pengguna, email, kata sandi, dan ID akunmu.",
+        "Nama sekolahmu, karena LANJUT memang tidak menyimpannya.",
+        "Data lain di akunmu, seperti kartu, hasil latihan, dan centang Daftar Periksa.",
+        "Tetapi apa pun yang kamu tulis sendiri di pesan ikut terkirim, termasuk nama, alamat, atau nama sekolah, kecuali bagian yang disamarkan. Karena itu, jangan menulis data pribadimu atau data orang lain di Ngobrol."
+      ]
+    },
+    {
+      "judul": "Data pribadi disamarkan",
+      "paragraf": [
+        "Sebelum dikirim, server LANJUT mengganti nomor telepon, alamat email, dan deretan 16 angka seperti NIK dengan tulisan [disamarkan]. Ini berlaku untuk pesanmu, riwayat obrolan, potongan modul, dan hasil pencarian web. Kalau ada yang disamarkan di pesanmu, aplikasi memberi tahu kamu.",
+        "Penyamaran ini otomatis dan tidak sempurna. Nama, alamat rumah, nama sekolah, dan data pribadi lain yang bukan nomor atau email tidak disamarkan."
+      ]
+    },
+    {
+      "judul": "Pertanyaan pelajaran: modul dan pencarian web",
+      "butir": [
+        "Kalau pesanmu dikenali sebagai pertanyaan materi pelajaran, server mencari potongan yang berkaitan di modul milikmu sendiri. Saat ini paling banyak 3 potongan, masing-masing sekitar 800–1.200 karakter, ikut dikirim ke penyedia AI setelah disamarkan. Modul milik akun lain tidak pernah dipakai. [ISI: aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.]",
+        "Pencarian web, berlaku bila fitur ini diaktifkan (bawaannya mati): untuk pertanyaan materi, server mengirim permintaan terpisah yang hanya berisi pertanyaan terbarumu yang sudah disamarkan, tanpa profil, riwayat, atau modul. OpenRouter meneruskannya ke mesin pencari pihak ketiga. Ada batas jumlah pencarian web per akun per hari. [ISI: hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.]",
+        "Tautan sumber web di bawah jawaban membuka situs pihak ketiga di luar LANJUT. Kebijakan ini tidak berlaku di situs itu.",
+        "Obrolan biasa dan pertanyaan tentang jalur masuk kuliah tidak memakai modul maupun pencarian web."
+      ]
+    },
+    {
+      "judul": "Apa yang disimpan dari obrolanmu",
+      "butir": [
+        "Server LANJUT tidak menyimpan isi obrolan, potongan modul yang dikirim, maupun pertanyaan pencarian web, dan tidak mencatatnya di catatan teknis server.",
+        "Yang tercatat di catatan teknis server hanya: permintaan ke Ngobrol (seperti fitur lain: hasil, lama proses, dan ID akun), jumlah potongan modul dan hasil web yang dipakai, jenis gangguan bila penyedia AI gagal, serta tingkat tanda bahaya beserta waktunya, tanpa isi pesan.",
+        "Untuk membatasi pemakaian, server menghitung jumlah pesan dan pencarian web per akun. Hitungan ini hanya ada di memori server dan hilang saat server dinyalakan ulang.",
+        "Untuk memantau biaya dan keselamatan, server menyimpan hitungan harian gabungan untuk semua pengguna, misalnya jumlah permintaan ke penyedia AI, jumlah token, jumlah tanda bahaya, dan jumlah gangguan. Hitungan ini tidak memuat ID akun maupun isi pesan.",
+        "Di sisi penyedia AI: kami meminta OpenRouter hanya memakai penyedia model yang tidak mengumpulkan data pengguna (pengaturan data_collection: deny). Apa yang tetap disimpan OpenRouter dan penyedia model, dan berapa lama, mengikuti kebijakan mereka. [ISI: hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.]"
+      ]
+    },
+    {
+      "judul": "Keselamatan",
+      "paragraf": [
+        "Server LANJUT memeriksa setiap pesan terbarumu untuk tanda bahaya, misalnya keinginan menyakiti diri atau mengalami kekerasan. Pemeriksaan ini dilakukan di server LANJUT, bukan oleh penyedia AI.",
+        "Kalau tanda bahayanya serius, pesan itu tidak diteruskan ke penyedia AI. Server langsung membalas dengan pesan tetap dan kartu layanan bantuan yang sudah dicek, juga saat fitur AI sedang dimatikan. Kalau kamu lalu melanjutkan obrolan, isi pesan itu tetap tidak ikut terkirim: setiap kali riwayat obrolan dikirim ke penyedia AI, server memeriksa ulang pesan-pesanmu, dan pesan yang tanda bahayanya serius diganti catatan singkat dari aplikasi bahwa kamu menyampaikan hal yang sangat berat dan kartu bantuan sudah ditampilkan. Balasan aplikasi untuk pesan itu tetap ada di riwayat.",
+        "Untuk tanda tekanan yang lebih ringan, misalnya cemas atau capek belajar, pesan tetap dikirim ke penyedia AI, disertai catatan dari aplikasi agar AI menanggapi perasaanmu lebih dulu. AI juga bisa menilai bahwa kamu mungkin butuh bantuan; aplikasi lalu menampilkan kartu layanan bantuan.",
+        "Daftar tanda bahaya masih draf yang menunggu tinjauan guru BK, dan daftar kartu bantuan juga masih draf. Pemeriksaan otomatis bisa keliru. Kalau kamu dalam bahaya, segera hubungi orang dewasa yang kamu percaya."
+      ]
+    },
+    {
+      "judul": "Fitur AI bisa dimatikan dan ada batasnya",
+      "butir": [
+        "Tim LANJUT bisa mematikan fitur AI kapan saja. Selama mati, Ngobrol membalas dengan pesan uji coba yang ditandai, dan pesanmu tidak dikirim ke penyedia AI.",
+        "Pemakaian modul dan pencarian web juga bisa dimatikan secara terpisah.",
+        "Ada batas jumlah pesan per akun dalam 5 menit dan dalam 24 jam, serta batas pencarian web per akun per hari."
+      ]
+    },
+    {
+      "judul": "Persetujuan orang tua atau wali",
+      "paragraf": [
+        "Banyak pengguna LANJUT berusia di bawah 18 tahun. Untuk data anak, persetujuan harus datang dari orang tua atau wali, bukan dari centang di aplikasi.",
+        "Orang tua atau wali memberi persetujuan lewat surat yang dibagikan sekolah. Setelah surat dikumpulkan, persetujuan itu dicatat ke akunmu. Statusnya bisa kamu lihat di Jalur Saya.",
+        "Fitur AI hanya aktif kalau persetujuan orang tua atau wali sudah tercatat dan tidak dicabut, dan kamu sudah menerima kebijakan privasi versi yang berlaku. Karena LANJUT tidak menanyakan usia, aturan ini berlaku untuk semua akun.",
+        "Tanpa persetujuan itu, layar Ngobrol terkunci dan tidak ada data akunmu yang dikirim ke penyedia AI. Fitur LANJUT lainnya tetap bisa kamu pakai.",
+        "[ISI: apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.]"
+      ]
+    },
+    {
+      "judul": "Hak kamu dan orang tua atau walimu",
+      "butir": [
+        "Melihat data apa saja yang tersimpan tentangmu.",
+        "Membetulkan data yang salah. Nama tampilan, kelas, jenis sekolah, prodi impian, dan gaya belajar bisa kamu ubah sendiri di Jalur Saya.",
+        "Meminta datamu dihapus. Modul bisa kamu hapus sendiri secara permanen di Arsip Belajar, satu per satu atau semuanya sekaligus. Untuk data lain, fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.",
+        "Isi obrolan tidak perlu dihapus dari server LANJUT karena memang tidak disimpan di sana. Untuk data yang sudah dikirim ke penyedia AI: [ISI: cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.]",
+        "Mencabut persetujuan. Orang tua atau wali cukup memberi tahu sekolah atau kontak di bawah bahwa persetujuannya dicabut. Setelah pencabutan dicatat, fitur AI tertutup untuk akunmu mulai pesan berikutnya, dan fitur lain tetap bisa dipakai. Pencabutan tidak menghapus data yang sudah pernah dikirim ke penyedia AI.",
+        "[ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]"
+      ]
+    },
+    {
+      "judul": "Berapa lama data disimpan",
+      "paragraf": [
+        "[ISI: masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.]",
+        "[ISI: masa simpan modul bila akunnya lama tidak dipakai.]"
+      ]
+    },
+    {
+      "judul": "Keamanan",
+      "paragraf": [
+        "Kata sandi dan tanda masuk disimpan dalam bentuk acak (hash). Setiap akun hanya bisa membuka datanya sendiri.",
+        "Data untuk fitur AI dikirim ke penyedia AI oleh server LANJUT, bukan langsung dari HP-mu, lewat koneksi terenkripsi (HTTPS). Kunci akses ke penyedia AI hanya ada di server.",
+        "[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.]"
+      ]
+    },
+    {
+      "judul": "Perubahan kebijakan",
+      "paragraf": [
+        "Kalau kebijakan ini berubah, nomor versinya naik. Persetujuan untuk versi lama tidak dianggap berlaku untuk fitur yang membutuhkan versi baru, termasuk fitur AI.",
+        "Saat versinya naik, aplikasi memintamu membaca ringkasan versi baru lalu menerimanya. Kamu boleh memilih \"Nanti saja\" dan tetap memakai fitur lain, tetapi fitur AI tertutup sampai kamu menerima versi yang berlaku.",
+        "Sistem juga bisa mewajibkan persetujuan orang tua atau wali yang baru setelah kebijakan berubah. [ISI: kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.]",
+        "[ISI: cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.]"
+      ]
+    },
+    {
+      "judul": "Kontak",
+      "paragraf": [
+        "[ISI: kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.]"
+      ]
+    }
+  ]
+}

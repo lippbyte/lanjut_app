@@ -1,0 +1,29 @@
+{
+  "status": "DRAF — daftar layanan bantuan untuk kartu di Ngobrol (LANJUT_053). Hanya entri dengan terverifikasi: true yang pernah tampil ke siswa. Mengubah berkas ini perlu menyalakan ulang server.",
+  "layanan": [
+    {
+      "nama": "Healing119 (layanan kesehatan jiwa Kemenkes)",
+      "nomor_atau_alamat": "Telepon 119 ekstensi 8 · healing119.id",
+      "keterangan": "Untuk bercerita dan mendapat dukungan saat kamu merasa sangat berat.",
+      "terverifikasi": true,
+      "sumber": "Dicek Khalifa (disebut di task LANJUT_052 dan LANJUT_053)",
+      "tanggal_cek": null
+    },
+    {
+      "nama": "Nomor darurat nasional",
+      "nomor_atau_alamat": "112",
+      "keterangan": "Kalau kamu atau orang lain sedang dalam bahaya saat ini juga.",
+      "terverifikasi": true,
+      "sumber": "nomor darurat nasional",
+      "tanggal_cek": null
+    },
+    {
+      "nama": "SAPA 129 (KemenPPPA)",
+      "nomor_atau_alamat": "129",
+      "keterangan": "Layanan pengaduan kekerasan terhadap perempuan dan anak.",
+      "terverifikasi": false,
+      "sumber": "belum dicek dari sumber resmi",
+      "tanggal_cek": null
+    }
+  ]
+}

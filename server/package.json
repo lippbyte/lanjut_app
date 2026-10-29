@@ -1,0 +1,43 @@
+{
+  "name": "lanjut-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fondasi backend LANJUT — Express + MySQL, sesuai docs/SDD-Backend-Foundation.md",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "migrasi": "node src/db/jalankan-migrasi.js",
+    "benih": "node src/db/benih/benih.js",
+    "verifikasi-konten": "node src/db/verifikasi/verifikasi-konten.js",
+    "lembar-review": "node src/db/verifikasi/lembar-review.js",
+    "lembar-review-teks": "node tools/lembar-review-teks.js",
+    "persetujuan-ortu": "node src/db/persetujuan/persetujuan-ortu.js",
+    "dokumen-kebijakan": "node tools/kebijakan-privasi.js",
+    "landing-kebijakan": "node tools/landing-kebijakan.js",
+    "dokumen-skenario-ai": "node tools/dokumen-skenario-ai.js",
+    "evaluasi-ai": "node tools/evaluasi-ai.js",
+    "pemakaian-ai": "node tools/pemakaian-ai.js",
+    "smoke": "node tools/smoke.js",
+    "cadangan-db": "node tools/cadangan-db.js",
+    "pulihkan-db": "node tools/pulihkan-db.js",
+    "cabut-sesi-tenggat": "node tools/cabut-sesi-tenggat.js",
+    "test": "node --test tests/*.test.js",
+    "periksa-sql": "node tools/periksa-sql.js"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0",
+    "multer": "^2.4.0",
+    "mysql2": "^3.11.0",
+    "pdfjs-dist": "4.10.38",
+    "zod": "^3.23.8"
+  }
+}

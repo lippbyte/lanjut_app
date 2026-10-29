@@ -1,0 +1,31 @@
+{
+  "_catatan": "CONTOH untuk test benih (tests/benih-rumpun.test.js) — BUKAN data konten. Menunjukkan format berlaku_untuk_rumpun; dibenih lalu dihapus lagi oleh test. Data asli ada di MVP-PWA/data/checklist.json.",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "asal": "contoh",
+  "status": "belum_diverifikasi",
+  "kategori": [
+    {
+      "id": "contoh-rumpun",
+      "nama": "Contoh Rumpun (uji benih)",
+      "butir": [
+        {
+          "id": "contoh-rumpun-kesehatan",
+          "judul": "CONTOH: butir khusus rumpun Kesehatan",
+          "urutan": 901,
+          "berlaku_untuk_kelas": ["12"],
+          "berlaku_untuk_jalur": ["SNBP", "SNBT"],
+          "berlaku_untuk_rumpun": ["Kesehatan"]
+        },
+        {
+          "id": "contoh-rumpun-kes-soshum",
+          "judul": "CONTOH: butir untuk dua rumpun",
+          "urutan": 902,
+          "berlaku_untuk_kelas": ["11", "12"],
+          "berlaku_untuk_jalur": ["SNBP", "SNBT"],
+          "berlaku_untuk_rumpun": ["Kesehatan", "Sosial & Humaniora"]
+        }
+      ]
+    }
+  ]
+}

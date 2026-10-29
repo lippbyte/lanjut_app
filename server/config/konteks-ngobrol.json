@@ -1,0 +1,16 @@
+{
+  "status": "DRAF (LANJUT_078). Kata pengenal konteks fitur untuk Ngobrol. Mengubah berkas ini perlu menyalakan ulang server.",
+  "cara_kerja": "Pesan dinormalisasi seperti materi.json (huruf kecil, tanpa tanda baca). Kata satu-kata dicocokkan lewat bentuk dasarnya (ujianku → ujian, berlatih → latih); frasa dicocokkan utuh. Konteks utama yang dikirim ke AI dipilih berurutan: pertanyaan materi (aturan materi.json) yang MASIH punya kata isi setelah kata_event, kata_saran, dan kata_umum_fitur dibuang → modul; ada kata_event → event; ada kata_saran → saran; pertanyaan materi lain → modul; selain itu kosong. Pencarian modul memakai kata isi itu saja. Kata di bawah juga dipakai untuk kartu tautan tambahan (tidak dikirim ke AI).",
+  "kata_event": [
+    "ujian", "ulangan", "uts", "uas", "pts", "tka", "asesmen", "penilaian akhir", "ujian akhir",
+    "ujian sekolah", "jadwal ujian", "persiapan ujian", "remedial", "event"
+  ],
+  "kata_saran": [
+    "latihan", "latih", "berlatih", "level in", "levelin", "saran", "belajar apa", "harus belajar",
+    "fokus belajar", "kartu latihan", "mapel yang lemah", "lemah di"
+  ],
+  "kata_umum_fitur": [
+    "berikutnya", "selanjutnya", "terdekat", "hari", "besok", "lusa", "minggu", "bulan", "depan",
+    "jadwal", "tanggal", "nilai", "persiapan", "siap", "siapin", "belajar", "mapel", "pelajaran"
+  ]
+}

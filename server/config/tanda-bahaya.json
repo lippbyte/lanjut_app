@@ -1,0 +1,71 @@
+{
+  "status": "DRAF untuk direview guru BK (LANJUT_053). Daftar awal, sengaja longgar: lebih baik kartu bantuan terlalu sering tampil daripada terlewat. Mengubah berkas ini perlu menyalakan ulang server.",
+  "cara_kerja": "Pesan siswa dan setiap frasa di bawah dinormalisasi dengan cara yang sama: huruf kecil, angka di dalam kata dibaca sebagai huruf (d1r1 = diri), tanda baca dihapus, huruf berulang diringkas (matiii = mati), lalu kata gaul diganti bentuk bakunya (lihat ejaan_gaul). Frasa cocok bila muncul utuh sebagai kata. Kombinasi (akut_kombinasi, LANJUT_060) cocok bila SETIAP kelompok punya paling sedikit satu akar kata yang muncul di dalam salah satu kata pesan, di urutan mana pun (ancam cocok dengan ngancam, diancam, ancaman). Tingkat akut: server membalas sendiri dengan kalimat tetap + kartu bantuan, tanpa memanggil AI, dan pesan itu diganti penanda netral bila kelak ikut di riwayat. Tingkat ringan: AI tetap menjawab, dengan instruksi menanggapi perasaan siswa lebih dulu.",
+  "ejaan_gaul": {
+    "mau": ["ingin", "pengen", "pengin", "pingin", "kepengen", "kepingin", "pgn", "pngn", "pgen", "mo", "pen"],
+    "hilang": ["ilang"],
+    "menghilang": ["ngilang", "ngilank"],
+    "foto aku": ["fotoku", "fotogw", "fotogue"],
+    "video aku": ["videoku", "vidioku"],
+    "tidak": ["gak", "ga", "nggak", "enggak", "engga", "ngga", "ngak", "gk", "tdk", "kagak", "ndak", "nda", "g"],
+    "aku": ["saya", "gue", "gw", "gua", "ak", "aq", "sy"],
+    "diri": ["dri", "diriku"],
+    "hidup": ["idup", "hidupku"],
+    "capek": ["cape", "cpk", "capk"],
+    "banget": ["bgt", "bngt", "bnget"],
+    "sudah": ["udah", "udh", "uda", "sdh"],
+    "lagi": ["lg", "lgi"],
+    "orang tua": ["ortu"]
+  },
+  "akut": {
+    "mengakhiri_hidup": [
+      "bunuh diri", "bunuhdiri", "bundir", "bnh diri", "suicide", "kill myself", "kms", "unalive",
+      "mau mati", "lebih baik mati", "mending mati", "mati aja",
+      "mengakhiri hidup", "akhiri hidup", "akhirin hidup", "ngakhirin hidup", "mengakhiri semuanya", "akhiri semuanya", "akhirin semuanya",
+      "tidak mau hidup", "tidak mau hidup lagi", "tidak sanggup hidup", "tidak kuat hidup",
+      "capek hidup", "lelah hidup", "muak hidup", "benci hidup",
+      "tidak ada gunanya hidup", "hidup tidak ada gunanya", "hidup tidak ada artinya", "tidak ada alasan untuk hidup",
+      "lebih baik tanpa aku", "dunia lebih baik tanpa aku",
+      "mau menghilang selamanya", "mau hilang selamanya", "mau pergi selamanya", "tidur selamanya", "tidak mau bangun lagi",
+      "mau hilang", "mau menghilang", "mau lenyap", "mending aku hilang", "lebih baik aku hilang",
+      "gantung diri", "loncat dari gedung", "lompat dari gedung", "minum racun", "overdosis", "potong nadi"
+    ],
+    "menyakiti_diri": [
+      "menyakiti diri", "nyakitin diri", "sakitin diri", "melukai diri", "ngelukain diri", "lukain diri",
+      "self harm", "selfharm", "cutting", "nyilet", "nyilet tangan", "silet tangan", "sayat tangan", "nyayat tangan",
+      "barcode tangan", "gores tangan", "mukul diri sendiri", "benturin kepala"
+    ],
+    "kekerasan_dialami": [
+      "dipukul", "dipukulin", "digebukin", "digebuki", "dihajar", "ditampar", "ditendang", "dikeroyok",
+      "disiksa", "dianiaya", "kdrt", "dikdrt", "dicekik", "disundut", "dikurung",
+      "diancam dibunuh", "diancam bunuh", "diancam mau dibunuh"
+    ],
+    "pelecehan": [
+      "dilecehkan", "dilecehin", "pelecehan", "pelecehan seksual", "diperkosa", "perkosa", "pemerkosaan",
+      "dicabuli", "dicabulin", "pencabulan", "diraba raba", "digerepe", "digrepe",
+      "dipaksa berhubungan", "dipaksa kirim foto", "diancam sebar foto", "foto aku disebar", "sextortion", "grooming",
+      "foto aku sudah disebar", "foto aku disebarin", "foto aku disebarkan", "foto aku diviralin", "foto aku diviralkan",
+      "video aku disebar", "video aku sudah disebar", "video aku disebarin", "foto bugil", "foto telanjang", "video bugil", "video telanjang"
+    ]
+  },
+  "akut_kombinasi": {
+    "ancaman_sebar_foto": [
+      ["ancam", "ancem"],
+      ["sebar", "nyebar", "menyebar", "viral", "upload", "aplod", "unggah", "posting", "share", "bocor"],
+      ["foto", "video", "vidio"]
+    ]
+  },
+  "positif_palsu_diketahui": [
+    "LANJUT_053: 'harga dipukul rata' (dipukul).",
+    "LANJUT_060, 'mau hilang': 'jerawatku mau hilang kalau rajin cuci muka?', 'sinyal di rumahku mau hilang terus', 'datanya mau hilang kalau nggak di-save?'.",
+    "LANJUT_060, kombinasi ancam + sebar + foto: 'aku ngancam adikku mau nyebar foto lucunya, bercanda kok', 'guru mengancam akan menyebarkan foto kelas yang ribut ke grup orang tua'.",
+    "LANJUT_060, 'foto bugil': pertanyaan pendidikan seks atau berita, mis. 'kenapa foto bugil anak di internet itu dilarang?'."
+  ],
+  "ringan": [
+    "stres", "stress", "cemas", "kecemasan", "panik", "khawatir banget", "takut gagal", "takut banget",
+    "tertekan", "kewalahan", "capek banget", "lelah banget", "burnout", "overthinking", "insecure",
+    "sedih banget", "nangis terus", "putus asa", "tidak ada harapan", "depresi", "kesepian",
+    "tidak punya teman", "gagal terus", "benci diri sendiri", "dibully", "dirundung", "dimarahin terus",
+    "tekanan orang tua", "dipaksa orang tua"
+  ]
+}
