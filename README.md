@@ -41,15 +41,19 @@ APK dibangun di cloud Expo, jadi tidak butuh Android Studio atau SDK lokal.
 
 ```bash
 cd LANJUT_App
-npx eas-cli build --platform android --profile preview   # hasil: .apk (bukan .aab)
+npx eas-cli build --platform android --profile preview       # .apk uji (boleh http://)
+npx eas-cli build --platform android --profile apk-sekolah   # .apk rilis untuk diunduh dari landing (wajib https://)
 ```
 
-- **URL API** diatur lewat `EXPO_PUBLIC_API_URL` di `eas.json` → `build.preview.env`. Saat ini isinya IP LAN komputer backend. Kalau IP komputer berubah, ganti nilai itu lalu build ulang; kode tidak perlu diubah.
+- **Profil:** `preview` = APK uji (environment EAS `preview`); `apk-sekolah` = APK rilis yang dibagikan lewat landing (environment EAS `production`); `production` = `.aab` untuk Play Store (environment EAS `production`).
+- **URL API** diambil dari variabel lingkungan EAS `EXPO_PUBLIC_API_URL` di environment profil itu (`eas.json` → `build.<profil>.environment`), bukan ditulis di `eas.json`, supaya alamat server tidak masuk repo. Ubah dengan `npx eas-cli env:set <environment> --name EXPO_PUBLIC_API_URL --value <url>/api/v1`, lalu build ulang; kode tidak perlu diubah. Tanpa variabel itu, build gagal dengan pesan "EXPO_PUBLIC_API_URL belum diisi". Berkas `.env` lokal tidak dibaca EAS Build.
+- **Versi:** satu sumber, `version` (X.Y.Z) dan `android.versionCode` di `app.config.ts` (`appVersionSource: "local"`). Naikkan `versionCode` setiap APK yang dibagikan.
 - **Kalau `EXPO_PUBLIC_API_URL` diisi,** nilainya dipakai di semua platform dan mengalahkan pemilihan otomatis (`localhost` untuk web / `10.0.2.2` untuk emulator / URL produksi).
-- **HTTP polos** (`usesCleartextTraffic`) hanya diizinkan kalau URL-nya berawalan `http://`. Build ke backend `https://` otomatis kembali aman.
+- **HTTP polos** (`usesCleartextTraffic`) hanya diizinkan kalau URL-nya berawalan `http://`. Build ke backend `https://` otomatis kembali aman. Semua profil selain `development` dan `preview` (mis. `production`, `apk-sekolah`) menolak `http://` (build dibatalkan), jadi HTTP polos hanya untuk build uji.
+- **Tanda tangan APK:** di EAS Build, keystore diambil dari kredensial EAS proyek (`npx eas-cli credentials -p android`), bukan dari `LANJUT_KEYSTORE_PROPS` (itu untuk build rilis lokal).
 - **Syarat di HP:** HP harus berada di WiFi yang sama dengan komputer backend, dan backend harus jalan (`cd server && npm start`). Backend sudah listen di `0.0.0.0:4000`.
 - **Penyimpanan APK:** simpan unduhan di `LANJUT_App/build/`. Folder ini diabaikan git.
-- **Aturan abaikan untuk EAS wajib di `.gitignore` root repo.** Saat mengemas proyek, EAS hanya membaca `.gitignore` root; aturan di `LANJUT_App/.gitignore` tidak berlaku untuk upload EAS (tanpa aturan root, APK di `build/` ikut terunggah dan arsip jadi ±220 MB). Cek isi arsip tanpa upload: `npx eas-cli build:inspect -p android -s archive -e preview -o <folder> --force`.
+- **Aturan abaikan untuk EAS ada di `.gitignore` root repo** (kini `LANJUT_App/.gitignore`, karena `LANJUT_App` sudah repo git sendiri). `.env`, `build/`, dan `android/` tidak ikut terunggah; arsip ±20 MB. Cek isi arsip tanpa upload: `npx eas-cli build:inspect -p android -s archive -e preview -o <folder> --force`.
 
 ## Audit dependensi (`npm audit`)
 

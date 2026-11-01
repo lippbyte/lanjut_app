@@ -18,31 +18,37 @@ import type { ExpoConfig } from 'expo/config';
 // Android Studio. Untuk device Android FISIK, override lewat env var di bawah
 // dengan IP LAN komputer (mis. http://192.168.x.x:4000/api/v1 — pola yang
 // sama dipakai saat menguji PWA v1 langsung di HP).
-const API_URL_DEV_ANDROID =
-  process.env.EXPO_PUBLIC_API_URL_DEV_ANDROID || 'http://10.0.2.2:4000/api/v1';
-const API_URL_DEV_WEB =
-  process.env.EXPO_PUBLIC_API_URL_DEV_WEB || 'http://localhost:4000/api/v1';
+// Build EAS selain profil development (preview, production) tidak membawa
+// alamat dev sama sekali; di build rilis `__DEV__` false sehingga tidak dipakai.
+// EAS_BUILD_PROFILE hanya ada di worker EAS, tidak saat `eas build` membaca config lokal.
+const profilEas = process.env.EAS_BUILD_PROFILE;
+const tanpaUrlDev = profilEas !== undefined && profilEas !== 'development';
+const API_URL_DEV_ANDROID = tanpaUrlDev
+  ? undefined
+  : process.env.EXPO_PUBLIC_API_URL_DEV_ANDROID || 'http://10.0.2.2:4000/api/v1';
+const API_URL_DEV_WEB = tanpaUrlDev
+  ? undefined
+  : process.env.EXPO_PUBLIC_API_URL_DEV_WEB || 'http://localhost:4000/api/v1';
 
-// Placeholder domain produksi (LANJUT_061) — WAJIB diganti sebelum rilis produksi.
+// URL API produksi, dari variabel lingkungan (EAS: environment production/preview).
+// Tidak ada nilai cadangan: build tanpa URL dibatalkan di bawah (LANJUT_061).
 const API_URL_PROD =
-  process.env.EXPO_PUBLIC_API_URL_PROD ||
-  process.env.EXPO_PUBLIC_API_URL ||
-  'https://api.GANTI-DOMAIN/api/v1';
+  process.env.EXPO_PUBLIC_API_URL_PROD || process.env.EXPO_PUBLIC_API_URL || undefined;
 
 // Satu URL yang mengalahkan ketiga kandidat di atas, di semua platform & mode.
 // Dipakai build APK preview / production (eas.json) atau override lingkungan lokal.
 const API_URL_OVERRIDE = process.env.EXPO_PUBLIC_API_URL || undefined;
 
-// Build dengan placeholder harus gagal dengan pesan yang jelas (LANJUT_061, LANJUT_062):
+// Build tanpa URL API harus gagal dengan pesan yang jelas (LANJUT_061, LANJUT_062):
 const isEasBuild = process.env.EAS_BUILD === 'true';
 const isProdEnv = process.env.NODE_ENV === 'production';
 const isExport = process.argv.some((arg) => arg === 'export');
 const targetApiUrl = API_URL_OVERRIDE || API_URL_PROD;
 
-if ((isEasBuild || isProdEnv || isExport) && targetApiUrl?.includes('GANTI-DOMAIN')) {
+if ((isEasBuild || isProdEnv || isExport) && !targetApiUrl) {
   throw new Error(
-    `[app.config.ts] Build dibatalkan: EXPO_PUBLIC_API_URL masih menggunakan placeholder "${targetApiUrl}". ` +
-      'Tentukan domain produksi yang sebenarnya di eas.json atau variabel lingkungan sebelum melakukan build.'
+    '[app.config.ts] Build dibatalkan: EXPO_PUBLIC_API_URL belum diisi. ' +
+      'Isi di variabel lingkungan EAS (environment profil build) atau lingkungan lokal sebelum melakukan build.'
   );
 }
 
@@ -50,13 +56,24 @@ if ((isEasBuild || isProdEnv || isExport) && targetApiUrl?.includes('GANTI-DOMAI
 // memang diarahkan ke backend http (mis. IP LAN saat pengujian dev), bukan untuk rilis https.
 const IZINKAN_HTTP = targetApiUrl?.startsWith('http://') ?? false;
 
+// usesCleartextTraffic hanya untuk build uji (profil development/preview, mis. ke IP server);
+// profil lain (production, apk-sekolah) wajib https, jadi build ke http:// dibatalkan.
+const PROFIL_UJI = ['development', 'preview'];
+if (profilEas !== undefined && !PROFIL_UJI.includes(profilEas) && IZINKAN_HTTP) {
+  throw new Error(
+    `[app.config.ts] Build profil ${profilEas} dibatalkan: EXPO_PUBLIC_API_URL "${targetApiUrl}" memakai http://. ` +
+      'Profil rilis wajib https://; http:// hanya untuk profil uji (preview).'
+  );
+}
+
 const config: ExpoConfig = {
   name: 'LANJUT',
   slug: 'lanjut',
   owner: 'lippbyte',
   scheme: 'lanjut',
-  // LANJUT_086: versionName Android = "1.0" (versionCode di bawah tetap 1).
-  version: '1.0',
+  // Satu-satunya sumber versi (eas.json appVersionSource "local"). Format X.Y.Z, sama dengan
+  // releases.json landing. versionCode di bawah naik tiap build yang dibagikan (1 = preview lama).
+  version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
@@ -75,7 +92,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: 'com.edilakso.lanjut',
-    versionCode: 1,
+    versionCode: 2,
     adaptiveIcon: {
       backgroundColor: '#FFFFFF',
       foregroundImage: './assets/android-icon-foreground.png',

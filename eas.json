@@ -13,19 +13,21 @@
     },
     "preview": {
       "distribution": "internal",
+      "environment": "preview",
       "android": {
         "buildType": "apk"
-      },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.GANTI-DOMAIN/api/v1"
       }
     },
     "production": {
+      "environment": "production",
       "android": {
         "buildType": "app-bundle"
-      },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.GANTI-DOMAIN/api/v1"
+      }
+    },
+    "apk-sekolah": {
+      "environment": "production",
+      "android": {
+        "buildType": "apk"
       }
     }
   }

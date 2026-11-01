@@ -10,7 +10,7 @@ RUN npm ci
 # Salin kode sumber aplikasi frontend
 COPY . .
 
-# Argumen build-time untuk app.config.ts (wajib bukan placeholder GANTI-DOMAIN saat export)
+# Argumen build-time untuk app.config.ts (wajib diisi; export tanpa EXPO_PUBLIC_API_URL dibatalkan)
 ARG EXPO_PUBLIC_API_URL
 ARG EXPO_PUBLIC_GOOGLE_CLIENT_ID=
 ARG EXPO_PUBLIC_GOOGLE_REDIRECT_URI=

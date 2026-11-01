@@ -79,12 +79,18 @@ test('release ditandatangani signingConfigs.release dari keystore.properties di 
   assert.ok(hasil.indexOf('LANJUT_KEYSTORE_PROPS') < hasil.indexOf('\nandroid {'), 'properti dibaca sebelum blok android');
 });
 
-test('tanpa keystore.properties, tugas rilis :app gagal (GradleException), tidak jatuh ke debug key', () => {
+test('tanpa keystore.properties maupun kredensial EAS, tugas rilis :app gagal (GradleException), tidak jatuh ke debug key', () => {
   const hasil = tambahkanTandaTanganRilis(TEMPLATE);
   const penjaga = hasil.slice(hasil.lastIndexOf(PENANDA));
   assert.match(penjaga, /gradle\.taskGraph\.whenReady/);
   assert.match(penjaga, /it\.name\.toLowerCase\(\)\.contains\('release'\)/);
-  assert.match(penjaga, /if \(!tugasRilis\.isEmpty\(\) && !lanjutKeystoreAda\) \{\n\s+throw new GradleException\(/);
+  // Di EAS Build, keystore datang dari credentials.json yang disuntikkan EAS, bukan dari LANJUT_KEYSTORE_PROPS.
+  assert.match(penjaga, /System\.getenv\('EAS_BUILD_WORKINGDIR'\)/);
+  assert.match(penjaga, /new File\(lanjutDirEas, 'credentials\.json'\)\.isFile\(\)/);
+  assert.match(
+    penjaga,
+    /if \(!tugasRilis\.isEmpty\(\) && !lanjutKeystoreAda && !lanjutKredensialEas\) \{\n\s+throw new GradleException\(/
+  );
 });
 
 test('idempoten, menjaga CRLF, dan menolak template yang berubah (prebuild berhenti, bukan diam-diam memakai debug key)', () => {
@@ -96,11 +102,11 @@ test('idempoten, menjaga CRLF, dan menolak template yang berubah (prebuild berhe
   assert.throws(() => tambahkanTandaTanganRilis(TEMPLATE.replace('    signingConfigs {', '    signingKonfig {')), /signingConfigs/);
 });
 
-test('app.config.ts memakai plugin; versionName 1.0 dan versionCode 1', () => {
+test('app.config.ts memakai plugin; versionName 1.0.0 dan versionCode 2', () => {
   const konfig = fs.readFileSync(path.join(AKAR_APP, 'app.config.ts'), 'utf8');
   assert.match(konfig, /'\.\/plugins\/withKeystoreRilis'/);
-  assert.match(konfig, /version: '1\.0',/);
-  assert.match(konfig, /versionCode: 1,/);
+  assert.match(konfig, /version: '1\.0\.0',/);
+  assert.match(konfig, /versionCode: 2,/);
 });
 
 test('tidak ada keystore atau keystore.properties di repo (di luar folder hasil build yang diabaikan git)', () => {

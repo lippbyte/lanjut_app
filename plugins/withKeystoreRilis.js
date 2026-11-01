@@ -30,9 +30,13 @@ const KONFIG_RILIS = `        release {
 
 const PENJAGA = `
 ${PENANDA}: tugas rilis :app tanpa keystore.properties gagal, tidak jatuh ke debug.keystore.
+// Di EAS Build, keystore dari kredensial EAS (credentials.json) disuntikkan
+// eas-build-inject-android-credentials.gradle ke signingConfigs.release.
+def lanjutDirEas = System.getenv('EAS_BUILD_WORKINGDIR')
+def lanjutKredensialEas = lanjutDirEas != null && new File(lanjutDirEas, 'credentials.json').isFile()
 gradle.taskGraph.whenReady { graf ->
     def tugasRilis = graf.allTasks.findAll { it.project == project && it.name.toLowerCase().contains('release') }
-    if (!tugasRilis.isEmpty() && !lanjutKeystoreAda) {
+    if (!tugasRilis.isEmpty() && !lanjutKeystoreAda && !lanjutKredensialEas) {
         throw new GradleException('LANJUT_086: build rilis butuh keystore rilis. Set LANJUT_KEYSTORE_PROPS ke keystore.properties di luar repo. Build rilis tidak memakai debug.keystore.')
     }
 }

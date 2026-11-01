@@ -45,13 +45,6 @@ if (!BASE_URL) {
   );
 }
 
-if (BASE_URL.includes('GANTI-DOMAIN')) {
-  throw new Error(
-    `[api/client] Alamat API masih menggunakan placeholder "${BASE_URL}". ` +
-      'Atur EXPO_PUBLIC_API_URL ke alamat server produksi yang valid sebelum menjalankan aplikasi.'
-  );
-}
-
 // Bentuk respons Express persis server/src/util/respons.js `sukses`/`galat` —
 // tipe ini SENGAJA disamakan literal dengan implementasi backend supaya
 // perubahan bentuk di sana ketahuan lewat error TypeScript di sini, bukan
