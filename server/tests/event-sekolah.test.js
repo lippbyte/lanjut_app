@@ -487,9 +487,12 @@ describe('LANJUT_076 §A: kelas 12 tidak berubah', () => {
     // (pilihan percakapan, belum disetujui PM): catatan di bawah kategori "Persiapan Ujian"
     // dan catatan SNPMB yang tidak menghitung kategori saran (lib/daftarPeriksa.ts). Persiapan
     // Event tetap tidak menyentuh bagian ini (dua asersi di bawah).
+    // Dihitung ulang 9 Nov 2026 hanya untuk penggantian nama LANJUT_001 seri v2: bila
+    // jalur_seleksi dan JALUR_SELEKSI_OPSI dikembalikan ke nama lama, sidiknya sama persis
+    // dengan nilai sebelumnya (df6096cd…5ef5b88db), jadi tampilannya tidak berubah.
     assert.equal(
       crypto.createHash('sha256').update(bagian12).digest('hex'),
-      'df6096cd4dd66f0cad392aa2067cc62732f7af27eb739445041b1743ef5b88db',
+      '4e86c22e33afc2fb875ab863448625a5ed279fbdaba8813525a02fb85509ce92',
       'tampilan Daftar Periksa kelas 12 berubah'
     );
     assert.equal((layar.match(/<PersiapanEvent \/>/g) || []).length, 1);

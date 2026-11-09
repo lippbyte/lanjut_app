@@ -38,6 +38,11 @@
 //   TIDAK diubah sama sekali.
 // - `checklist.json` dikelompokkan lewat `kategori[]`; tabel `kategori_checklist`
 //   (lihat catatan di migrasi 002) diisi dari situ.
+// - Kunci berkas `jalur`, `berlaku_untuk_jalur`, `peminat.jalur`, dan
+//   `kampus[].jalur_masuk` sengaja tetap memakai nama lama (LANJUT_001 seri v2):
+//   berkas itu dibaca langsung oleh PWA arsip, dan server/data-konten adalah
+//   salinannya. Di basis data dan API namanya `jalur_seleksi`; penerjemahannya
+//   hanya di berkas ini.
 
 const fs = require('fs');
 const path = require('path');
@@ -113,20 +118,20 @@ async function benihLinimasa(berkas = bacaJson('linimasa.json')) {
   for (const item of berkas.data) {
     await pool.execute(
       `INSERT INTO tahapan_linimasa
-         (id, judul, tanggal_mulai, tanggal_selesai, jalur,
+         (id, judul, tanggal_mulai, tanggal_selesai, jalur_seleksi,
           sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          status_verifikasi = IF(judul <=> VALUES(judul) AND tanggal_mulai <=> VALUES(tanggal_mulai) AND tanggal_selesai <=> VALUES(tanggal_selesai) AND
-            jalur <=> VALUES(jalur) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            jalur_seleksi <=> VALUES(jalur_seleksi) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
             asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
             status_verifikasi, 'belum_diverifikasi'),
          diperiksa_pada = IF(judul <=> VALUES(judul) AND tanggal_mulai <=> VALUES(tanggal_mulai) AND tanggal_selesai <=> VALUES(tanggal_selesai) AND
-            jalur <=> VALUES(jalur) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            jalur_seleksi <=> VALUES(jalur_seleksi) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
             asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
             diperiksa_pada, NULL),
          judul=VALUES(judul), tanggal_mulai=VALUES(tanggal_mulai),
-         tanggal_selesai=VALUES(tanggal_selesai), jalur=VALUES(jalur),
+         tanggal_selesai=VALUES(tanggal_selesai), jalur_seleksi=VALUES(jalur_seleksi),
          sumber=VALUES(sumber), pemilik=VALUES(pemilik),
          asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
@@ -270,24 +275,24 @@ async function benihCeritaAlumni() {
   for (const item of berkas.data) {
     await pool.execute(
       `INSERT INTO cerita_alumni
-         (id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur, hambatan, yang_dilakukan,
+         (id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur_seleksi, hambatan, yang_dilakukan,
           izin_tayang, tayang, sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          status_verifikasi = IF(nama <=> VALUES(nama) AND asal_smk <=> VALUES(asal_smk) AND jurusan_smk <=> VALUES(jurusan_smk) AND
-            ptn <=> VALUES(ptn) AND prodi <=> VALUES(prodi) AND jalur <=> VALUES(jalur) AND
+            ptn <=> VALUES(ptn) AND prodi <=> VALUES(prodi) AND jalur_seleksi <=> VALUES(jalur_seleksi) AND
             hambatan <=> VALUES(hambatan) AND yang_dilakukan <=> VALUES(yang_dilakukan) AND izin_tayang <=> VALUES(izin_tayang) AND
             tayang <=> VALUES(tayang) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
             asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
             status_verifikasi, 'belum_diverifikasi'),
          diperiksa_pada = IF(nama <=> VALUES(nama) AND asal_smk <=> VALUES(asal_smk) AND jurusan_smk <=> VALUES(jurusan_smk) AND
-            ptn <=> VALUES(ptn) AND prodi <=> VALUES(prodi) AND jalur <=> VALUES(jalur) AND
+            ptn <=> VALUES(ptn) AND prodi <=> VALUES(prodi) AND jalur_seleksi <=> VALUES(jalur_seleksi) AND
             hambatan <=> VALUES(hambatan) AND yang_dilakukan <=> VALUES(yang_dilakukan) AND izin_tayang <=> VALUES(izin_tayang) AND
             tayang <=> VALUES(tayang) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
             asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
             diperiksa_pada, NULL),
          nama=VALUES(nama), asal_smk=VALUES(asal_smk), jurusan_smk=VALUES(jurusan_smk),
-         ptn=VALUES(ptn), prodi=VALUES(prodi), jalur=VALUES(jalur), hambatan=VALUES(hambatan),
+         ptn=VALUES(ptn), prodi=VALUES(prodi), jalur_seleksi=VALUES(jalur_seleksi), hambatan=VALUES(hambatan),
          yang_dilakukan=VALUES(yang_dilakukan), izin_tayang=VALUES(izin_tayang),
          tayang=VALUES(tayang), sumber=VALUES(sumber), pemilik=VALUES(pemilik),
          asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
@@ -364,23 +369,23 @@ async function benihChecklist(berkas = bacaJson('checklist.json')) {
       totalButir += 1;
       await pool.execute(
         `INSERT INTO butir_daftar_periksa
-           (id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur, berlaku_untuk_rumpun,
+           (id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur_seleksi, berlaku_untuk_rumpun,
             kategori_id, sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            status_verifikasi = IF(judul <=> VALUES(judul) AND urutan <=> VALUES(urutan) AND berlaku_untuk_kelas <=> VALUES(berlaku_untuk_kelas) AND
-              berlaku_untuk_jalur <=> VALUES(berlaku_untuk_jalur) AND berlaku_untuk_rumpun <=> VALUES(berlaku_untuk_rumpun) AND kategori_id <=> VALUES(kategori_id) AND
+              berlaku_untuk_jalur_seleksi <=> VALUES(berlaku_untuk_jalur_seleksi) AND berlaku_untuk_rumpun <=> VALUES(berlaku_untuk_rumpun) AND kategori_id <=> VALUES(kategori_id) AND
               sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND
               url_sumber <=> VALUES(url_sumber),
               status_verifikasi, 'belum_diverifikasi'),
            diperiksa_pada = IF(judul <=> VALUES(judul) AND urutan <=> VALUES(urutan) AND berlaku_untuk_kelas <=> VALUES(berlaku_untuk_kelas) AND
-              berlaku_untuk_jalur <=> VALUES(berlaku_untuk_jalur) AND berlaku_untuk_rumpun <=> VALUES(berlaku_untuk_rumpun) AND kategori_id <=> VALUES(kategori_id) AND
+              berlaku_untuk_jalur_seleksi <=> VALUES(berlaku_untuk_jalur_seleksi) AND berlaku_untuk_rumpun <=> VALUES(berlaku_untuk_rumpun) AND kategori_id <=> VALUES(kategori_id) AND
               sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND
               url_sumber <=> VALUES(url_sumber),
               diperiksa_pada, NULL),
            judul=VALUES(judul), urutan=VALUES(urutan),
            berlaku_untuk_kelas=VALUES(berlaku_untuk_kelas),
-           berlaku_untuk_jalur=VALUES(berlaku_untuk_jalur),
+           berlaku_untuk_jalur_seleksi=VALUES(berlaku_untuk_jalur_seleksi),
            berlaku_untuk_rumpun=VALUES(berlaku_untuk_rumpun), kategori_id=VALUES(kategori_id),
            sumber=VALUES(sumber), pemilik=VALUES(pemilik),
            asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
@@ -513,7 +518,7 @@ async function benihProfilProdi(berkas = bacaJson('profil-prodi.json')) {
   const sama = `nama <=> VALUES(nama) AND urutan <=> VALUES(urutan) AND jenjang <=> VALUES(jenjang) AND
             badge_relevan_smk <=> VALUES(badge_relevan_smk) AND peminat_jumlah <=> VALUES(peminat_jumlah) AND
             peminat_kampus <=> VALUES(peminat_kampus) AND peminat_tahun <=> VALUES(peminat_tahun) AND
-            peminat_jalur <=> VALUES(peminat_jalur) AND peminat_sumber <=> VALUES(peminat_sumber) AND
+            peminat_jalur_seleksi <=> VALUES(peminat_jalur_seleksi) AND peminat_sumber <=> VALUES(peminat_sumber) AND
             diterima <=> VALUES(diterima) AND mata_kuliah <=> VALUES(mata_kuliah) AND profesi <=> VALUES(profesi) AND
             kampus <=> VALUES(kampus) AND status_sumber <=> VALUES(status_sumber) AND catatan_studi <=> VALUES(catatan_studi) AND
             sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber)`;
@@ -523,7 +528,7 @@ async function benihProfilProdi(berkas = bacaJson('profil-prodi.json')) {
     await pool.execute(
       `INSERT INTO profil_prodi
          (id, nama, urutan, jenjang, badge_relevan_smk, peminat_jumlah, peminat_kampus, peminat_tahun,
-          peminat_jalur, peminat_sumber, diterima, mata_kuliah, profesi, kampus, status_sumber, catatan_studi,
+          peminat_jalur_seleksi, peminat_sumber, diterima, mata_kuliah, profesi, kampus, status_sumber, catatan_studi,
           sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
@@ -532,7 +537,7 @@ async function benihProfilProdi(berkas = bacaJson('profil-prodi.json')) {
          nama=VALUES(nama), urutan=VALUES(urutan), jenjang=VALUES(jenjang),
          badge_relevan_smk=VALUES(badge_relevan_smk), peminat_jumlah=VALUES(peminat_jumlah),
          peminat_kampus=VALUES(peminat_kampus), peminat_tahun=VALUES(peminat_tahun),
-         peminat_jalur=VALUES(peminat_jalur), peminat_sumber=VALUES(peminat_sumber),
+         peminat_jalur_seleksi=VALUES(peminat_jalur_seleksi), peminat_sumber=VALUES(peminat_sumber),
          diterima=VALUES(diterima), mata_kuliah=VALUES(mata_kuliah), profesi=VALUES(profesi),
          kampus=VALUES(kampus), status_sumber=VALUES(status_sumber), catatan_studi=VALUES(catatan_studi),
          sumber=VALUES(sumber), pemilik=VALUES(pemilik), asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
@@ -550,7 +555,7 @@ async function benihProfilProdi(berkas = bacaJson('profil-prodi.json')) {
         item.diterima ?? null,
         JSON.stringify(item.mata_kuliah),
         JSON.stringify(item.profesi),
-        JSON.stringify(item.kampus),
+        JSON.stringify(kampusUntukDb(item.kampus)),
         JSON.stringify(item.status_sumber || {}),
         item.catatan_studi ?? null,
         berkas.sumber,
@@ -563,6 +568,17 @@ async function benihProfilProdi(berkas = bacaJson('profil-prodi.json')) {
     );
   }
   console.log(`[benih] profil_prodi: ${berkas.data.length} baris`);
+}
+
+/**
+ * Kunci berkas `jalur_masuk` menjadi `jalur_seleksi` di kolom JSON `kampus`. Urutan
+ * kunci dijaga: MariaDB menyimpan JSON sebagai teks, jadi perbandingan `<=>` di benih
+ * peka urutan, dan urutan yang bergeser akan mereset tanda verifikasi.
+ */
+function kampusUntukDb(kampus) {
+  return kampus.map((k) =>
+    Object.fromEntries(Object.entries(k).map(([kunci, nilai]) => [kunci === 'jalur_masuk' ? 'jalur_seleksi' : kunci, nilai]))
+  );
 }
 
 async function jalankanBenih() {

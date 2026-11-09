@@ -17,19 +17,19 @@ const { nyalakanServer, urlDari, pool } = require('./bantuan');
 const kontenRepo = require('../src/modul/konten/konten.repo');
 
 const KUNCI = [
-  'id', 'judul', 'tanggal_mulai', 'tanggal_selesai', 'jalur',
+  'id', 'judul', 'tanggal_mulai', 'tanggal_selesai', 'jalur_seleksi', 'jalur',
   'sumber', 'pemilik', 'status_verifikasi', 'asal', 'url_sumber', 'diperiksa_pada',
 ].sort();
 
 const FIXTURE = [
   {
     id: 'uji-030-lini-dicek', judul: 'Tahapan uji dicek', tanggal_mulai: '2099-03-02',
-    tanggal_selesai: '2099-03-09', jalur: 'SNBT', status_verifikasi: 'terverifikasi',
+    tanggal_selesai: '2099-03-09', jalur_seleksi: 'SNBT', status_verifikasi: 'terverifikasi',
     asal: 'resmi', url_sumber: 'https://contoh.invalid/jadwal', diperiksa_pada: '2099-01-15',
   },
   {
     id: 'uji-030-lini-belum', judul: 'Tahapan uji belum dicek', tanggal_mulai: '2099-03-01',
-    tanggal_selesai: null, jalur: 'SNBP', status_verifikasi: 'belum_diverifikasi',
+    tanggal_selesai: null, jalur_seleksi: 'SNBP', status_verifikasi: 'belum_diverifikasi',
     asal: 'uji', url_sumber: null, diperiksa_pada: null,
   },
 ];
@@ -54,10 +54,10 @@ before(async () => {
   for (const f of FIXTURE) {
     await pool.query(
       `INSERT INTO tahapan_linimasa
-         (id, judul, tanggal_mulai, tanggal_selesai, jalur, pemilik,
+         (id, judul, tanggal_mulai, tanggal_selesai, jalur_seleksi, pemilik,
           status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, 'tim', ?, ?, ?, ?)`,
-      [f.id, f.judul, f.tanggal_mulai, f.tanggal_selesai, f.jalur,
+      [f.id, f.judul, f.tanggal_mulai, f.tanggal_selesai, f.jalur_seleksi,
         f.status_verifikasi, f.asal, f.url_sumber, f.diperiksa_pada]
     );
   }
@@ -98,12 +98,12 @@ test('linimasa: tahapan terverifikasi DAN belum sama-sama dikirim, tanggal persi
     assert.deepEqual(
       {
         judul: t.judul, tanggal_mulai: t.tanggal_mulai, tanggal_selesai: t.tanggal_selesai,
-        jalur: t.jalur, status_verifikasi: t.status_verifikasi, asal: t.asal,
+        jalur_seleksi: t.jalur_seleksi, status_verifikasi: t.status_verifikasi, asal: t.asal,
         url_sumber: t.url_sumber, diperiksa_pada: t.diperiksa_pada, sumber: t.sumber,
       },
       {
         judul: f.judul, tanggal_mulai: f.tanggal_mulai, tanggal_selesai: f.tanggal_selesai,
-        jalur: f.jalur, status_verifikasi: f.status_verifikasi, asal: f.asal,
+        jalur_seleksi: f.jalur_seleksi, status_verifikasi: f.status_verifikasi, asal: f.asal,
         url_sumber: f.url_sumber, diperiksa_pada: f.diperiksa_pada, sumber: 'resmi',
       }
     );
@@ -111,7 +111,7 @@ test('linimasa: tahapan terverifikasi DAN belum sama-sama dikirim, tanggal persi
 });
 
 test('linimasa: kueri yang tidak dikenal diabaikan, bukan galat dan bukan penyaring', async () => {
-  const { status, json } = await ambil('/konten/linimasa?jalur=TKA&status=terverifikasi&x[]=1');
+  const { status, json } = await ambil('/konten/linimasa?jalur_seleksi=TKA&status=terverifikasi&x[]=1');
   assert.equal(status, 200);
   assert.equal(json.ok, true);
   const ids = json.data.map((t) => t.id);

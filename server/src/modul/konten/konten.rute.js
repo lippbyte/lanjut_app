@@ -9,6 +9,11 @@ const { keTanggal } = require('../../util/waktu');
 
 const router = express.Router();
 
+// Kompatibilitas APK 1.0.0 (LANJUT_001 seri v2): APK yang sudah terpasang masih memakai
+// nama lama, dan `jalur_masuk` dipakai tanpa pengaman (`.map`) di layar Eksplorasi Tujuan.
+// Field `jalur`, `berlaku_untuk_jalur`, `jalur_masuk`, dan kueri `?jalur=` sengaja tetap
+// dilayani, hanya di berkas ini. Hapus setelah tidak ada lagi pengguna APK 1.0.0.
+
 // LANJUT_073 — banner Beranda dari server/config/banner-beranda.json (bukan tabel).
 // Berkas rusak → `banner: []` + peringatan di log (lihat banner.js), bukan galat.
 router.get('/banner', async (req, res, next) => {
@@ -26,6 +31,7 @@ router.get('/linimasa', async (req, res, next) => {
       res,
       baris.map((b) => ({
         ...b,
+        jalur: b.jalur_seleksi, // APK 1.0.0
         tanggal_mulai: keTanggal(b.tanggal_mulai),
         tanggal_selesai: keTanggal(b.tanggal_selesai),
         diperiksa_pada: keTanggal(b.diperiksa_pada),
@@ -111,7 +117,7 @@ router.get('/cerita-alumni', async (req, res, next) => {
     const baris = await konten.ambilCeritaAlumniTayang();
     sukses(
       res,
-      baris.map((b) => ({ ...b, diperiksa_pada: keTanggal(b.diperiksa_pada) }))
+      baris.map((b) => ({ ...b, jalur: b.jalur_seleksi /* APK 1.0.0 */, diperiksa_pada: keTanggal(b.diperiksa_pada) }))
     );
   } catch (err) {
     next(err);
@@ -137,13 +143,14 @@ function bentukProfilProdi(b) {
             jumlah: b.peminat_jumlah,
             kampus: b.peminat_kampus,
             tahun: b.peminat_tahun,
-            jalur: b.peminat_jalur,
+            jalur_seleksi: b.peminat_jalur_seleksi,
+            jalur: b.peminat_jalur_seleksi, // APK 1.0.0
             sumber: b.peminat_sumber,
           },
     diterima: b.diterima,
     mata_kuliah: jsonDari(b.mata_kuliah),
     profesi: jsonDari(b.profesi),
-    kampus: jsonDari(b.kampus),
+    kampus: jsonDari(b.kampus).map((k) => ({ ...k, jalur_masuk: k.jalur_seleksi })), // jalur_masuk: APK 1.0.0
     status_sumber: jsonDari(b.status_sumber),
     catatan_studi: b.catatan_studi,
     sumber: b.sumber,
@@ -180,7 +187,7 @@ router.get('/checklist', async (req, res, next) => {
   try {
     const baris = await konten.ambilChecklist({
       kelas: req.query.kelas,
-      jalur: req.query.jalur,
+      jalur_seleksi: req.query.jalur_seleksi ?? req.query.jalur, // ?jalur=: APK 1.0.0
       // `?rumpun=a&rumpun=b` jadi array di Express — abaikan, jangan 500.
       rumpun: typeof req.query.rumpun === 'string' ? req.query.rumpun : null,
     });
@@ -201,7 +208,8 @@ router.get('/checklist', async (req, res, next) => {
         judul: b.judul,
         urutan: b.urutan,
         berlaku_untuk_kelas: b.berlaku_untuk_kelas.split(','),
-        berlaku_untuk_jalur: b.berlaku_untuk_jalur.split(','),
+        berlaku_untuk_jalur_seleksi: b.berlaku_untuk_jalur_seleksi.split(','),
+        berlaku_untuk_jalur: b.berlaku_untuk_jalur_seleksi.split(','), // APK 1.0.0
         // null = butir umum (semua rumpun); array = butir khusus rumpun itu.
         berlaku_untuk_rumpun: b.berlaku_untuk_rumpun ? b.berlaku_untuk_rumpun.split(',') : null,
         sumber: b.sumber,

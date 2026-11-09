@@ -17,7 +17,7 @@ export type Progres = {
 /**
  * X/Y dihitung dari `kategori` (data asli hasil fetch), bukan dari
  * `total_butir` yang dikirim API maupun angka tetap — supaya benar untuk
- * kombinasi kelas/jalur apa pun, termasuk saat berkasnya berubah.
+ * kombinasi kelas/jalur_seleksi apa pun, termasuk saat berkasnya berubah.
  */
 export function hitungProgres(kategori: KategoriDaftarPeriksa[], selesaiIds: ReadonlySet<string>): Progres {
   let total = 0;
@@ -58,7 +58,7 @@ const URUTAN_PRIBADI = 1000;
 /**
  * Butir milik akun (LANJUT_034) digabung ke butir umum — padanan PWA
  * pasangChecklist() + ChecklistTambahan. Butir pribadi tidak disaring kelas,
- * jalur, atau rumpun: siswa sendiri yang menyimpannya. Masukan tidak diubah.
+ * jalur_seleksi, atau rumpun: siswa sendiri yang menyimpannya. Masukan tidak diubah.
  */
 export function gabungButirPribadi(kategori: KategoriDaftarPeriksa[], pribadi: ButirPribadi[]): KategoriDaftarPeriksa[] {
   const hasil = kategori.map((k) => ({ ...k, butir: [...k.butir] }));
@@ -68,7 +68,7 @@ export function gabungButirPribadi(kategori: KategoriDaftarPeriksa[], pribadi: B
       judul: p.judul,
       urutan: URUTAN_PRIBADI + i,
       berlaku_untuk_kelas: [],
-      berlaku_untuk_jalur: [],
+      berlaku_untuk_jalur_seleksi: [],
       sumber: 'pengguna',
       pemilik: 'pengguna',
       status_verifikasi: 'belum_diverifikasi',

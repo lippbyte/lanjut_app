@@ -15,13 +15,13 @@ const KES = 'Kesehatan';
 
 // Kategori 'berkas' sudah ada dari benih checklist.
 const FIXTURE = [
-  { id: 'uji-rumpun-tek', rumpun: TEK, kelas: '12', jalur: 'SNBP,SNBT' },
-  { id: 'uji-rumpun-tek-kes', rumpun: `${TEK},${KES}`, kelas: '11,12', jalur: 'SNBP,SNBT' },
-  { id: 'uji-rumpun-eko', rumpun: 'Ekonomi & Bisnis', kelas: '12', jalur: 'SNBP,SNBT' },
+  { id: 'uji-rumpun-tek', rumpun: TEK, kelas: '12', jalur_seleksi: 'SNBP,SNBT' },
+  { id: 'uji-rumpun-tek-kes', rumpun: `${TEK},${KES}`, kelas: '11,12', jalur_seleksi: 'SNBP,SNBT' },
+  { id: 'uji-rumpun-eko', rumpun: 'Ekonomi & Bisnis', kelas: '12', jalur_seleksi: 'SNBP,SNBT' },
 ];
 const ID_FIXTURE = FIXTURE.map((f) => f.id);
 
-const KUERI_LAMA = ['', '?kelas=12', '?kelas=12&jalur=SNBP', '?kelas=11&jalur=TKA', '?jalur=SNBT'];
+const KUERI_LAMA = ['', '?kelas=12', '?kelas=12&jalur_seleksi=SNBP', '?kelas=11&jalur_seleksi=TKA', '?jalur_seleksi=SNBT'];
 
 let server;
 let baseUrl;
@@ -51,10 +51,10 @@ before(async () => {
   for (const [i, f] of FIXTURE.entries()) {
     await pool.query(
       `INSERT INTO butir_daftar_periksa
-         (id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur, berlaku_untuk_rumpun,
+         (id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur_seleksi, berlaku_untuk_rumpun,
           kategori_id, pemilik, asal)
        VALUES (?, ?, ?, ?, ?, ?, 'berkas', 'tim', 'uji')`,
-      [f.id, `Butir uji ${f.id}`, 90 + i, f.kelas, f.jalur, f.rumpun]
+      [f.id, `Butir uji ${f.id}`, 90 + i, f.kelas, f.jalur_seleksi, f.rumpun]
     );
   }
 });
@@ -106,7 +106,7 @@ test('checklist dengan rumpun: filter kelas & jalur tetap berlaku', async () => 
   assert.ok(!kelas11.includes('uji-rumpun-tek'), 'butir kelas 12 tidak boleh tampil di kelas 11');
   assert.ok(kelas11.includes('uji-rumpun-tek-kes'));
 
-  const tka = idButir(await ambil(`/konten/checklist?jalur=TKA&rumpun=${r}`));
+  const tka = idButir(await ambil(`/konten/checklist?jalur_seleksi=TKA&rumpun=${r}`));
   assert.ok(!tka.includes('uji-rumpun-tek') && !tka.includes('uji-rumpun-tek-kes'));
 });
 

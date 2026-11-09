@@ -72,6 +72,14 @@ dijalankan yang dieksekusi. Migrasi **tidak pernah** disunting setelah
 dijalankan di server tayang; perbaikan selalu berkas baru bernomor lebih
 tinggi (§3.6).
 
+Sebagian migrasi punya langkah turun di `src/db/migrasi-turun/`, untuk
+membatalkan migrasi **terakhir** yang dijalankan. Cadangkan dulu dengan
+`npm run cadangan-db`, lalu:
+
+```bash
+npm run migrasi-turun -- 029_ganti_nama_jalur_seleksi.sql
+```
+
 Benih membaca `MVP-PWA/data/*.json` langsung (tidak menyalin isinya ke SQL) dan
 memakai `INSERT ... ON DUPLICATE KEY UPDATE` — aman dijalankan berkali-kali.
 
@@ -1210,8 +1218,8 @@ curl -s http://localhost:3000/api/v1/auth/saya -H "Authorization: Bearer <token>
 # Konten publik, tanpa login:
 curl -s http://localhost:3000/api/v1/konten/linimasa
 curl -s http://localhost:3000/api/v1/konten/banner
-curl -s http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP
-curl -s "http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP&rumpun=Teknologi%20%26%20Rekayasa"
+curl -s http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur_seleksi=SNBP
+curl -s "http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur_seleksi=SNBP&rumpun=Teknologi%20%26%20Rekayasa"
 ```
 
 ### Filter rumpun di checklist (migrasi 006, LANJUT_007)
@@ -1221,7 +1229,7 @@ curl -s "http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP&rumpu
   `NULL` = butir umum, berlaku untuk semua rumpun.
 - `GET /konten/checklist?rumpun=` mengembalikan butir umum **ditambah** butir
   khusus rumpun itu. Rumpun yang tidak cocok butir mana pun → hanya butir umum.
-- **Beda dari `kelas`/`jalur`:** tanpa `rumpun`, butir khusus rumpun **tidak**
+- **Beda dari `kelas`/`jalur_seleksi`:** tanpa `rumpun`, butir khusus rumpun **tidak**
   ikut (bukan "semua"). Klien lama yang belum mengirim `rumpun` tetap mendapat
   hasil persis seperti sebelum kolom ini ada, dan hitungan X/Y-nya tidak
   bertambah oleh butir rumpun lain.

@@ -246,7 +246,7 @@ describe('LANJUT_065 §D: Tes Lintas Akun (Cross-Account Isolation)', () => {
     await panggil('PATCH', '/pengguna/saya', tokenB, { prodi_impian: 'farmasi' });
 
     // b. Centang butir daftar periksa
-    const butirResp = await panggil('GET', '/konten/checklist?kelas=12&jalur=SNBP');
+    const butirResp = await panggil('GET', '/konten/checklist?kelas=12&jalur_seleksi=SNBP');
     const firstButirId = butirResp.json.data.kategori[0].butir[0].id;
     await panggil('PUT', `/kemajuan/${encodeURIComponent(firstButirId)}`, tokenB);
 

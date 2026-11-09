@@ -36,16 +36,16 @@ export function judulEksplorasi(kelas: Kelas | null | undefined): string {
   return JUDUL_EKSPLORASI[versiEksplorasi(kelas)];
 }
 
-export type BagianEksplorasi = 'pengantar' | 'jalur' | 'bidang' | 'simpan' | 'prodi_nanti' | 'penutup';
+export type BagianEksplorasi = 'pengantar' | 'jalur_seleksi' | 'bidang' | 'simpan' | 'prodi_nanti' | 'penutup';
 
 /**
- * Bagian yang dirender per versi, urut dari atas. SMP TIDAK punya 'jalur'
+ * Bagian yang dirender per versi, urut dari atas. SMP TIDAK punya 'jalur_seleksi'
  * (jalur masuk) dan tidak ada bagian bertanggal di versi mana pun: tanggal
  * hanya dari data Linimasa terverifikasi, dan Linimasa khusus kelas 12.
  */
 export const BAGIAN_EKSPLORASI: Record<Exclude<VersiEksplorasi, 'f10'>, readonly BagianEksplorasi[]> = {
   smp: ['pengantar', 'bidang', 'simpan', 'penutup'],
-  kelas10_11: ['pengantar', 'jalur', 'bidang', 'simpan', 'prodi_nanti'],
+  kelas10_11: ['pengantar', 'jalur_seleksi', 'bidang', 'simpan', 'prodi_nanti'],
 };
 
 /** Paling banyak bidang yang bisa dipilih di layar (server menerima sampai 5). */
@@ -105,7 +105,7 @@ export function penjelasanBidang(rumpun: string): PenjelasanBidang | null {
 }
 
 /** Jalur masuk umum untuk kelas 10–11 — tanpa tanggal, tanpa angka. DRAF, belum dicek ke SNPMB. */
-export const JALUR_MASUK: readonly { nama: string; penjelasan: string }[] = [
+export const JALUR_SELEKSI: readonly { nama: string; penjelasan: string }[] = [
   {
     nama: 'SNBP',
     penjelasan: 'Seleksi Nasional Berdasarkan Prestasi. Dinilai dari nilai rapor dan prestasi, tanpa tes tertulis. Sekolah menentukan siapa yang bisa ikut.',
@@ -128,7 +128,7 @@ export const TEKS_EKSPLORASI = {
   },
   kelas10_11: {
     pengantar: 'Kenali cara masuk perguruan tinggi dan bidang yang ingin kamu dalami.',
-    judulJalur: 'Jalur masuk perguruan tinggi',
+    judulJalurSeleksi: 'Jalur masuk perguruan tinggi',
     tombol: 'Simpan bidangku',
     prodiNanti: 'Daftar prodi dan syaratnya akan muncul setelah dicek ke sumber resmi.',
   },

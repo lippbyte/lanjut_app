@@ -18,7 +18,7 @@ import { BukanKelas12, useUntukKelas12 } from './KhususKelas12';
 import { PersiapanEvent } from './PersiapanEvent';
 
 const KELAS_OPSI = ['10', '11', '12'] as const;
-const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
+const JALUR_SELEKSI_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
 
 /**
  * F5 — padanan MVP-PWA/checklist.html: bilah kemajuan bergradasi + tiga
@@ -27,14 +27,14 @@ const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
  * Beda dari PWA, dua-duanya disengaja:
  *  - Centang disimpan ke akun lewat /kemajuan (PWA: localStorage), jadi
  *    ikut pindah ke HP lain.
- *  - Butir disaring kelas & jalur (AC F5 di PRD, belum ada di PWA). Kelas
- *    diisi dari akun kalau ada; jalur disimpan di perangkat karena akun
- *    belum punya medan jalur. Rumpun target prodi ikut dikirim, jadi butir
+ *  - Butir disaring kelas & jalur_seleksi (AC F5 di PRD, belum ada di PWA). Kelas
+ *    diisi dari akun kalau ada; jalur_seleksi disimpan di perangkat karena akun
+ *    belum punya medan jalur_seleksi. Rumpun target prodi ikut dikirim, jadi butir
  *    khusus rumpun itu tampil (LANJUT_013).
  *
  * Butir pribadi (LANJUT_034, "Simpan" dari Pilih Mapel & Eksplorasi Tujuan)
  * tersimpan di akun, ikut digabung ke kategorinya, dan bisa dihapus. Butir
- * ini tidak disaring kelas/jalur, jadi tetap tampil sebelum keduanya dipilih.
+ * ini tidak disaring kelas/jalur_seleksi, jadi tetap tampil sebelum keduanya dipilih.
  */
 export function DaftarPeriksaScreen() {
   const kelas12 = useUntukKelas12();
@@ -64,7 +64,7 @@ function DaftarPeriksaBukanKelas12() {
 
 function DaftarPeriksaKelas12() {
   const saring = useSaringDaftarPeriksa();
-  const { kelas, jalur, pilih, isPending } = saring;
+  const { kelas, jalur_seleksi, pilih, isPending } = saring;
 
   return (
     <View style={gaya.layarIsi}>
@@ -72,12 +72,12 @@ function DaftarPeriksaKelas12() {
 
       <Kartu varian="soft" style={s.saring}>
         <BarisKeping label="Kelas" opsi={KELAS_OPSI} tampil={(k) => `Kelas ${k}`} aktif={kelas} onPilih={(k) => pilih({ kelas: k })} />
-        <BarisKeping label="Jalur" opsi={JALUR_OPSI} tampil={(j) => j} aktif={jalur} onPilih={(j) => pilih({ jalur: j })} />
+        <BarisKeping label="Jalur" opsi={JALUR_SELEKSI_OPSI} tampil={(j) => j} aktif={jalur_seleksi} onPilih={(j) => pilih({ jalur_seleksi: j })} />
       </Kartu>
 
       {isPending ? (
         <Memuat />
-      ) : kelas && jalur ? (
+      ) : kelas && jalur_seleksi ? (
         <Checklist saring={saring} />
       ) : (
         <>
@@ -104,7 +104,7 @@ function useAksiButir(pribadiIds: ReadonlySet<string>, selesai: ReadonlySet<stri
   };
 }
 
-// Kelas/jalur belum dipilih: butir pribadi tetap tampil (tanpa bilah kemajuan,
+// Kelas/jalur_seleksi belum dipilih: butir pribadi tetap tampil (tanpa bilah kemajuan,
 // karena X/Y baru bermakna setelah butir umum tersaring).
 function ButirPribadiSaja() {
   const { data } = useButirPribadi();

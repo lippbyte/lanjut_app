@@ -33,7 +33,7 @@ const KELUARAN_BAWAAN = path.join(__dirname, '..', '..', '..', '..', '..', 'docs
 // status 'terverifikasi' DAN diperiksa_pada terisi (dihitung di bawah).
 const SQL = {
   profil: `SELECT pp.id, pp.nama, p.rumpun, pp.jenjang, pp.badge_relevan_smk,
-                  pp.peminat_jumlah, pp.peminat_kampus, pp.peminat_tahun, pp.peminat_jalur, pp.peminat_sumber,
+                  pp.peminat_jumlah, pp.peminat_kampus, pp.peminat_tahun, pp.peminat_jalur_seleksi, pp.peminat_sumber,
                   pp.diterima, pp.mata_kuliah, pp.profesi, pp.kampus, pp.status_sumber, pp.catatan_studi,
                   pp.asal, pp.url_sumber, pp.status_verifikasi, DATE_FORMAT(pp.diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
              FROM profil_prodi pp
@@ -66,17 +66,17 @@ const SQL = {
                      DATE_FORMAT(diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
                 FROM butir_khusus_smk
                ORDER BY urutan, id`,
-  checklist: `SELECT b.id, b.judul, k.nama AS kategori, b.berlaku_untuk_kelas, b.berlaku_untuk_jalur, b.berlaku_untuk_rumpun,
+  checklist: `SELECT b.id, b.judul, k.nama AS kategori, b.berlaku_untuk_kelas, b.berlaku_untuk_jalur_seleksi, b.berlaku_untuk_rumpun,
                      b.asal, b.url_sumber, b.status_verifikasi, DATE_FORMAT(b.diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
                 FROM butir_daftar_periksa b
                 JOIN kategori_checklist k ON k.id = b.kategori_id
                ORDER BY k.urutan, b.urutan, b.id`,
-  linimasa: `SELECT id, judul, jalur, DATE_FORMAT(tanggal_mulai, '%Y-%m-%d') AS mulai,
+  linimasa: `SELECT id, judul, jalur_seleksi, DATE_FORMAT(tanggal_mulai, '%Y-%m-%d') AS mulai,
                     DATE_FORMAT(tanggal_selesai, '%Y-%m-%d') AS selesai, asal, url_sumber, status_verifikasi,
                     DATE_FORMAT(diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
                FROM tahapan_linimasa
               ORDER BY tanggal_mulai, id`,
-  cerita: `SELECT id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur, hambatan, yang_dilakukan, izin_tayang, tayang,
+  cerita: `SELECT id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur_seleksi, hambatan, yang_dilakukan, izin_tayang, tayang,
                   asal, url_sumber, status_verifikasi, DATE_FORMAT(diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
              FROM cerita_alumni
             ORDER BY id`,
@@ -193,9 +193,9 @@ async function bagianProfil() {
       const status = json(p.status_sumber) || {};
       const rasio = rasioKeketatan(p.diterima, p.peminat_jumlah);
       const sumberPeminat =
-        ['Sumber:', p.peminat_sumber, p.peminat_jalur, p.peminat_tahun].filter(Boolean).join(' ') +
+        ['Sumber:', p.peminat_sumber, p.peminat_jalur_seleksi, p.peminat_tahun].filter(Boolean).join(' ') +
         (p.peminat_kampus ? `, ${p.peminat_kampus}` : '');
-      const kampus = (json(p.kampus) || []).map((k) => `${aman(k.nama)} (${aman(k.jenis)}; jalur ${(k.jalur_masuk || []).map(aman).join(', ')})`);
+      const kampus = (json(p.kampus) || []).map((k) => `${aman(k.nama)} (${aman(k.jenis)}; jalur ${(k.jalur_seleksi || []).map(aman).join(', ')})`);
       return {
         id: p.id,
         judul: aman(p.nama),
@@ -351,7 +351,7 @@ async function bagianChecklist() {
       isi: [
         `**Kategori:** ${aman(b.kategori)}`,
         `**Butir:** ${aman(b.judul)}`,
-        `**Berlaku untuk:** kelas ${aman(b.berlaku_untuk_kelas)} · jalur ${aman(b.berlaku_untuk_jalur)} · rumpun ${
+        `**Berlaku untuk:** kelas ${aman(b.berlaku_untuk_kelas)} · jalur ${aman(b.berlaku_untuk_jalur_seleksi)} · rumpun ${
           b.berlaku_untuk_rumpun ? aman(b.berlaku_untuk_rumpun) : 'semua'
         }`,
       ],
@@ -378,7 +378,7 @@ async function bagianLinimasa() {
       id: t.id,
       judul: aman(t.judul),
       isi: [
-        `**Judul:** ${aman(t.judul)} · **Jalur:** ${aman(t.jalur)}`,
+        `**Judul:** ${aman(t.judul)} · **Jalur:** ${aman(t.jalur_seleksi)}`,
         `**Tanggal:** ${tanggalPanjang(t.mulai)}${t.selesai ? ` – ${tanggalPanjang(t.selesai)}` : ''}`,
       ],
       sumber: [`Tempat memverifikasi (url_sumber): ${tautan(t.url_sumber)}`, `Asal isi: ${aman(t.asal)}`],
@@ -404,7 +404,7 @@ async function bagianCerita() {
       judul: aman(c.nama),
       isi: [
         `**Nama:** ${aman(c.nama)} · **SMK:** ${aman(c.asal_smk)} (${aman(c.jurusan_smk)})`,
-        `**Kampus & prodi:** ${aman(c.ptn)}, ${aman(c.prodi)} · **Jalur:** ${aman(c.jalur)}`,
+        `**Kampus & prodi:** ${aman(c.ptn)}, ${aman(c.prodi)} · **Jalur:** ${aman(c.jalur_seleksi)}`,
         `**Hambatan:** ${aman(c.hambatan)}`,
         `**Yang dilakukan:** ${aman(c.yang_dilakukan)}`,
         `**Izin tayang:** ${yaTidak(c.izin_tayang)} · **Tayang:** ${yaTidak(c.tayang)}`,

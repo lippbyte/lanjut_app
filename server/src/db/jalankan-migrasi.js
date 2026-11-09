@@ -94,4 +94,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanMigrasi, pernyataanMigrasi, DIR_MIGRASI };
+module.exports = { jalankanMigrasi, jalankanSatu, pastikanTabelMigrasi, daftarBerkasMigrasi, pernyataanMigrasi, DIR_MIGRASI };

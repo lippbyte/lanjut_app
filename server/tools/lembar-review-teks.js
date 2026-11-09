@@ -858,10 +858,10 @@ const PETA = [
         ['**Jalur SNBP:**', 'SNBP', 'Dinilai dari nilai rapor dan prestasi, tanpa tes tertulis; sekolah menentukan siapa yang bisa ikut.'],
         ['**Jalur SNBT:**', 'SNBT', 'Dinilai dari hasil tes tertulis berbasis komputer.'],
         ['**Jalur seleksi mandiri:**', 'seleksi mandiri', 'Diadakan sendiri oleh tiap perguruan tinggi negeri; caranya berbeda di tiap kampus.'],
-      ].map(([awal, jalur, klaim]) => ({
+      ].map(([awal, jalur_seleksi, klaim]) => ({
         task: 'LANJUT_075',
         awal,
-        nama: `Penjelasan jalur ${jalur}`,
+        nama: `Penjelasan jalur ${jalur_seleksi}`,
         di: 'Jalur dan Bidangmu, kartu jalur masuk (tanpa tanggal).',
         oleh: 'Kelas 10–11.',
         faktual: { klaim, sumber: 'Laman resmi SNPMB (SNBP, SNBT) dan laman seleksi mandiri PTN. Bagian ini berlabel "Perkiraan" sampai dicek.' },

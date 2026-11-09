@@ -54,7 +54,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
       judul: 'Tahapan Pertama Terverifikasi',
       tanggal_mulai: '2026-08-01',
       tanggal_selesai: '2026-08-15',
-      jalur: 'TKA',
+      jalur_seleksi: 'TKA',
       status_verifikasi: 'terverifikasi',
       diperiksa_pada: '2026-07-20',
       url_sumber: 'https://www.kemendikdasmen.go.id/siaran-pers/15707',
@@ -64,7 +64,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
       judul: 'Tahapan Kedua Belum Dicek',
       tanggal_mulai: '2026-08-10',
       tanggal_selesai: '2026-08-20',
-      jalur: 'TKA',
+      jalur_seleksi: 'TKA',
       status_verifikasi: 'belum_diverifikasi',
       diperiksa_pada: null,
       url_sumber: 'https://snpmb.bppp.kemdikbud.go.id/',
@@ -74,7 +74,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
       judul: 'Tahapan Belum Diverifikasi Tapi Ada Tanggal',
       tanggal_mulai: '2026-08-05',
       tanggal_selesai: '2026-08-18',
-      jalur: 'TKA',
+      jalur_seleksi: 'TKA',
       status_verifikasi: 'belum_diverifikasi',
       diperiksa_pada: '2026-08-01',
       url_sumber: 'https://snpmb.bppp.kemdikbud.go.id/',
@@ -84,7 +84,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
       judul: 'Tahapan Ketiga Terverifikasi',
       tanggal_mulai: '2026-09-01',
       tanggal_selesai: '2026-09-15',
-      jalur: 'SNBP',
+      jalur_seleksi: 'SNBP',
       status_verifikasi: 'terverifikasi',
       diperiksa_pada: '2026-08-25',
       url_sumber: 'https://snpmb.bppp.kemdikbud.go.id/',
@@ -94,7 +94,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
       judul: 'Tahapan Keempat Terverifikasi',
       tanggal_mulai: '2026-10-01',
       tanggal_selesai: '2026-10-15',
-      jalur: 'SNBT',
+      jalur_seleksi: 'SNBT',
       status_verifikasi: 'terverifikasi',
       diperiksa_pada: '2026-09-15',
       url_sumber: 'https://snpmb.bppp.kemdikbud.go.id/',
@@ -104,7 +104,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
       judul: 'Tahapan Kelima Terverifikasi',
       tanggal_mulai: '2026-11-01',
       tanggal_selesai: '2026-11-15',
-      jalur: 'SNBT',
+      jalur_seleksi: 'SNBT',
       status_verifikasi: 'terverifikasi',
       diperiksa_pada: '2026-10-15',
       url_sumber: 'https://snpmb.bppp.kemdikbud.go.id/',
@@ -235,7 +235,7 @@ describe('LANJUT_066 §B & §C: Integrasi Database dengan Data Simulasi & Pember
     // 1. Sisipkan data simulasi
     await pool.query(
       `INSERT INTO tahapan_linimasa
-         (id, judul, tanggal_mulai, tanggal_selesai, jalur, pemilik,
+         (id, judul, tanggal_mulai, tanggal_selesai, jalur_seleksi, pemilik,
           status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES
          (?, 'Simulasi Terverifikasi', '2099-01-01', '2099-01-10', 'TKA', 'tim', 'terverifikasi', 'uji', 'https://snpmb.bppp.kemdikbud.go.id/', '2099-01-01'),

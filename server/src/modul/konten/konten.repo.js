@@ -7,7 +7,7 @@ const pool = require('../../db/koneksi');
 
 async function ambilLinimasa() {
   const [baris] = await pool.query(
-    `SELECT id, judul, tanggal_mulai, tanggal_selesai, jalur,
+    `SELECT id, judul, tanggal_mulai, tanggal_selesai, jalur_seleksi,
             sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada
        FROM tahapan_linimasa
       ORDER BY tanggal_mulai ASC`
@@ -118,7 +118,7 @@ async function ambilMapelPerRumpun(bobotMin) {
  * bukan di rute, supaya tidak bisa terlewat. */
 async function ambilCeritaAlumniTayang() {
   const [baris] = await pool.query(
-    `SELECT id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur, hambatan, yang_dilakukan,
+    `SELECT id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur_seleksi, hambatan, yang_dilakukan,
             sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada
        FROM cerita_alumni
       WHERE izin_tayang = 1 AND tayang = 1
@@ -128,28 +128,28 @@ async function ambilCeritaAlumniTayang() {
 }
 
 /**
- * F5 — checklist, dikelompokkan per kategori, dapat disaring ?kelas=&jalur=&rumpun=.
+ * F5 — checklist, dikelompokkan per kategori, dapat disaring ?kelas=&jalur_seleksi=&rumpun=.
  * SQL statis: filter opsional ditulis `(? IS NULL OR FIND_IN_SET(...) > 0)`,
  * bukan merakit klausa WHERE secara dinamis (§2.2 aturan 2).
  *
- * Rumpun (LANJUT_007) beda dari kelas/jalur: butir umum (rumpun NULL) selalu
+ * Rumpun (LANJUT_007) beda dari kelas/jalur_seleksi: butir umum (rumpun NULL) selalu
  * ikut, butir khusus rumpun HANYA ikut kalau rumpunnya dikirim dan cocok.
  * Tanpa `rumpun`, hasilnya persis seperti sebelum kolom ini ada — klien lama
  * tidak tiba-tiba mendapat butir rumpun lain yang ikut menambah hitungan X/Y.
  */
-async function ambilChecklist({ kelas, jalur, rumpun }) {
+async function ambilChecklist({ kelas, jalur_seleksi, rumpun }) {
   const [baris] = await pool.execute(
-    `SELECT b.id, b.judul, b.urutan, b.berlaku_untuk_kelas, b.berlaku_untuk_jalur,
+    `SELECT b.id, b.judul, b.urutan, b.berlaku_untuk_kelas, b.berlaku_untuk_jalur_seleksi,
             b.berlaku_untuk_rumpun,
             b.sumber, b.pemilik, b.status_verifikasi, b.asal, b.url_sumber, b.diperiksa_pada,
             k.id AS kategori_id, k.nama AS kategori_nama, k.urutan AS kategori_urutan
        FROM butir_daftar_periksa b
        JOIN kategori_checklist k ON k.id = b.kategori_id
       WHERE (? IS NULL OR FIND_IN_SET(?, b.berlaku_untuk_kelas) > 0)
-        AND (? IS NULL OR FIND_IN_SET(?, b.berlaku_untuk_jalur) > 0)
+        AND (? IS NULL OR FIND_IN_SET(?, b.berlaku_untuk_jalur_seleksi) > 0)
         AND (b.berlaku_untuk_rumpun IS NULL OR FIND_IN_SET(?, b.berlaku_untuk_rumpun) > 0)
       ORDER BY k.urutan ASC, b.urutan ASC`,
-    [kelas || null, kelas || null, jalur || null, jalur || null, rumpun || null]
+    [kelas || null, kelas || null, jalur_seleksi || null, jalur_seleksi || null, rumpun || null]
   );
   return baris;
 }
@@ -164,7 +164,7 @@ async function ambilChecklist({ kelas, jalur, rumpun }) {
 async function ambilProfilProdiTerverifikasi(id) {
   const [baris] = await pool.execute(
     `SELECT pp.id, pp.nama, p.rumpun, pp.jenjang, pp.badge_relevan_smk,
-            pp.peminat_jumlah, pp.peminat_kampus, pp.peminat_tahun, pp.peminat_jalur, pp.peminat_sumber,
+            pp.peminat_jumlah, pp.peminat_kampus, pp.peminat_tahun, pp.peminat_jalur_seleksi, pp.peminat_sumber,
             pp.diterima, pp.mata_kuliah, pp.profesi, pp.kampus, pp.status_sumber, pp.catatan_studi,
             pp.sumber, pp.pemilik, pp.status_verifikasi, pp.asal, pp.url_sumber, pp.diperiksa_pada
        FROM profil_prodi pp

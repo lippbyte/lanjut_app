@@ -7,7 +7,7 @@ import { useProdi } from '../../hooks/useProdi';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
 import {
   BAGIAN_EKSPLORASI,
-  JALUR_MASUK,
+  JALUR_SELEKSI,
   MAKS_MINAT,
   TEKS_EKSPLORASI,
   bolehSimpan,
@@ -59,10 +59,10 @@ function LayarMinat({ versi }: { versi: VersiMinat }) {
 
   const bagian: Record<BagianEksplorasi, React.ReactNode> = {
     pengantar: <Text style={gaya.teksBody}>{teksVersi.pengantar}</Text>,
-    jalur: (
+    jalur_seleksi: (
       <View style={s.seksi}>
-        <KepalaSeksi judul={TEKS_EKSPLORASI.kelas10_11.judulJalur} />
-        {JALUR_MASUK.map((j) => (
+        <KepalaSeksi judul={TEKS_EKSPLORASI.kelas10_11.judulJalurSeleksi} />
+        {JALUR_SELEKSI.map((j) => (
           <Kartu key={j.nama} style={s.kartuRapat}>
             <Text style={s.nama}>{j.nama}</Text>
             <Text style={s.teks}>{j.penjelasan}</Text>
