@@ -57,7 +57,7 @@ function KartuCerita({ cerita }: { cerita: CeritaAlumni }) {
           {/* Lencana CONTOH ikut datanya: cerita nyata tidak membawanya. */}
           {cerita.sumber === 'contoh' ? <Lencana varian="neutral">CONTOH</Lencana> : null}
         </View>
-        <Lencana>Jalur {cerita.jalur}</Lencana>
+        <Lencana>Jalur {cerita.jalur_seleksi}</Lencana>
         <Text style={gaya.teksKecil}>
           <Text style={gaya.tebal}>Hambatan: </Text>
           {cerita.hambatan}

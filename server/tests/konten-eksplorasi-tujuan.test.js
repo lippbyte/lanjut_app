@@ -32,8 +32,8 @@ const ISI = {
   mata_kuliah: ['Mata kuliah B', 'Mata kuliah A', 'Mata kuliah C'], // urutan berkas dipertahankan
   profesi: ['Profesi uji'],
   kampus: [
-    { nama: 'Politeknik Uji', jenis: 'PTN Vokasi', jalur_masuk: ['SNBT'] },
-    { nama: 'Universitas Uji', jenis: 'PTN Akademik', jalur_masuk: ['SNBP', 'SNBT'] },
+    { nama: 'Politeknik Uji', jenis: 'PTN Vokasi', jalur_seleksi: ['SNBT'] },
+    { nama: 'Universitas Uji', jenis: 'PTN Akademik', jalur_seleksi: ['SNBP', 'SNBT'] },
   ],
   status_sumber: { peminat: 'Terverifikasi', mata_kuliah: 'Perkiraan', profesi: 'Terverifikasi', kampus: 'Terverifikasi' },
 };
@@ -82,7 +82,7 @@ before(async () => {
   await pool.query(
     `INSERT INTO profil_prodi
        (id, nama, urutan, jenjang, badge_relevan_smk, peminat_jumlah, peminat_kampus, peminat_tahun,
-        peminat_jalur, peminat_sumber, diterima, mata_kuliah, profesi, kampus, status_sumber,
+        peminat_jalur_seleksi, peminat_sumber, diterima, mata_kuliah, profesi, kampus, status_sumber,
         catatan_studi, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
      VALUES (?, ?, 999, ?, 1, 5582, 'Universitas Uji', 2026, 'SNBT', 'SNPMB', 43, ?, ?, ?, ?,
              'Catatan studi uji.', 'tim', 'belum_diverifikasi', ?, 'https://contoh.invalid/f10', NULL)`,
@@ -124,11 +124,11 @@ test('eksplorasi-tujuan: profil terverifikasi tampil di daftar & detail dengan b
     rumpun: prodi.rumpun,
     jenjang: 'D4',
     badge_relevan_smk: true,
-    peminat: { jumlah: 5582, kampus: 'Universitas Uji', tahun: 2026, jalur: 'SNBT', sumber: 'SNPMB' },
+    peminat: { jumlah: 5582, kampus: 'Universitas Uji', tahun: 2026, jalur_seleksi: 'SNBT', jalur: 'SNBT', sumber: 'SNPMB' },
     diterima: 43,
     mata_kuliah: ISI.mata_kuliah,
     profesi: ISI.profesi,
-    kampus: ISI.kampus,
+    kampus: ISI.kampus.map((k) => ({ ...k, jalur_masuk: k.jalur_seleksi })),
     status_sumber: ISI.status_sumber,
     catatan_studi: 'Catatan studi uji.',
     sumber: 'resmi',
@@ -320,6 +320,13 @@ test('benih ulang dengan isi sama: tanda verifikasi tetap (LANJUT_011), termasuk
   const b = await barisFixture();
   assert.equal(b.status_verifikasi, 'terverifikasi');
   assert.ok(b.diperiksa_pada);
+});
+
+test('benih: kunci berkas kampus[].jalur_masuk dan peminat.jalur tersimpan dengan nama jalur_seleksi (LANJUT_001 seri v2)', async () => {
+  await benihProfilProdi(berkasFixture());
+  const b = await barisFixture();
+  assert.deepEqual(b.kampus, [{ nama: 'Universitas Uji', jenis: 'PTN Akademik', jalur_seleksi: ['SNBP'] }]);
+  assert.equal(b.peminat_jalur_seleksi, 'SNBP');
 });
 
 test('benih dengan isi berubah (urutan mata kuliah / kampus / angka): tanda direset (LANJUT_020)', async () => {

@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node src/index.js",
     "migrasi": "node src/db/jalankan-migrasi.js",
+    "migrasi-turun": "node src/db/turunkan-migrasi.js",
     "benih": "node src/db/benih/benih.js",
     "verifikasi-konten": "node src/db/verifikasi/verifikasi-konten.js",
     "lembar-review": "node src/db/verifikasi/lembar-review.js",

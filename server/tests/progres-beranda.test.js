@@ -81,7 +81,7 @@ async function isiProdi(token, prodi) {
 }
 
 async function centangSatu(token) {
-  const checklist = await panggil('GET', '/konten/checklist?kelas=12&jalur=SNBP');
+  const checklist = await panggil('GET', '/konten/checklist?kelas=12&jalur_seleksi=SNBP');
   assert.equal(checklist.status, 200);
   const butirId = checklist.json.data.kategori[0].butir[0].id;
   const res = await panggil('PUT', `/kemajuan/${encodeURIComponent(butirId)}`, token);

@@ -19,7 +19,7 @@ export type SinyalPosisi = {
   adaProdi: boolean;
   /** Butir `mapel-tka` sudah dicentang (disimpan oleh Pilih Mapel). */
   mapelTkaSelesai: boolean;
-  /** Progres Daftar Periksa; null kalau kelas/jalur belum dipilih. */
+  /** Progres Daftar Periksa; null kalau kelas/jalur_seleksi belum dipilih. */
   progres: { selesai: number; total: number } | null;
   /**
    * Tenggat terdekat dari Linimasa terverifikasi (hasil `turunkanLinimasa`,

@@ -121,7 +121,7 @@ function PenjelasStatus({ status }: { status?: StatusSumber }) {
 function Profil({ profil: p, onLainnya }: { profil: ProfilProdi; onLainnya: () => void }) {
   const rasio = rasioKeketatan(p.diterima, p.peminat?.jumlah);
   const sumberPeminat = p.peminat
-    ? ['Sumber:', p.peminat.sumber, p.peminat.jalur, p.peminat.tahun].filter(Boolean).join(' ') +
+    ? ['Sumber:', p.peminat.sumber, p.peminat.jalur_seleksi, p.peminat.tahun].filter(Boolean).join(' ') +
       (p.peminat.kampus ? `, ${p.peminat.kampus}` : '')
     : null;
 
@@ -189,7 +189,7 @@ function Profil({ profil: p, onLainnya }: { profil: ProfilProdi; onLainnya: () =
                 <Text style={s.kampusNama}>{k.nama}</Text>
                 <View style={s.lencanaBaris}>
                   <Lencana varian="neutral">{k.jenis}</Lencana>
-                  {k.jalur_masuk.map((j) => (
+                  {k.jalur_seleksi.map((j) => (
                     <Lencana key={j} varian="resmi">
                       {j}
                     </Lencana>

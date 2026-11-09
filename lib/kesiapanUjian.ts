@@ -45,8 +45,8 @@ export type TujuanKesiapan = '/arsip' | '/level-in' | '/daftar-periksa';
 export type SaranKesiapan = { teks: string; langkah: { label: string; tujuan: TujuanKesiapan } | null };
 
 /**
- * Ringkasan kategori Persiapan Ujian dari butir yang tampil (sudah tersaring kelas & jalur).
- * `tryout`/`simulasi` null = jalur ini tidak punya butirnya (mis. SNBP), bukan "belum".
+ * Ringkasan kategori Persiapan Ujian dari butir yang tampil (sudah tersaring kelas & jalur_seleksi).
+ * `tryout`/`simulasi` null = jalur_seleksi ini tidak punya butirnya (mis. SNBP), bukan "belum".
  */
 export type RingkasanUjian = { selesai: number; total: number; tryout: boolean | null; simulasi: boolean | null };
 

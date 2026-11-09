@@ -15,7 +15,7 @@ const { nyalakanServer, urlDari, pool } = require('./bantuan');
 const kontenRepo = require('../src/modul/konten/konten.repo');
 
 const KUNCI = [
-  'id', 'nama', 'asal_smk', 'jurusan_smk', 'ptn', 'prodi', 'jalur', 'hambatan', 'yang_dilakukan',
+  'id', 'nama', 'asal_smk', 'jurusan_smk', 'ptn', 'prodi', 'jalur_seleksi', 'jalur', 'hambatan', 'yang_dilakukan',
   'sumber', 'pemilik', 'status_verifikasi', 'asal', 'url_sumber', 'diperiksa_pada',
 ].sort();
 
@@ -47,7 +47,7 @@ before(async () => {
   for (const f of FIXTURE) {
     await pool.query(
       `INSERT INTO cerita_alumni
-         (id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur, hambatan, yang_dilakukan,
+         (id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur_seleksi, hambatan, yang_dilakukan,
           izin_tayang, tayang, pemilik, asal)
        VALUES (?, ?, 'SMK Uji', 'RPL', 'PTN Uji', 'Prodi Uji', 'SNBP', 'Hambatan uji', 'Yang dilakukan uji',
                ?, ?, 'tim', 'uji')`,
@@ -94,7 +94,7 @@ test('cerita-alumni: bentuk data tanpa kolom internal (izin_tayang/tayang tidak 
   const c = json.data.find((x) => x.id === 'uji-030-alumni-tayang');
   assert.deepEqual(Object.keys(c).sort(), KUNCI);
   assert.equal(c.nama, 'Alumni uji-030-alumni-tayang');
-  assert.equal(c.jalur, 'SNBP');
+  assert.equal(c.jalur_seleksi, 'SNBP');
   assert.equal(c.diperiksa_pada, null);
   for (const x of json.data) assert.deepEqual(Object.keys(x).sort(), KUNCI, `kunci ${x.id} berbeda`);
 });

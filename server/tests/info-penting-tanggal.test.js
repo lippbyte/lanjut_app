@@ -24,7 +24,7 @@ function tahap(id, mulai, selesai, lain = {}) {
     judul: `Tahap ${id}`,
     tanggal_mulai: mulai,
     tanggal_selesai: selesai,
-    jalur: 'TKA',
+    jalur_seleksi: 'TKA',
     status_verifikasi: 'terverifikasi',
     diperiksa_pada: '2026-09-27',
     url_sumber: 'https://www.kemendikdasmen.go.id/',

@@ -228,7 +228,7 @@ describe('LANJUT_075 §A: isi layar per jenjang (lib/eksplorasiKampus.ts)', () =
   test('SMP: tanpa jalur masuk dan tanpa tanggal; ada bidang, tombol Simpan minatku, dan kalimat penutup', () => {
     const b = eks.BAGIAN_EKSPLORASI.smp;
     assert.deepEqual([...b], ['pengantar', 'bidang', 'simpan', 'penutup']);
-    assert.ok(!b.includes('jalur') && !b.includes('prodi_nanti'));
+    assert.ok(!b.includes('jalur_seleksi') && !b.includes('prodi_nanti'));
     assert.equal(eks.TEKS_EKSPLORASI.smp.tombol, 'Simpan minatku');
     assert.equal(eks.TEKS_EKSPLORASI.smp.penutup, 'Ini baru gambaran awal. Kamu masih punya waktu untuk menentukan.');
     assert.equal(eks.MAKS_MINAT.smp, 5);
@@ -237,8 +237,8 @@ describe('LANJUT_075 §A: isi layar per jenjang (lib/eksplorasiKampus.ts)', () =
   });
 
   test('Kelas 10–11: jalur umum (SNBP, SNBT, mandiri), bidang maks. 3, tombol Simpan bidangku, kalimat pengganti daftar prodi', () => {
-    assert.deepEqual([...eks.BAGIAN_EKSPLORASI.kelas10_11], ['pengantar', 'jalur', 'bidang', 'simpan', 'prodi_nanti']);
-    assert.deepEqual(eks.JALUR_MASUK.map((j) => j.nama), ['SNBP', 'SNBT', 'Seleksi mandiri']);
+    assert.deepEqual([...eks.BAGIAN_EKSPLORASI.kelas10_11], ['pengantar', 'jalur_seleksi', 'bidang', 'simpan', 'prodi_nanti']);
+    assert.deepEqual(eks.JALUR_SELEKSI.map((j) => j.nama), ['SNBP', 'SNBT', 'Seleksi mandiri']);
     assert.equal(eks.MAKS_MINAT.kelas10_11, 3);
     assert.equal(eks.TEKS_EKSPLORASI.kelas10_11.tombol, 'Simpan bidangku');
     assert.equal(eks.TEKS_EKSPLORASI.kelas10_11.prodiNanti, 'Daftar prodi dan syaratnya akan muncul setelah dicek ke sumber resmi.');
@@ -247,7 +247,7 @@ describe('LANJUT_075 §A: isi layar per jenjang (lib/eksplorasiKampus.ts)', () =
   test('Tidak ada tanggal, angka, biaya, daya tampung, atau peluang di teks jalur dan bidang', () => {
     const BULAN = /januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember/i;
     const semua = [
-      ...eks.JALUR_MASUK.map((j) => j.penjelasan),
+      ...eks.JALUR_SELEKSI.map((j) => j.penjelasan),
       ...Object.values(eks.PENJELASAN_BIDANG).flatMap((p) => [p.belajar, p.pekerjaan]),
       eks.TEKS_EKSPLORASI.smp.pengantar,
       eks.TEKS_EKSPLORASI.kelas10_11.pengantar,
@@ -346,10 +346,10 @@ describe('LANJUT_075: data prodi terverifikasi, grid Beranda, salinan teks', () 
       eks.TEKS_EKSPLORASI.kelas10_11.prodiNanti,
       eks.TEKS_EKSPLORASI.smp.pengantar,
       eks.TEKS_EKSPLORASI.kelas10_11.pengantar,
-      eks.TEKS_EKSPLORASI.kelas10_11.judulJalur,
+      eks.TEKS_EKSPLORASI.kelas10_11.judulJalurSeleksi,
       eks.TEKS_EKSPLORASI.tersimpan,
       eks.TEKS_EKSPLORASI.perluKebijakan,
-      ...eks.JALUR_MASUK.map((j) => j.penjelasan),
+      ...eks.JALUR_SELEKSI.map((j) => j.penjelasan),
       ...Object.values(eks.PENJELASAN_BIDANG).flatMap((p) => [p.belajar, p.pekerjaan]),
     ];
     for (const t of wajib) assert.ok(blok.includes(t), `belum tercatat: ${t}`);

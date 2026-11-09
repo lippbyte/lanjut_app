@@ -8,15 +8,15 @@ import { useProfilLokal, useSetProfilLokal } from './useProfilLokal';
 
 export type SaringanDaftarPeriksa = {
   kelas: string | null;
-  jalur: string | null;
+  jalur_seleksi: string | null;
   rumpun: string | null;
   /** Saringan belum lengkap (profil lokal / daftar prodi masih dimuat). */
   isPending?: boolean;
 };
 
 /**
- * Kelas, jalur, dan rumpun yang menyaring Daftar Periksa. Kelas pilihan di
- * perangkat mengalahkan kelas akun; jalur hanya ada di perangkat; rumpun
+ * Kelas, jalur_seleksi, dan rumpun yang menyaring Daftar Periksa. Kelas pilihan di
+ * perangkat mengalahkan kelas akun; jalur_seleksi hanya ada di perangkat; rumpun
  * diturunkan dari target prodi akun (`prodi.rumpun` di /konten/prodi, sama
  * seperti Pilih Mapel). Dipakai Daftar Periksa, Data Akun, dan Jalur Saya
  * (/cek-posisi) supaya ketiganya menyaring sama persis.
@@ -28,8 +28,8 @@ export function useSaringDaftarPeriksa() {
   const prodiQuery = useProdi();
 
   const kelas = profilQuery.data?.kelas ?? pengguna?.kelas ?? null;
-  const jalur = profilQuery.data?.jalur ?? null;
-  const pilih = (ubah: { kelas?: string | null; jalur?: string | null }) => simpanProfil({ kelas, jalur, ...ubah });
+  const jalur_seleksi = profilQuery.data?.jalur_seleksi ?? null;
+  const pilih = (ubah: { kelas?: string | null; jalur_seleksi?: string | null }) => simpanProfil({ kelas, jalur_seleksi, ...ubah });
 
   // Tanpa target prodi, atau prodi tak ditemukan / /konten/prodi gagal →
   // tanpa rumpun = hanya butir umum, sama seperti sebelum rumpun ada.
@@ -39,20 +39,20 @@ export function useSaringDaftarPeriksa() {
   // diambil dua kali (tanpa lalu dengan rumpun) dan angka X/Y tidak berkedip.
   const rumpunMemuat = !!prodiImpian && prodiQuery.isPending;
 
-  return { kelas, jalur, rumpun, pilih, isPending: profilQuery.isPending || rumpunMemuat };
+  return { kelas, jalur_seleksi, rumpun, pilih, isPending: profilQuery.isPending || rumpunMemuat };
 }
 
 /**
  * Butir tersaring + butir pribadi + centang akun + X/Y — satu-satunya tempat
  * semuanya digabung, jadi Daftar Periksa, Data Akun, dan Jalur Saya
- * (/cek-posisi) menghitung X/Y yang sama. Tanpa kelas/jalur, atau selama saringan masih
+ * (/cek-posisi) menghitung X/Y yang sama. Tanpa kelas/jalur_seleksi, atau selama saringan masih
  * dimuat, query butir tidak dijalankan. Terima hasil useSaringDaftarPeriksa()
  * apa adanya.
  */
-export function useProgresDaftarPeriksa({ kelas, jalur, rumpun, isPending: saringMemuat }: SaringanDaftarPeriksa) {
-  const siap = !!kelas && !!jalur && !saringMemuat;
+export function useProgresDaftarPeriksa({ kelas, jalur_seleksi, rumpun, isPending: saringMemuat }: SaringanDaftarPeriksa) {
+  const siap = !!kelas && !!jalur_seleksi && !saringMemuat;
   const butirQuery = useButirDaftarPeriksa(
-    { kelas: kelas ?? undefined, jalur: jalur ?? undefined, rumpun: rumpun ?? undefined },
+    { kelas: kelas ?? undefined, jalur_seleksi: jalur_seleksi ?? undefined, rumpun: rumpun ?? undefined },
     siap
   );
   const kemajuanQuery = useKemajuan();

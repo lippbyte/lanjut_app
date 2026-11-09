@@ -126,14 +126,14 @@ describe('Persiapan Ujian: data checklist.json', () => {
 
 describe('Persiapan Ujian: GET /konten/checklist tersaring kelas & jalur', () => {
   test('Kelas 12: TKA mendapat tryout, simulasi, Level-In; SNBT hanya tryout UTBK-SNBT; SNBP tidak ada', async () => {
-    assert.deepEqual(await ujianDi('?kelas=12&jalur=TKA'), ['tryout-tka', 'simulasi-tka', 'levelin-mapel-tka']);
-    assert.deepEqual(await ujianDi('?kelas=12&jalur=SNBT'), ['tryout-snbt']);
-    assert.deepEqual(await ujianDi('?kelas=12&jalur=SNBP'), []);
+    assert.deepEqual(await ujianDi('?kelas=12&jalur_seleksi=TKA'), ['tryout-tka', 'simulasi-tka', 'levelin-mapel-tka']);
+    assert.deepEqual(await ujianDi('?kelas=12&jalur_seleksi=SNBT'), ['tryout-snbt']);
+    assert.deepEqual(await ujianDi('?kelas=12&jalur_seleksi=SNBP'), []);
   });
 
   test('Kelas 11 jalur TKA: hanya cek Level-In; butir lama tetap tampil seperti sebelumnya', async () => {
-    assert.deepEqual(await ujianDi('?kelas=11&jalur=TKA'), ['levelin-mapel-tka']);
-    const r = await panggil('GET', '/konten/checklist?kelas=12&jalur=SNBP');
+    assert.deepEqual(await ujianDi('?kelas=11&jalur_seleksi=TKA'), ['levelin-mapel-tka']);
+    const r = await panggil('GET', '/konten/checklist?kelas=12&jalur_seleksi=SNBP');
     const lama = CHECKLIST.kategori
       .filter((k) => k.id !== 'persiapan-ujian')
       .flatMap((k) => k.butir)

@@ -241,7 +241,7 @@ function RingkasanKemajuan() {
 function RingkasanKemajuanKelas12() {
   const router = useRouter();
   const saring = useSaringDaftarPeriksa();
-  const { kelas, jalur, isPending: saringMemuat } = saring;
+  const { kelas, jalur_seleksi, isPending: saringMemuat } = saring;
   const hasil = useProgresDaftarPeriksa(saring);
   const bukaDaftarPeriksa = () => router.push('/daftar-periksa');
 
@@ -261,7 +261,7 @@ function RingkasanKemajuanKelas12() {
         </Text>
         <BilahProgres selesai={selesai} total={total} label="Kemajuan daftar periksa" />
         <Text style={s.label}>
-          Kelas {kelas} · {jalur}
+          Kelas {kelas} · {jalur_seleksi}
         </Text>
       </>
     );

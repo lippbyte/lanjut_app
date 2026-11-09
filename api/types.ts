@@ -31,7 +31,7 @@ export type TahapanLinimasa = MetaSumberResmi & {
   judul: string;
   tanggal_mulai: string; // ISO date, dikonversi backend lewat util/waktu.keTanggal
   tanggal_selesai: string;
-  jalur: 'TKA' | 'SNBP' | 'SNBT';
+  jalur_seleksi: 'TKA' | 'SNBP' | 'SNBT';
 };
 
 // LANJUT_073 — GET /konten/banner (konten.rute.js, server/src/modul/konten/banner.js).
@@ -67,14 +67,14 @@ export type Prodi = MetaSumberResmi & {
 // hanya mengirim profil yang sudah terverifikasi. Tidak ada gaji maupun rasio:
 // rasio keketatan dihitung di lib/eksplorasi.ts.
 export type StatusSumber = 'Terverifikasi' | 'Perkiraan';
-export type KampusProfil = { nama: string; jenis: string; jalur_masuk: string[] };
+export type KampusProfil = { nama: string; jenis: string; jalur_seleksi: string[] };
 export type ProfilProdi = MetaSumberResmi & {
   id: string;
   nama: string;
   rumpun: string;
   jenjang: string;
   badge_relevan_smk: boolean;
-  peminat: { jumlah: number; kampus: string | null; tahun: number | null; jalur: string | null; sumber: string | null } | null;
+  peminat: { jumlah: number; kampus: string | null; tahun: number | null; jalur_seleksi: string | null; sumber: string | null } | null;
   diterima: number | null;
   mata_kuliah: string[];
   profesi: string[];
@@ -125,7 +125,7 @@ export type CeritaAlumni = MetaSumberResmi & {
   jurusan_smk: string;
   ptn: string;
   prodi: string;
-  jalur: string;
+  jalur_seleksi: string;
   hambatan: string;
   yang_dilakukan: string;
 };
@@ -138,7 +138,7 @@ export type ButirDaftarPeriksa = {
   judul: string;
   urutan: number;
   berlaku_untuk_kelas: string[];
-  berlaku_untuk_jalur: string[];
+  berlaku_untuk_jalur_seleksi: string[];
   sumber: string;
   pemilik: string;
   status_verifikasi: string;
