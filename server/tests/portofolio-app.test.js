@@ -126,6 +126,7 @@ describe('Validasi sama dengan server', () => {
   test('Tautan berbahaya ditolak keduanya', () => {
     for (const tautan of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', ' javascript:alert(1)', "javascript:alert('https://contoh.test')", 'data:text/html,x', 'file:///etc/passwd', 'ftp://contoh.test', 'bukan tautan', 'http://']) {
       assert.equal(porto.tautanSah(tautan), false, tautan);
+      assert.equal(klien({ tautan }), false, `formulir: ${tautan}`);
       assert.equal(server({ tautan }), false, `server: ${tautan}`);
     }
   });
