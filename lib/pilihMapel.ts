@@ -22,7 +22,7 @@ export function tampilkanRangkumanUmum(kelas: Kelas | null | undefined): boolean
 
 /**
  * Arti `prodi_mapel.bobot`, disalin apa adanya dari `_bobot` di
- * MVP-PWA/data/prodi-mapel.json (sumber data benih) — bukan istilah baru.
+ * server/data-konten/prodi-mapel.json (sumber data benih) — bukan istilah baru.
  * Dua mapel berbobot 3 itulah yang jadi saran 2 mapel pilihan TKA.
  */
 const LABEL_BOBOT: Record<number, string> = {
