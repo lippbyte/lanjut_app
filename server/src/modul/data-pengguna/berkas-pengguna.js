@@ -1,12 +1,10 @@
 // Satu pintu untuk menghapus berkas milik satu akun di disk (LANJUT_009 seri v2).
 //
-// Saat ini daftar penyedianya kosong: Unggah modul tidak pernah menyimpan berkas (multer
-// memoryStorage, hanya teksnya masuk basis data), jadi belum ada berkas pengguna di disk.
-// Bagian 3 cukup memanggil daftarkanPenyediaBerkas untuk foto, tanpa mengubah rute hapus akun.
+// Satu-satunya penyedia saat ini adalah foto butir bukti (butir-bukti/penyimpanan-foto.js).
+// Unggah modul tidak menyimpan berkas: multer memoryStorage, hanya teksnya masuk basis data.
 //
 // Fungsi ini dipanggil SESUDAH transaksi basis data berhasil, jadi penyedia tidak bisa lagi
-// membaca baris lampiran. Karena itu berkas harus bisa ditemukan dari penggunaId saja,
-// misalnya disimpan di <folder foto>/<penggunaId>/<nama_tersimpan>.
+// membaca baris lampiran. Karena itu berkas harus bisa ditemukan dari penggunaId saja.
 //
 // Kegagalan satu penyedia dicatat dan tidak menghentikan penyedia lain atau membatalkan
 // penghapusan akun. Jejaknya bisa dicari di log server dengan kata kunci [hapus-berkas-gagal].

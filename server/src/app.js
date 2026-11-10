@@ -23,6 +23,8 @@ const levelinRute = require('./modul/levelin/levelin.rute');
 const persetujuanRute = require('./modul/persetujuan/persetujuan.rute');
 const modulRute = require('./modul/modul/modul.rute');
 const ngobrolRute = require('./modul/ngobrol/ngobrol.rute');
+// LANJUT_010: dimuat juga saat saklar mati, supaya hapus akun tetap menghapus foto yang tersimpan.
+require('./modul/butir-bukti/penyimpanan-foto');
 
 const app = express();
 
@@ -108,6 +110,8 @@ app.use('/api/v1', levelinRute); // sesi-latihan, riwayat-latihan, kalibrasi, sa
 app.use('/api/v1/persetujuan', persetujuanRute); // LANJUT_047
 app.use('/api/v1/modul', modulRute); // LANJUT_049
 app.use('/api/v1/ngobrol', ngobrolRute); // LANJUT_051 — AI lewat OpenRouter, di balik gerbang persetujuan
+// LANJUT_010: saklar mati berarti rutenya sama sekali tidak ada, jadi jawabannya 404 biasa.
+if (env.PORTOFOLIO_AKTIF) app.use('/api/v1/butir-bukti', require('./modul/butir-bukti/butir-bukti.rute'));
 
 app.use((req, res) => {
   const { galat } = require('./util/respons');
