@@ -74,6 +74,7 @@ const BERKAS_DATA = [
   'arsip.json',
   'profil-prodi.json',
   'levelin-konfig.json',
+  'jalur-minat.json',
 ];
 
 function asalLokasi() {
@@ -409,6 +410,49 @@ async function benihChecklist(berkas = bacaJson('checklist.json')) {
   console.log(`[benih] kategori_checklist: ${berkas.kategori.length} baris, butir_daftar_periksa: ${totalButir} baris`);
 }
 
+// Jalur minat (K6, LANJUT_008 seri v2). Pola LANJUT_011/020 seperti tabel konten lain:
+// tanda verifikasi hanya diisi saat INSERT, lalu dipertahankan selama isinya tidak berubah.
+// `berkas` bisa diganti fixture di tes.
+async function benihJalurMinat(berkas = bacaJson('jalur-minat.json')) {
+  for (const item of berkas.data) {
+    await pool.execute(
+      `INSERT INTO jalur_minat
+         (id, nama, deskripsi_singkat, status_teks, urutan, aktif, sumber, pemilik,
+          status_verifikasi, asal, url_sumber, diperiksa_pada)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(nama <=> VALUES(nama) AND deskripsi_singkat <=> VALUES(deskripsi_singkat) AND
+            status_teks <=> VALUES(status_teks) AND urutan <=> VALUES(urutan) AND aktif <=> VALUES(aktif) AND
+            sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND
+            url_sumber <=> VALUES(url_sumber),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(nama <=> VALUES(nama) AND deskripsi_singkat <=> VALUES(deskripsi_singkat) AND
+            status_teks <=> VALUES(status_teks) AND urutan <=> VALUES(urutan) AND aktif <=> VALUES(aktif) AND
+            sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND
+            url_sumber <=> VALUES(url_sumber),
+            diperiksa_pada, NULL),
+         nama=VALUES(nama), deskripsi_singkat=VALUES(deskripsi_singkat), status_teks=VALUES(status_teks),
+         urutan=VALUES(urutan), aktif=VALUES(aktif), sumber=VALUES(sumber), pemilik=VALUES(pemilik),
+         asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
+      [
+        item.id,
+        item.nama,
+        item.deskripsi_singkat,
+        item.status_teks,
+        item.urutan,
+        item.aktif ? 1 : 0,
+        berkas.sumber,
+        berkas.pemilik,
+        berkas.status || 'belum_diverifikasi',
+        berkas.asal,
+        berkas.url_sumber || null,
+        berkas.diperiksa_pada || null,
+      ]
+    );
+  }
+  console.log(`[benih] jalur_minat: ${berkas.data.length} baris`);
+}
+
 // Level-In (LANJUT_042): data/levelin-konfig.json -> konfigurasi_levelin, satu
 // baris per kunci (pemetaan di modul/levelin/konfigurasi.js). `versi` naik dan
 // diubah_pada berganti HANYA bila nilainya berubah (SDD-LevelIn §3.2) — urutan
@@ -593,6 +637,7 @@ async function jalankanBenih() {
   await benihChecklist();
   await benihArsipKartu();
   await benihKonfigurasiLevelin();
+  await benihJalurMinat();
   console.log('[benih] selesai.');
 }
 
@@ -605,4 +650,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanBenih, benihLinimasa, benihChecklist, benihProfilProdi, benihArsipKartu, DIR_DATA };
+module.exports = { jalankanBenih, benihLinimasa, benihChecklist, benihProfilProdi, benihArsipKartu, benihJalurMinat, DIR_DATA };

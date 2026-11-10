@@ -25,7 +25,16 @@ const KATA_KUNCI_SQL = /(?<!\.)\b(SELECT|INSERT|UPDATE|DELETE)\b/;
 // ADALAH lapisan SQL infrastruktur (migrasi & benih), bukan kode rute/layanan.
 const DIKECUALIKAN_DARI_ATURAN_1 = [path.join(DIR_SRC, 'db')];
 
-const TABEL_PRIBADI = ['sesi_pengguna', 'kemajuan', 'kartu', 'sesi_latihan', 'riwayat_latihan', 'butir_pribadi', 'persetujuan', 'modul', 'potongan_modul', 'event_sekolah'];
+const TABEL_PRIBADI = ['sesi_pengguna', 'kemajuan', 'kartu', 'sesi_latihan', 'riwayat_latihan', 'butir_pribadi', 'persetujuan', 'modul', 'potongan_modul', 'event_sekolah', 'pengguna_jalur_minat', 'tujuan', 'butir_bukti', 'lampiran_butir_bukti'];
+
+// `tujuan` juga nama kolom di kode_otp_email (otp.repo.js), jadi tabelnya dikenali dari
+// posisinya di SQL. Tabel lain cukup dicari namanya.
+function polaPernyataan(tabel) {
+  if (tabel === 'tujuan') {
+    return '(?:(?:SELECT|DELETE)[\\s\\S]{0,400}?\\b(?:FROM|JOIN)\\s+tujuan\\b|UPDATE\\s+tujuan\\b)[\\s\\S]{0,400}';
+  }
+  return `(SELECT|UPDATE|DELETE)[\\s\\S]{0,400}?\\b${tabel}\\b[\\s\\S]{0,400}`;
+}
 
 let galatDitemukan = [];
 
@@ -81,10 +90,7 @@ function periksaFilterKepemilikan(berkas) {
   const isi = fs.readFileSync(berkas, 'utf8');
 
   for (const tabel of TABEL_PRIBADI) {
-    const regexPernyataan = new RegExp(
-      `(SELECT|UPDATE|DELETE)[\\s\\S]{0,400}?\\b${tabel}\\b[\\s\\S]{0,400}`,
-      'gi'
-    );
+    const regexPernyataan = new RegExp(polaPernyataan(tabel), 'gi');
     let cocok;
     while ((cocok = regexPernyataan.exec(isi))) {
       // Sertakan 300 karakter SEBELUM kata kunci juga, supaya komentar
