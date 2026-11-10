@@ -154,6 +154,7 @@ Tanda `|` dan tanda kutip terbalik di dalam kutipan diganti supaya tabel tetap t
 
 ## 3. Catatan
 
-- **Berkas hasil skrip ada di repo induk.** `docs/verifikasi/lembar-review-konten.md` dibuat oleh `npm run lembar-review`, dan `docs/lembar-review-draf-teks.md` dibuat oleh `npm run lembar-review-teks`. Keduanya berada di repo induk `lippbyte/lanjut-app`, jadi tidak ikut berubah di repo ini. Keduanya perlu dibangun ulang dari repo induk setelah perubahan ini masuk `main`.
+- **Berkas hasil skrip ada di repo induk.** `docs/verifikasi/lembar-review-konten.md` dibuat oleh `npm run lembar-review`, dan `docs/lembar-review-draf-teks.md` dibuat oleh `npm run lembar-review-teks`. Keduanya berada di repo induk `lippbyte/lanjut-app`, jadi tidak ikut berubah di repo ini. Keduanya perlu diperbarui di repo induk setelah perubahan ini masuk `main`.
+- **Selisih lembar.** Pada basis data dan sumber yang sama, kode lama dan kode baru hanya berbeda nama folder: lembar konten 88 butir sebelum dan sesudah (3 baris berubah), lembar teks 266 butir dari 43 blok sebelum dan sesudah (1 baris berubah). Berkas di repo induk sudah tertinggal sebelum task ini, jadi membangunnya ulang juga membawa butir yang bertambah sejak terakhir dibuat: lembar teks dari 241 menjadi 266 butir, lembar konten dari 84 menjadi 88 butir (diukur pada basis data uji).
 - **Rujukan tanpa nama folder dibiarkan.** Beberapa komentar menulis `data/levelin-konfig.json` atau `data/mapel.json` tanpa menyebut `MVP-PWA`. Tulisan itu tidak menunjuk ke folder arsip, jadi tidak termasuk audit ini.
 - **Cara mencari.** `git grep -n MVP-PWA 10736dc`, mencakup semua berkas yang dilacak git. Tidak ada nama berkas yang mengandung `MVP-PWA`, dan tidak ada penyebutan di `server/data-konten`.
