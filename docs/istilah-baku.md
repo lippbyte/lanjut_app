@@ -10,7 +10,7 @@ Istilah yang wajib dipakai di kode, skema, data, dan dokumen baru. Glosarium unt
 ## Catatan pemakaian
 
 - Kata `jalur` saja tidak dipakai untuk kedua arti di atas pada kode baru.
-- Berkas konten (`server/data-konten`, salinan dari `MVP-PWA/data` di repo induk) masih memakai kunci lama `jalur`, `berlaku_untuk_jalur`, dan `jalur_masuk`, karena dibaca oleh PWA arsip. Kunci itu diterjemahkan saat benih, di `server/src/db/benih/benih.js`.
+- Berkas konten di `server/data-konten` (sumber data konten, K16; `MVP-PWA/data` di repo induk adalah arsip bekunya) masih memakai kunci lama `jalur`, `berlaku_untuk_jalur`, dan `jalur_masuk`, karena dibaca oleh PWA arsip. Kunci itu diterjemahkan saat benih, di `server/src/db/benih/benih.js`.
 - API masih mengirim nama lama di samping `jalur_seleksi` untuk APK 1.0.0, hanya di `server/src/modul/konten/konten.rute.js`.
 - "Jalur Saya" adalah nama fitur di layar `/cek-posisi`, bukan salah satu istilah di atas.
 - Rincian seluruh pemakaian lama ada di `docs/audit-penamaan-jalur.md`.

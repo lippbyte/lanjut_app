@@ -10,10 +10,10 @@
 // menaikkan versi kebijakan, dan tes di sini bergantung pada versi itu.
 
 const { test, describe, before, after } = require('node:test');
-const { SALINAN_TEKS, jalurInduk, tesLuarRepo, malas } = require('./luar-repo');
+const { SALINAN_TEKS, jalurDataKonten, tesLuarRepo, malas } = require('./luar-repo');
 const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
-const PRODI_PWA = jalurInduk('MVP-PWA', 'data', 'prodi.json');
-const tesProdiPwa = tesLuarRepo(test, PRODI_PWA);
+const PRODI_KONTEN = jalurDataKonten('prodi.json');
+const tesProdiKonten = tesLuarRepo(test, PRODI_KONTEN);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -31,7 +31,7 @@ const baca = (...p) => fs.readFileSync(path.join(AKAR_APP, ...p), 'utf8');
 const eks = muatModulApp('lib/eksplorasiKampus');
 const beranda = muatModulApp('lib/beranda');
 
-const PRODI_JSON = malas(() => JSON.parse(fs.readFileSync(PRODI_PWA, 'utf8')).data);
+const PRODI_JSON = malas(() => JSON.parse(fs.readFileSync(PRODI_KONTEN, 'utf8')).data);
 const RUMPUN_DATA = malas(() => [...new Set(PRODI_JSON().map((p) => p.rumpun))].sort());
 const BERKAS_MIGRASI = '019_minat_rumpun.sql';
 
@@ -115,7 +115,7 @@ describe('LANJUT_075 §B: migrasi 019_minat_rumpun', () => {
 });
 
 describe('LANJUT_075 §B: PATCH /pengguna/saya minat_rumpun', () => {
-  tesProdiPwa('Daftar rumpun yang sah = rumpun di data prodi yang sudah ada (tidak ada daftar baru)', async () => {
+  tesProdiKonten('Daftar rumpun yang sah = rumpun di data prodi yang sudah ada (tidak ada daftar baru)', async () => {
     assert.deepEqual(await kontenRepo.ambilDaftarRumpun(), RUMPUN_DATA());
     assert.deepEqual(RUMPUN_DATA(), ['Ekonomi & Bisnis', 'Kesehatan', 'Sosial & Humaniora', 'Teknologi & Rekayasa']);
   });
@@ -126,7 +126,7 @@ describe('LANJUT_075 §B: PATCH /pengguna/saya minat_rumpun', () => {
     assert.deepEqual((await profil(a.token)).minat_rumpun, []);
   });
 
-  tesProdiPwa('SMP yang sudah menerima kebijakan: simpan rumpun sah → 200; prodi_impian tidak berubah', async () => {
+  tesProdiKonten('SMP yang sudah menerima kebijakan: simpan rumpun sah → 200; prodi_impian tidak berubah', async () => {
     const prodiId = PRODI_JSON()[0].id;
     const a = await akun('7', { lain: { prodi_impian: prodiId } });
     const r = await ubahMinat(a.token, ['Kesehatan', 'Teknologi & Rekayasa']);
@@ -137,7 +137,7 @@ describe('LANJUT_075 §B: PATCH /pengguna/saya minat_rumpun', () => {
     assert.equal(p.prodi_impian, prodiId);
   });
 
-  tesProdiPwa('Kelas 10–11: semua (4) rumpun yang ada diterima; [] mengosongkan', async () => {
+  tesProdiKonten('Kelas 10–11: semua (4) rumpun yang ada diterima; [] mengosongkan', async () => {
     for (const kelas of ['10', '11']) {
       const a = await akun(kelas);
       assert.equal((await ubahMinat(a.token, RUMPUN_DATA())).status, 200);
@@ -263,7 +263,7 @@ describe('LANJUT_075 §A: isi layar per jenjang (lib/eksplorasiKampus.ts)', () =
     }
   });
 
-  tesProdiPwa('Penjelasan bidang: semua rumpun yang ada punya penjelasan, tanpa nama prodi', () => {
+  tesProdiKonten('Penjelasan bidang: semua rumpun yang ada punya penjelasan, tanpa nama prodi', () => {
     assert.deepEqual(Object.keys(eks.PENJELASAN_BIDANG).sort(), RUMPUN_DATA());
     // Nama prodi dari prodi.json, juga bagian sebelum tanda kurung (mis. "Kedokteran").
     const namaProdi = PRODI_JSON().flatMap((p) => [p.nama, p.nama.split(' (')[0]]);
@@ -276,7 +276,7 @@ describe('LANJUT_075 §A: isi layar per jenjang (lib/eksplorasiKampus.ts)', () =
     assert.equal(eks.penjelasanBidang('toString'), null);
   });
 
-  tesProdiPwa('daftarRumpun dari data prodi = daftar server; ubahPilihan & bolehSimpan menghormati batas jenjang', () => {
+  tesProdiKonten('daftarRumpun dari data prodi = daftar server; ubahPilihan & bolehSimpan menghormati batas jenjang', () => {
     assert.deepEqual(eks.daftarRumpun(PRODI_JSON()), RUMPUN_DATA());
     assert.deepEqual(eks.daftarRumpun(null), []);
     let p = [];

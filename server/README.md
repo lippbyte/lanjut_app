@@ -67,6 +67,11 @@ npm run migrasi   # menjalankan server/src/db/migrasi/001..006 yang belum jalan
 npm run benih     # mengisi konten dari MVP-PWA/data/*.json (idempoten, aman diulang)
 ```
 
+**Sumber data konten (K16).** `server/data-konten/` adalah satu-satunya sumber
+data konten. Perubahan konten dilakukan di folder ini, lalu jalankan
+`npm run benih`. `MVP-PWA/data/` di repo induk adalah arsip beku: jangan
+disunting lagi.
+
 Migrasi dicatat di tabel `_migrasi` — hanya berkas yang belum pernah
 dijalankan yang dieksekusi. Migrasi **tidak pernah** disunting setelah
 dijalankan di server tayang; perbaikan selalu berkas baru bernomor lebih
