@@ -16,7 +16,7 @@ function hapusDataAkun(queryClient: QueryClient) {
 type StatusSesi = 'memuat' | 'masuk' | 'keluar';
 
 /** Kenapa status jadi 'keluar' — layar Masuk menjelaskannya ke pengguna. */
-export type AlasanKeluar = 'sesi_berakhir' | null;
+export type AlasanKeluar = 'sesi_berakhir' | 'akun_dihapus' | null;
 
 type NilaiAuth = {
   status: StatusSesi;
@@ -29,6 +29,7 @@ type NilaiAuth = {
   terapkanSesi: (sesi: Sesi) => void;
   perbaruiPengguna: (profil: Pengguna) => Promise<void>;
   keluar: () => Promise<void>;
+  selesaiHapusAkun: () => Promise<void>;
 };
 
 const AuthContext = createContext<NilaiAuth | null>(null);
@@ -149,11 +150,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setStatus('keluar');
   }, [token, queryClient]);
 
+  /** Akun sudah dihapus di server (LANJUT_009): buang semua sisa akun itu dari perangkat. */
+  const selesaiHapusAkun = useCallback(async () => {
+    const penggunaId = penggunaIdRef.current;
+    tokenRef.current = null;
+    await authApi.hapusSesiLokal();
+    if (penggunaId) await authApi.hapusProfilLokalAkun(penggunaId);
+    hapusDataAkun(queryClient);
+    setToken(null);
+    setPengguna(null);
+    setAlasanKeluar('akun_dihapus');
+    setStatus('keluar');
+  }, [queryClient]);
+
   const selesaikanOnboarding = useCallback(() => setPerluOnboarding(false), []);
 
   const nilai = useMemo(
-    () => ({ status, token, pengguna, alasanKeluar, perluOnboarding, selesaikanOnboarding, terapkanSesi, perbaruiPengguna, keluar }),
-    [status, token, pengguna, alasanKeluar, perluOnboarding, selesaikanOnboarding, terapkanSesi, perbaruiPengguna, keluar]
+    () => ({ status, token, pengguna, alasanKeluar, perluOnboarding, selesaikanOnboarding, terapkanSesi, perbaruiPengguna, keluar, selesaiHapusAkun }),
+    [status, token, pengguna, alasanKeluar, perluOnboarding, selesaikanOnboarding, terapkanSesi, perbaruiPengguna, keluar, selesaiHapusAkun]
   );
 
   return <AuthContext.Provider value={nilai}>{children}</AuthContext.Provider>;

@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { PESAN_SESI_BERAKHIR } from '../../../api/auth';
 import { useAuth } from '../../../hooks/useAuth';
+import { TEKS_DATA_AKUN } from '../../../lib/dataAkun';
 import { useSesi } from '../../../providers/AuthProvider';
 import { color, spacing, teks as teksToken } from '../../../theme/tokens';
 import { Peringatan, Tombol } from '../../ui';
@@ -44,6 +45,7 @@ export function LoginScreen() {
         {/* Sesi ditolak server di tengah pemakaian atau saat app dibuka —
             jelaskan kenapa tiba-tiba di sini (LANJUT_018). */}
         {alasanKeluar === 'sesi_berakhir' ? <Peringatan>{PESAN_SESI_BERAKHIR}</Peringatan> : null}
+        {alasanKeluar === 'akun_dihapus' ? <Peringatan>{TEKS_DATA_AKUN.akunDihapus}</Peringatan> : null}
         {cara === 'kode' ? (
           <MasukKodeEmail />
         ) : (

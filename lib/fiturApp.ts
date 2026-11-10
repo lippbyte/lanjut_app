@@ -8,6 +8,15 @@
  * privasi. Bawaan uji rilis: MATI. Menyala hanya bila build dibuat dengan
  * EXPO_PUBLIC_MIKROFON_NGOBROL=1 — keputusan menunggu tinjauan hukum.
  */
+/**
+ * Unduh data dan hapus akun (LANJUT_009): teksnya masih draf, dan web ikut terbit saat deploy.
+ * Bawaan: MATI. Menyala hanya bila build dibuat dengan EXPO_PUBLIC_KELOLA_DATA_AKUN=1.
+ */
+export function kelolaDataAkunAktif(extra: unknown): boolean {
+  if (!extra || typeof extra !== 'object') return false;
+  return (extra as { kelolaDataAkun?: unknown }).kelolaDataAkun === true;
+}
+
 export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;

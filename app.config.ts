@@ -121,6 +121,9 @@ const config: ExpoConfig = {
     // LANJUT_080b: mikrofon Ngobrol MATI kecuali build dibuat dengan
     // EXPO_PUBLIC_MIKROFON_NGOBROL=1 (dibaca lib/fiturApp.ts). Menunggu tinjauan hukum.
     mikrofonNgobrol: process.env.EXPO_PUBLIC_MIKROFON_NGOBROL === '1',
+    // LANJUT_009: unduh data dan hapus akun MATI kecuali build dibuat dengan
+    // EXPO_PUBLIC_KELOLA_DATA_AKUN=1 (dibaca lib/fiturApp.ts). Menunggu persetujuan teks.
+    kelolaDataAkun: process.env.EXPO_PUBLIC_KELOLA_DATA_AKUN === '1',
     // LANJUT_083: masuk dengan Google (lib/googleMasuk.ts). Client ID OAuth bersifat
     // publik; Client Secret TIDAK pernah diisi di app. Kosong = tombol Google tidak
     // tampil. Android/iOS juga butuh alamat halaman penerus di domain landing

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -10,6 +11,7 @@ import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
 import { GAYA_BELAJAR, labelGayaBelajar } from '../../lib/gayaBelajar';
+import { kelolaDataAkunAktif } from '../../lib/fiturApp';
 import { keadaanKebijakan, perluTerimaUlang } from '../../lib/kebijakanPrivasi';
 import {
   JENIS_SEKOLAH_MENENGAH,
@@ -25,6 +27,7 @@ import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
 import { useUntukKelas12 } from './KhususKelas12';
+import { BagianDataSaya } from './HapusAkunScreen';
 import { AjakanVerifikasiEmail } from './VerifikasiEmail';
 
 // "Data Akun" (v1.1 LANJUT_004 menamainya Jalur Saya; nama itu dipindah ke
@@ -32,6 +35,8 @@ import { AjakanVerifikasiEmail } from './VerifikasiEmail';
 // (keadaan "sudah masuk"). Keadaan tamu tidak ada di sini karena layar ini
 // hanya bisa dibuka setelah login. Semua isi dibaca dari `pengguna` di
 // AuthProvider — hasil GET /auth/saya milik akun yang sedang masuk.
+const KELOLA_DATA_AKUN = kelolaDataAkunAktif(Constants.expoConfig?.extra);
+
 export function AkunScreen() {
   const { pengguna, keluar } = useSesi();
   const router = useRouter();
@@ -77,6 +82,8 @@ export function AkunScreen() {
           Baca kebijakan privasi
         </Text>
       </Kartu>
+      {/* LANJUT_009: tersembunyi sampai saklar build dinyalakan (teks masih draf). */}
+      {KELOLA_DATA_AKUN ? <BagianDataSaya /> : null}
       <Penafian>Catatan yang sudah tersimpan ke akunmu tetap ada setelah keluar.</Penafian>
       <Tombol label={proses ? 'Mengeluarkan…' : 'Keluar'} varian="garis" besar penuh proses={proses} onPress={onKeluar} />
     </View>

@@ -12,3 +12,6 @@ export function uraiProfilLokal(mentah: string | null): ProfilLokal {
   const { jalur, ...sisa } = JSON.parse(mentah);
   return { ...PROFIL_KOSONG, ...(jalur === undefined ? {} : { jalur_seleksi: jalur }), ...sisa };
 }
+
+/** Kunci penyimpanan per akun di perangkat. Juga dipakai saat akun dihapus (LANJUT_009). */
+export const kunciProfilLokal = (penggunaId: string) => `lanjut.profil.lokal.v1:${penggunaId}`;
