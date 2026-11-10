@@ -224,6 +224,7 @@ module.exports = {
   hapus,
   hapusSemua,
   rapikanIndeksSekarang,
+  jadwalkanRapikanIndeks, // dipakai hapus akun (LANJUT_009)
   galatBerkasBesar,
   PESAN,
   POTONGAN_LATIHAN_PER_MAPEL,

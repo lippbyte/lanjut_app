@@ -21,6 +21,8 @@ const HALAMAN_ANAK: Record<string, string> = {
   // LANJUT_064: judul netral untuk semua jenjang (DRAF)
   '/cerita-alumni': 'Cerita Alumni',
   '/akun': 'Data Akun',
+  // LANJUT_009 — dari Data Akun (DRAF, docs/draf-teks-hapus-akun.md).
+  '/hapus-akun': 'Hapus Akun',
   '/cek-posisi': 'Jalur Saya',
   '/gaya-belajar': 'Gaya Belajar',
   '/ngobrol': 'Ngobrol Bareng LANJUT',

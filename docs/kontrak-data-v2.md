@@ -120,16 +120,47 @@ Pada fungsi `ubah`, medan bernilai `undefined` berarti tidak diubah, dan `null` 
 | | `buat({id, penggunaId, butirBuktiId, jenisBerkas, ukuranByte, namaTersimpan, namaAsli, waktu})` | `false` bila butir milik akun lain |
 | | `ubahNamaAsliMilikSendiri`, `hapusMilikSendiri` | `false` bila bukan milik sendiri |
 | `modul/data-pengguna/data-pengguna.layanan.js` | `eksporDataV2(penggunaId)` | Empat tabel milik akun itu |
+| | `eksporSemua(penggunaId)` | Seluruh data milik akun, lihat bagian 3 |
+| | `kirimKodeHapus(penggunaId)`, `hapusAkun(penggunaId, {kata_sandi, kode_email})` | Lihat bagian 3 |
+| `modul/data-pengguna/berkas-pengguna.js` | `hapusBerkasPengguna(penggunaId)`, `daftarkanPenyediaBerkas({nama, hapus})` | `{berhasil, gagal}` |
 
 Medan `rujukan` berbentuk `{ jenis, id }`, atau `null`.
 
 ## 3. Hapus akun dan ekspor
 
-Aplikasi belum punya fitur hapus akun maupun ekspor data (lihat audit, bagian 3).
+Daftar lengkap tempat data pengguna ada di `docs/audit-hapus-akun-ekspor.md`. Semua rute di bawah wajib masuk, dan dibatasi 10 permintaan per 15 menit per akun.
 
-- `DELETE FROM pengguna` membersihkan baris di keempat tabel lewat `ON DELETE CASCADE`.
-- `eksporDataV2` sudah memuat keempat tabel, dan siap dipakai bila fitur ekspor dibuat.
-- **Catatan untuk Bagian 3:** lampiran akan berupa berkas di disk. Penghapusan butir dan penghapusan akun kelak **juga harus menghapus berkasnya**. Hapus berantai di database tidak menyentuh disk, jadi `nama_tersimpan` harus dibaca sebelum barisnya dihapus.
+| Rute | Badan | Hasil |
+|---|---|---|
+| `GET /api/v1/pengguna/saya/ekspor` | | Satu JSON berisi data akun sendiri |
+| `POST /api/v1/pengguna/saya/hapus/kirim-kode` | | Mengirim kode `hapus_akun` ke email terverifikasi |
+| `DELETE /api/v1/pengguna/saya` | `penegasan` = `HAPUS AKUN SAYA`, ditambah tepat satu dari `kata_sandi` atau `kode_email` | `{ dihapus: true }` |
+
+**Hapus akun.** Id akun selalu diambil dari sesi. Urutannya:
+
+1. Konfirmasi identitas. Tanpa penegasan atau konfirmasi: 400. Kata sandi salah: 401, dan tercatat di `percobaan_masuk`.
+2. Satu transaksi: `percobaan_masuk`, `kode_otp_email`, `pendaftaran_tertunda`, lalu baris `pengguna`. Tabel lain ikut lewat `ON DELETE CASCADE`, termasuk sesi.
+3. Setelah transaksi berhasil: `hapusBerkasPengguna`, lalu perapian indeks FULLTEXT bila akunnya punya modul.
+
+Penghapusan berlaku seketika dan tidak bisa dibatalkan.
+
+**`hapusBerkasPengguna`.** Saat ini belum punya penyedia, karena belum ada berkas pengguna di disk. Fungsi ini berjalan sesudah barisnya hilang, jadi setiap penyedia harus bisa menemukan berkas dari `penggunaId` saja. Kegagalan tidak membatalkan penghapusan akun, dan dicatat di log server dengan kata kunci `[hapus-berkas-gagal]` beserta ID akun dan nama penyedia.
+
+**Catatan untuk Bagian 3:** daftarkan penyedia foto lewat `daftarkanPenyediaBerkas`, dan simpan foto per folder akun, misalnya `<folder foto>/<penggunaId>/<nama_tersimpan>`. Menghapus satu butir juga harus menghapus berkasnya, dan `nama_tersimpan` harus dibaca sebelum barisnya dihapus.
+
+**Ekspor: yang disertakan.** `pengguna`, `percobaan_masuk`, `sesi_pengguna`, `kemajuan`, `butir_pribadi`, `kartu` milik sendiri, `sesi_latihan`, `riwayat_latihan`, `persetujuan`, `modul`, `event_sekolah`, `pengguna_jalur_minat`, `tujuan`, `butir_bukti`, `lampiran_butir_bukti`. Baris yang dihapus lunak ikut, karena masih tersimpan. Nama medan mengikuti nama kolom.
+
+**Ekspor: yang sengaja dikecualikan.**
+
+| Data | Alasan |
+|---|---|
+| `kata_sandi_hash`, `token_hash`, `kode_hash` | Rahasia |
+| `pengguna.disetel_ulang_oleh` | ID akun tim, bukan data siswa |
+| `potongan_modul` | Isinya sama dengan `modul.isi` |
+| `kode_otp_email`, `pendaftaran_tertunda` | Berisi rahasia dan hilang sendiri dalam 24 jam |
+| Kartu kurasi tim, konten umum | Bukan milik akun |
+
+**Batas ekspor.** 20.000 baris per tabel dan 30 MB. Data yang melewatinya ditolak utuh dengan `EKSPOR_TERLALU_BESAR`, tidak pernah dipotong diam-diam. Permintaan seperti itu dilayani manual oleh tim. Data siswa biasa jauh di bawah batas: modul paling besar 10 × 200.000 karakter.
 
 ## 4. Usulan batas lampiran untuk Bagian 3
 
@@ -156,5 +187,4 @@ Catatan rancangan untuk Bagian 3:
 - `ProjectRecord` (K17, Bagian 8).
 - Kode unggah dan penyajian berkas (K19, Bagian 3).
 - Pemindahan `prodi_tujuan` menjadi tujuan (Bagian 4).
-- Fitur hapus akun dan ekspor data di aplikasi.
 - Pendaftaran `jalur_minat` di `npm run verifikasi-konten` dan lembar review. Kolom verifikasinya sudah ada.

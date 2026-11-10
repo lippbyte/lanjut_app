@@ -1,16 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { PROFIL_KOSONG, uraiProfilLokal, type ProfilLokal } from '../lib/profilLokal';
+import { PROFIL_KOSONG, kunciProfilLokal, uraiProfilLokal, type ProfilLokal } from '../lib/profilLokal';
 import { useSesi } from '../providers/AuthProvider';
-
-const AWALAN_KUNCI = 'lanjut.profil.lokal.v1';
 
 export type { ProfilLokal };
 
 // Kunci per akun: satu HP bisa dipakai bergantian, dan pilihan akun A tidak
 // boleh menyaring Daftar Periksa (dan ringkasan kemajuan) akun B.
-const kunciUntuk = (penggunaId: string) => `${AWALAN_KUNCI}:${penggunaId}`;
+const kunciUntuk = kunciProfilLokal;
 
 async function bacaProfilLokal(penggunaId: string): Promise<ProfilLokal> {
   try {

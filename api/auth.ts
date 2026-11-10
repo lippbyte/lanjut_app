@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type { JenisSekolah, Kelas } from '../lib/jenjang';
 import type { KesiapanUjian } from '../lib/kesiapanUjian';
+import { kunciProfilLokal } from '../lib/profilLokal';
 import { ApiError, apiFetch } from './client';
 
 export const KUNCI_TOKEN = 'auth_token';
@@ -163,6 +164,23 @@ export async function ubahProfil(token: string, data: DataUbahProfil): Promise<P
   return apiFetch<Pengguna>('/pengguna/saya', { method: 'PATCH', body: data, token });
 }
 
+/** GET /pengguna/saya/ekspor — salinan seluruh data akun sendiri (LANJUT_009). */
+export async function eksporDataSaya(token: string): Promise<unknown> {
+  return apiFetch<unknown>('/pengguna/saya/ekspor', { token });
+}
+
+/** POST /pengguna/saya/hapus/kirim-kode — untuk akun tanpa kata sandi (LANJUT_009). */
+export async function kirimKodeHapusAkun(token: string): Promise<{ diproses: boolean; berlaku_detik: number }> {
+  return apiFetch('/pengguna/saya/hapus/kirim-kode', { method: 'POST', token });
+}
+
+export type DataHapusAkun = { penegasan: string; kata_sandi?: string; kode_email?: string };
+
+/** DELETE /pengguna/saya — menghapus akun sendiri secara permanen (LANJUT_009). */
+export async function hapusAkunSaya(token: string, data: DataHapusAkun): Promise<{ dihapus: boolean }> {
+  return apiFetch('/pengguna/saya', { method: 'DELETE', body: data, token });
+}
+
 async function simpanSesi(sesi: Sesi) {
   await AsyncStorage.multiSet([
     [KUNCI_TOKEN, sesi.token],
@@ -182,6 +200,11 @@ export async function simpanPengguna(pengguna: Pengguna) {
 
 export async function hapusSesiLokal() {
   await AsyncStorage.multiRemove([KUNCI_TOKEN, KUNCI_PENGGUNA]);
+}
+
+/** Dipanggil saat akun dihapus (LANJUT_009): profil lokal akun itu ikut dibuang dari perangkat. */
+export async function hapusProfilLokalAkun(penggunaId: string) {
+  await AsyncStorage.removeItem(kunciProfilLokal(penggunaId));
 }
 
 // Kalimat disalin dari PESAN_GALAT di MVP-PWA/assets/api.js supaya kedua

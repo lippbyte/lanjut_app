@@ -22,6 +22,12 @@ const TEKS_PER_TUJUAN = {
     pembuka: 'Ini kode untuk memastikan email ini milik akun LANJUT kamu:',
     abaikan: 'Kalau kamu tidak memintanya, abaikan email ini.',
   },
+  // LANJUT_009: DRAF, menunggu persetujuan Khalifa (docs/draf-teks-hapus-akun.md).
+  hapus_akun: {
+    subjek: 'Kode untuk menghapus akun LANJUT',
+    pembuka: 'Ini kode untuk menghapus akun LANJUT kamu secara permanen:',
+    abaikan: 'Kalau kamu tidak sedang menghapus akun, abaikan email ini. Tanpa kode ini, akunmu tidak terhapus.',
+  },
 };
 
 const SUBJEK = TEKS_PER_TUJUAN.masuk.subjek;
