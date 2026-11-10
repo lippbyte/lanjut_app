@@ -3,10 +3,11 @@
 **Task:** LANJUT_002 seri v2 (Bagian 1 rencana implementasi).
 **Dasar audit:** commit `166d433` repo `lippbyte/lanjut_app`, 10 November 2026.
 **Sifat:** dokumen saja. Tidak ada kode, tabel, atau endpoint yang berubah.
+**Diperbarui:** LANJUT_004 seri v2 mengeluarkan endpoint klaim data tamu yang sudah dihapus. Nomor baris rujukan tetap memakai commit di atas.
 
 **Cara membaca:** rujukan berkas relatif terhadap akar repo ini dan memakai nomor baris commit di atas. "Core" berarti LANJUT Core. Kata "perlu keputusan Khalifa" berarti arahnya belum ditetapkan; pilihan dan rekomendasinya ada di Bagian 9.
 
-**Label:** K1–K9 adalah keputusan terkunci di rencana implementasi. D1–D8 adalah keputusan yang masih terbuka di dokumen ini. T1–T35 adalah 35 titik sambung di dokumen ini: T1–T33 ada di kode produksi dan berkas kontennya, T34–T35 ada di tes.
+**Label:** K1–K9 adalah keputusan terkunci di rencana implementasi. D1–D8 adalah keputusan di dokumen ini; semuanya masih terbuka kecuali D7, yang sudah diputuskan lewat K14. Dokumen ini mencatat 30 titik sambung: T1–T2 dan T8–T33 ada di kode produksi dan berkas kontennya, T34–T35 ada di tes. T3–T7 sudah hilang bersama endpoint klaim data tamu, dan nomornya tidak dipakai ulang supaya rujukan lama tetap benar.
 
 Product Strategy v2.1 tidak ada di repo ini maupun repo induk, jadi kolom "Catatan v2" bersandar pada `task/rencana-implementasi-lanjut-v2.md` di repo induk.
 
@@ -17,10 +18,10 @@ Product Strategy v2.1 tidak ada di repo ini maupun repo induk, jadi kolom "Catat
 | Tetap | 18 |
 | Revisi | 13 |
 | Tunda | 2 |
-| Perlu keputusan Khalifa | 3 |
-| **Total** | **36** |
+| Perlu keputusan Khalifa | 2 |
+| **Total** | **35** |
 
-Batas Level-In saat ini setengah rapi. Logika inti (`keputusan.js`, `konfigurasi.js`) berdiri sendiri. Yang kusut ada di sekitarnya. Dari 35 titik sambung yang dicatat, 33 ada di kode produksi dan berkas kontennya (T1–T33) dan 2 ada di tes (T34–T35). Dari 33 itu, 7 pasti melanggar aturan yang diusulkan, 15 menjadi pelanggaran atau tidak tergantung keputusan D1–D4, dan 11 sah atau berupa catatan. Selain itu, semua tabel belajar terikat langsung ke tabel `pengguna`.
+Batas Level-In saat ini setengah rapi. Logika inti (`keputusan.js`, `konfigurasi.js`) berdiri sendiri. Yang kusut ada di sekitarnya. Dari 30 titik sambung yang dicatat, 28 ada di kode produksi dan berkas kontennya dan 2 ada di tes (T34–T35). Dari 28 itu, 5 pasti melanggar aturan yang diusulkan, 12 menjadi pelanggaran atau tidak tergantung keputusan D1–D4, dan 11 sah atau berupa catatan. Selain itu, semua tabel belajar terikat langsung ke tabel `pengguna`.
 
 ## 2. Peta fitur
 
@@ -35,7 +36,6 @@ Batas Level-In saat ini setengah rapi. Logika inti (`keputusan.js`, `konfigurasi
 | Kebijakan privasi dan penerimaannya | `app/kebijakan-privasi.tsx`, `app/(app)/terima-kebijakan.tsx`, `components/screens/TerimaKebijakan.tsx`, `lib/kebijakan-privasi.json`, `server/tools/kebijakan-privasi.js`; `persetujuan` | Revisi | Mekanismenya baik, isinya belum memuat data portofolio | Versi baru dan tinjauan hukum (jalur paralel rencana) |
 | Persetujuan orang tua dan gerbang AI | `app/(app)/persetujuan-ortu.tsx`, `server/src/modul/persetujuan/persetujuan.layanan.js:54`, `server/src/db/persetujuan/persetujuan-ortu.js`; `/persetujuan/*`; `persetujuan` | Revisi | Sekarang hanya menjaga AI | Bagian 9: alur 12–15 tahun untuk seluruh pemakaian data |
 | Data Akun | `app/(app)/akun.tsx`, `components/screens/AkunScreen.tsx`; `/pengguna/saya`; `pengguna.prodi_tujuan` (nama API `prodi_impian`, `server/src/modul/auth/auth.layanan.js:71`) | Revisi | Satu kolom tujuan tidak cukup | `prodi_impian` menjadi salah satu bentuk `PersonalGoal` |
-| Klaim data tamu | `POST /sinkron/klaim`, `server/src/modul/sinkron/sinkron.layanan.js` | Perlu keputusan Khalifa | Tidak ada pemanggil di aplikasi maupun PWA, hanya tes | Lihat D7 di Bagian 9. Ini kelompok pelanggaran batas terbesar |
 
 ### Beranda dan navigasi
 
@@ -170,11 +170,6 @@ Tiga kelompok mengikuti task. Kolom "Tes" menyebut berkas di `server/tests/`.
 |---|---|---|---|---|---|
 | T1 | `server/src/modul/ngobrol/ngobrol.layanan.js:39,537` | Ngobrol → Inti | `levelinLayanan.saranHarian` | Sedang | Melanggar |
 | T2 | `server/src/modul/ngobrol/ngobrol.layanan.js:37,493,494` | Ngobrol → Modul | `jumlahMilik`, `kandidatUntukAi` (teks potongan) | Sulit | Tergantung D3, D4 |
-| T3 | `server/src/modul/sinkron/sinkron.layanan.js:25,87,101,123,128` | Sinkron → Latihan, Inti | `levelinRepo`, termasuk tulis `riwayat_latihan` | Sedang | Melanggar |
-| T4 | `server/src/modul/sinkron/sinkron.layanan.js:26,27,124,125` | Sinkron → Inti | `keputusan`, `bentukKonfig` | Sedang | Melanggar |
-| T5 | `server/src/modul/sinkron/sinkron.layanan.js:24,93,155,161` | Sinkron → Kartu | `kartuRepo`, termasuk `buatKartu` | Sedang | Tergantung D1 |
-| T6 | `server/src/modul/sinkron/sinkron.skema.js:4` | Sinkron → Latihan | `catatanRiwayatSkema` | Mudah | Tergantung D2 |
-| T7 | `server/src/modul/sinkron/sinkron.repo.js:16,23` | Sinkron → Kartu, Latihan | SQL langsung `kartu`, `riwayat_latihan` | Mudah | Tergantung D1, D2 |
 | T8 | `server/src/modul/levelin/levelin.layanan.js:13,14,82,146`, `server/src/modul/levelin/levelin.repo.js:109-120` | Inti, Latihan → Kartu, Modul | `ambilUntukDijawab`, `jumlahPotonganPerMapel`, SQL `kartu` | Sedang | Tergantung D1, D3 |
 | T9 | `server/src/modul/event-sekolah/event-sekolah.repo.js:58,72,84` | Event → Kartu | SQL langsung `kartu` | Sedang | Tergantung D1 |
 | T10 | `server/src/db/migrasi/020_event_sekolah.sql:33` | Event → Kartu | Kunci asing `event_sekolah.kartu_id` | Sulit | Tergantung D1 |
@@ -219,7 +214,7 @@ Tiga kelompok mengikuti task. Kolom "Tes" menyebut berkas di `server/tests/`.
 | T34 | `server/tests/bantuan.js:5` | Tes memakai `app.js` utuh | Modul Level-In belum bisa diuji tanpa modul lain |
 | T35 | `server/tests/levelin-keputusan.test.js:21-24` | Tes membaca `MVP-PWA` di luar repo, dan melewati diri bila folder itu tidak ada. Sudah diperbaiki di LANJUT_003, lihat `docs/audit-tes-luar-repo.md` | Selama tes masih membaca `MVP-PWA`, tes kesetaraan aturan tidak bisa berjalan di repo yang berdiri sendiri |
 
-**Hitungan.** Ada 35 titik sambung: 33 di kode produksi dan berkas kontennya (T1–T33), dan 2 di tes (T34–T35). Hanya T1–T33 yang dinilai terhadap aturan arah, karena tes bukan bagian dari modul yang akan dipisah. T34–T35 dicatat sebagai temuan, jadi tabelnya tidak punya kolom aturan. Dari 33 titik yang dinilai: 7 pasti melanggar (T1, T3, T4, T12, T14, T15, T23), 15 tergantung D1–D4, dan 11 sah atau berupa catatan.
+**Hitungan.** Ada 30 titik sambung: 28 di kode produksi dan berkas kontennya (T1–T2 dan T8–T33), dan 2 di tes (T34–T35). Hanya 28 titik itu yang dinilai terhadap aturan arah, karena tes bukan bagian dari modul yang akan dipisah. T34–T35 dicatat sebagai temuan, jadi tabelnya tidak punya kolom aturan. Dari 28 titik yang dinilai: 5 pasti melanggar (T1, T12, T14, T15, T23), 12 tergantung D1–D4, dan 11 sah atau berupa catatan. Sebelum endpoint klaim data tamu dihapus, jumlahnya 35 titik, dengan 7 pasti melanggar dan 15 tergantung D1–D4.
 
 ## 6. Aturan arah ketergantungan
 
@@ -237,8 +232,8 @@ Rumusan contoh di task perlu dua tambahan agar cocok dengan kode: katalog mapel 
 
 | Aturan | Titik yang melanggar |
 |---|---|
-| 2 (Core membaca isi Level-In) | Pasti: T1, T3, T4, T23. Bila D1 atau D2 memilih Level-In: T5, T6, T7, T9, T10, T24, T28 |
-| 4 (Core menulis ke Level-In) | Bila D1 atau D2 memilih Level-In: T3 (`simpanSatuRiwayat`), T5 (`buatKartu`), T15 (benih `kartu`) |
+| 2 (Core membaca isi Level-In) | Pasti: T1, T23. Bila D1 atau D2 memilih Level-In: T9, T10, T24, T28 |
+| 4 (Core menulis ke Level-In) | Bila D1 atau D2 memilih Level-In: T15 (benih `kartu`) |
 | 5 (konfigurasi campur) | Pasti: T12, T14, T15 |
 
 T2, T8, T13, T16, T19, T21, T29, dan T30 juga baru bisa dinilai sesudah D1–D4 diputuskan. T20 sah menurut aturan 1 selama satu database, tetapi harus diganti bila K7 (dua akun) diwujudkan secara fisik.
@@ -288,7 +283,6 @@ flowchart TD
         IDENTITAS["Identitas dan persetujuan"]
         KATALOG["Katalog mapel dan konten"]
         BERANDA["Beranda dan navigasi"]
-        SINKRON["Klaim data tamu"]
         EVENT["Persiapan Event"]
         ALAT["Benih dan verifikasi"]
     end
@@ -314,7 +308,6 @@ flowchart TD
 
     BERANDA ==>|"T23"| INTI
     NGOBROL ==>|"T1"| INTI
-    SINKRON ==>|"T3, T4"| INTI
     ALAT ==>|"T15"| KONFIG
     IDENTITAS ==>|"T12"| KONFIG
     NGOBROL ==>|"T12"| KONFIG
@@ -323,8 +316,6 @@ flowchart TD
 
     BERANDA -.->|"T24"| LATIHAN
     BERANDA -.->|"T24"| KARTU
-    SINKRON -.->|"T3, T6, T7"| LATIHAN
-    SINKRON -.->|"T5, T7"| KARTU
     EVENT -.->|"T9, T10"| KARTU
     ALAT -.->|"T15, T16"| KARTU
     NGOBROL -.->|"T2"| MODUL
@@ -352,14 +343,13 @@ Rekomendasi di bawah hanya usulan. Tidak ada yang sudah diterapkan.
 | D4 | Ngobrol AI dan AI materi masuk sisi mana? | Core; Level-In; dibagi | Dibagi: Ngobrol dan penjaga keselamatan di Core, pencarian materi di balik kontrak |
 | D5 | Gaya Belajar diapakan? | Tetap apa adanya; tunda pengembangan; hapus | Tunda pengembangan. Biarkan sebagai preferensi, jangan dijadikan dasar rekomendasi |
 | D6 | Cerita Alumni diapakan? | Tunda sampai ada minimal 3 cerita nyata; revisi menjadi cerita lintas jalur; hapus | Tunda sekarang, revisi bersama Bagian 8 |
-| D7 | `POST /sinkron/klaim` diapakan? | Pertahankan; hapus (dengan migrasi dokumen) | Pertahankan dulu dan putuskan saat Bagian 6. Bila dihapus, T3–T7 ikut hilang |
+| D7 | `POST /sinkron/klaim` diapakan? | Sudah diputuskan: hapus (K14) | Selesai di LANJUT_004, dan T3–T7 ikut hilang |
 | D8 | Nama fitur "Jalur Saya" (sisa LANJUT_001) | Pertahankan; ganti (mis. "Posisi Saya") | Ganti sebelum Bagian 4 dimulai |
 
 Satu hal perlu ditinjau ulang saat Level-In mulai dibangun, sesuai catatan K7 rencana: semua tabel belajar menempel ke `pengguna` dengan kunci asing (T20). Bila dua akun benar-benar terpisah, riwayat belajar siswa lama perlu aturan pemindahan.
 
 ## 10. Temuan lain
 
-- `POST /sinkron/klaim` tidak punya pemanggil di aplikasi Expo maupun PWA arsip.
 - `konfig_versi` Level-In bisa berubah karena kunci non-Level-In (T14). Saat ini belum terjadi karena hanya benih yang menaikkan `versi`, dan benih hanya menyentuh kunci Level-In.
 - Kolom database bernama `prodi_tujuan`, sedangkan API menamainya `prodi_impian`. Rencana v2 hanya menyebut `prodi_impian`.
 - Sebanyak 19 berkas tes di `server/tests/` membaca `MVP-PWA`, `docs`, atau folder lain di luar repo ini, jadi rangkaian tes belum bisa berjalan utuh dari repo ini saja.

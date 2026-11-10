@@ -1,6 +1,6 @@
 // Nilai `pengguna.kelas` yang sah (migrasi 010, LANJUT_035): SMP 7–9 dan
-// SMA/SMK 10–12. Satu daftar untuk semua skema zod (daftar, ubah profil,
-// klaim sinkron) supaya tidak ada yang tertinggal saat daftar ini berubah.
+// SMA/SMK 10–12. Satu daftar untuk semua skema zod (daftar, ubah profil)
+// supaya tidak ada yang tertinggal saat daftar ini berubah.
 // Harus sama dengan ENUM di 010_kelas_smp.sql dan `KELAS_OPSI` di
 // LANJUT_App/lib/jenjang.ts.
 
@@ -14,7 +14,7 @@ const JENIS_SEKOLAH = ['SMP', 'SMA', 'SMK', 'MA'];
 const KELAS_SMP = new Set(['7', '8', '9']);
 
 /**
- * Satu-satunya aturan jenis sekolah (daftar, PATCH profil, klaim sinkron):
+ * Satu-satunya aturan jenis sekolah (daftar, PATCH profil):
  *   - kelas 7–9   → selalu 'SMP' (diisi server, siswa tidak ditanya);
  *   - kelas 10–12 → 'SMA' | 'SMK' | 'MA' | null (null = gerbang app bertanya);
  *                   'SMP' lama ikut dikosongkan saat kelas naik ke 10–12;

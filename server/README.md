@@ -1108,13 +1108,13 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
   `tests/lembar-review.test.js`.
 - **Jenis sekolah (LANJUT_038, migrasi 011)**: `pengguna.jenis_sekolah`
   SMP/SMA/SMK/MA; migrasi mengisi SMP untuk kelas 7–9. Aturannya satu, di
-  `src/util/kelas.js` `tentukanJenisSekolah` (dipakai daftar, PATCH profil,
-  klaim sinkron): kelas 7–9 → SMP; kelas 10–12 → SMA/SMK/MA atau null (SMP
+  `src/util/kelas.js` `tentukanJenisSekolah` (dipakai daftar, PATCH profil):
+  kelas 7–9 → SMP; kelas 10–12 → SMA/SMK/MA atau null (SMP
   lama dikosongkan saat kelas naik); kombinasi bertentangan → 400. Tes:
   `tests/pengguna-jenis-sekolah.test.js`.
 - **Kelas SMP (LANJUT_035, migrasi 010)**: `pengguna.kelas` menerima
-  '7'–'12' (daftar nilai di `src/util/kelas.js`, dipakai skema daftar, ubah
-  profil, dan klaim sinkron). `kelas` tetap opsional saat daftar supaya APK
+  '7'–'12' (daftar nilai di `src/util/kelas.js`, dipakai skema daftar dan ubah
+  profil). `kelas` tetap opsional saat daftar supaya APK
   lama tidak gagal. Tes: `tests/pengguna-kelas.test.js`.
 - **`butir-pribadi` (LANJUT_034, migrasi 009)**: butir Daftar Periksa milik
   akun dari F3/F10. `GET/POST /butir-pribadi`, `PUT/DELETE
@@ -1150,16 +1150,6 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
     keyakinan, kalibrasi dan saran harian punya bahan dari F7.
   Tes: `tests/levelin-keputusan.test.js`, `tests/levelin-kalibrasi.test.js`,
   `tests/latihan.test.js` (keyakinan, LANJUT_058).
-- **B7 selesai**: `POST /sinkron/klaim` — idempoten, menolak baris milik
-  pengguna lain (`TIDAK_BERHAK`), tidak pernah memindahkan kepemilikan. Diuji
-  di `tests/sinkron.test.js`. **Audit LANJUT_042**: rujukan di dalam baris
-  kini diperiksa sebelum ditulis — `sesi_id`/`kartu_id` yang bukan milik
-  pengklaim dilepas (NULL, dihitung di `peristiwa.tautan_dilepas`), `mapel_id`
-  /`butir_id` tak dikenal ditolak per baris (`VALIDASI_GAGAL`), kartu
-  diklaim sebelum peristiwa. Dulu akun B bisa menautkan riwayatnya ke
-  sesi/kartu pribadi akun A, dan rujukan tak dikenal → 500. Tes lintas akun:
-  `tests/sinkron-lintas-akun.test.js`. Belum ada klien yang memanggil
-  endpoint ini (SDD §6.3, catatan 27 Sep 2026).
 - **B8, B9 tidak dikerjakan** — di luar cakupan tugas ini (penyambungan
   klien `daftar.html`/`masuk.html`/`akun.html`, dan penyiapan tayang/HTTPS/
   cadangan). Lihat §9.3 SDD.
@@ -1190,8 +1180,8 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
    asli `item.sumber`. Nilai isi (teks, `izin_tayang`, `tayang`) **tidak**
    diubah — lihat komentar lengkap di `src/db/benih/benih.js`.
 4. **`§6.6` (jam perangkat salah) diimplementasikan sebagian.** Waktu yang
-   dikirim klien (`dijawab_pada`, `dimulai_pada`, `selesai_pada`,
-   `selesai_pada` klaim kemajuan) diterima apa adanya **hanya bila** selisih
+   dikirim klien (`dijawab_pada`, `dimulai_pada`, `selesai_pada`)
+   diterima apa adanya **hanya bila** selisih
    dengan jam server ≤ 24 jam; di luar itu, server memakai jamnya sendiri
    (`src/util/waktu.js#keDbDariKlien`). Ini penerapan literal aturan §6.6,
    tetapi belum ada uji otomatis khusus untuk kasus tepi ini — hanya diuji

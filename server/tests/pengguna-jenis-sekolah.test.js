@@ -1,7 +1,7 @@
 // Uji jenis sekolah (LANJUT_038, migrasi 011, util/kelas.js
 // tentukanJenisSekolah): kelas 7–9 selalu SMP tanpa ditanya; kelas 10–12
 // SMA/SMK/MA atau null; kombinasi bertentangan → 400; jenis sekolah ikut
-// diselaraskan setiap kelas berubah (daftar, PATCH, klaim sinkron).
+// diselaraskan setiap kelas berubah (daftar, PATCH).
 
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
@@ -127,18 +127,4 @@ test('PATCH medan lain tidak menyentuh jenis sekolah', async () => {
   const { token } = await akun({ kelas: '12', jenis_sekolah: 'MA' });
   await ubah(token, { nama_tampilan: 'Nama Baru', gaya_belajar: 'visual' });
   assert.equal((await saya(token)).jenis_sekolah, 'MA');
-});
-
-test('klaim sinkron kelas: 9 → SMP; 11 dari SMP → null; 12 mempertahankan SMK', async () => {
-  const a = await akun();
-  await panggil('POST', '/sinkron/klaim', a.token, { profil: { kelas: '9' } });
-  assert.equal((await saya(a.token)).jenis_sekolah, 'SMP');
-  await panggil('POST', '/sinkron/klaim', a.token, { profil: { kelas: '11' } });
-  assert.equal((await saya(a.token)).jenis_sekolah, null);
-
-  const b = await akun({ kelas: '11', jenis_sekolah: 'SMK' });
-  await panggil('POST', '/sinkron/klaim', b.token, { profil: { kelas: '12' } });
-  const p = await saya(b.token);
-  assert.equal(p.kelas, '12');
-  assert.equal(p.jenis_sekolah, 'SMK');
 });
