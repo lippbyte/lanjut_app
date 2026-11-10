@@ -353,7 +353,7 @@ test('Foto: batas 30 per akun, juga untuk dua unggahan serentak', async () => {
 test('Nama berkas tidak pernah memuat masukan pengguna', async () => {
   const a = await akun();
   const b = await buatButir(a);
-  const res = await unggah(a, b.id, foto.JPEG, '../../../jahat\\foto-saya.jpg');
+  const res = await unggah(a, b.id, foto.JPEG, `${'../'.repeat(3)}jahat\\foto-saya.jpg`);
   assert.equal(res.status, 201);
   assert.equal(res.json.data.nama_asli, 'foto-saya.jpg');
   assert.ok(!('nama_tersimpan' in res.json.data));
@@ -398,7 +398,7 @@ test('Percobaan menembus jalur gagal', async () => {
         .on('error', gagal);
     });
   const dasar = `/api/v1/butir-bukti/${b.id}/foto`;
-  for (const j of [`${dasar}/..%2F..%2F..%2Fetc%2Fpasswd`, `${dasar}/%2e%2e`, `${dasar}/..`, `${dasar}/../../../../etc/passwd`, '/api/v1/butir-bukti/..%2F..%2Fetc']) {
+  for (const j of [`${dasar}/..%2F..%2F..%2Fetc%2Fpasswd`, `${dasar}/%2e%2e`, `${dasar}/..`, `${dasar}/${'../'.repeat(4)}etc/passwd`, '/api/v1/butir-bukti/..%2F..%2Fetc']) {
     assert.equal(await statusMentah(j), 404, j);
   }
 });
