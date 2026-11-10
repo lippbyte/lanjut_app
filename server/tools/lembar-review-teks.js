@@ -786,7 +786,7 @@ const PETA = [
         oleh: 'Kelas 12 yang sudah memilih rumpun.',
         faktual: {
           klaim: 'Pengelompokan rumpun → mapel bersifat sementara dan belum dicek ke sumber resmi.',
-          sumber: 'konten.repo.js ambilMapelPerRumpun (prodi_mapel bobot ≥ 2 dari data benih MVP-PWA/data/prodi*.json, 0 dari 19 prodi terverifikasi). Verifikasi oleh tim konten.',
+          sumber: 'konten.repo.js ambilMapelPerRumpun (prodi_mapel bobot ≥ 2 dari data benih server/data-konten/prodi*.json, 0 dari 19 prodi terverifikasi). Verifikasi oleh tim konten.',
         },
       },
       { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — judul kelompok:**', nama: 'Judul kelompok = nama rumpun', di: 'Tab Pilih Mapel, di atas pil mapel tiap rumpun favorit.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
@@ -806,7 +806,7 @@ const PETA = [
   },
   {
     // §4.20 — percakapan 15 Okt 2026, tanpa nomor task (kepala blok tidak menyebut LANJUT_xxx).
-    // Data: MVP-PWA/data/checklist.json (kategori persiapan-ujian); teks lain di lib/kesiapanUjian.ts.
+    // Data: server/data-konten/checklist.json (kategori persiapan-ujian); teks lain di lib/kesiapanUjian.ts.
     kelompok: 'Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Jalur Saya)',
     butir: [
       ...[

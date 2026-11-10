@@ -17,7 +17,7 @@ import type { KategoriDaftarPeriksa } from '../api/types';
 /** Sama persis dengan ENUM di server/src/db/migrasi/023_kesiapan_ujian.sql. */
 export type KesiapanUjian = 'belum' | 'sebagian' | 'hampir' | 'siap';
 
-/** id kategori & butir di MVP-PWA/data/checklist.json. */
+/** id kategori & butir di server/data-konten/checklist.json. */
 export const KATEGORI_PERSIAPAN_UJIAN = 'persiapan-ujian';
 export const BUTIR_TRYOUT: readonly string[] = ['tryout-tka', 'tryout-snbt'];
 export const BUTIR_SIMULASI = 'simulasi-tka';

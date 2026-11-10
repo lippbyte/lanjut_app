@@ -4,7 +4,7 @@
 // kosong untuk keputusan & catatan reviewer. Profil prodi F10 paling atas,
 // karena itulah yang paling menghambat fitur yang sudah jadi.
 //
-// HANYA MEMBACA: basis data lewat SELECT, berkas data konten (MVP-PWA/data),
+// HANYA MEMBACA: basis data lewat SELECT, berkas data konten (server/data-konten),
 // dan log verifikasi lokal. Tidak ada INSERT/UPDATE/DELETE di sini (dijaga
 // tests/lembar-review.test.js). Menandai tetap lewat
 // `npm run verifikasi-konten ... --ya`, oleh orang, setelah mengecek sumber.
@@ -180,7 +180,7 @@ async function bagianProfil() {
     judul: 'Profil prodi — Eksplorasi Tujuan (F10)',
     pengantar: [
       'Di aplikasi sekarang: profil yang belum ditandai **tidak dikirim server sama sekali**. Semua siswa melihat "Profil prodi sedang kami cek", padahal layarnya sudah jadi. Profil yang ditandai langsung tampil.',
-      'Satu profil = satu tanda, berlaku untuk **seluruh** isinya (angka, mata kuliah, profesi, kampus). Kalau ada bagian yang salah, perbaiki dulu di `MVP-PWA/data/profil-prodi.json` → `npm run benih` → baru tandai.',
+      'Satu profil = satu tanda, berlaku untuk **seluruh** isinya (angka, mata kuliah, profesi, kampus). Kalau ada bagian yang salah, perbaiki dulu di `server/data-konten/profil-prodi.json` → `npm run benih` → baru tandai.',
       'Label status data ("Terverifikasi"/"Perkiraan") tampil ke siswa sebagai lencana di tiap bagian. Menandai profil **tidak** mengubah label itu. Yang dicek: isi cocok dengan sumber, dan label "Perkiraan" memang dipasang pada bagian yang belum bersumber resmi.',
       `Kepala berkas profil-prodi.json: asal "${aman(berkas.asal)}", status berkas "${aman(berkas.status)}", diriset ${tanggalPanjang(berkas.diperiksa_pada)}. ${amanCatatan(berkas._asal)}`,
       tanpaProfil.length
@@ -485,7 +485,7 @@ function susunMarkdown(semuaBagian, { dibuat, basisData }) {
   const out = [
     '# Lembar Review Konten LANJUT',
     '',
-    `Dibuat otomatis ${dibuat} dengan \`npm run lembar-review\` (folder \`LANJUT_App/server\`) dari basis data \`${basisData}\` dan berkas \`MVP-PWA/data/\`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.`,
+    `Dibuat otomatis ${dibuat} dengan \`npm run lembar-review\` (folder \`LANJUT_App/server\`) dari basis data \`${basisData}\` dan berkas \`server/data-konten/\`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.`,
     '',
     ...STANDAR_PEMERIKSAAN,
     '## Cara memakai lembar ini',
@@ -493,7 +493,7 @@ function susunMarkdown(semuaBagian, { dibuat, basisData }) {
     '1. Kerjakan dari atas. Bagian 1 (profil prodi) paling mendesak: layar Eksplorasi Tujuan sudah jadi, tetapi kosong untuk semua siswa sampai profilnya ditandai. Bagian 2 (kartu kurasi) menyusul untuk alasan yang sama.',
     '2. Untuk setiap butir: buka sumber yang tercatat, cocokkan dengan isi yang (akan) tampil ke siswa, centang **satu** keputusan (ganti `[ ]` menjadi `[x]`), lalu isi nama, tanggal, dan catatan.',
     '3. Butir baru berstatus terverifikasi setelah orang yang berwenang menjalankan perintah di butir itu dari folder `LANJUT_App/server`. Tanpa `--ya` perintah hanya menampilkan pratinjau dan **tidak mengubah apa pun**; ulangi dengan `--ya` di akhir untuk benar-benar menandai. Tambahkan `--tanggal=TAHUN-BULAN-TANGGAL` bila tanggal pengecekan berbeda dari hari perintah dijalankan.',
-    '4. Kalau isinya perlu diperbaiki: ubah berkas data di `MVP-PWA/data/`, jalankan `npm run benih`, lalu buat ulang lembar ini. Isi yang berubah otomatis kembali ke "belum terverifikasi", termasuk yang sudah pernah ditandai.',
+    '4. Kalau isinya perlu diperbaiki: ubah berkas data di `server/data-konten/`, jalankan `npm run benih`, lalu buat ulang lembar ini. Isi yang berubah otomatis kembali ke "belum terverifikasi", termasuk yang sudah pernah ditandai.',
     '5. Jangan menandai butir yang sumbernya tidak bisa dibuka atau tidak cocok. Pilih "Tidak bisa dicek" dan tulis alasannya. Jangan mengisi kekosongan dengan perkiraan sendiri.',
     '',
     '## Ringkasan',
