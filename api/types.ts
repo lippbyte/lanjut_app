@@ -379,3 +379,20 @@ export type PilihanMapel =
       pengelompokan_terverifikasi: boolean;
     }
   | { mode: 'mapel_saya'; maks_mapel: number; mapel_pilihan: string[]; mapel: MapelRingkas[] };
+
+// Portofolio (LANJUT_011): bentuk respons butir-bukti.layanan.js `bentukFoto` dan `bentukButir`.
+export type FotoButir = { id: string; jenis_berkas: string; ukuran_byte: number; nama_asli: string; dibuat_pada: string };
+export type ButirBukti = {
+  id: string;
+  jalur_minat_id: string | null;
+  tujuan_id: string | null;
+  judul: string;
+  uraian: string | null;
+  tautan: string | null;
+  jenis: string;
+  tanggal_karya: string | null;
+  visibilitas: string;
+  dibuat_pada: string;
+  diubah_pada: string;
+  foto: FotoButir[];
+};

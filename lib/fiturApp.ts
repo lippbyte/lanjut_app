@@ -17,6 +17,15 @@ export function kelolaDataAkunAktif(extra: unknown): boolean {
   return (extra as { kelolaDataAkun?: unknown }).kelolaDataAkun === true;
 }
 
+/**
+ * Portofolio (LANJUT_011): teksnya masih draf dan menunggu pilot.
+ * Bawaan: MATI. Menyala hanya bila build dibuat dengan EXPO_PUBLIC_PORTOFOLIO=1.
+ */
+export function portofolioAktif(extra: unknown): boolean {
+  if (!extra || typeof extra !== 'object') return false;
+  return (extra as { portofolio?: unknown }).portofolio === true;
+}
+
 export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;

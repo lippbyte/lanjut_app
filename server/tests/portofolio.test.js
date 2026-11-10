@@ -595,8 +595,13 @@ test('metrik-portofolio: hanya butir bermakna yang dihitung, dan akun uji bisa d
   await pool.query('UPDATE butir_bukti SET uraian = ? WHERE id = ?', [`${' '.repeat(40)}pendek${' '.repeat(40)}`, butirSpasi.id]);
   const denganUraian = await akun();
   await buatButir(denganUraian, { uraian: uraian30 });
-  const denganTautan = await akun();
-  await buatButir(denganTautan, { tautan: 'https://contoh.test' });
+  // LANJUT_011: tautan saja tidak cukup, tautan terhitung hanya bila uraiannya memenuhi 30 karakter.
+  const hanyaTautan = await akun();
+  await buatButir(hanyaTautan, { tautan: 'https://contoh.test' });
+  const tautanUraianPendek = await akun();
+  await buatButir(tautanUraianPendek, { tautan: 'https://contoh.test', uraian: 'x'.repeat(29) });
+  const tautanDanUraian = await akun();
+  await buatButir(tautanDanUraian, { tautan: 'https://contoh.test', uraian: uraian30 });
   const denganFoto = await akun();
   await unggah(denganFoto, (await buatButir(denganFoto)).id, foto.JPEG);
   const lama = await akun();
@@ -605,13 +610,13 @@ test('metrik-portofolio: hanya butir bermakna yang dihitung, dan akun uji bisa d
 
   const keluaran = jalankanAlat('metrik-portofolio', '--daftar');
   assert.equal(angkaDari(keluaran, 'Jendela'), 14);
-  for (const x of [denganUraian, denganTautan, denganFoto]) assert.ok(keluaran.includes(x.id), 'butir bermakna harus terhitung');
-  for (const x of [kosong, pendek, spasi, lama]) assert.ok(!keluaran.includes(x.id), 'butir tidak bermakna atau di luar jendela tidak terhitung');
+  for (const x of [denganUraian, tautanDanUraian, denganFoto]) assert.ok(keluaran.includes(x.id), 'butir bermakna harus terhitung');
+  for (const x of [kosong, pendek, spasi, lama, hanyaTautan, tautanUraianPendek]) assert.ok(!keluaran.includes(x.id), 'butir tidak bermakna atau di luar jendela tidak terhitung');
   assert.ok(!keluaran.includes(denganUraian.nama), 'keluaran tidak boleh memuat nama');
 
   const dua = jalankanAlat('metrik-portofolio', '--daftar', `--kecualikan=${denganUraian.id},${denganFoto.id}`);
   assert.ok(!dua.includes(denganUraian.id));
-  assert.ok(dua.includes(denganTautan.id));
+  assert.ok(dua.includes(tautanDanUraian.id));
   assert.equal(angkaDari(keluaran, 'Siswa dengan butir bermakna') - angkaDari(dua, 'Siswa dengan butir bermakna'), 2);
 
   assert.ok(jalankanAlat('metrik-portofolio', '--hari=30', '--daftar').includes(lama.id), 'jendela bisa diatur');
