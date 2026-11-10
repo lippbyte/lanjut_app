@@ -1,4 +1,4 @@
-// Benih: membaca MVP-PWA/data/*.json → INSERT ... ON DUPLICATE KEY UPDATE.
+// Benih: membaca server/data-konten/*.json → INSERT ... ON DUPLICATE KEY UPDATE.
 // docs/SDD-Backend-Foundation.md §3.6. Berkas JSON TIDAK disalin ke SQL —
 // dibaca langsung dari sumbernya, dan itu tetap menjadi satu-satunya tempat
 // konten diedit selama Panel Admin belum ada.
@@ -40,8 +40,8 @@
 //   (lihat catatan di migrasi 002) diisi dari situ.
 // - Kunci berkas `jalur`, `berlaku_untuk_jalur`, `peminat.jalur`, dan
 //   `kampus[].jalur_masuk` sengaja tetap memakai nama lama (LANJUT_001 seri v2):
-//   berkas itu dibaca langsung oleh PWA arsip, dan server/data-konten adalah
-//   salinannya. Di basis data dan API namanya `jalur_seleksi`; penerjemahannya
+//   isi berkas tidak diubah, dan salinan bekunya di MVP-PWA/data masih dibaca
+//   PWA arsip. Di basis data dan API namanya `jalur_seleksi`; penerjemahannya
 //   hanya di berkas ini.
 
 const fs = require('fs');
@@ -54,15 +54,14 @@ const { rataKonfig } = require('../../modul/levelin/konfigurasi');
 // Folder server/ (tempat package.json & .env): server/src/db/benih → naik 3.
 const DIR_SERVER = path.join(__dirname, '..', '..', '..');
 
-// Lokasi *.json konten (LANJUT_023). Bawaan: ../../MVP-PWA/data dari folder
-// server/, yaitu MVP-PWA/data di akar repo — persis lokasi sebelum env ini
-// ada. Di hosting yang hanya menerima folder server/, salin folder data ke
-// sana dan isi LOKASI_DATA_KONTEN (absolut, atau relatif terhadap server/ —
-// sengaja bukan terhadap folder tempat perintah dijalankan, supaya hasilnya
-// tidak bergantung dari mana `npm run benih` dipanggil).
+// Lokasi *.json konten (LANJUT_023). Bawaan: server/data-konten, sumber data
+// konten sejak K16 (LANJUT_005 seri v2). LOKASI_DATA_KONTEN menggantinya bila
+// perlu (absolut, atau relatif terhadap server/ — sengaja bukan terhadap
+// folder tempat perintah dijalankan, supaya hasilnya tidak bergantung dari
+// mana `npm run benih` dipanggil).
 const DIR_DATA = env.LOKASI_DATA_KONTEN
   ? path.resolve(DIR_SERVER, env.LOKASI_DATA_KONTEN)
-  : path.join(DIR_SERVER, '..', '..', 'MVP-PWA', 'data');
+  : path.join(DIR_SERVER, 'data-konten');
 
 const BERKAS_DATA = [
   'prodi.json',

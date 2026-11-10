@@ -130,7 +130,7 @@ const env = {
   JUMLAH_PROXY: typeof trustProxy === 'number' ? trustProxy : (trustProxy ? 1 : 0), // alias kompatibilitas
   HEADER_IP_KLIEN: headerIpKlien ? headerIpKlien.toLowerCase() : null,
   // Folder berisi *.json konten untuk `npm run benih` (LANJUT_023). Kosong =
-  // bawaan ../../MVP-PWA/data dari folder server/. Absolut, atau relatif
+  // bawaan server/data-konten. Absolut, atau relatif
   // terhadap folder server/. Hanya dipakai benih, bukan oleh API.
   LOKASI_DATA_KONTEN: opsional('LOKASI_DATA_KONTEN', null),
   // Ngobrol Bareng LANJUT (LANJUT_051): AI lewat OpenRouter. Kunci KOSONG =
