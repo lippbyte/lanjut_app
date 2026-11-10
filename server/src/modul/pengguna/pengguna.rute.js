@@ -3,7 +3,10 @@ const wajibLogin = require('../../middleware/wajibLogin');
 const { validasiBody } = require('../../middleware/validasi');
 const { ubahProfilSkema } = require('./pengguna.skema');
 const { sukses } = require('../../util/respons');
+const { batasDataAkun } = require('../../middleware/batasLaju');
 const layanan = require('./pengguna.layanan');
+const dataPengguna = require('../data-pengguna/data-pengguna.layanan');
+const { hapusAkunSkema } = require('../data-pengguna/data-pengguna.skema');
 
 const router = express.Router();
 
@@ -30,6 +33,34 @@ router.patch('/saya', wajibLogin, validasiBody(ubahProfilSkema), async (req, res
   try {
     const profil = await layanan.ubahProfil(req.pengguna.id, req.body);
     sukses(res, profil);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// LANJUT_009: salinan seluruh data milik akun sendiri, dalam satu JSON.
+router.get('/saya/ekspor', wajibLogin, batasDataAkun, async (req, res, next) => {
+  try {
+    sukses(res, await dataPengguna.eksporSemua(req.pengguna.id));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// LANJUT_009: kode email untuk akun yang tidak punya kata sandi (mis. masuk lewat Google).
+router.post('/saya/hapus/kirim-kode', wajibLogin, batasDataAkun, async (req, res, next) => {
+  try {
+    sukses(res, await dataPengguna.kirimKodeHapus(req.pengguna.id));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// LANJUT_009: hapus akun sendiri secara permanen. Hanya pemilik: id diambil dari sesi, bukan
+// dari permintaan. Wajib penegasan dan konfirmasi identitas (lihat data-pengguna.skema.js).
+router.delete('/saya', wajibLogin, batasDataAkun, validasiBody(hapusAkunSkema), async (req, res, next) => {
+  try {
+    sukses(res, await dataPengguna.hapusAkun(req.pengguna.id, req.body));
   } catch (err) {
     next(err);
   }

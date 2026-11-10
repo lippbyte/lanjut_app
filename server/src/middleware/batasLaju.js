@@ -48,4 +48,17 @@ const batasDaftar = rateLimit({
   handler: penanganGalatTerlaluSering,
 });
 
-module.exports = { batasGlobal, batasAuth, batasDaftar };
+/**
+ * Hapus akun dan ekspor data (LANJUT_009): 10 permintaan / 15 menit per akun. Dipasang sesudah
+ * wajibLogin, jadi siswa satu sekolah yang berbagi IP tidak saling menghabiskan jatah.
+ */
+const batasDataAkun = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: DI_LINGKUNGAN_TEST ? 100000 : 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => (req.pengguna ? req.pengguna.id : ipKlien(req)),
+  handler: penanganGalatTerlaluSering,
+});
+
+module.exports = { batasGlobal, batasAuth, batasDaftar, batasDataAkun };
