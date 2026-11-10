@@ -362,6 +362,25 @@ test('Nama berkas tidak pernah memuat masukan pengguna', async () => {
   assert.match(baris.nama_tersimpan, POLA_NAMA);
   assert.deepEqual(berkasAkun(a), [baris.nama_tersimpan]);
   assert.ok(!fs.existsSync(path.join(DIREKTORI, '..', 'jahat')));
+
+  const panjang = await unggah(a, b.id, foto.JPEG, `${'a'.repeat(300)}.jpg`);
+  assert.equal(panjang.status, 201, 'nama yang terlalu panjang dipotong, unggahan tetap berhasil');
+  assert.equal(panjang.json.data.nama_asli.length, 255);
+
+  // Karakter kendali hanya lolos pengurai lewat bentuk filename*, jadi badannya dirakit sendiri.
+  const batas = 'batas-uji-kendali';
+  const badan = Buffer.concat([
+    Buffer.from(`--${batas}\r\nContent-Disposition: form-data; name="foto"; filename*=UTF-8''a%07b.jpg\r\nContent-Type: image/jpeg\r\n\r\n`),
+    foto.JPEG,
+    Buffer.from(`\r\n--${batas}--\r\n`),
+  ]);
+  const kendali = await fetch(`${baseUrl}/api/v1/butir-bukti/${b.id}/foto`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${a.token}`, 'Content-Type': `multipart/form-data; boundary=${batas}` },
+    body: badan,
+  });
+  assert.equal(kendali.status, 201);
+  assert.equal((await kendali.json()).data.nama_asli, 'ab.jpg');
 });
 
 test('Percobaan menembus jalur gagal', async () => {
@@ -571,7 +590,9 @@ test('metrik-portofolio: hanya butir bermakna yang dihitung, dan akun uji bisa d
   const pendek = await akun();
   await buatButir(pendek, { uraian: 'x'.repeat(29) });
   const spasi = await akun();
-  await buatButir(spasi, { uraian: `${' '.repeat(40)}pendek${' '.repeat(40)}` });
+  const butirSpasi = await buatButir(spasi, { uraian: 'pendek' });
+  // Rute sudah merapikan spasi, jadi isian berspasi hanya bisa masuk dari luar rute.
+  await pool.query('UPDATE butir_bukti SET uraian = ? WHERE id = ?', [`${' '.repeat(40)}pendek${' '.repeat(40)}`, butirSpasi.id]);
   const denganUraian = await akun();
   await buatButir(denganUraian, { uraian: uraian30 });
   const denganTautan = await akun();
