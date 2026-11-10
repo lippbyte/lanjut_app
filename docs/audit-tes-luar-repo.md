@@ -137,7 +137,7 @@ Sebanyak 71 tes pulih, sama dengan perkiraan: 57 lewat `DIR_DATA` dan 14 yang me
 | `levelin-keputusan` | keluaran sama dengan PWA pada ratusan masukan acak | Menjalankan `assets/levelin.js` sebagai pembanding |
 | `onboarding` | empat layar cerita, urutan sama dengan PWA | Membandingkan dengan `onboarding.html` |
 | `onboarding` | setiap teks persis ada di PWA dan di salinan teks | Membandingkan dengan `onboarding.html` |
-| `onboarding` | setiap layar punya isi atau butir; label tombol sesuai salinan | Berada di blok yang sama dan memakai pembanding yang sama |
+| `onboarding` | setiap layar punya isi atau butir; label tombol sesuai salinan | Tidak membaca `onboarding.html` dan hanya butuh salinan teks di `docs/`, tetapi dibungkus aturan yang sama dengan dua tes di atasnya, jadi ikut gagal bila `MVP-PWA` hilang |
 | `kebijakan-privasi` | kalimat "tidak dikirim ke mana pun" tidak ada di kebijakan, surat, salinan, maupun teks app | Memindai semua berkas `*.html` di PWA, selain dokumen di `docs/` |
 | `keystore-rilis` | tidak ada keystore di repo | Memindai seluruh repo induk, termasuk `MVP-PWA`. Pemindaian folder `LANJUT_App` adalah tes terpisah yang selalu berjalan |
 
