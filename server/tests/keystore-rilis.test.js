@@ -3,6 +3,7 @@
 // (android/ dibuat ulang oleh `expo prebuild`, tidak ada di repo). Tanpa basis data.
 
 const { test } = require('node:test');
+const { jalurInduk, tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -109,7 +110,8 @@ test('app.config.ts memakai plugin; versionName 1.0.0 dan versionCode 2', () => 
   assert.match(konfig, /versionCode: 2,/);
 });
 
-test('tidak ada keystore atau keystore.properties di repo (di luar folder hasil build yang diabaikan git)', () => {
+/** Berkas keystore di bawah `akar`, di luar folder hasil build yang diabaikan git. */
+function cariKeystore(akar) {
   const LEWATI = new Set(['node_modules', '.git', 'android', 'ios', 'dist', '.expo', '.uji-build', '.uji-ssr', 'cadangan']);
   const temuan = [];
   const jelajah = (dir) => {
@@ -120,6 +122,17 @@ test('tidak ada keystore atau keystore.properties di repo (di luar folder hasil 
       else if (/\.(jks|keystore|p12|pfx)$/i.test(e.name) || /^keystore\.properties$/i.test(e.name)) temuan.push(path.relative(AKAR_REPO, p));
     }
   };
-  jelajah(AKAR_REPO);
-  assert.deepEqual(temuan, []);
+  jelajah(akar);
+  return temuan;
+}
+
+// Tanpa folder saudara, pemindaian repo induk tidak memeriksa apa yang dijanjikan namanya.
+const tesRepoInduk = tesLuarRepo(test, ...['MVP-PWA', 'docs', 'landing', 'diagrams', 'assets'].map((n) => jalurInduk(n)));
+
+tesRepoInduk('tidak ada keystore atau keystore.properties di repo (di luar folder hasil build yang diabaikan git)', () => {
+  assert.deepEqual(cariKeystore(AKAR_REPO), []);
+});
+
+test('tidak ada keystore atau keystore.properties di folder LANJUT_App (tetap berjalan tanpa repo induk)', () => {
+  assert.deepEqual(cariKeystore(AKAR_APP), []);
 });

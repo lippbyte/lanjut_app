@@ -5,6 +5,8 @@
 // dengan cermin server src/util/linimasa.js. Tanpa basis data.
 
 const { test, describe } = require('node:test');
+const { SALINAN_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -133,7 +135,7 @@ describe('LANJUT_072b: kalimat bila semua tersaring', () => {
     }
   });
 
-  test('Kalimat tercatat DRAF di salinan-teks-lanjut.md', () => {
+  tesSalinan('Kalimat tercatat DRAF di salinan-teks-lanjut.md', () => {
     const sumber = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
     const awal = sumber.indexOf('**LANJUT_App (LANJUT_072b)');
     assert.ok(awal >= 0, 'blok LANJUT_072b harus ada');

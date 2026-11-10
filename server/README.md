@@ -881,6 +881,14 @@ tidak mengembangkan pola `*`, dan baru Node 21+ yang bisa mengembangkannya
 sendiri. Di Node 20, jalankan dari Git Bash: `node --test tests/*.test.js`.
 Di Linux (server produksi) dan di Node 22+, `npm test` berjalan normal.
 
+**Tes yang membaca folder di luar `LANJUT_App`** (`MVP-PWA`, `docs`, `landing`,
+lihat `docs/audit-tes-luar-repo.md`). Jalankan tes dari salinan repo induk supaya
+folder itu ada. Bila salah satunya tidak ada, tes yang membutuhkannya **gagal**
+dengan pesan yang menyebut path dan cara memperbaikinya. Untuk melewatinya dengan
+sengaja, setel `LEWATI_TES_LUAR_REPO=1`: tes yang path-nya hilang ditandai
+dilewati, dan akhir keluaran `npm test` menampilkan jumlah serta alasannya.
+Tes baru yang membaca luar folder ini wajib memakai `tests/luar-repo.js`.
+
 `NODE_ENV=test` menaikkan batas `express-rate-limit` (§8.2) supaya rangkaian
 test yang memanggil endpoint `/auth/*` berkali-kali dari mesin yang sama tidak
 saling memblokir — ini **tidak** mengubah angka pembatasan di lingkungan lain.

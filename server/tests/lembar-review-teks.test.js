@@ -9,16 +9,19 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
-const { test } = require('node:test');
+const { test: tesDasar } = require('node:test');
+const { tesLuarRepo, malas } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { susunLembarTeks, jalankan, SALINAN, PETA, PENGECUALIAN } = require('../tools/lembar-review-teks');
 
-const sumber = fs.readFileSync(SALINAN, 'utf8');
-const baris = sumber.split(/\r?\n/);
+const test = tesLuarRepo(tesDasar, SALINAN);
+
+const sumber = malas(() => fs.readFileSync(SALINAN, 'utf8'));
 const BUTIR = /^\s*- /;
 
 /** Hitung langsung: setiap paragraf ber-"DRAF" → baris butir sesudahnya sampai judul/---/paragraf baru. */
 function hitungLangsung() {
+  const baris = sumber().split(/\r?\n/);
   const blok = [];
   for (let i = 0; i < baris.length; i++) {
     if (BUTIR.test(baris[i]) || !/\bDRAF\b/.test(baris[i])) continue;
@@ -63,11 +66,11 @@ test('lembar teks: bunyi setiap butir identik dengan baris sumbernya', () => {
 test('lembar teks: yang sudah disetujui atau di luar blok DRAF tidak ikut', () => {
   const { md } = susunLembarTeks();
   // §4.10 keterangan data pribadi — disetujui Khalifa 28 Sep 2026.
-  assert.ok(sumber.includes('Kami menyimpan nama pengguna'));
+  assert.ok(sumber().includes('Kami menyimpan nama pengguna'));
   assert.ok(!md.includes('Kami menyimpan nama pengguna'));
   // Teks yang dikecualikan di kepala blok LANJUT_039/041 (dipakai apa adanya), di luar daftar butir DRAF.
   for (const t of ['**Penanda kartu pengguna (tetap, tidak bisa disembunyikan):**', '**Ketika waktu mepet:**', '**Layar kosong:** Belum ada kartu.']) {
-    assert.ok(sumber.includes(t), t);
+    assert.ok(sumber().includes(t), t);
     assert.ok(!md.includes(t), `ikut padahal bukan DRAF: ${t}`);
   }
 });

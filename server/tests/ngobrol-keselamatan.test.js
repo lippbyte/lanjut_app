@@ -6,6 +6,8 @@
 const fs = require('fs');
 const path = require('path');
 const { test, after } = require('node:test');
+const { SALINAN_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
 const assert = require('node:assert/strict');
 const keselamatan = require('../src/modul/ngobrol/keselamatan');
 const { samarkan } = require('../src/modul/ngobrol/samarkan');
@@ -48,7 +50,7 @@ test('berkas konfigurasi bertanda DRAF; daftar tanda bahaya untuk review guru BK
   assert.match(bacaKonfig('ngobrol-teks.json').status, /^DRAF/);
 });
 
-test('teks tetap server sama persis dengan salinan-teks-lanjut.md §4.16', () => {
+tesSalinan('teks tetap server sama persis dengan salinan-teks-lanjut.md §4.16', () => {
   const salinan = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'docs', 'salinan-teks-lanjut.md'), 'utf8');
   const teks = bacaKonfig('ngobrol-teks.json');
   for (const [k, v] of Object.entries(teks)) {

@@ -21,9 +21,12 @@
 // persis, dan butir umum yang berubah status akan merusak pembandingan itu.
 
 const { test, before, after } = require('node:test');
+const { tesLuarRepo, adaSemua } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { pool } = require('./bantuan');
-const { jalankanBenih, benihLinimasa, benihChecklist, benihArsipKartu } = require('../src/db/benih/benih');
+const { jalankanBenih, benihLinimasa, benihChecklist, benihArsipKartu, DIR_DATA } = require('../src/db/benih/benih');
+
+const tesDataKonten = tesLuarRepo(test, DIR_DATA);
 const { JENIS, ubahStatus } = require('../src/db/verifikasi/verifikasi-konten');
 
 // Satu baris asli per jenis yang bisa diverifikasi (selain checklist).
@@ -161,24 +164,29 @@ before(async () => {
 });
 
 after(async () => {
-  // Isi yang diubah test dikembalikan dulu dari JSON, baru tanda aslinya.
-  await jalankanBenih();
-  for (const [jenis, id] of [...Object.entries(BARIS), ...Object.entries(BARIS_BASI)]) {
-    const b = asli[`${jenis}/${id}`];
-    await pool.query('UPDATE ?? SET status_verifikasi = ?, diperiksa_pada = ? WHERE id = ?', [
-      JENIS[jenis].tabel,
-      b.status_verifikasi,
-      b.diperiksa_pada,
-      id,
-    ]);
+  // Koneksi selalu ditutup: tanpa ini, data konten yang hilang membuat proses tes menggantung selamanya.
+  try {
+    // Isi yang diubah test dikembalikan dulu dari JSON, baru tanda aslinya. Tes yang mengubah isi
+    // butuh folder yang sama, jadi tanpa folder itu tidak ada isi yang perlu dikembalikan.
+    if (adaSemua(DIR_DATA)) await jalankanBenih();
+    for (const [jenis, id] of [...Object.entries(BARIS), ...Object.entries(BARIS_BASI)]) {
+      const b = asli[`${jenis}/${id}`];
+      await pool.query('UPDATE ?? SET status_verifikasi = ?, diperiksa_pada = ? WHERE id = ?', [
+        JENIS[jenis].tabel,
+        b.status_verifikasi,
+        b.diperiksa_pada,
+        id,
+      ]);
+    }
+    await hapusChecklistContoh();
+    await hapusLinimasaFixture();
+    await hapusKartuFixture();
+  } finally {
+    await pool.end();
   }
-  await hapusChecklistContoh();
-  await hapusLinimasaFixture();
-  await hapusKartuFixture();
-  await pool.end();
 });
 
-test('benih ulang: baris yang sudah ditandai terverifikasi TETAP terverifikasi (semua jenis)', async () => {
+tesDataKonten('benih ulang: baris yang sudah ditandai terverifikasi TETAP terverifikasi (semua jenis)', async () => {
   for (const [jenis, id] of Object.entries(BARIS)) {
     await ubahStatus({ jenis, ids: [id], tanggal: '2026-09-20', batal: false, konfirmasi: true });
   }
@@ -188,7 +196,7 @@ test('benih ulang: baris yang sudah ditandai terverifikasi TETAP terverifikasi (
   }
 });
 
-test('benih ulang: butir checklist yang sudah ditandai terverifikasi TETAP terverifikasi', async () => {
+tesDataKonten('benih ulang: butir checklist yang sudah ditandai terverifikasi TETAP terverifikasi', async () => {
   await benihChecklist(CHECKLIST_CONTOH);
   assert.deepEqual(await status('checklist', ID_CHECKLIST), { status: 'belum_diverifikasi', tanggal: null });
 
@@ -197,7 +205,7 @@ test('benih ulang: butir checklist yang sudah ditandai terverifikasi TETAP terve
   assert.deepEqual(await status('checklist', ID_CHECKLIST), { status: 'terverifikasi', tanggal: '2026-09-20' });
 });
 
-test('benih ulang: kolom konten lain tetap diperbarui dari JSON', async () => {
+tesDataKonten('benih ulang: kolom konten lain tetap diperbarui dari JSON', async () => {
   const [[sebelum]] = await pool.query('SELECT judul FROM tahapan_linimasa WHERE id = ?', [BARIS.linimasa]);
   await pool.query("UPDATE tahapan_linimasa SET judul = 'JUDUL BASI' WHERE id = ?", [BARIS.linimasa]);
   await jalankanBenih();
@@ -245,7 +253,7 @@ test('benih (LANJUT_020): hanya tanggal berubah → tanda di-reset', async () =>
   assert.deepEqual(await status('linimasa', ID_LINIMASA), BELUM, 'tanggal mulai berubah, tanda tetap');
 });
 
-test('benih (LANJUT_020): butir checklist berubah → tanda di-reset', async () => {
+tesDataKonten('benih (LANJUT_020): butir checklist berubah → tanda di-reset', async () => {
   await benihChecklist(CHECKLIST_CONTOH);
   await tandai('checklist', ID_CHECKLIST);
   const berubah = JSON.parse(JSON.stringify(CHECKLIST_CONTOH));
@@ -269,7 +277,7 @@ test('benih (LANJUT_043): kartu kurasi — isi SAMA → tanda tetap; isi berubah
   assert.deepEqual(await status('kartu', ID_KARTU_BARU), BELUM);
 });
 
-test('benih (LANJUT_020): isi berbeda dari JSON → tanda di-reset (Khusus SMK, prodi, mapel, Cerita Alumni)', async () => {
+tesDataKonten('benih (LANJUT_020): isi berbeda dari JSON → tanda di-reset (Khusus SMK, prodi, mapel, Cerita Alumni)', async () => {
   for (const [jenis, id] of Object.entries(BARIS_BASI)) {
     await tandai(jenis, id);
     await pool.query("UPDATE ?? SET url_sumber = 'https://basi.invalid/' WHERE id = ?", [JENIS[jenis].tabel, id]);

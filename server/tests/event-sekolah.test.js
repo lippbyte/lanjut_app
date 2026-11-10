@@ -11,6 +11,8 @@
 // melihat perubahan itu (dan menahan versi kebijakan selama tes ini).
 
 const { test, describe, before, after } = require('node:test');
+const { SALINAN_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -608,7 +610,7 @@ describe('LANJUT_076 §D–F: Beranda, layar, teks', () => {
     for (const pola of [/new Date/, /Date\.now/, /Date\.UTC/, /86400000/]) assert.ok(!pola.test(layar), `logika tanggal di layar: ${pola}`);
   });
 
-  test('Teks baru tercatat DRAF di salinan-teks-lanjut.md §4.4', () => {
+  tesSalinan('Teks baru tercatat DRAF di salinan-teks-lanjut.md §4.4', () => {
     const sumber = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
     const awal = sumber.indexOf('**LANJUT_App (LANJUT_076)');
     assert.ok(awal >= 0, 'blok LANJUT_076 harus ada');

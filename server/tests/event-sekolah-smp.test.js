@@ -12,6 +12,8 @@
 // uji disisipkan langsung ke DB (mapel sosiologi, tidak dipakai tes lain) lalu dihapus.
 
 const { test, describe, before, after } = require('node:test');
+const { SALINAN_TEKS, jalurInduk, tesLuarRepo } = require('./luar-repo');
+const tesDokumen = tesLuarRepo(test, SALINAN_TEKS, jalurInduk('docs', 'verifikasi', 'panduan-materi-sumber-resmi.md'));
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -451,7 +453,7 @@ describe('LANJUT_076b §B, §F: halaman Daftar Periksa SMP dan kartu Beranda', (
     for (const m of hook.matchAll(/apiFetch<[^>]+>\(\s*([`'])([^`']+)\1/g)) assert.ok(m[2].startsWith('/pengguna/event'), m[2]);
   });
 
-  test('Teks 076b tercatat DRAF di salinan §4.4 dan panduan tim konten ada', () => {
+  tesDokumen('Teks 076b tercatat DRAF di salinan §4.4 dan panduan tim konten ada', () => {
     const sumber = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
     const awal = sumber.indexOf('**LANJUT_App (LANJUT_076b)');
     assert.ok(awal > sumber.indexOf('### 4.4 Daftar Periksa') && awal < sumber.indexOf('### 4.5 Arsip Belajar'), 'blok LANJUT_076b di §4.4');

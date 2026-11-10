@@ -10,6 +10,8 @@
 // - lintas akun: akun kelas 7 tidak melihat kartu kelas 12
 
 const { test, describe, before, after } = require('node:test');
+const { SALINAN_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -151,7 +153,7 @@ describe('LANJUT_071 §A: tombol "Mulai eksplorasi" SMP ke Gaya Belajar', () => 
 });
 
 describe('LANJUT_069 §B: teks sama persis dengan salinan-teks-lanjut.md (DRAF)', () => {
-  test('Setiap teks SMP dan kelas 10–11 ada persis di blok LANJUT_069', () => {
+  tesSalinan('Setiap teks SMP dan kelas 10–11 ada persis di blok LANJUT_069', () => {
     const blok = blokSalinan069();
     for (const kelas of ['7', '10']) {
       for (const t of teksTampil(isiJenjangSaya(kelas))) {
@@ -160,7 +162,7 @@ describe('LANJUT_069 §B: teks sama persis dengan salinan-teks-lanjut.md (DRAF)'
     }
   });
 
-  test('Kalimat netral Daftar Periksa kelas 10–11 ada persis di blok LANJUT_069', () => {
+  tesSalinan('Kalimat netral Daftar Periksa kelas 10–11 ada persis di blok LANJUT_069', () => {
     const blok = blokSalinan069();
     const t = teksDaftarPeriksaBukanKelas12('10');
     assert.ok(blok.includes(`"Bagian ini untuk kelas 12":** "${t}"`), t);

@@ -12,6 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const { test } = require('node:test');
+const { SALINAN_TEKS, LEMBAR_TEKS, tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { susunDokumen, daftarIsi, SUMBER, DOKUMEN } = require('../tools/kebijakan-privasi');
 
@@ -19,6 +20,13 @@ const AKAR = path.join(__dirname, '..', '..', '..');
 const APP = path.join(AKAR, 'LANJUT_App');
 const SURAT = path.join(AKAR, 'docs', 'surat-persetujuan-ortu-wali-DRAF.md');
 const KLAIM = path.join(AKAR, 'docs', 'kebijakan-v2-klaim-vs-kode.md');
+const MVP_PWA = path.join(AKAR, 'MVP-PWA');
+const tesDokumenKebijakan = tesLuarRepo(test, DOKUMEN);
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
+const tesKeduaDokumen = tesLuarRepo(test, DOKUMEN, SURAT);
+const tesSemuaTeks = tesLuarRepo(test, DOKUMEN, SURAT, SALINAN_TEKS, LEMBAR_TEKS, MVP_PWA);
+const tesKlaimDanSurat = tesLuarRepo(test, KLAIM, SURAT);
+const tesKlaim = tesLuarRepo(test, KLAIM);
 const baca = (p) => fs.readFileSync(p, 'utf8').replace(/\r\n/g, '\n');
 const rata = (s) => s.replace(/\s+/g, ' ');
 const kebijakan = JSON.parse(fs.readFileSync(SUMBER, 'utf8'));
@@ -34,19 +42,19 @@ function berkasDi(dir, akhiran) {
   });
 }
 
-test('dokumen DRAF berisi teks kebijakan yang sama persis dengan app (npm run dokumen-kebijakan)', () => {
+tesDokumenKebijakan('dokumen DRAF berisi teks kebijakan yang sama persis dengan app (npm run dokumen-kebijakan)', () => {
   const dok = baca(DOKUMEN);
   assert.equal(susunDokumen(dok), dok, 'jalankan npm run dokumen-kebijakan');
   for (const t of semuaTeks) assert.ok(dok.includes(t), t.slice(0, 60));
   assert.ok(dok.includes(`${daftarIsi(kebijakan).length} bagian menunggu keputusan Khalifa`));
 });
 
-test('ringkasan di salinan-teks-lanjut.md §4.13 sama persis dengan app', () => {
+tesSalinan('ringkasan di salinan-teks-lanjut.md §4.13 sama persis dengan app', () => {
   const salinan = baca(path.join(AKAR, 'docs', 'salinan-teks-lanjut.md'));
   kebijakan.ringkasan.forEach((t, i) => assert.ok(salinan.includes(`- **Ringkasan ${i + 1}:** ${t}\n`), `Ringkasan ${i + 1}`));
 });
 
-test('kedua dokumen bertanda DRAF untuk ahli hukum; surat punya tempat nomor, tanda tangan, dan nomor versi', () => {
+tesKeduaDokumen('kedua dokumen bertanda DRAF untuk ahli hukum; surat punya tempat nomor, tanda tangan, dan nomor versi', () => {
   const surat = baca(SURAT);
   for (const dok of [baca(DOKUMEN), surat]) assert.match(dok, /\*\*DRAF — wajib direview ahli hukum sebelum dipakai\.\*\*/);
   assert.match(surat, /\*\*Nomor:\*\* \.{5,}/);
@@ -108,7 +116,7 @@ test('LANJUT_056: kebijakan menyebut pengiriman ke penyedia AI, modul, web, peny
   for (const kata of WAJIB) assert.ok(teks.includes(kata), kata);
 });
 
-test('LANJUT_056: kalimat "tidak dikirim ke mana pun" dan variasinya tidak ada di kebijakan, surat, salinan, maupun teks app', () => {
+tesSemuaTeks('LANJUT_056: kalimat "tidak dikirim ke mana pun" dan variasinya tidak ada di kebijakan, surat, salinan, maupun teks app', () => {
   const TERLARANG = [
     /dikirim\s+ke\s+mana[\s-]*pun/i,
     /(tidak|belum|tak)\s+(pernah\s+)?(di)?kirim(kan)?\s+ke\s+(pihak\s+(lain|ketiga|luar)|luar(\s+negeri)?)\b/i,
@@ -136,7 +144,7 @@ test('LANJUT_056: kalimat "tidak dikirim ke mana pun" dan variasinya tidak ada d
   assert.deepEqual(temuan, []);
 });
 
-test('LANJUT_056: setiap [ISI] di kebijakan dan surat punya pengisi di kebijakan-v2-klaim-vs-kode.md', () => {
+tesKlaimDanSurat('LANJUT_056: setiap [ISI] di kebijakan dan surat punya pengisi di kebijakan-v2-klaim-vs-kode.md', () => {
   const klaim = baca(KLAIM);
   // `[ISI: ...]` (tiga titik) = contoh penulisan di catatan peninjau, bukan bagian yang harus diisi.
   const isi = (teks) => [...rata(teks).matchAll(/\[ISI: [^\]]+\]/g)].map((m) => m[0]).filter((x) => x !== '[ISI: ...]');
@@ -150,7 +158,7 @@ test('LANJUT_056: setiap [ISI] di kebijakan dan surat punya pengisi di kebijakan
   for (const b of baris) assert.match(b.split('|').at(-2), /Khalifa|guru BK|peninjau hukum|Sekolah/, b.slice(0, 60));
 });
 
-test('LANJUT_056: setiap klaim di tabel klaim-vs-kode punya bukti dan status', () => {
+tesKlaim('LANJUT_056: setiap klaim di tabel klaim-vs-kode punya bukti dan status', () => {
   const klaim = baca(KLAIM).split('## 8. Surat')[0];
   const baris = klaim.split('\n').filter((b) => /^\| [A-Z]+\d+[a-z]? \|/.test(b));
   assert.ok(baris.length >= 60, `jumlah klaim: ${baris.length}`);

@@ -11,14 +11,18 @@
 // Memakai kunciKonfigurasiGlobal: kesiapan hanya tersimpan bila kebijakan versi berlaku
 // diterima, dan persetujuan.test.js sementara menaikkan versi itu.
 
-const { test, describe, before, after } = require('node:test');
+const { test: tesDasar, describe, before, after } = require('node:test');
+const { jalurInduk, tesLuarRepo, adaSemua, malas } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool } = require('./bantuan');
 const { muatModulApp } = require('./muat-ts-app');
 const { pernyataanMigrasi, DIR_MIGRASI } = require('../src/db/jalankan-migrasi');
-const { benihChecklist } = require('../src/db/benih/benih');
+const { benihChecklist, DIR_DATA } = require('../src/db/benih/benih');
+
+const CHECKLIST_PWA = jalurInduk('MVP-PWA', 'data', 'checklist.json');
+const test = tesLuarRepo(tesDasar, DIR_DATA, CHECKLIST_PWA);
 const { ambilKonfigurasi } = require('../src/modul/persetujuan/persetujuan.layanan');
 const { KESIAPAN_UJIAN: KESIAPAN_SERVER } = require('../src/modul/pengguna/pengguna.skema');
 const { pesanSistem } = require('../src/modul/ngobrol/ngobrol.layanan');
@@ -30,8 +34,8 @@ const kesiapan = muatModulApp('lib/kesiapanUjian');
 const daftarPeriksa = muatModulApp('lib/daftarPeriksa');
 
 const BERKAS_MIGRASI = '023_kesiapan_ujian.sql';
-const CHECKLIST = JSON.parse(fs.readFileSync(path.join(AKAR_REPO, 'MVP-PWA', 'data', 'checklist.json'), 'utf8'));
-const KATEGORI = CHECKLIST.kategori.find((k) => k.id === 'persiapan-ujian');
+const CHECKLIST = malas(() => JSON.parse(fs.readFileSync(CHECKLIST_PWA, 'utf8')));
+const KATEGORI = malas(() => CHECKLIST().kategori.find((k) => k.id === 'persiapan-ujian'));
 
 let server;
 let baseUrl;
@@ -43,7 +47,7 @@ before(async () => {
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   versiKebijakan = (await ambilKonfigurasi()).versiKebijakan;
-  await benihChecklist(); // idempoten: isi berkas asli, nilai yang sama
+  if (adaSemua(DIR_DATA)) await benihChecklist(); // idempoten: isi berkas asli, nilai yang sama
 });
 
 after(async () => {
@@ -85,11 +89,11 @@ const ujianDi = async (q) => {
 
 describe('Persiapan Ujian: data checklist.json', () => {
   test('Kategori baru di akhir: tryout TKA, simulasi/gladi TKA, Level-In mapel TKA, tryout UTBK-SNBT', () => {
-    assert.ok(KATEGORI, 'kategori persiapan-ujian tidak ada');
-    assert.equal(KATEGORI.nama, 'Persiapan Ujian');
-    assert.equal(CHECKLIST.kategori.at(-1).id, 'persiapan-ujian');
+    assert.ok(KATEGORI(), 'kategori persiapan-ujian tidak ada');
+    assert.equal(KATEGORI().nama, 'Persiapan Ujian');
+    assert.equal(CHECKLIST().kategori.at(-1).id, 'persiapan-ujian');
     assert.deepEqual(
-      KATEGORI.butir.map((b) => [b.id, b.berlaku_untuk_kelas.join(','), b.berlaku_untuk_jalur.join(',')]),
+      KATEGORI().butir.map((b) => [b.id, b.berlaku_untuk_kelas.join(','), b.berlaku_untuk_jalur.join(',')]),
       [
         ['tryout-tka', '12', 'TKA'],
         ['simulasi-tka', '12', 'TKA'],
@@ -98,16 +102,16 @@ describe('Persiapan Ujian: data checklist.json', () => {
       ]
     );
     // Butir lama tidak berubah urutannya; butir baru menyambung di belakang.
-    const semua = CHECKLIST.kategori.flatMap((k) => k.butir);
+    const semua = CHECKLIST().kategori.flatMap((k) => k.butir);
     assert.deepEqual(semua.map((b) => b.urutan), semua.map((_, i) => i + 1));
-    assert.equal(CHECKLIST.total_butir, semua.length);
+    assert.equal(CHECKLIST().total_butir, semua.length);
   });
 
   test('Saran tim, bukan isi laman resmi: asal tim, tanpa url_sumber, tanpa tanggal, gladi bersyarat', () => {
-    assert.equal(KATEGORI.asal, 'tim');
-    assert.equal(KATEGORI.url_sumber, null);
-    for (const b of KATEGORI.butir) assert.doesNotMatch(b.judul, /\d/, `tanpa tanggal/angka: ${b.judul}`);
-    assert.match(KATEGORI.butir.find((b) => b.id === 'simulasi-tka').judul, /kalau sekolahmu mengadakannya$/);
+    assert.equal(KATEGORI().asal, 'tim');
+    assert.equal(KATEGORI().url_sumber, null);
+    for (const b of KATEGORI().butir) assert.doesNotMatch(b.judul, /\d/, `tanpa tanggal/angka: ${b.judul}`);
+    assert.match(KATEGORI().butir.find((b) => b.id === 'simulasi-tka').judul, /kalau sekolahmu mengadakannya$/);
   });
 
   test('Benih: kategori saran menimpa asal & url_sumber; kategori lain tetap memakai nilai berkas', async () => {
@@ -116,10 +120,10 @@ describe('Persiapan Ujian: data checklist.json', () => {
       ['persiapan-ujian', 'berkas']
     );
     const ujian = baris.filter((b) => b.kategori_id === 'persiapan-ujian');
-    assert.deepEqual(ujian.map((b) => b.id), KATEGORI.butir.map((b) => b.id));
+    assert.deepEqual(ujian.map((b) => b.id), KATEGORI().butir.map((b) => b.id));
     for (const b of ujian) assert.deepEqual([b.asal, b.url_sumber], ['tim', null], b.id);
     for (const b of baris.filter((x) => x.kategori_id === 'berkas')) {
-      assert.deepEqual([b.asal, b.url_sumber], [CHECKLIST.asal, CHECKLIST.url_sumber], b.id);
+      assert.deepEqual([b.asal, b.url_sumber], [CHECKLIST().asal, CHECKLIST().url_sumber], b.id);
     }
   });
 });
@@ -134,7 +138,7 @@ describe('Persiapan Ujian: GET /konten/checklist tersaring kelas & jalur', () =>
   test('Kelas 11 jalur TKA: hanya cek Level-In; butir lama tetap tampil seperti sebelumnya', async () => {
     assert.deepEqual(await ujianDi('?kelas=11&jalur_seleksi=TKA'), ['levelin-mapel-tka']);
     const r = await panggil('GET', '/konten/checklist?kelas=12&jalur_seleksi=SNBP');
-    const lama = CHECKLIST.kategori
+    const lama = CHECKLIST().kategori
       .filter((k) => k.id !== 'persiapan-ujian')
       .flatMap((k) => k.butir)
       .filter((b) => b.berlaku_untuk_kelas.includes('12') && b.berlaku_untuk_jalur.includes('SNBP'))

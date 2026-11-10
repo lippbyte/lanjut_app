@@ -11,6 +11,8 @@
 // Mapel ekonomi/informatika: tidak dipakai fixture kartu kurasi tes lain.
 
 const { test, describe, before, after } = require('node:test');
+const { SALINAN_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
@@ -247,7 +249,7 @@ describe('LANJUT_077 §B: Data Akun SMP tanpa "kelas 12"', () => {
 });
 
 describe('LANJUT_077: salinan teks', () => {
-  test('Teks baru tercatat DRAF di salinan-teks-lanjut.md (§4.18 kartu Beranda, §4.11 Data Akun SMP)', () => {
+  tesSalinan('Teks baru tercatat DRAF di salinan-teks-lanjut.md (§4.18 kartu Beranda, §4.11 Data Akun SMP)', () => {
     const sumber = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8').replace(/\r\n/g, '\n');
     // Setiap blok LANJUT_077: kepala (paragraf ber-DRAF) + butirnya, sampai judul berikutnya atau "---".
     const blok = [];

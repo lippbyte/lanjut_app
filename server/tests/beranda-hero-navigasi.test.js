@@ -5,6 +5,9 @@
 // (muat-ts-app.js); layar React dicek dari sumbernya.
 
 const { test, describe } = require('node:test');
+const { SALINAN_TEKS, LEMBAR_TEKS, tesLuarRepo, malas } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
+const tesDokumenTeks = tesLuarRepo(test, SALINAN_TEKS, LEMBAR_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -295,7 +298,7 @@ describe('LANJUT_074 §E: "Jalur Saya" dan "Data Akun"', () => {
     return hasil;
   }
 
-  test('Label lama tidak ada lagi di kode app, server, README, salinan teks, dan lembar review', () => {
+  tesDokumenTeks('Label lama tidak ada lagi di kode app, server, README, salinan teks, dan lembar review', () => {
     const berkas = [
       ...['app', 'components', 'lib', 'hooks', 'providers', 'api', 'theme'].flatMap((d) => berkasDi(path.join(AKAR_APP, d), ['.ts', '.tsx', '.json'])),
       ...['src', 'tools', 'config'].flatMap((d) => berkasDi(path.join(AKAR_APP, 'server', d), ['.js', '.json'])),
@@ -407,21 +410,21 @@ describe('LANJUT_074 §F: ucapan → teks', () => {
 });
 
 describe('LANJUT_074: salinan teks', () => {
-  const sumber = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
+  const sumber = malas(() => fs.readFileSync(SALINAN_TEKS, 'utf8'));
   /** Semua blok yang kepalanya "**LANJUT_App (LANJUT_0xx)", sampai judul bagian berikutnya atau blok lain. */
   function blokTask(task) {
     const hasil = [];
-    let awal = sumber.indexOf(`**LANJUT_App (${task})`);
+    let awal = sumber().indexOf(`**LANJUT_App (${task})`);
     while (awal >= 0) {
-      const sisa = sumber.slice(awal + 1);
+      const sisa = sumber().slice(awal + 1);
       const akhir = sisa.search(/\n(?:### |\*\*LANJUT_App \()/);
-      hasil.push(akhir < 0 ? sumber.slice(awal) : sumber.slice(awal, awal + 1 + akhir));
-      awal = sumber.indexOf(`**LANJUT_App (${task})`, awal + 1);
+      hasil.push(akhir < 0 ? sumber().slice(awal) : sumber().slice(awal, awal + 1 + akhir));
+      awal = sumber().indexOf(`**LANJUT_App (${task})`, awal + 1);
     }
     return hasil;
   }
 
-  test('Teks baru LANJUT_074 tercatat DRAF (Beranda & navigasi, dan tombol mikrofon Ngobrol)', () => {
+  tesSalinan('Teks baru LANJUT_074 tercatat DRAF (Beranda & navigasi, dan tombol mikrofon Ngobrol)', () => {
     const blok = blokTask('LANJUT_074');
     assert.equal(blok.length, 2, 'dua blok: §4.1 (Beranda, tab, nama) dan §4.15 (mikrofon)');
     for (const b of blok) assert.match(b.slice(0, b.indexOf('\n\n')), /\bDRAF\b/);
@@ -438,11 +441,11 @@ describe('LANJUT_074: salinan teks', () => {
     }
   });
 
-  test('Teks lama yang menunjuk ke halaman akun ikut diganti "Data Akun"; "Sumber:" carousel tetap tercatat', () => {
+  tesSalinan('Teks lama yang menunjuk ke halaman akun ikut diganti "Data Akun"; "Sumber:" carousel tetap tercatat', () => {
     for (const baru of ['Isi kelas di Data Akun, ya.', 'Isi kelas di Data Akun · Buka Jenjang Saya', 'Buka Data Akun · Keluar', 'Nanti bisa diubah di Data Akun.', 'Isi kelasmu di Data Akun', '**Data Akun — baris:**', '**Data Akun, kartu Kemajuan:**']) {
-      assert.ok(sumber.includes(baru), `salinan belum memuat "${baru}"`);
+      assert.ok(sumber().includes(baru), `salinan belum memuat "${baru}"`);
     }
-    assert.ok(!/\b(di|Buka|Ubah) Jalur Saya\b|\*\*Jalur Saya[ ,:—]/.test(sumber), 'masih ada teks yang menyebut halaman akun "Jalur Saya"');
+    assert.ok(!/\b(di|Buka|Ubah) Jalur Saya\b|\*\*Jalur Saya[ ,:—]/.test(sumber()), 'masih ada teks yang menyebut halaman akun "Jalur Saya"');
     const [blok073] = blokTask('LANJUT_073');
     assert.ok(blok073.includes('Sumber: [sumber]'));
   });

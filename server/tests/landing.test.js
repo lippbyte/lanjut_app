@@ -6,16 +6,19 @@
 // `npm run landing-kebijakan` (tools/landing-kebijakan.js).
 
 const { test } = require('node:test');
+const { tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 
 const { hasilkan, DATA, SUMBER } = require('../tools/landing-kebijakan');
 
-test('landing-kebijakan: data kebijakan di landing sama dengan lib/kebijakan-privasi.json (tidak basi)', () => {
+const tesLanding = tesLuarRepo(test, DATA);
+
+tesLanding('landing-kebijakan: data kebijakan di landing sama dengan lib/kebijakan-privasi.json (tidak basi)', () => {
   assert.equal(fs.readFileSync(DATA, 'utf8').replace(/\r\n/g, '\n'), hasilkan());
 });
 
-test('landing-kebijakan: hanya bagian yang tampil (status, versi, ringkasan, isi), isi dan urutan apa adanya', () => {
+tesLanding('landing-kebijakan: hanya bagian yang tampil (status, versi, ringkasan, isi), isi dan urutan apa adanya', () => {
   const sumber = JSON.parse(fs.readFileSync(SUMBER, 'utf8'));
   const data = JSON.parse(fs.readFileSync(DATA, 'utf8'));
   assert.deepEqual(Object.keys(data), ['status', 'versi', 'ringkasan', 'isi']);

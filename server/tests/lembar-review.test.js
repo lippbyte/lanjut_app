@@ -12,9 +12,13 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { test, after } = require('node:test');
+const { test: tesDasar, after } = require('node:test');
+const { tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { acak, pool } = require('./bantuan');
+const { DIR_DATA } = require('../src/db/benih/benih');
+
+const test = tesLuarRepo(tesDasar, DIR_DATA);
 const { daftarBelum } = require('../src/db/verifikasi/verifikasi-konten');
 const { susunLembar, jalankan, STANDAR_PEMERIKSAAN } = require('../src/db/verifikasi/lembar-review');
 
