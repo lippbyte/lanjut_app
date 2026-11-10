@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Article, H1 } from '@expo/html-elements';
+import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
@@ -26,6 +27,7 @@ import { useSaranHarian } from '../../hooks/useLevelIn';
 import { useMapel } from '../../hooks/useMapel';
 import { namaMapel } from '../../lib/arsip';
 import {
+  KARTU_PORTOFOLIO,
   apakahPunyaKemajuan,
   bannerBeranda,
   daftarKartuBeranda,
@@ -38,6 +40,7 @@ import {
   type BagianBeranda,
 } from '../../lib/beranda';
 import { TEKS_EVENT, eventTerdekat, labelJenis, selisihHari, teksHitungMundur, untukPersiapanEvent } from '../../lib/eventSekolah';
+import { portofolioAktif } from '../../lib/fiturApp';
 import type { Kelas } from '../../lib/jenjang';
 import { TEKS_LEVELIN, latihanBerikutnya } from '../../lib/levelin';
 import {
@@ -55,6 +58,7 @@ import {
   BilahProgres,
   Ikon,
   Kartu,
+  KartuPintu,
   SeksiJudul,
   Sumber,
   Tombol,
@@ -62,6 +66,8 @@ import {
 } from '../ui';
 
 const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
+// LANJUT_011: tersembunyi sampai saklar build dinyalakan (teks masih draf).
+const PORTOFOLIO = portofolioAktif(Constants.expoConfig?.extra);
 
 /**
  * Tab Beranda — padanan MVP-PWA/beranda.html. Dari atas (LANJUT_074,
@@ -135,6 +141,7 @@ export function LinimasaScreen() {
     tampilBanner: banner.length > 0,
     tampilPersiapan: persiapan !== null,
     tampilLatihan: latihan !== null,
+    tampilPortofolio: PORTOFOLIO,
   });
 
   const bagian: Record<BagianBeranda, React.ReactNode> = {
@@ -187,6 +194,7 @@ export function LinimasaScreen() {
         })}
       </View>
     ),
+    portofolio: <KartuPintu ikon="foto" judul={KARTU_PORTOFOLIO.judul} keterangan={KARTU_PORTOFOLIO.keterangan} onPress={() => router.push('/portofolio' as any)} />,
     // LANJUT_065 §B: kartu "Mulai dari Sini" untuk akun baru / belum punya kemajuan.
     mulai_dari_sini: <KartuMulaiDariSini kelas={kelas} onPress={(href) => router.push(href as any)} />,
     // LANJUT_035, LANJUT_064, LANJUT_066: Info Penting terverifikasi HANYA untuk kelas 12.

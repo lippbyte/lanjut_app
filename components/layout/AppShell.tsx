@@ -1,10 +1,12 @@
 import React from 'react';
 import { Header, Main, Nav } from '@expo/html-elements';
+import Constants from 'expo-constants';
 import { Link, usePathname, useRouter } from 'expo-router';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { judulEksplorasi } from '../../lib/eksplorasiKampus';
+import { portofolioAktif } from '../../lib/fiturApp';
 import { TAB_BAWAH, TINGGI_IKON_TAB, UKURAN_IKON_TAB_TENGAH, UKURAN_TAB_TENGAH, tabAktif, type HrefTab } from '../../lib/navigasi';
 import { useSesi } from '../../providers/AuthProvider';
 import { color, font, gradient, layout, radius, shadow, spacing, teks } from '../../theme/tokens';
@@ -43,6 +45,10 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/terima-kebijakan': 'Kebijakan Privasi',
   // 15 Okt 2026 — dari Ngobrol yang terkunci.
   '/persetujuan-ortu': 'Persetujuan Orang Tua/Wali',
+  // LANJUT_011 — dari Beranda (DRAF, docs/draf-teks-portofolio.md). Hanya bila saklar build menyala.
+  ...(portofolioAktif(Constants.expoConfig?.extra)
+    ? { '/portofolio': 'Portofolio', '/portofolio-tulis': 'Tulis Catatan', '/portofolio-butir': 'Catatan' }
+    : {}),
 };
 
 // Tab yang tetap aktif untuk halaman anak: lib/navigasi.ts `tabAktif` (TAB_INDUK,

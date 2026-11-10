@@ -66,6 +66,10 @@ if (profilEas !== undefined && !PROFIL_UJI.includes(profilEas) && IZINKAN_HTTP) 
   );
 }
 
+// LANJUT_011: portofolio MATI kecuali build dibuat dengan EXPO_PUBLIC_PORTOFOLIO=1. Saat mati,
+// plugin pemilih foto tidak dipasang dan izin kamera dicabut, jadi APK tidak meminta apa pun untuknya.
+const PORTOFOLIO_AKTIF = process.env.EXPO_PUBLIC_PORTOFOLIO === '1';
+
 const config: ExpoConfig = {
   name: 'LANJUT',
   slug: 'lanjut',
@@ -86,6 +90,18 @@ const config: ExpoConfig = {
     // LANJUT_086: build rilis ditandatangani keystore rilis di luar repo (LANJUT_KEYSTORE_PROPS);
     // tanpa keystore, build rilis gagal, tidak jatuh ke debug.keystore.
     './plugins/withKeystoreRilis',
+    ...(PORTOFOLIO_AKTIF
+      ? [
+          [
+            'expo-image-picker',
+            {
+              photosPermission: 'LANJUT membuka galeri saat kamu memilih foto untuk catatan portofoliomu.',
+              cameraPermission: 'LANJUT memakai kamera saat kamu mengambil foto untuk catatan portofoliomu.',
+              microphonePermission: false,
+            },
+          ] as [string, Record<string, unknown>],
+        ]
+      : []),
   ],
   ios: {
     supportsTablet: true,
@@ -100,6 +116,7 @@ const config: ExpoConfig = {
       monochromeImage: './assets/android-icon-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
+    ...(PORTOFOLIO_AKTIF ? {} : { blockedPermissions: ['android.permission.CAMERA'] }),
   },
   web: {
     favicon: './assets/favicon.png',
@@ -124,6 +141,8 @@ const config: ExpoConfig = {
     // LANJUT_009: unduh data dan hapus akun MATI kecuali build dibuat dengan
     // EXPO_PUBLIC_KELOLA_DATA_AKUN=1 (dibaca lib/fiturApp.ts). Menunggu persetujuan teks.
     kelolaDataAkun: process.env.EXPO_PUBLIC_KELOLA_DATA_AKUN === '1',
+    // LANJUT_011: dibaca lib/fiturApp.ts. Rutenya dikeluarkan dari bundel di metro.config.js.
+    portofolio: PORTOFOLIO_AKTIF,
     // LANJUT_083: masuk dengan Google (lib/googleMasuk.ts). Client ID OAuth bersifat
     // publik; Client Secret TIDAK pernah diisi di app. Kosong = tombol Google tidak
     // tampil. Android/iOS juga butuh alamat halaman penerus di domain landing

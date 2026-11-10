@@ -14,6 +14,13 @@ const IKON = {
     </>
   ),
   panah: <Path d="m9 6 6 6-6 6" />,
+  foto: (
+    <>
+      <Rect x="3" y="5" width="18" height="14" rx="2" />
+      <Circle cx="9" cy="10" r="1.5" />
+      <Path d="m4 17 5-4 3 2 3-3 5 4" />
+    </>
+  ),
   beranda: (
     <>
       <Path d="M3 10.5 12 3l9 7.5" />

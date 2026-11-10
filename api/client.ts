@@ -101,6 +101,74 @@ type ApiFetchOpsi = {
   query?: Record<string, string | undefined>;
 };
 
+const urlApi = (path: string) => BASE_URL!.replace(/\/$/, '') + path;
+
+/**
+ * Unggah dengan kemajuan (LANJUT_011). Memakai XMLHttpRequest, karena fetch tidak melaporkan
+ * kemajuan pengiriman. Penanganan galatnya sama dengan apiFetch.
+ */
+export function apiUnggah<T>(
+  path: string,
+  opsi: { token: string; body: FormData; onKemajuan?: (persen: number) => void }
+): Promise<T> {
+  return new Promise((selesai, gagal) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', urlApi(path));
+    xhr.setRequestHeader('Authorization', `Bearer ${opsi.token}`);
+    xhr.timeout = 120000;
+    if (xhr.upload) {
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable && e.total) opsi.onKemajuan?.(Math.round((e.loaded / e.total) * 100));
+      };
+    }
+    const putus = () => gagal(new ApiError(0, 'Unggahan terputus.', 'JARINGAN'));
+    xhr.onerror = putus;
+    xhr.ontimeout = putus;
+    xhr.onload = () => {
+      let json: ResponsSukses<T> | ResponsGalat;
+      try {
+        json = JSON.parse(xhr.responseText);
+      } catch {
+        gagal(new ApiError(xhr.status, `Respons bukan JSON (status ${xhr.status}) dari ${path}`));
+        return;
+      }
+      if (json.ok) {
+        selesai(json.data);
+        return;
+      }
+      if (xhr.status === 401 && KODE_SESI_TIDAK_SAH.has(json.galat.kode)) pendengarSesiBerakhir?.(opsi.token);
+      gagal(new ApiError(xhr.status, json.galat.pesan, json.galat.kode, json.galat.medan));
+    };
+    xhr.send(opsi.body);
+  });
+}
+
+/**
+ * Mengambil gambar dari rute yang menuntut token, sebagai data URI di memori (LANJUT_011). Komponen
+ * gambar tidak mengambilnya sendiri, karena di Android hasilnya masuk cache disk.
+ */
+export async function apiAmbilDataUri(path: string, token: string): Promise<string> {
+  let res: Response;
+  try {
+    res = await fetch(urlApi(path), { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+  } catch (err) {
+    throw new ApiError(0, `Gagal mengambil gambar: ${(err as Error).message}`, 'JARINGAN');
+  }
+  if (!res.ok) {
+    const json = (await res.json().catch(() => null)) as ResponsGalat | null;
+    const kode = json?.galat?.kode;
+    if (res.status === 401 && kode && KODE_SESI_TIDAK_SAH.has(kode)) pendengarSesiBerakhir?.(token);
+    throw new ApiError(res.status, json?.galat?.pesan ?? `Status ${res.status}`, kode);
+  }
+  const blob = await res.blob();
+  return new Promise((selesai, gagal) => {
+    const pembaca = new FileReader();
+    pembaca.onerror = () => gagal(new ApiError(res.status, 'Gambar tidak terbaca.'));
+    pembaca.onload = () => selesai(String(pembaca.result));
+    pembaca.readAsDataURL(blob);
+  });
+}
+
 /**
  * Satu fungsi fetch generik untuk seluruh API — tiap hook memanggil ini
  * dengan path relatif (mis. "/konten/linimasa"), bukan menyusun `fetch()`
