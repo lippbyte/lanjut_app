@@ -1,0 +1,36 @@
+{
+  "_catatan": "Entitas `jalur_minat` (K6, LANJUT_008 seri v2): tiga jalur pengembangan. Jangan tertukar dengan `jalur_seleksi` (SNBP/SNBT/Mandiri). Belum ada rute atau layar yang menampilkan berkas ini.",
+  "_peringatan": "Setiap `deskripsi_singkat` di bawah masih DRAF dan menunggu persetujuan teks Khalifa (`status_teks`: draf). Jangan ditampilkan ke siswa sebelum disetujui.",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "status": "belum_diverifikasi",
+  "diperiksa_pada": null,
+  "url_sumber": null,
+  "asal": "Product Strategy v2.1",
+  "data": [
+    {
+      "id": "melanjutkan",
+      "nama": "Melanjutkan",
+      "deskripsi_singkat": "Jalur untuk kamu yang ingin meneruskan pendidikan setelah lulus sekolah.",
+      "status_teks": "draf",
+      "urutan": 1,
+      "aktif": true
+    },
+    {
+      "id": "bekerja",
+      "nama": "Bekerja",
+      "deskripsi_singkat": "Jalur untuk kamu yang ingin masuk ke dunia kerja setelah lulus sekolah.",
+      "status_teks": "draf",
+      "urutan": 2,
+      "aktif": true
+    },
+    {
+      "id": "wirausaha",
+      "nama": "Wirausaha",
+      "deskripsi_singkat": "Jalur untuk kamu yang ingin merintis usaha sendiri.",
+      "status_teks": "draf",
+      "urutan": 3,
+      "aktif": true
+    }
+  ]
+}
