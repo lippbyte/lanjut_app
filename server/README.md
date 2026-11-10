@@ -64,8 +64,13 @@ kosong — pesan galatnya menyebutkan variabel mana yang kurang.
 
 ```bash
 npm run migrasi   # menjalankan server/src/db/migrasi/001..006 yang belum jalan
-npm run benih     # mengisi konten dari MVP-PWA/data/*.json (idempoten, aman diulang)
+npm run benih     # mengisi konten dari server/data-konten/*.json (idempoten, aman diulang)
 ```
+
+**Sumber data konten (K16).** `server/data-konten/` adalah satu-satunya sumber
+data konten. Perubahan konten dilakukan di folder ini, lalu jalankan
+`npm run benih`. `MVP-PWA/data/` di repo induk adalah arsip beku: jangan
+disunting lagi.
 
 Migrasi dicatat di tabel `_migrasi` — hanya berkas yang belum pernah
 dijalankan yang dieksekusi. Migrasi **tidak pernah** disunting setelah
@@ -80,7 +85,7 @@ membatalkan migrasi **terakhir** yang dijalankan. Cadangkan dulu dengan
 npm run migrasi-turun -- 029_ganti_nama_jalur_seleksi.sql
 ```
 
-Benih membaca `MVP-PWA/data/*.json` langsung (tidak menyalin isinya ke SQL) dan
+Benih membaca `server/data-konten/*.json` langsung (tidak menyalin isinya ke SQL) dan
 memakai `INSERT ... ON DUPLICATE KEY UPDATE` — aman dijalankan berkali-kali.
 
 **Benih aman dijalankan ulang kapan saja — tanda "sudah dicek" tidak hilang
@@ -241,7 +246,7 @@ tanggal riset disusun, jadi semua profil mulai sebagai belum terverifikasi.
   varian SQL statis tersendiri (`*Kurasi`) yang selalu menyaring
   `sumber = 'resmi' AND dihapus_pada IS NULL`, termasuk di `UPDATE`-nya.
 - `npm run lembar-review` (`src/db/verifikasi/lembar-review.js`) menyusun
-  lembar review Markdown dari basis data (SELECT saja) + `MVP-PWA/data/`.
+  lembar review Markdown dari basis data (SELECT saja) + `server/data-konten/`.
   Bawaannya ditulis ke `docs/verifikasi/lembar-review-konten.md`;
   `--keluar=berkas.md` untuk lokasi lain. Bagian "Standar pemeriksaan" ditulis
   dari `STANDAR_PEMERIKSAAN` di berkas yang sama, jadi tidak hilang saat
@@ -946,7 +951,7 @@ sama dengan `.env.example`:
 | `CORS_ORIGINS` (atau `ASAL_DIIZINKAN`) | **ya** | `https://app.GANTI-DOMAIN` | Asal web yang boleh memanggil API, dipisah koma, **tidak pernah** `*` |
 | `SESI_UMUR_HARI` | tidak (bawaan `90`) | `90` | Umur sesi login (hari, bergulir) |
 | `TRUST_PROXY` (atau `JUMLAH_PROXY`) | tidak (bawaan `0`) | `1` | Jumlah reverse proxy tepercaya di depan server — lihat di bawah |
-| `LOKASI_DATA_KONTEN` | tidak (bawaan `../../MVP-PWA/data`) | `data-konten` | Folder berisi berkas `*.json` konten untuk `npm run benih` — lihat di bawah |
+| `LOKASI_DATA_KONTEN` | tidak (bawaan `server/data-konten`) | `data-konten` | Folder berisi berkas `*.json` konten untuk `npm run benih` — lihat di bawah |
 | `OPENROUTER_API_KEY` | tidak (bawaan kosong) | *(rahasia, biarkan kosong dulu)* | Kunci AI Ngobrol (§2d). Kosong = AI tidak tersedia (`503 AI_TIDAK_TERSEDIA`), atau balasan uji coba selama `ai_aktif = 0`; server tetap jalan. Hanya di `.env` server, jangan di app. Isi sesudah daftar periksa keselamatan di `docs/kesiapan-rilis-uji.md` beres, dengan batas kredit di dasbor OpenRouter |
 
 Koneksi basis data memakai **lima variabel terpisah** (`DB_HOST`, `DB_PORT`,
@@ -988,8 +993,7 @@ cp .env.production.example .env
 # 3. Buat semua tabel (hanya menjalankan migrasi yang belum pernah jalan)
 npm run migrasi
 
-# 4. Isi konten dari berkas *.json (aman diulang). Kalau yang diunggah hanya
-#    folder server/, siapkan dulu folder data-konten — lihat di bawah.
+# 4. Isi konten dari server/data-konten/*.json (aman diulang) — lihat di bawah.
 npm run benih
 
 # 5. (Opsional) Tandai konten yang sudah dicek ke sumber resmi — tanda ini
@@ -1013,39 +1017,21 @@ Catatan:
 ### Data konten untuk `npm run benih` (`LOKASI_DATA_KONTEN`)
 
 Isi aplikasi (jadwal Linimasa, daftar prodi, Daftar Periksa, dan lainnya)
-berasal dari berkas-berkas `.json` di folder **`MVP-PWA/data`** di repo.
-`npm run benih` menyalin isi berkas-berkas itu ke basis data.
+berasal dari berkas-berkas `.json` di folder **`server/data-konten`**.
+`npm run benih` menyalin isi berkas-berkas itu ke basis data. Folder ini ikut
+terbawa saat repo di-`git clone` atau folder `server/` diunggah, jadi tidak ada
+yang perlu disiapkan. Baris pertama hasil benih menyebut folder yang dipakai,
+mis. `[benih] data konten: /home/akun/lanjut/server/data-konten`.
 
-- **Kalau seluruh repo ada di server** (mis. hasil `git clone`): tidak perlu
-  apa-apa. Benih otomatis membaca `MVP-PWA/data` seperti di laptop.
-- **Kalau yang diunggah hanya folder `server/`** (misalnya lewat cPanel), ikuti
-  langkah berikut:
-
-1. Di komputer, buka folder repo lalu masuk ke **`MVP-PWA`**. Klik kanan
-   folder **`data`** → *Compress / Kirim ke → Folder terkompresi (zip)*.
-2. Unggah berkas zip itu ke folder `server/` di hosting (di cPanel: *File
-   Manager* → masuk ke folder aplikasi → *Upload*).
-3. Ekstrak zip-nya di sana (di cPanel: klik kanan berkas zip → *Extract*),
-   lalu **ganti nama** folder hasil ekstrak dari `data` menjadi
-   **`data-konten`**. Pastikan berkas seperti `prodi.json` dan
-   `linimasa.json` langsung berada di dalam `server/data-konten/` — bukan di
-   `server/data-konten/data/`.
-4. Tambahkan baris ini ke berkas `.env` di folder `server/` (atau ke
-   pengaturan *environment variable* di hosting):
-   ```
-   LOKASI_DATA_KONTEN=data-konten
-   ```
-5. Jalankan `npm run benih`. Baris pertama hasilnya menyebut folder yang
-   dipakai, mis. `[benih] data konten: /home/akun/lanjut/server/data-konten`.
-
-Kalau foldernya salah atau belum lengkap, benih **berhenti sebelum menulis
-apa pun** dan menyebut folder yang dicari serta berkas yang kurang. Isi
-`LOKASI_DATA_KONTEN` boleh path lengkap (mis. `/home/akun/data-konten`)
-atau path relatif terhadap folder `server/` (mis. `data-konten`).
+`LOKASI_DATA_KONTEN` hanya perlu diisi bila ingin membaca folder lain. Isinya
+boleh path lengkap (mis. `/home/akun/data-lain`) atau path relatif terhadap
+folder `server/`. Kalau foldernya salah atau belum lengkap, benih **berhenti
+sebelum menulis apa pun** dan menyebut folder yang dicari serta berkas yang
+kurang.
 
 **Setiap kali isi berkas JSON diubah** (mis. tanggal Linimasa diperbarui),
-ulangi langkah 1–3 untuk menimpa folder `data-konten` di server, lalu
-jalankan `npm run benih` lagi. Ingat: konten yang isinya berubah akan kembali
+ubah di `server/data-konten`, perbarui folder itu di server (tarik perubahan
+terbaru, atau unggah ulang foldernya), lalu jalankan `npm run benih` lagi. Ingat: konten yang isinya berubah akan kembali
 "belum diverifikasi" dan perlu ditandai ulang (bagian 2 dan 2a).
 
 ### Memastikan server sehat
@@ -1157,7 +1143,7 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 ### Penyimpangan kecil dari SDD (dengan alasan)
 
 1. **Tabel `kategori_checklist` ditambahkan** (migrasi 002), di luar daftar
-   tabel eksplisit §3.4. `MVP-PWA/data/checklist.json` mengelompokkan butir
+   tabel eksplisit §3.4. `server/data-konten/checklist.json` mengelompokkan butir
    checklist ke dalam kategori tampilan ("Berkas Pendaftaran", dst.), dan
    catatan di berkas JSON itu sendiri menyarankan "kalau nanti masuk basis
    data, kategori sebaiknya jadi tabel sendiri, bukan teks bebas." §3.4 SDD
@@ -1234,9 +1220,9 @@ curl -s "http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur_seleksi=SN
 - Tiap butir di respons kini punya `berlaku_untuk_rumpun`: `null` (umum) atau
   array rumpun.
 - Butir khusus rumpun belum ada; mengisinya kerja tim konten, lewat
-  `MVP-PWA/data/checklist.json` + `npm run benih` (lihat di bawah).
+  `server/data-konten/checklist.json` + `npm run benih` (lihat di bawah).
 
-**Menambah butir khusus rumpun (tim konten).** Di `MVP-PWA/data/checklist.json`,
+**Menambah butir khusus rumpun (tim konten).** Di `server/data-konten/checklist.json`,
 beri butir medan opsional `berlaku_untuk_rumpun` berisi array nama rumpun,
 ditulis **persis** seperti `rumpun` di `prodi.json`:
 

@@ -12,14 +12,14 @@
 // di berkas ini supaya tidak berebut baris yang sama antar-proses.
 
 const { test: tesDasar, before, after, mock } = require('node:test');
-const { jalurInduk, tesLuarRepo, adaSemua } = require('./luar-repo');
+const { jalurDataKonten, tesLuarRepo, adaSemua } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { nyalakanServer, urlDari, pool } = require('./bantuan');
 const kontenRepo = require('../src/modul/konten/konten.repo');
 const { benihProfilProdi, DIR_DATA } = require('../src/db/benih/benih');
 
 const test = tesLuarRepo(tesDasar, DIR_DATA);
-const tesProfilPwa = tesLuarRepo(test, jalurInduk('MVP-PWA', 'data', 'profil-prodi.json'));
+const tesProfilKonten = tesLuarRepo(test, jalurDataKonten('profil-prodi.json'));
 const { ubahStatus, daftarBelum, GalatPakai } = require('../src/db/verifikasi/verifikasi-konten');
 
 const ASAL_UJI = 'uji-031';
@@ -274,8 +274,8 @@ async function barisFixture() {
 
 const tampil = async () => (await ambil('/konten/eksplorasi-tujuan')).json.data.some((p) => p.id === prodi.id);
 
-tesProfilPwa('benih profil asli: semua entri profil-prodi.json ada di tabel dengan nama sesuai prodi', async () => {
-  const berkas = require('../../../MVP-PWA/data/profil-prodi.json');
+tesProfilKonten('benih profil asli: semua entri profil-prodi.json ada di tabel dengan nama sesuai prodi', async () => {
+  const berkas = require(jalurDataKonten('profil-prodi.json'));
   const [baris] = await pool.query('SELECT id, nama FROM profil_prodi WHERE id IN (?)', [berkas.data.map((p) => p.id)]);
   assert.equal(baris.length, berkas.data.length);
   for (const p of berkas.data) assert.equal(baris.find((b) => b.id === p.id).nama, p.nama);
@@ -283,8 +283,8 @@ tesProfilPwa('benih profil asli: semua entri profil-prodi.json ada di tabel deng
 
 // LANJUT_044: jalur berkas → tabel untuk penanda "Perkiraan" (jalur tabel →
 // respons diuji dengan fixture di atas).
-tesProfilPwa('benih profil asli: status_sumber tiap profil di tabel sama persis dengan profil-prodi.json', async () => {
-  const berkas = require('../../../MVP-PWA/data/profil-prodi.json');
+tesProfilKonten('benih profil asli: status_sumber tiap profil di tabel sama persis dengan profil-prodi.json', async () => {
+  const berkas = require(jalurDataKonten('profil-prodi.json'));
   const [baris] = await pool.query('SELECT id, status_sumber FROM profil_prodi WHERE id IN (?)', [berkas.data.map((p) => p.id)]);
   for (const p of berkas.data) {
     const b = baris.find((x) => x.id === p.id);

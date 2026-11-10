@@ -5,10 +5,11 @@ const os = require('os');
 const path = require('path');
 const { test, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
-const { SAKLAR, PENANDA_HILANG, tesLuarRepo, alasanLewati, adaSemua, malas } = require('./luar-repo');
+const { SAKLAR, PENANDA_HILANG, PENANDA_DALAM_HILANG, jalurDataKonten, tesLuarRepo, alasanLewati, adaSemua, malas } = require('./luar-repo');
 
 const ADA = __filename;
 const HILANG = path.join(os.tmpdir(), `lanjut-luar-repo-tidak-ada-${process.pid}`, 'berkas.md');
+const HILANG_DALAM_REPO = jalurDataKonten(`tidak-ada-${process.pid}.json`);
 const saklarAwal = process.env[SAKLAR];
 
 afterEach(() => {
@@ -86,6 +87,28 @@ test('bungkusan menjaga opsi tes, bentuk (nama, opsi, fn), dan boleh ditumpuk', 
   assert.equal(typeof rekam.opsi.skip, 'string', 'lapisan luar yang path-nya hilang tetap melewati tes');
 });
 
+test('path di dalam repo hilang: tetap gagal walau saklar menyala, dan tidak dihitung sebagai path luar', () => {
+  process.env[SAKLAR] = '1';
+  const rekam = rekamTes();
+  let jalan = false;
+  tesLuarRepo(rekam, HILANG_DALAM_REPO)('contoh', () => {
+    jalan = true;
+  });
+  assert.equal(rekam.opsi.skip, undefined);
+  assert.throws(rekam.fn, (galat) => {
+    assert.ok(galat.message.includes(PENANDA_DALAM_HILANG));
+    assert.ok(!galat.message.includes(PENANDA_HILANG), 'bukan kegagalan karena path luar');
+    assert.ok(galat.message.includes(HILANG_DALAM_REPO));
+    return true;
+  });
+  assert.equal(jalan, false);
+});
+
+test('path dalam repo dan path luar sama-sama hilang: saklar tidak melewati tes', () => {
+  process.env[SAKLAR] = '1';
+  assert.equal(alasanLewati(HILANG, HILANG_DALAM_REPO), false);
+});
+
 test('malas: membaca sekali dan hanya saat dipanggil', () => {
   let panggil = 0;
   const nilai = malas(() => {
@@ -108,4 +131,15 @@ test('setiap berkas tes yang menunjuk ke luar LANJUT_App memakai aturan luar-rep
       return PENUNJUK.some((p) => p.test(isi)) && !isi.includes("require('./luar-repo')");
     });
   assert.deepEqual(pelanggar, []);
+});
+
+test('data konten dibaca dari server/data-konten, tidak ada tes yang kembali ke MVP-PWA/data (K16)', () => {
+  const PENUNJUK_ARSIP = /MVP-PWA['"\s,/\\]+data/;
+  const pelanggar = fs
+    .readdirSync(__dirname)
+    .filter((n) => n.endsWith('.test.js') && n !== path.basename(__filename))
+    .filter((n) => PENUNJUK_ARSIP.test(fs.readFileSync(path.join(__dirname, n), 'utf8')));
+  assert.deepEqual(pelanggar, []);
+  assert.equal(jalurDataKonten('prodi.json'), path.join(__dirname, '..', 'data-konten', 'prodi.json'));
+  assert.ok(fs.existsSync(jalurDataKonten('prodi.json')));
 });

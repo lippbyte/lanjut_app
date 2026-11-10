@@ -12,7 +12,7 @@
 // diterima, dan persetujuan.test.js sementara menaikkan versi itu.
 
 const { test: tesDasar, describe, before, after } = require('node:test');
-const { jalurInduk, tesLuarRepo, adaSemua, malas } = require('./luar-repo');
+const { jalurDataKonten, tesLuarRepo, adaSemua, malas } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -21,8 +21,8 @@ const { muatModulApp } = require('./muat-ts-app');
 const { pernyataanMigrasi, DIR_MIGRASI } = require('../src/db/jalankan-migrasi');
 const { benihChecklist, DIR_DATA } = require('../src/db/benih/benih');
 
-const CHECKLIST_PWA = jalurInduk('MVP-PWA', 'data', 'checklist.json');
-const test = tesLuarRepo(tesDasar, DIR_DATA, CHECKLIST_PWA);
+const CHECKLIST_KONTEN = jalurDataKonten('checklist.json');
+const test = tesLuarRepo(tesDasar, DIR_DATA, CHECKLIST_KONTEN);
 const { ambilKonfigurasi } = require('../src/modul/persetujuan/persetujuan.layanan');
 const { KESIAPAN_UJIAN: KESIAPAN_SERVER } = require('../src/modul/pengguna/pengguna.skema');
 const { pesanSistem } = require('../src/modul/ngobrol/ngobrol.layanan');
@@ -34,7 +34,7 @@ const kesiapan = muatModulApp('lib/kesiapanUjian');
 const daftarPeriksa = muatModulApp('lib/daftarPeriksa');
 
 const BERKAS_MIGRASI = '023_kesiapan_ujian.sql';
-const CHECKLIST = malas(() => JSON.parse(fs.readFileSync(CHECKLIST_PWA, 'utf8')));
+const CHECKLIST = malas(() => JSON.parse(fs.readFileSync(CHECKLIST_KONTEN, 'utf8')));
 const KATEGORI = malas(() => CHECKLIST().kategori.find((k) => k.id === 'persiapan-ujian'));
 
 let server;

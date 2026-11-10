@@ -12,10 +12,10 @@
 // diterima, dan persetujuan.test.js sementara menaikkan versi itu.
 
 const { test, describe, before, after } = require('node:test');
-const { SALINAN_TEKS, LEMBAR_TEKS, jalurInduk, tesLuarRepo, malas } = require('./luar-repo');
+const { SALINAN_TEKS, LEMBAR_TEKS, jalurDataKonten, tesLuarRepo, malas } = require('./luar-repo');
 const tesDokumenTeks = tesLuarRepo(test, SALINAN_TEKS, LEMBAR_TEKS);
 const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
-const tesDataPwa = tesLuarRepo(test, jalurInduk('MVP-PWA', 'data', 'prodi.json'), jalurInduk('MVP-PWA', 'data', 'prodi-mapel.json'), jalurInduk('MVP-PWA', 'data', 'mapel.json'));
+const tesDataKonten = tesLuarRepo(test, jalurDataKonten('prodi.json'), jalurDataKonten('prodi-mapel.json'), jalurDataKonten('mapel.json'));
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -33,7 +33,7 @@ const baca = (...p) => fs.readFileSync(path.join(AKAR_APP, ...p), 'utf8').replac
 const app = muatModulApp('lib/mapelPilihan');
 
 const BERKAS_MIGRASI = '022_mapel_pilihan.sql';
-const dataBenih = (n) => JSON.parse(fs.readFileSync(path.join(AKAR_REPO, 'MVP-PWA', 'data', n), 'utf8')).data;
+const dataBenih = (n) => JSON.parse(fs.readFileSync(jalurDataKonten(n), 'utf8')).data;
 const PRODI = malas(() => dataBenih('prodi.json'));
 const PRODI_MAPEL = malas(() => dataBenih('prodi-mapel.json'));
 const MAPEL = malas(() => dataBenih('mapel.json'));
@@ -175,7 +175,7 @@ describe('LANJUT_079 §C: GET/PATCH /pengguna/saya mapel_pilihan', () => {
     }
   });
 
-  tesDataPwa('Maks. 5 untuk SEMUA kelas: 6 mapel → 400 VALIDASI_GAGAL medan mapel_pilihan; tidak ada yang tersimpan', async () => {
+  tesDataKonten('Maks. 5 untuk SEMUA kelas: 6 mapel → 400 VALIDASI_GAGAL medan mapel_pilihan; tidak ada yang tersimpan', async () => {
     const enam = ['sosiologi', 'fisika', 'bahasa-inggris', 'geografi', 'informatika', 'kimia'];
     for (const kelas of ['7', '11']) {
       const a = await akun(kelas);
@@ -220,7 +220,7 @@ describe('LANJUT_079 §C: GET/PATCH /pengguna/saya mapel_pilihan', () => {
     assert.deepEqual((await profil(a)).mapel_pilihan, []);
   });
 
-  tesDataPwa('Kelas 7–11: minat_rumpun tetap seperti sekarang (diterima bila kebijakan diterima, 403 bila belum) dan TIDAK membatasi Mapel Saya', async () => {
+  tesDataKonten('Kelas 7–11: minat_rumpun tetap seperti sekarang (diterima bila kebijakan diterima, 403 bila belum) dan TIDAK membatasi Mapel Saya', async () => {
     const a = await akun('8');
     assert.equal((await ubah(a, { minat_rumpun: ['Kesehatan'] })).status, 200);
     // sosiologi tidak termasuk kelompok Kesehatan — untuk kelas 7–11 tetap boleh.
@@ -243,7 +243,7 @@ describe('LANJUT_079 §C: GET/PATCH /pengguna/saya mapel_pilihan', () => {
     assert.deepEqual((await profil(a)).mapel_pilihan, ['matematika', 'biologi']);
   });
 
-  tesDataPwa('Kelas 12: mapel dari rumpun favorit → 200; mapel di luar rumpun (sendiri atau campuran) → 400 medan mapel_pilihan, tidak tersimpan', async () => {
+  tesDataKonten('Kelas 12: mapel dari rumpun favorit → 200; mapel di luar rumpun (sendiri atau campuran) → 400 medan mapel_pilihan, tidak tersimpan', async () => {
     const a = await akun('12');
     const rumpun = ['Kesehatan', 'Ekonomi & Bisnis'];
     assert.equal((await ubah(a, { minat_rumpun: rumpun })).status, 200);
@@ -277,7 +277,7 @@ describe('LANJUT_079 §C: GET/PATCH /pengguna/saya mapel_pilihan', () => {
     assert.equal((await profil(a)).minat_rumpun.length, 3);
   });
 
-  tesDataPwa('Kelas 12: rumpun dan mapel dalam satu permintaan dicek terhadap rumpun BARU; mengganti rumpun melepas mapel yang tidak lagi termasuk', async () => {
+  tesDataKonten('Kelas 12: rumpun dan mapel dalam satu permintaan dicek terhadap rumpun BARU; mengganti rumpun melepas mapel yang tidak lagi termasuk', async () => {
     const a = await akun('12');
     const r = await ubah(a, { minat_rumpun: ['Teknologi & Rekayasa'], mapel_pilihan: ['informatika', 'fisika'] });
     assert.equal(r.status, 200, JSON.stringify(r.json));
@@ -315,7 +315,7 @@ describe('LANJUT_079 §C: GET/PATCH /pengguna/saya mapel_pilihan', () => {
 });
 
 describe('LANJUT_079 §A/§B: GET /pengguna/saya/pilihan-mapel', () => {
-  tesDataPwa('Pemetaan rumpun → mapel = data benih prodi_mapel bobot >= 2 (pengelompokan internal, belum terverifikasi)', async () => {
+  tesDataKonten('Pemetaan rumpun → mapel = data benih prodi_mapel bobot >= 2 (pengelompokan internal, belum terverifikasi)', async () => {
     const semuaRumpun = await kontenRepo.ambilDaftarRumpun();
     assert.deepEqual(semuaRumpun, ['Ekonomi & Bisnis', 'Kesehatan', 'Sosial & Humaniora', 'Teknologi & Rekayasa']);
     assert.equal(mapelPilihan.BOBOT_MIN_RUMPUN, 2);
@@ -334,7 +334,7 @@ describe('LANJUT_079 §A/§B: GET /pengguna/saya/pilihan-mapel', () => {
     assert.equal(d.maks_rumpun, 3);
   });
 
-  tesDataPwa('Kelas 12 dengan dua rumpun: hanya dua kelompok itu, per rumpun; bukan daftar penuh; pengelompokan bertanda belum terverifikasi', async () => {
+  tesDataKonten('Kelas 12 dengan dua rumpun: hanya dua kelompok itu, per rumpun; bukan daftar penuh; pengelompokan bertanda belum terverifikasi', async () => {
     const a = await akun('12');
     const rumpun = ['Teknologi & Rekayasa', 'Ekonomi & Bisnis'];
     assert.equal((await ubah(a, { minat_rumpun: rumpun })).status, 200);
@@ -349,7 +349,7 @@ describe('LANJUT_079 §A/§B: GET /pengguna/saya/pilihan-mapel', () => {
     assert.equal(d.pengelompokan_terverifikasi, false);
   });
 
-  tesDataPwa('Kelas 7–11: mode mapel_saya, semua mapel sekolah, tanpa rumpun/kelompok/prodi — walau minat_rumpun terisi', async () => {
+  tesDataKonten('Kelas 7–11: mode mapel_saya, semua mapel sekolah, tanpa rumpun/kelompok/prodi — walau minat_rumpun terisi', async () => {
     for (const kelas of ['7', '11']) {
       const a = await akun(kelas);
       await ubah(a, { minat_rumpun: ['Kesehatan'] });
@@ -497,7 +497,7 @@ describe('LANJUT_079b §B/§C: catatan per kelompok dan mapel SMP apa adanya', (
     assert.ok(lembar.includes('> **Pilih Mapel kelas 12 — catatan pengelompokan:** Belum dicek ke sumber resmi.'));
   });
 
-  tesDataPwa('Tidak ada mapel baru: tabel mapel = 10 mapel benih; Mapel Saya kelas 7–9 menampilkan persis itu', async () => {
+  tesDataKonten('Tidak ada mapel baru: tabel mapel = 10 mapel benih; Mapel Saya kelas 7–9 menampilkan persis itu', async () => {
     const [baris] = await pool.query('SELECT id FROM mapel ORDER BY id');
     assert.deepEqual(baris.map((b) => b.id), SEMUA_MAPEL());
     assert.equal(SEMUA_MAPEL().length, 10);
