@@ -41,5 +41,4 @@ module.exports = {
   tutupSesiSkema,
   riwayatBorongSkema,
   ringkasanQuerySkema,
-  catatanRiwayatSkema,
 };

@@ -22,7 +22,7 @@ function petakanProdiTujuan(prodiImpian) {
 }
 
 // C-2/C-2b: validasi keberadaan prodi sebelum menyimpan, di SATU TEMPAT SAJA
-// supaya semua jalur tulis (daftar, ubah profil, klaim sinkron) memakai
+// supaya semua jalur tulis (daftar, ubah profil) memakai
 // aturan yang sama. Tanpa ini, prodi yang tidak dikenal jatuh ke pelanggaran
 // FK saat disimpan dan bocor sebagai HTTP 500, bukan 400 VALIDASI_GAGAL.
 // `prodiTujuan` di sini SUDAH melalui petakanProdiTujuan() — null berarti

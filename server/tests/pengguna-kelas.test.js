@@ -1,5 +1,5 @@
-// Uji kelas SMP 7–9 (LANJUT_035, migrasi 010): daftar, PATCH /pengguna/saya,
-// dan klaim sinkron menerima kelas 7–12; nilai di luar itu → 400. Daftar
+// Uji kelas SMP 7–9 (LANJUT_035, migrasi 010): daftar dan PATCH /pengguna/saya
+// menerima kelas 7–12; nilai di luar itu → 400. Daftar
 // tanpa kelas tetap boleh (APK lama), dan akun kelas 10–12 tetap masuk.
 
 const { test, before, after } = require('node:test');
@@ -74,18 +74,6 @@ test('PATCH /pengguna/saya: kelas 12 → 9 → 12 → null, nilai lain → 400 d
     assert.ok(res.json.galat.medan.kelas);
   }
   assert.equal((await saya(token)).kelas, '8');
-});
-
-test('klaim sinkron menerima kelas SMP', async () => {
-  const { json } = await daftarPenggunaBaru(baseUrl);
-  const token = json.data.token;
-  const res = await panggil('POST', '/sinkron/klaim', token, { profil: { kelas: '7' } });
-  assert.equal(res.status, 200);
-  assert.equal((await saya(token)).kelas, '7');
-
-  const salah = await panggil('POST', '/sinkron/klaim', token, { profil: { kelas: '6' } });
-  assert.equal(salah.status, 400);
-  assert.equal((await saya(token)).kelas, '7');
 });
 
 test('akun kelas 10–12 tetap bisa masuk dan profilnya utuh', async () => {
