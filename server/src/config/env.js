@@ -133,6 +133,10 @@ const env = {
   // bawaan server/data-konten. Absolut, atau relatif
   // terhadap folder server/. Hanya dipakai benih, bukan oleh API.
   LOKASI_DATA_KONTEN: opsional('LOKASI_DATA_KONTEN', null),
+  // Portofolio & Bukti (LANJUT_010). Bawaan MATI: semua rutenya 404 sampai sengaja dinyalakan.
+  PORTOFOLIO_AKTIF: opsional('PORTOFOLIO_AKTIF', '0') === '1',
+  // Folder foto, jalur lengkap, di luar folder statis. Wajib bila saklar di atas menyala.
+  DIREKTORI_BERKAS: opsional('DIREKTORI_BERKAS', null),
   // Ngobrol Bareng LANJUT (LANJUT_051): AI lewat OpenRouter. Kunci KOSONG =
   // fitur AI mati (503 AI_TIDAK_TERSEDIA), server tetap menyala. Kunci hanya
   // ada di server: tidak pernah dikirim ke app dan tidak dicatat di log.

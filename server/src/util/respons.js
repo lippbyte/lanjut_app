@@ -45,6 +45,13 @@ const STATUS_PER_KODE = {
   SANDI_PERLU_DIBUAT: 403, // LANJUT_083d: sandi lama dicabut; masuk dengan kode email lalu buat sandi baru
   EMAIL_BELUM_DIVERIFIKASI: 403, // LANJUT_084: tenggat verifikasi akun lama lewat; masuk dengan kode email atau Google
   EKSPOR_TERLALU_BESAR: 413, // LANJUT_009: ditolak utuh, tidak pernah dipotong diam-diam
+  // LANJUT_010 — foto butir bukti
+  FOTO_TERLALU_BESAR: 413,
+  FOTO_JENIS_DITOLAK: 415,
+  FOTO_HEIC_DITOLAK: 415,
+  FOTO_RUSAK: 422,
+  BATAS_FOTO_BUTIR: 409,
+  BATAS_FOTO_AKUN: 409,
   GALAT_SERVER: 500,
 };
 

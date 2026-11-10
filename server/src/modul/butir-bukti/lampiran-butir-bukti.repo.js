@@ -55,6 +55,58 @@ async function buat({ id, penggunaId, butirBuktiId, jenisBerkas, ukuranByte, nam
   return hasil.affectedRows > 0;
 }
 
+/**
+ * Menambah baris dengan batas per butir dan per akun (LANJUT_010). Baris pengguna dikunci dulu,
+ * jadi unggahan serentak dari satu akun berjalan bergantian dan tidak bisa melewati batas.
+ * Mengembalikan 'ok', 'butir_tidak_ada', 'batas_butir', atau 'batas_akun'.
+ */
+async function buatDenganBatas({ id, penggunaId, butirBuktiId, jenisBerkas, ukuranByte, namaTersimpan, namaAsli, batasPerButir, batasPerAkun, waktu }) {
+  const koneksi = await pool.getConnection();
+  try {
+    await koneksi.beginTransaction();
+    await koneksi.execute('SELECT id FROM pengguna WHERE id = ? FOR UPDATE', [penggunaId]);
+    const [milik] = await koneksi.execute('SELECT id FROM butir_bukti WHERE id = ? AND pengguna_id = ? LIMIT 1', [butirBuktiId, penggunaId]);
+    let status = 'ok';
+    if (milik.length === 0) {
+      status = 'butir_tidak_ada';
+    } else {
+      const [[{ perButir }]] = await koneksi.execute(
+        `SELECT COUNT(*) AS perButir
+           FROM lampiran_butir_bukti AS l
+           JOIN butir_bukti AS b ON b.id = l.butir_bukti_id
+          WHERE l.butir_bukti_id = ? AND b.pengguna_id = ?`,
+        [butirBuktiId, penggunaId]
+      );
+      const [[{ perAkun }]] = await koneksi.execute(
+        `SELECT COUNT(*) AS perAkun
+           FROM lampiran_butir_bukti AS l
+           JOIN butir_bukti AS b ON b.id = l.butir_bukti_id
+          WHERE b.pengguna_id = ?`,
+        [penggunaId]
+      );
+      if (perButir >= batasPerButir) status = 'batas_butir';
+      else if (perAkun >= batasPerAkun) status = 'batas_akun';
+    }
+    if (status !== 'ok') {
+      await koneksi.rollback();
+      return status;
+    }
+    await koneksi.execute(
+      `INSERT INTO lampiran_butir_bukti
+         (id, butir_bukti_id, jenis_berkas, ukuran_byte, nama_tersimpan, nama_asli, dibuat_pada)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [id, butirBuktiId, jenisBerkas, ukuranByte, namaTersimpan, namaAsli, waktu]
+    );
+    await koneksi.commit();
+    return 'ok';
+  } catch (galat) {
+    await koneksi.rollback();
+    throw galat;
+  } finally {
+    koneksi.release();
+  }
+}
+
 /** Hanya nama tampilan yang bisa diubah. Metadata berkas tetap seperti saat disimpan. */
 async function ubahNamaAsliMilikSendiri(penggunaId, lampiranId, namaAsli) {
   const [hasil] = await pool.execute(
@@ -83,6 +135,7 @@ module.exports = {
   daftarSemuaMilikSendiri,
   ambilMilikSendiri,
   buat,
+  buatDenganBatas,
   ubahNamaAsliMilikSendiri,
   hapusMilikSendiri,
 };

@@ -5,6 +5,15 @@ const app = require('./app');
 const pool = require('./db/koneksi');
 
 const { bersihkanPendaftaranKedaluwarsa } = require('./modul/auth/daftarEmail.layanan');
+const { pastikanSiap: pastikanPenyimpananFotoSiap } = require('./modul/butir-bukti/penyimpanan-foto');
+
+// LANJUT_010: saklar portofolio menyala tanpa folder yang sah berarti server menolak berjalan.
+try {
+  pastikanPenyimpananFotoSiap();
+} catch (galat) {
+  console.error(`[server] ${galat.message}`);
+  process.exit(1);
+}
 
 const server = app.listen(env.PORT, () => {
   console.log(`[server] LANJUT API berjalan di port ${env.PORT} (${env.NODE_ENV})`);

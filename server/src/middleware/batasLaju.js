@@ -61,4 +61,14 @@ const batasDataAkun = rateLimit({
   handler: penanganGalatTerlaluSering,
 });
 
-module.exports = { batasGlobal, batasAuth, batasDaftar, batasDataAkun };
+/** Unggah foto butir bukti (LANJUT_010): 20 permintaan / 15 menit per akun, sesudah wajibLogin. */
+const batasUnggahFoto = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: DI_LINGKUNGAN_TEST ? 100000 : 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => (req.pengguna ? req.pengguna.id : ipKlien(req)),
+  handler: penanganGalatTerlaluSering,
+});
+
+module.exports = { batasGlobal, batasAuth, batasDaftar, batasDataAkun, batasUnggahFoto };

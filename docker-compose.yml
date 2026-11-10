@@ -38,6 +38,9 @@ services:
       HEADER_IP_KLIEN: ${HEADER_IP_KLIEN:-x-real-ip}
       LOKASI_DATA_KONTEN: data-konten
       JALANKAN_BENIH: ${JALANKAN_BENIH:-true}
+      # LANJUT_010: bawaan mati. Foto disimpan di volume lanjut_berkas.
+      PORTOFOLIO_AKTIF: ${PORTOFOLIO_AKTIF:-0}
+      DIREKTORI_BERKAS: /data/berkas
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
@@ -50,6 +53,8 @@ services:
       sh -c "npm run migrasi &&
       if [ \"$$JALANKAN_BENIH\" = \"true\" ]; then npm run benih; fi &&
       node src/index.js"
+    volumes:
+      - lanjut_berkas:/data/berkas
     ports:
       - "${API_PORT:-4000}:${API_PORT:-4000}"
 
@@ -74,3 +79,4 @@ services:
 
 volumes:
   lanjut_db_data:
+  lanjut_berkas:

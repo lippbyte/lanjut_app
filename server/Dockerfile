@@ -18,6 +18,10 @@ COPY config/ ./config/
 COPY tools/ ./tools/
 COPY data-konten/ ./data-konten/
 
+# Folder foto butir bukti (LANJUT_010). Dibuat sebelum beralih ke pengguna node, supaya volume
+# yang dipasang di sini bisa ditulis.
+RUN mkdir -p /data/berkas && chown -R node:node /data/berkas
+
 # Buat pengguna non-root demi keamanan kontainer
 USER node
 

@@ -951,6 +951,8 @@ sama dengan `.env.example`:
 | `CORS_ORIGINS` (atau `ASAL_DIIZINKAN`) | **ya** | `https://app.GANTI-DOMAIN` | Asal web yang boleh memanggil API, dipisah koma, **tidak pernah** `*` |
 | `SESI_UMUR_HARI` | tidak (bawaan `90`) | `90` | Umur sesi login (hari, bergulir) |
 | `TRUST_PROXY` (atau `JUMLAH_PROXY`) | tidak (bawaan `0`) | `1` | Jumlah reverse proxy tepercaya di depan server — lihat di bawah |
+| `PORTOFOLIO_AKTIF` | tidak (bawaan `0`) | `0` | `1` menyalakan rute Portofolio & Bukti. Mati: semua rutenya 404 |
+| `DIREKTORI_BERKAS` | bila `PORTOFOLIO_AKTIF=1` | `/data/berkas` | Folder foto, jalur lengkap, di luar folder statis. Server menolak berjalan bila kosong atau tidak bisa ditulis |
 | `LOKASI_DATA_KONTEN` | tidak (bawaan `server/data-konten`) | `data-konten` | Folder berisi berkas `*.json` konten untuk `npm run benih` — lihat di bawah |
 | `OPENROUTER_API_KEY` | tidak (bawaan kosong) | *(rahasia, biarkan kosong dulu)* | Kunci AI Ngobrol (§2d). Kosong = AI tidak tersedia (`503 AI_TIDAK_TERSEDIA`), atau balasan uji coba selama `ai_aktif = 0`; server tetap jalan. Hanya di `.env` server, jangan di app. Isi sesudah daftar periksa keselamatan di `docs/kesiapan-rilis-uji.md` beres, dengan batas kredit di dasbor OpenRouter |
 
