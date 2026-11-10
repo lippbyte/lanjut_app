@@ -11,11 +11,15 @@
 // sudah berprofil, prodi fixture dibuat sebagai cadangan. Semua tes F10 ada
 // di berkas ini supaya tidak berebut baris yang sama antar-proses.
 
-const { test, before, after, mock } = require('node:test');
+const { test: tesDasar, before, after, mock } = require('node:test');
+const { jalurInduk, tesLuarRepo, adaSemua } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { nyalakanServer, urlDari, pool } = require('./bantuan');
 const kontenRepo = require('../src/modul/konten/konten.repo');
-const { benihProfilProdi } = require('../src/db/benih/benih');
+const { benihProfilProdi, DIR_DATA } = require('../src/db/benih/benih');
+
+const test = tesLuarRepo(tesDasar, DIR_DATA);
+const tesProfilPwa = tesLuarRepo(test, jalurInduk('MVP-PWA', 'data', 'profil-prodi.json'));
 const { ubahStatus, daftarBelum, GalatPakai } = require('../src/db/verifikasi/verifikasi-konten');
 
 const ASAL_UJI = 'uji-031';
@@ -61,7 +65,7 @@ before(async () => {
   // Profil asli dari berkas dipastikan ada dulu (idempoten, tanda verifikasi
   // tim tidak disentuh), supaya prodi "tanpa profil" di bawah benar-benar
   // tidak ada di profil-prodi.json dan benih asli tidak menimpa fixture.
-  await benihProfilProdi();
+  if (adaSemua(DIR_DATA)) await benihProfilProdi();
 
   const [kosong] = await pool.query(
     `SELECT p.id, p.nama, p.rumpun FROM prodi p LEFT JOIN profil_prodi pp ON pp.id = p.id
@@ -270,7 +274,7 @@ async function barisFixture() {
 
 const tampil = async () => (await ambil('/konten/eksplorasi-tujuan')).json.data.some((p) => p.id === prodi.id);
 
-test('benih profil asli: semua entri profil-prodi.json ada di tabel dengan nama sesuai prodi', async () => {
+tesProfilPwa('benih profil asli: semua entri profil-prodi.json ada di tabel dengan nama sesuai prodi', async () => {
   const berkas = require('../../../MVP-PWA/data/profil-prodi.json');
   const [baris] = await pool.query('SELECT id, nama FROM profil_prodi WHERE id IN (?)', [berkas.data.map((p) => p.id)]);
   assert.equal(baris.length, berkas.data.length);
@@ -279,7 +283,7 @@ test('benih profil asli: semua entri profil-prodi.json ada di tabel dengan nama 
 
 // LANJUT_044: jalur berkas → tabel untuk penanda "Perkiraan" (jalur tabel →
 // respons diuji dengan fixture di atas).
-test('benih profil asli: status_sumber tiap profil di tabel sama persis dengan profil-prodi.json', async () => {
+tesProfilPwa('benih profil asli: status_sumber tiap profil di tabel sama persis dengan profil-prodi.json', async () => {
   const berkas = require('../../../MVP-PWA/data/profil-prodi.json');
   const [baris] = await pool.query('SELECT id, status_sumber FROM profil_prodi WHERE id IN (?)', [berkas.data.map((p) => p.id)]);
   for (const p of berkas.data) {

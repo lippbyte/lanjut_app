@@ -10,6 +10,9 @@
 // Modul murni app dijalankan langsung (muat-ts-app.js); tanpa server/basis data.
 
 const { test, describe } = require('node:test');
+const { SALINAN_TEKS, LEMBAR_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
+const tesDokumenTeks = tesLuarRepo(test, SALINAN_TEKS, LEMBAR_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -88,7 +91,7 @@ describe('LANJUT_075c: keterangan kartu Eksplorasi Kampus', () => {
     });
   }
 
-  test('Keterangan baru tercatat DRAF di salinan teks', () => {
+  tesSalinan('Keterangan baru tercatat DRAF di salinan teks', () => {
     const salinan = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
     const awal = salinan.indexOf('**LANJUT_App (LANJUT_075c)');
     assert.ok(awal >= 0, 'blok LANJUT_075c harus ada');
@@ -148,12 +151,11 @@ describe('LANJUT_075b: tab aktif di /eksplorasi-tujuan', () => {
 });
 
 describe('LANJUT_075b: DRAF kebijakan privasi untuk minat_rumpun', () => {
-  const salinan = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
-  const awal = salinan.indexOf('**LANJUT_075b — usulan kalimat kebijakan privasi');
-  const blok = awal >= 0 ? salinan.slice(awal, salinan.indexOf('\n### ', awal)) : '';
-  const kalimat = (blok.match(/- \*\*Usulan — bidang minat yang disimpan:\*\* (.+)/) || [])[1];
-
-  test('Tercatat DRAF di salinan teks dan lembar review', () => {
+  tesDokumenTeks('Tercatat DRAF di salinan teks dan lembar review', () => {
+    const salinan = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
+    const awal = salinan.indexOf('**LANJUT_075b — usulan kalimat kebijakan privasi');
+    const blok = awal >= 0 ? salinan.slice(awal, salinan.indexOf('\n### ', awal)) : '';
+    const kalimat = (blok.match(/- \*\*Usulan — bidang minat yang disimpan:\*\* (.+)/) || [])[1];
     assert.ok(awal >= 0, 'blok LANJUT_075b harus ada');
     assert.match(blok.slice(0, blok.indexOf('\n\n')), /\bDRAF\b/);
     assert.ok(kalimat && /bidang minat/i.test(kalimat) && kalimat.includes('Eksplorasi Kampus'));

@@ -10,6 +10,7 @@
 // 4. Pemetaan konfigurasi_levelin <-> objek konfigurasi (konfigurasi.js).
 
 const { test } = require('node:test');
+const { tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
@@ -20,8 +21,8 @@ const { bentukKonfig, rataKonfig } = require('../src/modul/levelin/konfigurasi')
 
 const BERKAS_PWA = path.join(__dirname, '..', '..', '..', 'MVP-PWA', 'assets', 'levelin.js');
 const BERKAS_KONFIG = path.join(__dirname, '..', '..', '..', 'MVP-PWA', 'data', 'levelin-konfig.json');
-const ADA_PWA = fs.existsSync(BERKAS_PWA);
-const LEWATI = ADA_PWA ? false : 'MVP-PWA/assets/levelin.js tidak ada di lingkungan ini';
+const tesPwa = tesLuarRepo(test, BERKAS_PWA);
+const tesKonfigPwa = tesLuarRepo(test, BERKAS_KONFIG);
 
 const FUNGSI = ['gapNumerik', 'klasifikasiKartu', 'agregatPerMapel', 'ringkasSesi', 'saranHarian'];
 
@@ -80,7 +81,7 @@ function peristiwaAcak(r, n) {
   }));
 }
 
-test('teks badan kelima fungsi Lapisan 2 identik dengan PWA', { skip: LEWATI }, () => {
+tesPwa('teks badan kelima fungsi Lapisan 2 identik dengan PWA', () => {
   const pwa = muatPwa();
   for (const nama of FUNGSI) {
     assert.equal(normal(keputusan[nama]), normal(pwa[nama]), `${nama} menyimpang dari MVP-PWA/assets/levelin.js`);
@@ -88,7 +89,7 @@ test('teks badan kelima fungsi Lapisan 2 identik dengan PWA', { skip: LEWATI }, 
   assert.deepEqual(json(keputusan.KONFIG_BAWAAN), json(pwa.KONFIG_BAWAAN), 'KONFIG_BAWAAN menyimpang');
 });
 
-test('keluaran sama dengan PWA pada ratusan masukan acak (seed tetap)', { skip: LEWATI }, () => {
+tesPwa('keluaran sama dengan PWA pada ratusan masukan acak (seed tetap)', () => {
   const pwa = muatPwa();
   const r = prng(42);
   const cfg = json(keputusan.KONFIG_BAWAAN);
@@ -194,7 +195,7 @@ test('level akurasi: ambang dibaca dari konfigurasi, bukan angka di kode', () =>
 
 // --- konfigurasi.js ----------------------------------------------------------
 
-test('konfigurasi: data/levelin-konfig.json → baris → objek konfigurasi', { skip: fs.existsSync(BERKAS_KONFIG) ? false : 'berkas konfigurasi tidak ada' }, () => {
+tesKonfigPwa('konfigurasi: data/levelin-konfig.json → baris → objek konfigurasi', () => {
   const baris = rataKonfig(JSON.parse(fs.readFileSync(BERKAS_KONFIG, 'utf8')));
   assert.equal(baris.length, 11);
   assert.ok(baris.every((b) => typeof b.nilai === 'string' && b.dasar));

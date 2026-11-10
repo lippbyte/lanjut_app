@@ -6,12 +6,15 @@
 // karena file test jalan paralel: butir umum atau butir Teknologi di sini akan
 // mengubah respons yang dibandingkan persis oleh test itu.
 
-const { test, before, after } = require('node:test');
+const { test: tesDasar, before, after } = require('node:test');
+const { tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const fs = require('node:fs');
 const { nyalakanServer, urlDari, pool } = require('./bantuan');
 const { benihChecklist, DIR_DATA } = require('../src/db/benih/benih');
+
+const test = tesLuarRepo(tesDasar, DIR_DATA);
 
 const CONTOH = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'contoh', 'checklist-contoh-rumpun.json'), 'utf8')

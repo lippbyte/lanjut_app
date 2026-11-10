@@ -9,6 +9,8 @@
 // dan persetujuan.test.js sementara menaikkan versi itu.
 
 const { test, describe, before, after } = require('node:test');
+const { SALINAN_TEKS, LEMBAR_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesDokumenTeks = tesLuarRepo(test, SALINAN_TEKS, LEMBAR_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -48,7 +50,7 @@ describe('LANJUT_080b §A: pesan galat muat yang tidak benar', () => {
     assert.deepEqual(temuan, []);
   });
 
-  test('KeadaanGalat memakai kalimat baru yang tercatat DRAF di salinan §6 (blok LANJUT_080b) dan lembar review', () => {
+  tesDokumenTeks('KeadaanGalat memakai kalimat baru yang tercatat DRAF di salinan §6 (blok LANJUT_080b) dan lembar review', () => {
     const ui = baca('components', 'ui', 'index.tsx');
     const fungsi = ui.slice(ui.indexOf('export function KeadaanGalat()'), ui.indexOf('export const gaya'));
     assert.ok(fungsi.includes(`<Peringatan>${KALIMAT_BARU}</Peringatan>`), fungsi);

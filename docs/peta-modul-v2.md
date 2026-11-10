@@ -6,7 +6,7 @@
 
 **Cara membaca:** rujukan berkas relatif terhadap akar repo ini dan memakai nomor baris commit di atas. "Core" berarti LANJUT Core. Kata "perlu keputusan Khalifa" berarti arahnya belum ditetapkan; pilihan dan rekomendasinya ada di Bagian 9.
 
-**Label:** K1–K9 adalah keputusan terkunci di rencana implementasi. D1–D8 adalah keputusan yang masih terbuka di dokumen ini. T1–T35 adalah titik sambung di dokumen ini.
+**Label:** K1–K9 adalah keputusan terkunci di rencana implementasi. D1–D8 adalah keputusan yang masih terbuka di dokumen ini. T1–T35 adalah 35 titik sambung di dokumen ini: T1–T33 ada di kode produksi dan berkas kontennya, T34–T35 ada di tes.
 
 Product Strategy v2.1 tidak ada di repo ini maupun repo induk, jadi kolom "Catatan v2" bersandar pada `task/rencana-implementasi-lanjut-v2.md` di repo induk.
 
@@ -20,7 +20,7 @@ Product Strategy v2.1 tidak ada di repo ini maupun repo induk, jadi kolom "Catat
 | Perlu keputusan Khalifa | 3 |
 | **Total** | **36** |
 
-Batas Level-In saat ini setengah rapi. Logika inti (`keputusan.js`, `konfigurasi.js`) berdiri sendiri. Yang kusut ada di sekitarnya: dari 33 titik sambung kode, 7 pasti melanggar aturan yang diusulkan, 15 menjadi pelanggaran atau tidak tergantung keputusan D1–D4, dan semua tabel belajar terikat langsung ke tabel `pengguna`.
+Batas Level-In saat ini setengah rapi. Logika inti (`keputusan.js`, `konfigurasi.js`) berdiri sendiri. Yang kusut ada di sekitarnya. Dari 35 titik sambung yang dicatat, 33 ada di kode produksi dan berkas kontennya (T1–T33) dan 2 ada di tes (T34–T35). Dari 33 itu, 7 pasti melanggar aturan yang diusulkan, 15 menjadi pelanggaran atau tidak tergantung keputusan D1–D4, dan 11 sah atau berupa catatan. Selain itu, semua tabel belajar terikat langsung ke tabel `pengguna`.
 
 ## 2. Peta fitur
 
@@ -217,9 +217,9 @@ Tiga kelompok mengikuti task. Kolom "Tes" menyebut berkas di `server/tests/`.
 | # | Lokasi | Temuan | Dampak ke Bagian 6 |
 |---|---|---|---|
 | T34 | `server/tests/bantuan.js:5` | Tes memakai `app.js` utuh | Modul Level-In belum bisa diuji tanpa modul lain |
-| T35 | `server/tests/levelin-keputusan.test.js:21-24` | Tes membaca `MVP-PWA` di luar repo, dan melewati diri bila folder itu tidak ada | Saat repo berdiri sendiri, tes kesetaraan aturan hilang tanpa terlihat gagal |
+| T35 | `server/tests/levelin-keputusan.test.js:21-24` | Tes membaca `MVP-PWA` di luar repo, dan melewati diri bila folder itu tidak ada. Sudah diperbaiki di LANJUT_003, lihat `docs/audit-tes-luar-repo.md` | Selama tes masih membaca `MVP-PWA`, tes kesetaraan aturan tidak bisa berjalan di repo yang berdiri sendiri |
 
-**Hitungan.** Dari 33 titik sambung kode (T1–T33): 7 pasti melanggar (T1, T3, T4, T12, T14, T15, T23), 15 tergantung D1–D4, dan 11 sah atau berupa catatan.
+**Hitungan.** Ada 35 titik sambung: 33 di kode produksi dan berkas kontennya (T1–T33), dan 2 di tes (T34–T35). Hanya T1–T33 yang dinilai terhadap aturan arah, karena tes bukan bagian dari modul yang akan dipisah. T34–T35 dicatat sebagai temuan, jadi tabelnya tidak punya kolom aturan. Dari 33 titik yang dinilai: 7 pasti melanggar (T1, T3, T4, T12, T14, T15, T23), 15 tergantung D1–D4, dan 11 sah atau berupa catatan.
 
 ## 6. Aturan arah ketergantungan
 

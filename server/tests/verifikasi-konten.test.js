@@ -14,9 +14,11 @@
 const fs = require('fs');
 const path = require('path');
 const { test, before, after } = require('node:test');
+const { tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, pool } = require('./bantuan');
 const { DIR_DATA } = require('../src/db/benih/benih');
+const tesDataKonten = tesLuarRepo(test, DIR_DATA);
 const { daftarBelum, ubahStatus, jalankan, GalatPakai, PerluKonfirmasi } = require('../src/db/verifikasi/verifikasi-konten');
 
 const ID = 'sosialisasi';
@@ -121,7 +123,7 @@ test('verifikasi-konten: jenis tidak dikenal & ID kosong ditolak', async () => {
 
 const tanggalDb = (nilai) => nilai && new Date(nilai).toISOString().slice(0, 10);
 
-test('kartu (LANJUT_043): --list hanya kartu kurasi belum terverifikasi — tanpa kartu siswa & kurasi terhapus', async () => {
+tesDataKonten('kartu (LANJUT_043): --list hanya kartu kurasi belum terverifikasi — tanpa kartu siswa & kurasi terhapus', async () => {
   const [{ jenis, baris }] = await daftarBelum('kartu');
   assert.equal(jenis, 'kartu');
   const ids = baris.map((b) => b.id);

@@ -16,6 +16,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { test, before, after } = require('node:test');
+const { tesLuarRepo } = require('./luar-repo');
 const assert = require('node:assert/strict');
 const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool } = require('./bantuan');
 const env = require('../src/config/env');
@@ -23,6 +24,7 @@ const penyedia = require('../src/modul/ngobrol/penyedia-ai');
 const { samarkan } = require('../src/modul/ngobrol/samarkan');
 const skrip = require('../src/db/persetujuan/persetujuan-ortu');
 const { susunDokumen, DOKUMEN } = require('../tools/dokumen-skenario-ai');
+const tesDokumenSkenario = tesLuarRepo(test, DOKUMEN);
 
 const AKAR = path.join(__dirname, '..');
 const BERKAS = JSON.parse(fs.readFileSync(path.join(__dirname, 'skenario-ai', 'skenario.json'), 'utf8'));
@@ -318,7 +320,7 @@ test('skenario.json: A–J (LANJUT_054, 48–55, + 16 variasi & positif palsu LA
   for (const email of semua.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || []) assert.match(email, /@contoh\./, `surel bukan contoh: ${email}`);
 });
 
-test('docs/skenario-ai.md sama dengan skenario.json (npm run dokumen-skenario-ai)', () => {
+tesDokumenSkenario('docs/skenario-ai.md sama dengan skenario.json (npm run dokumen-skenario-ai)', () => {
   const dok = fs.readFileSync(DOKUMEN, 'utf8').replace(/\r\n/g, '\n');
   assert.equal(susunDokumen(dok), dok, 'jalankan npm run dokumen-skenario-ai');
 });

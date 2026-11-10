@@ -8,6 +8,8 @@
 // App: lib/beranda.ts dijalankan langsung (muat-ts-app.js).
 
 const { test, describe, before, after } = require('node:test');
+const { SALINAN_TEKS, tesLuarRepo } = require('./luar-repo');
+const tesSalinan = tesLuarRepo(test, SALINAN_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -333,7 +335,7 @@ describe('LANJUT_073 §C / LANJUT_074: app (lib/beranda.ts)', () => {
 });
 
 describe('LANJUT_073 §D: salinan teks', () => {
-  test('Teks "Sumber:" banner tercatat DRAF di salinan-teks-lanjut.md', () => {
+  tesSalinan('Teks "Sumber:" banner tercatat DRAF di salinan-teks-lanjut.md', () => {
     const sumber = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
     const awal = sumber.indexOf('**LANJUT_App (LANJUT_073)');
     assert.ok(awal >= 0, 'blok LANJUT_073 harus ada');

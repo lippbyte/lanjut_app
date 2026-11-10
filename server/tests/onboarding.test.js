@@ -4,6 +4,9 @@
 // layout (auth), dan komponen dicek dari sumbernya.
 
 const { test, describe } = require('node:test');
+const { SALINAN_TEKS, jalurInduk, tesLuarRepo, malas } = require('./luar-repo');
+const ONBOARDING_PWA = jalurInduk('MVP-PWA', 'onboarding.html');
+const tesOnboardingPwa = tesLuarRepo(test, ONBOARDING_PWA, SALINAN_TEKS);
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -36,31 +39,31 @@ function campur(rgba, latar) {
 }
 
 describe('isi onboarding = salinan teks §3 (seperti MVP-PWA/onboarding.html)', () => {
-  const pwa = fs.readFileSync(path.join(AKAR_REPO, 'MVP-PWA', 'onboarding.html'), 'utf8');
-  const salinan = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
+  const pwa = malas(() => fs.readFileSync(ONBOARDING_PWA, 'utf8'));
+  const salinan = malas(() => fs.readFileSync(SALINAN_TEKS, 'utf8'));
 
-  test('empat layar cerita, urutan sama dengan PWA', () => {
+  tesOnboardingPwa('empat layar cerita, urutan sama dengan PWA', () => {
     assert.equal(LAYAR_ONBOARDING.length, 4);
     let sebelum = -1;
     for (const layar of LAYAR_ONBOARDING) {
-      const letak = pwa.indexOf(layar.judul);
+      const letak = pwa().indexOf(layar.judul);
       assert.ok(letak > sebelum, `judul "${layar.judul}" ada di PWA, berurutan`);
       sebelum = letak;
     }
   });
 
-  test('setiap teks persis ada di PWA dan di salinan teks (kecuali ejaan "sarannya")', () => {
+  tesOnboardingPwa('setiap teks persis ada di PWA dan di salinan teks (kecuali ejaan "sarannya")', () => {
     for (const layar of LAYAR_ONBOARDING) {
       for (const teks of [layar.judul, layar.isi, ...(layar.butir ?? [])].filter(Boolean)) {
-        assert.ok(pwa.includes(teks), `PWA: ${teks}`);
-        assert.ok(salinan.includes(teks.replace('sarannya', 'saranya')), `salinan: ${teks}`);
+        assert.ok(pwa().includes(teks), `PWA: ${teks}`);
+        assert.ok(salinan().includes(teks.replace('sarannya', 'saranya')), `salinan: ${teks}`);
       }
     }
   });
 
-  test('setiap layar punya isi atau butir; label tombol sesuai salinan ("Mulai" di layar terakhir)', () => {
+  tesOnboardingPwa('setiap layar punya isi atau butir; label tombol sesuai salinan ("Mulai" di layar terakhir)', () => {
     for (const layar of LAYAR_ONBOARDING) assert.ok(layar.isi || layar.butir?.length, layar.judul);
-    assert.match(salinan, /`\[ Mulai \]`/);
+    assert.match(salinan(), /`\[ Mulai \]`/);
     assert.equal(onboarding.TEKS_ONBOARDING.mulai, 'Mulai');
     assert.equal(onboarding.TEKS_ONBOARDING.lanjut, 'Lanjut');
     assert.equal(onboarding.TEKS_ONBOARDING.lewati, 'Lewati');
