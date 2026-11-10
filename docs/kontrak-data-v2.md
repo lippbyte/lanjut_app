@@ -231,7 +231,7 @@ Satu berkas memakai satu baris. Bila gagal lagi, alasan dan waktunya diperbarui.
 
 `npm run bersihkan-berkas` mencoba ulang yang tertunda. `--cek` hanya melaporkan. Berkas yatim, yaitu ada di disk tetapi tidak ada di basis data, dilaporkan dan tidak pernah dihapus otomatis.
 
-**Butir bermakna.** Butir yang uraiannya minimal 30 karakter sesudah spasi di tepi dibuang, atau punya minimal satu foto, atau punya tautan.
+**Butir bermakna.** Butir yang uraiannya minimal 30 karakter sesudah spasi di tepi dibuang, atau punya minimal satu foto. Tautan saja tidak cukup (LANJUT_011, keputusan Khalifa): tautan hanya terhitung bila disertai uraian yang memenuhi 30 karakter.
 
 `npm run metrik-portofolio` hanya membaca. Keluarannya jumlah siswa dengan minimal satu butir bermakna yang dibuat dalam jendela waktu. Pilihan: `--hari=14`, `--kecualikan=id,id` untuk akun uji, dan `--daftar` untuk menampilkan ID akun.
 
