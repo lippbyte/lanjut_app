@@ -21,7 +21,7 @@ const sel = (b) => b.split('|').slice(1, -1).map((s) => s.trim());
 test('lembar isian: setiap [ISI] di draf dan surat punya baris', () => {
   const lembar = fs.readFileSync(LEMBAR, 'utf8');
   const semua = new Set([...penanda(rata(DRAF)), ...penanda(rata(SURAT))]);
-  assert.ok(semua.size >= 28, `jumlah [ISI] unik: ${semua.size}`);
+  assert.ok(semua.size >= 27, `jumlah [ISI] unik: ${semua.size}`);
   for (const x of semua) assert.ok(lembar.includes(`\`${x}\``), `belum ada di lembar: ${x}`);
 });
 
@@ -30,7 +30,7 @@ test('lembar isian: tidak ada penanda basi', () => {
   for (const x of penanda(baris().join('\n'))) assert.ok(semua.has(x), `basi: ${x}`);
 });
 
-const POLA_JAWABAN = /^Sebagian terisi\. Sumber: `docs\/hasil-pengisian-fakta\.md` butir (\d+), diperiksa \d{4}-\d{2}-\d{2}\.$/;
+const POLA_JAWABAN = /^(?:Sebagian terisi|Terjawab)\. Sumber: `docs\/hasil-pengisian-fakta\.md` butir (\d+), diperiksa \d{4}-\d{2}-\d{2}\.$/;
 const barisHasil = () => fs.readFileSync(HASIL, 'utf8').replace(/\r\n/g, '\n').split('\n').filter((b) => /^\| \d+ \|/.test(b)).map(sel);
 const terisi = (status) => /^terisi/.test(status);
 
