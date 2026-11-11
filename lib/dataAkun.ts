@@ -13,7 +13,7 @@ export type MetodeKonfirmasi = 'sandi' | 'kode';
 
 export const TEKS_DATA_AKUN = {
   seksi: 'Data saya',
-  penjelasUnduh: 'Salinan data akunmu dalam satu berkas. Kata sandi dan tanda masuk tidak ikut.',
+  penjelasUnduh: 'Salinan data akunmu dalam satu berkas. Kata sandi dan tanda masuk tidak ikut. Isi foto juga tidak ikut, hanya data fotonya, misalnya nama dan ukurannya.',
   unduh: 'Unduh data saya',
   unduhProses: 'Menyiapkan data…',
   unduhSelesai: 'Berkas datamu sudah disiapkan.',
@@ -21,7 +21,7 @@ export const TEKS_DATA_AKUN = {
   pengantar: 'Akun dan datamu di server LANJUT akan dihapus permanen. Setelah dihapus, tidak bisa dibatalkan atau dipulihkan.',
   judulHilang: 'Yang ikut terhapus',
   judulTersisa: 'Yang tidak bisa dihapus dari sini',
-  saranUnduh: 'Kalau ingin menyimpan salinannya, unduh datamu dulu di Data Akun.',
+  saranUnduh: 'Kalau ingin menyimpan salinannya, unduh datamu dulu di Data Akun. Isi foto tidak ikut di salinan itu.',
   paham: 'Aku paham akun dan datanya akan dihapus permanen.',
   labelSandi: 'Kata sandi',
   petunjukKonfirmasi: 'Untuk memastikan ini benar-benar kamu.',
@@ -67,7 +67,7 @@ const GALAT_UNDUH: Readonly<Record<string, string>> = {
   EKSPOR_TERLALU_BESAR: 'Datamu terlalu besar untuk diunduh sekaligus. Hubungi tim LANJUT untuk memintanya.',
   TERLALU_SERING: 'Terlalu banyak percobaan. Coba lagi beberapa menit lagi.',
   JARINGAN: 'Tidak bisa terhubung ke server. Coba lagi.',
-  TERLALU_BESAR_HP: 'Datamu terlalu besar untuk dibagikan dari HP. Buka LANJUT di peramban untuk mengunduhnya.',
+  BAGIKAN_TIDAK_TERSEDIA: 'Berkas belum bisa dibagikan dari HP ini. Buka LANJUT di peramban untuk mengunduhnya.',
 };
 export const GALAT_UNDUH_UMUM = 'Data belum bisa diunduh. Coba lagi nanti.';
 
@@ -96,9 +96,6 @@ export function badanHapusAkun({ metode, kataSandi, kodeEmail }: Omit<IsianHapus
     ? { penegasan: PENEGASAN_HAPUS_AKUN, kata_sandi: kataSandi }
     : { penegasan: PENEGASAN_HAPUS_AKUN, kode_email: kodeEmail };
 }
-
-/** Lembar bagikan Android menolak isi yang terlalu panjang, jadi di HP ukurannya dibatasi. */
-export const BATAS_BAGIKAN_HP = 400000;
 
 /** Nama berkas tanpa karakter yang bermasalah di sistem berkas. */
 export function namaBerkasEkspor(namaPengguna: string, tanggalIso: string): string {

@@ -59,7 +59,7 @@ export function AkunScreen() {
       {tampilPintuJalurSaya(pengguna.kelas) ? (
         <KartuPintu
           ikon="posisi"
-          judul="Jalur Saya"
+          judul="Profil Saya"
           keterangan="Tahap kamu sekarang, dihitung dari jalur dan kemajuanmu."
           onPress={() => router.push('/cek-posisi')}
         />

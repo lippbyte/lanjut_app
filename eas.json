@@ -29,6 +29,17 @@
       "android": {
         "buildType": "apk"
       }
+    },
+    "pilot": {
+      "environment": "production",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_PORTOFOLIO": "1",
+        "EXPO_PUBLIC_KELOLA_DATA_AKUN": "1"
+      }
     }
   }
 }

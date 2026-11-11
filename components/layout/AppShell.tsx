@@ -18,14 +18,14 @@ import { Ikon } from '../ui/Ikon';
 // yang tetap aktif (seperti alumni.html di PWA).
 
 // Halaman anak: dapat .pagebar (tombol kembali + judul) di bawah app bar.
-// LANJUT_074: /cek-posisi bernama "Jalur Saya"; halaman akun jadi "Data Akun" (DRAF).
+// LANJUT_013 (K15): /cek-posisi bernama "Profil Saya"; halaman akun bernama "Data Akun" (DRAF).
 const HALAMAN_ANAK: Record<string, string> = {
   // LANJUT_064: judul netral untuk semua jenjang (DRAF)
   '/cerita-alumni': 'Cerita Alumni',
   '/akun': 'Data Akun',
   // LANJUT_009 — dari Data Akun (DRAF, docs/draf-teks-hapus-akun.md).
   '/hapus-akun': 'Hapus Akun',
-  '/cek-posisi': 'Jalur Saya',
+  '/cek-posisi': 'Profil Saya',
   '/gaya-belajar': 'Gaya Belajar',
   '/ngobrol': 'Ngobrol Bareng LANJUT',
   '/eksplorasi-tujuan': 'Eksplorasi Tujuan',

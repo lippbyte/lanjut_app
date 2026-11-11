@@ -93,15 +93,15 @@
       "untuk": ["kelas10_11"]
     },
     {
-      "nama": "Jalur Saya",
-      "letak": "Beranda, kartu Jalur Saya (juga tombol \"Mulai dari Sini\")",
+      "nama": "Profil Saya",
+      "letak": "Beranda, kartu Profil Saya (di aplikasi versi lama bernama Jalur Saya; juga tombol \"Mulai dari Sini\")",
       "guna": "melihat tahap persiapan masuk kuliahmu (Posisi Kamu), fokus sekarang, langkah berikutnya, dan memilih 1–3 rumpun favorit. Di bagian \"Kesiapan Ujian\" kamu bisa memilih seberapa siap kamu menghadapi ujian (TKA atau UTBK-SNBT) untuk mendapat saran latihan; jawabannya tidak mengubah tahapmu.",
       "untuk": ["kelas12"]
     },
     {
       "nama": "Daftar Periksa",
       "letak": "tab Daftar Periksa",
-      "guna": "daftar langkah persiapan masuk kuliah (SNBP, SNBT, TKA) yang bisa dicentang satu per satu; persentasenya ikut tampil di Jalur Saya. Butir dari Pilih Mapel juga masuk ke sini. Untuk jalur TKA atau SNBT ada kategori \"Persiapan Ujian\": ikut tryout, ikut simulasi atau gladi TKA kalau sekolah mengadakannya, dan cek Level-In. Itu saran LANJUT, bukan syarat resmi pendaftaran.",
+      "guna": "daftar langkah persiapan masuk kuliah (SNBP, SNBT, TKA) yang bisa dicentang satu per satu; persentasenya ikut tampil di Profil Saya. Butir dari Pilih Mapel juga masuk ke sini. Untuk jalur TKA atau SNBT ada kategori \"Persiapan Ujian\": ikut tryout, ikut simulasi atau gladi TKA kalau sekolah mengadakannya, dan cek Level-In. Itu saran LANJUT, bukan syarat resmi pendaftaran.",
       "untuk": ["kelas12"]
     },
     {
