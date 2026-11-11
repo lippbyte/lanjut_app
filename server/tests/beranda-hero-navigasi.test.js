@@ -252,19 +252,19 @@ describe('LANJUT_074 §D: tab bar lima tab', () => {
   });
 });
 
-describe('LANJUT_074 §E: "Jalur Saya" dan "Data Akun"', () => {
-  test('Fitur /cek-posisi berlabel "Jalur Saya" di grid, Mulai dari Sini, Jenjang Saya, Data Akun, page bar, dan cermin server', () => {
+describe('LANJUT_074 §E: "Profil Saya" (LANJUT_013) dan "Data Akun"', () => {
+  test('Fitur /cek-posisi berlabel "Profil Saya" di grid, Mulai dari Sini, Jenjang Saya, Data Akun, page bar, dan cermin server', () => {
     for (const k of [beranda.KARTU_CEK_POSISI, cermin.KARTU_CEK_POSISI]) {
-      assert.equal(k.judul, 'Jalur Saya');
-      assert.equal(k.labelPendek, 'Jalur Saya');
+      assert.equal(k.judul, 'Profil Saya');
+      assert.equal(k.labelPendek, 'Profil Saya');
       assert.equal(k.href, '/cek-posisi');
     }
-    assert.equal(beranda.daftarKartuBeranda('12')[0].labelPendek, 'Jalur Saya');
-    assert.equal(beranda.infoMulaiDariSini('12').labelTombol, 'Jalur Saya');
-    assert.equal(cermin.infoMulaiDariSini('12').labelTombol, 'Jalur Saya');
-    assert.equal(jenjangSaya.isiJenjangSaya('12').pintu.find((p) => p.href === '/cek-posisi').judul, 'Jalur Saya');
-    assert.ok(baca('components', 'layout', 'AppShell.tsx').includes("'/cek-posisi': 'Jalur Saya'"));
-    assert.ok(baca('components', 'screens', 'AkunScreen.tsx').includes('judul="Jalur Saya"'));
+    assert.equal(beranda.daftarKartuBeranda('12')[0].labelPendek, 'Profil Saya');
+    assert.equal(beranda.infoMulaiDariSini('12').labelTombol, 'Profil Saya');
+    assert.equal(cermin.infoMulaiDariSini('12').labelTombol, 'Profil Saya');
+    assert.equal(jenjangSaya.isiJenjangSaya('12').pintu.find((p) => p.href === '/cek-posisi').judul, 'Profil Saya');
+    assert.ok(baca('components', 'layout', 'AppShell.tsx').includes("'/cek-posisi': 'Profil Saya'"));
+    assert.ok(baca('components', 'screens', 'AkunScreen.tsx').includes('judul="Profil Saya"'));
   });
 
   test('Halaman akun bernama "Data Akun": page bar, judul bagian, form ubah, dan semua tombol/teks yang menunjuk ke sana', () => {

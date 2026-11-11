@@ -4,7 +4,7 @@
 //   data uji; setiap berkas tes yang mengubah saklar itu memakai kunci tes dan
 //   memulihkan nilai awalnya di blok finally
 // - §B halaman yang bisa dibuka dari Data Akun SMP tidak memuat placeholder kelas 12
-//   (pintu Jalur Saya /cek-posisi disembunyikan untuk kelas 7–9; kelas 10–12 tetap)
+//   (pintu Profil Saya /cek-posisi disembunyikan untuk kelas 7–9; kelas 10–12 tetap)
 // - §C teks Level-In tanpa angka ambang tetap; angka di layar Latihan hanya ukuran sesi
 // Tes ini hanya MEMBACA basis data (di bawah kunciKonfigurasiGlobal, supaya tidak
 // membaca nilai sementara milik tes AI/event yang sedang berjalan).
@@ -103,7 +103,7 @@ describe('LANJUT_077b §A: saklar AI bawaan 0', () => {
 describe('LANJUT_077b §B: halaman yang bisa dibuka dari Data Akun SMP', () => {
   const layarAkun = baca('components', 'screens', 'AkunScreen.tsx');
 
-  /** Rute yang bisa dibuka dari Data Akun untuk kelas `k` (pintu Jalur Saya hanya bila tampilPintuJalurSaya). */
+  /** Rute yang bisa dibuka dari Data Akun untuk kelas `k` (pintu Profil Saya hanya bila tampilPintuJalurSaya). */
   function ruteDariDataAkun(k) {
     const semua = [...new Set([...tanpaKomentar(layarAkun).matchAll(/router\.(?:push|replace)\('([^']+)'\)/g)].map((m) => m[1]))];
     return semua.filter((r) => r !== '/cek-posisi' || jenjangSaya.tampilPintuJalurSaya(k));
@@ -119,11 +119,11 @@ describe('LANJUT_077b §B: halaman yang bisa dibuka dari Data Akun SMP', () => {
     return [isiRute, ...impor].join('\n');
   }
 
-  test('Pintu Jalur Saya tidak tampil untuk kelas 7–9; tampil untuk kelas 10–12 dan akun tanpa kelas (tidak berubah)', () => {
+  test('Pintu Profil Saya tidak tampil untuk kelas 7–9; tampil untuk kelas 10–12 dan akun tanpa kelas (tidak berubah)', () => {
     for (const k of ['7', '8', '9']) assert.equal(jenjangSaya.tampilPintuJalurSaya(k), false, `kelas ${k}`);
     for (const k of ['10', '11', '12', null, undefined]) assert.equal(jenjangSaya.tampilPintuJalurSaya(k), true, `kelas ${k}`);
     // Pintu dirender hanya lewat fungsi itu, isinya sama seperti sebelumnya.
-    assert.ok(layarAkun.includes("{tampilPintuJalurSaya(pengguna.kelas) ? (\n        <KartuPintu\n          ikon=\"posisi\"\n          judul=\"Jalur Saya\""));
+    assert.ok(layarAkun.includes("{tampilPintuJalurSaya(pengguna.kelas) ? (\n        <KartuPintu\n          ikon=\"posisi\"\n          judul=\"Profil Saya\""));
     assert.ok(layarAkun.includes('keterangan="Tahap kamu sekarang, dihitung dari jalur dan kemajuanmu."'));
     assert.equal((layarAkun.match(/router\.push\('\/cek-posisi'\)/g) || []).length, 1);
   });

@@ -44,29 +44,29 @@ describe('Panduan fitur per jenjang', () => {
     for (const k of [null, undefined, '', '13']) assert.equal(panduan.kelompokKelas(k), 'umum');
   });
 
-  test('SMP: fitur SMP saja — tanpa Jalur Saya, Daftar Periksa, Pilih Mapel prodi, Info Penting, atau SNBP', () => {
+  test('SMP: fitur SMP saja — tanpa Profil Saya, Daftar Periksa, Pilih Mapel prodi, Info Penting, atau SNBP', () => {
     const n = nama('8');
     for (const ada of ['Jenjang Saya', 'Eksplorasi Kampus', 'Gaya Belajar', 'Mapel Saya', 'Arsip Belajar', 'Latihan', 'Level-In', 'Ngobrol Bareng LANJUT']) {
       assert.ok(n.includes(ada), `SMP tanpa ${ada}`);
     }
-    for (const tidak of ['Jalur Saya', 'Daftar Periksa', 'Pilih Mapel', 'Info Penting']) assert.ok(!n.includes(tidak), `SMP mendapat ${tidak}`);
+    for (const tidak of ['Profil Saya', 'Daftar Periksa', 'Pilih Mapel', 'Info Penting']) assert.ok(!n.includes(tidak), `SMP mendapat ${tidak}`);
     const teks = panduan.bagianPanduan('8');
-    assert.ok(!/SNBP|SNBT|TKA|Penolong Pilih Mapel|Jalur Saya/.test(teks), teks);
+    assert.ok(!/SNBP|SNBT|TKA|Penolong Pilih Mapel|Profil Saya/.test(teks), teks);
     assert.ok(teks.includes('Kenali Minatmu'));
   });
 
-  test('Kelas 10–11: Pilih Mapel (Mapel Saya + Penolong) dan Daftar Periksa; tanpa Jalur Saya dan Info Penting', () => {
+  test('Kelas 10–11: Pilih Mapel (Mapel Saya + Penolong) dan Daftar Periksa; tanpa Profil Saya dan Info Penting', () => {
     for (const k of ['10', '11']) {
       const n = nama(k);
       for (const ada of ['Pilih Mapel', 'Eksplorasi Kampus', 'Daftar Periksa', 'Gaya Belajar', 'Jenjang Saya']) assert.ok(n.includes(ada), `${k} tanpa ${ada}`);
-      for (const tidak of ['Jalur Saya', 'Info Penting', 'Mapel Saya']) assert.ok(!n.includes(tidak), `${k} mendapat ${tidak}`);
+      for (const tidak of ['Profil Saya', 'Info Penting', 'Mapel Saya']) assert.ok(!n.includes(tidak), `${k} mendapat ${tidak}`);
       assert.ok(panduan.bagianPanduan(k).includes('Jalur dan Bidangmu'));
     }
   });
 
-  test('Kelas 12: Jalur Saya, Daftar Periksa, Pilih Mapel, Eksplorasi Kampus, Info Penting', () => {
+  test('Kelas 12: Profil Saya, Daftar Periksa, Pilih Mapel, Eksplorasi Kampus, Info Penting', () => {
     const n = nama('12');
-    for (const ada of ['Jalur Saya', 'Daftar Periksa', 'Pilih Mapel', 'Eksplorasi Kampus', 'Info Penting', 'Arsip Belajar', 'Latihan', 'Level-In']) {
+    for (const ada of ['Profil Saya', 'Daftar Periksa', 'Pilih Mapel', 'Eksplorasi Kampus', 'Info Penting', 'Arsip Belajar', 'Latihan', 'Level-In']) {
       assert.ok(n.includes(ada), `kelas 12 tanpa ${ada}`);
     }
     assert.ok(!n.includes('Mapel Saya'));
@@ -110,14 +110,14 @@ describe('Panduan fitur per jenjang', () => {
 });
 
 describe('Instruksi sistem', () => {
-  test('Memuat PANDUAN FITUR jenjang siswa; SMP tidak pernah mendapat Jalur Saya', () => {
+  test('Memuat PANDUAN FITUR jenjang siswa; SMP tidak pernah mendapat Profil Saya', () => {
     const smp = layanan.pesanSistem({ kelas: '8', jenis_sekolah: 'SMP' }, null);
     assert.ok(smp.includes('PANDUAN FITUR LANJUT untuk siswa ini (SMP'));
     assert.ok(smp.includes(panduan.bagianPanduan('8')));
-    assert.ok(!smp.includes('Jalur Saya'), 'SMP tidak boleh diarahkan ke Jalur Saya');
+    assert.ok(!smp.includes('Profil Saya'), 'SMP tidak boleh diarahkan ke Profil Saya');
     const k12 = layanan.pesanSistem({ kelas: '12', jenis_sekolah: 'SMA' }, null);
     assert.ok(k12.includes(panduan.bagianPanduan('12')));
-    assert.ok(k12.includes('Jalur Saya'));
+    assert.ok(k12.includes('Profil Saya'));
   });
 
   test('Aturan memandu fitur: hanya fitur di panduan, nama persis, tanpa nama menu lama', () => {

@@ -21,11 +21,13 @@ describe('Saklar build: layar tertutup sampai teks disetujui', () => {
     assert.equal(fitur.kelolaDataAkunAktif({ kelolaDataAkun: true }), true);
   });
 
-  test('Bawaan mati di app.config, Dockerfile, dan docker-compose; eas.json tidak menyalakan', () => {
+  test('Bawaan mati di app.config, Dockerfile, dan docker-compose; di eas.json hanya profil pilot yang menyalakan', () => {
     assert.ok(baca('app.config.ts').includes("kelolaDataAkun: process.env.EXPO_PUBLIC_KELOLA_DATA_AKUN === '1',"));
     assert.ok(baca('Dockerfile').includes('ARG EXPO_PUBLIC_KELOLA_DATA_AKUN=0'));
     assert.ok(baca('docker-compose.yml').includes('EXPO_PUBLIC_KELOLA_DATA_AKUN: ${EXPO_PUBLIC_KELOLA_DATA_AKUN:-0}'));
-    assert.ok(!baca('eas.json').includes('EXPO_PUBLIC_KELOLA_DATA_AKUN'));
+    const { pilot, ...lain } = JSON.parse(baca('eas.json')).build;
+    assert.equal(pilot.env.EXPO_PUBLIC_KELOLA_DATA_AKUN, '1');
+    assert.ok(!JSON.stringify(lain).includes('EXPO_PUBLIC_KELOLA_DATA_AKUN'));
   });
 
   test('Data Akun dan rute /hapus-akun tunduk pada saklar', () => {
@@ -116,7 +118,7 @@ describe('Teks baru berstatus draf', () => {
     for (const kode of ['KREDENSIAL_SALAH', 'KODE_SALAH', 'KODE_KEDALUWARSA', 'TERLALU_SERING', 'OTP_TIDAK_TERSEDIA', 'TIDAK_BERHAK', 'JARINGAN']) {
       assert.ok(draf.includes(dataAkun.pesanGalatHapus(kode)), kode);
     }
-    for (const kode of ['EKSPOR_TERLALU_BESAR', 'TERLALU_BESAR_HP']) assert.ok(draf.includes(dataAkun.pesanGalatUnduh(kode)), kode);
+    for (const kode of ['EKSPOR_TERLALU_BESAR', 'BAGIKAN_TIDAK_TERSEDIA']) assert.ok(draf.includes(dataAkun.pesanGalatUnduh(kode)), kode);
   });
 
   test('Email kode hapus akun juga tercatat', () => {

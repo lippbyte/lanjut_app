@@ -37,12 +37,14 @@ describe('Saklar build: mati berarti tidak ada jejak', () => {
     assert.equal(fitur.portofolioAktif({ portofolio: true }), true);
   });
 
-  test('Bawaan mati di app.config, Dockerfile, dan docker-compose; eas.json tidak menyalakan', () => {
+  test('Bawaan mati di app.config, Dockerfile, dan docker-compose; di eas.json hanya profil pilot yang menyalakan', () => {
     assert.ok(baca('app.config.ts').includes("const PORTOFOLIO_AKTIF = process.env.EXPO_PUBLIC_PORTOFOLIO === '1';"));
     assert.ok(baca('app.config.ts').includes('portofolio: PORTOFOLIO_AKTIF,'));
     assert.ok(baca('Dockerfile').includes('ARG EXPO_PUBLIC_PORTOFOLIO=0'));
     assert.ok(baca('docker-compose.yml').includes('EXPO_PUBLIC_PORTOFOLIO: ${EXPO_PUBLIC_PORTOFOLIO:-0}'));
-    assert.ok(!baca('eas.json').includes('EXPO_PUBLIC_PORTOFOLIO'));
+    const { pilot, ...lain } = JSON.parse(baca('eas.json')).build;
+    assert.equal(pilot.env.EXPO_PUBLIC_PORTOFOLIO, '1');
+    assert.ok(!JSON.stringify(lain).includes('EXPO_PUBLIC_PORTOFOLIO'));
   });
 
   test('Saat mati, berkas rute tidak masuk bundel, jadi rutenya tidak terdaftar', () => {
@@ -112,9 +114,8 @@ describe('Saklar build: mati berarti tidak ada jejak', () => {
 
   test('Saat mati, APK tidak meminta izin kamera; saat menyala, mikrofon tetap dicabut', () => {
     const config = baca('app.config.ts');
-    assert.ok(config.includes("...(PORTOFOLIO_AKTIF ? {} : { blockedPermissions: ['android.permission.CAMERA'] }),"));
-    assert.match(config, /\.\.\.\(PORTOFOLIO_AKTIF\s*\? \[\s*\[\s*'expo-image-picker'/);
-    assert.ok(config.includes('microphonePermission: false'));
+    assert.ok(config.includes(': { photosPermission: false, cameraPermission: false, microphonePermission: false },'));
+    assert.match(config, /'expo-image-picker',\s*PORTOFOLIO_AKTIF\s*\? \{[\s\S]*?microphonePermission: false,\s*\}/);
   });
 });
 
