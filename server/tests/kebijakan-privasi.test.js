@@ -195,6 +195,14 @@ test('setiap kelompok data yang disimpan disebut di kebijakan', () => {
     'modul.isi (berkas asli tidak disimpan)': 'berkas aslinya tidak disimpan',
     'modul (hapus permanen)': 'hapus permanen',
     pemakaian_ai_harian: 'hitungan harian gabungan', // LANJUT_060, tanpa ID akun/isi
+    'pengguna.minat_rumpun': 'bidang minat', // LANJUT_017
+    'pengguna.mapel_pilihan': 'mapel pilihan',
+    'pengguna.kesiapan_ujian': 'kesiapan ujian',
+    event_sekolah: 'persiapan event',
+    'persetujuan.sumber konfirmasi_di_app': 'konfirmasi orang tua atau wali di aplikasi',
+    kode_otp_email: 'kode masuk lewat email',
+    pendaftaran_tertunda: 'data daftar sementara',
+    'pengguna.email_terverifikasi': 'verifikasi email',
   };
   for (const [kolom, kata] of Object.entries(WAJIB)) assert.ok(teks.includes(kata), `${kolom} → "${kata}"`);
 });

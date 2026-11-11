@@ -7,7 +7,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { periksa, sidikTeks } = require('../tools/periksa-gerbang-rilis');
+const { periksa, sidikTeks, teksDrafLain } = require('../tools/periksa-gerbang-rilis');
 const { muatModulApp } = require('./muat-ts-app');
 
 const AKAR_APP = path.join(__dirname, '..', '..');
@@ -105,6 +105,40 @@ describe('Pemeriksa gerbang rilis', () => {
     t.kebijakan.isi[1].butir = ['LANJUT tidak mengumpulkan lokasi atau foto.'];
     t.simpanKebijakan();
     assert.deepEqual(jenis(t.akar), ['kalimat']);
+  });
+
+  test('Kalimat foto yang sudah diganti tertangkap, di kebijakan dan di teks layar', () => {
+    for (const teks of ['Pengelola tidak membukanya tanpa keperluan.', 'Fotomu hanya terlihat olehmu di aplikasi.', 'Hanya kamu yang bisa melihat foto ini.']) {
+      const t = tiruan();
+      t.kebijakan.isi[1].butir = [teks];
+      t.simpanKebijakan();
+      assert.deepEqual(jenis(t.akar), ['kalimat'], teks);
+    }
+    for (const rel of ['lib/portofolio.ts', 'lib/beranda.ts']) {
+      const t = tiruan();
+      t.tulis(rel, "export const A = 'tidak membukanya tanpa keperluan';\n");
+      assert.deepEqual(periksa(t.akar), [{ jenis: 'kalimat', pesan: `${rel}: masih memuat kalimat foto yang sudah diganti (K29).` }], rel);
+    }
+  });
+
+  test('Kalimat foto lama boleh ada bila Portofolio mati', () => {
+    const t = tiruan();
+    t.tulis('lib/portofolio.ts', "export const A = 'Hanya kamu yang bisa melihat foto ini.';\n");
+    t.matikanSaklar();
+    assert.deepEqual(periksa(t.akar), []);
+  });
+
+  test('Teks DRAF lain hanya jadi peringatan, dengan hitungan', () => {
+    const t = tiruan();
+    t.tulis('lib/ngobrol.ts', '// DRAF belum disetujui Khalifa.\n// DRAF\n');
+    t.tulis('components/screens/Lain.tsx', '// Teks DRAF.\n');
+    t.tulis('lib/polos.ts', 'const draf = 1;\n');
+    t.tulis('lib/kebijakanPrivasi.ts', '// DRAF\n');
+    assert.deepEqual(teksDrafLain(t.akar), [{ berkas: 'components/screens/Lain.tsx', jumlah: 1 }, { berkas: 'lib/ngobrol.ts', jumlah: 3 }]);
+    assert.deepEqual(periksa(t.akar), [], 'peringatan bukan kegagalan');
+    const r = cli(`--akar=${t.akar}`);
+    assert.equal(r.status, 0, r.stdout);
+    assert.match(r.stdout, /Peringatan, bukan kegagalan: 2 berkas lain masih memuat 4 tanda DRAF/);
   });
 
   test('Kalimat hapus akun belum ada tertangkap bila saklarnya menyala', () => {
@@ -250,5 +284,7 @@ describe('Teks kebijakan yang sudah diselaraskan', () => {
     const teks = [porto.TEKS_PORTOFOLIO.privasiFoto, porto.TEKS_PORTOFOLIO.pengantar, beranda.KARTU_PORTOFOLIO.keterangan].join(' ');
     assert.doesNotMatch(teks, /Hanya kamu yang bisa/);
     assert.match(porto.TEKS_PORTOFOLIO.privasiFoto, /Pengelola layanan secara teknis/);
+    assert.doesNotMatch(teks, /tanpa keperluan/);
+    assert.doesNotMatch(semua, /tanpa keperluan|hanya terlihat olehmu/);
   });
 });

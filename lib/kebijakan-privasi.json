@@ -1,5 +1,5 @@
 {
-  "_catatan": "LANJUT_047; isi diperbarui LANJUT_056 menjadi draf v2 (fitur AI, modul, pencarian web), diselaraskan dengan draf di LANJUT_014 (hapus akun, Portofolio, masa simpan K27). DRAF — wajib direview ahli hukum sebelum dipakai. Satu-satunya sumber teks kebijakan privasi di app (ringkasan di layar Daftar dan halaman lengkap /kebijakan-privasi). docs/kebijakan-privasi-DRAF.md memuat teks yang sama persis (dijaga server/tests/kebijakan-privasi.test.js). `versi` SENGAJA masih 1: menaikkannya tanpa migrasi yang menaikkan persetujuan_versi_kebijakan membuat pendaftaran ditolak. Saat rilis: app dengan teks ini dirilis dulu, lalu `versi` di sini dan persetujuan_versi_kebijakan di server dinaikkan bersama. Setiap klaim tentang data dicocokkan dengan kode di docs/kebijakan-v2-klaim-vs-kode.md. Bagian [ISI: ...] menunggu diisi; pengisinya tercatat di dokumen itu.",
+  "_catatan": "LANJUT_047; isi diperbarui LANJUT_056 menjadi draf v2 (fitur AI, modul, pencarian web), diselaraskan dengan draf di LANJUT_014 (hapus akun, Portofolio, masa simpan K27), dan di LANJUT_017 (K29, data yang tertinggal). DRAF — wajib direview ahli hukum sebelum dipakai. Satu-satunya sumber teks kebijakan privasi di app (ringkasan di layar Daftar dan halaman lengkap /kebijakan-privasi). docs/kebijakan-privasi-DRAF.md memuat teks yang sama persis (dijaga server/tests/kebijakan-privasi.test.js). `versi` SENGAJA masih 1: menaikkannya tanpa migrasi yang menaikkan persetujuan_versi_kebijakan membuat pendaftaran ditolak. Saat rilis: app dengan teks ini dirilis dulu, lalu `versi` di sini dan persetujuan_versi_kebijakan di server dinaikkan bersama. Setiap klaim tentang data dicocokkan dengan kode di docs/kebijakan-v2-klaim-vs-kode.md. Bagian [ISI: ...] menunggu diisi; pengisinya tercatat di dokumen itu.",
   "versi": 1,
   "status": "DRAF — belum berlaku. Wajib direview ahli hukum sebelum dipakai.",
   "ringkasan": [
@@ -21,13 +21,19 @@
       "butir": [
         "Akun: nama pengguna, nama tampilan, email (kalau kamu isi), dan kata sandi. Kata sandi disimpan dalam bentuk acak (hash), jadi tidak bisa dibaca, termasuk oleh tim LANJUT.",
         "Jalur belajarmu: kelas, jenis sekolah (SMP, SMA, SMK, atau MA), prodi impian, dan gaya belajar yang kamu pilih.",
+        "Pilihan belajar: bidang minat yang kamu pilih (misalnya Kesehatan atau Teknologi & Rekayasa, paling banyak 5), mapel pilihanmu (paling banyak 5), dan jawabanmu atas pertanyaan seberapa siap kamu menghadapi ujian. Ketiganya bisa kamu ubah atau kosongkan.",
+        "Persiapan Event, kalau fiturnya sudah dibuka untukmu: ujian atau ulangan sekolah yang kamu catat (jenis, tanggal, mapel, catatan materi singkat, dan kartu Arsip yang kamu tautkan). Event yang kamu hapus dihapus permanen.",
         "Kemajuan: butir Daftar Periksa yang kamu centang, dan butir yang kamu simpan dari Pilih Mapel atau Eksplorasi Tujuan.",
         "Arsip Belajar: kartu yang kamu tulis (mapel, judul, isi, dan jawaban). Isinya teks bebas, jadi sebaiknya jangan menulis data pribadi di kartu.",
         "Modul: teks materi pelajaran yang kamu unggah ke Arsip Belajar (dari berkas .txt, .md, atau PDF, atau yang kamu tempel), beserta judul, mapel, nama berkas, dan waktu unggah. Berkas aslinya tidak disimpan, hanya teksnya. Teks itu juga dibelah menjadi potongan supaya bisa kamu cari dan supaya potongan yang berkaitan bisa dipakai fitur AI. Modul bisa kamu hapus permanen kapan saja; teks dan semua potongannya ikut terhapus.",
         "Portofolio, kalau fiturnya sudah dibuka untukmu: catatan yang kamu buat (judul, jenis, cerita singkat, tautan, dan tanggal karya) beserta fotonya. Satu catatan paling banyak 3 foto, satu akun paling banyak 30 foto, dan satu foto paling besar 5 MB. Sebelum disimpan, keterangan tersembunyi di foto, termasuk lokasi, dihapus. Foto disimpan privat di server. Catatan dan foto yang kamu hapus dihapus permanen; kalau berkas fotonya gagal terhapus saat itu, server mencatat nama berkasnya (tanpa ID akun) supaya bisa dihapus lagi.",
         "Latihan: kapan sesi latihan dimulai dan selesai, mapel yang dilatih, kartu yang kamu jawab, benar atau salahnya jawabanmu, dan seberapa yakin kamu (kalau kamu mengisinya).",
         "Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.",
+        "Konfirmasi orang tua atau wali di aplikasi: kalau orang tua atau wali menyatakan setuju langsung di HP-mu, server mencatat waktunya dan bahwa persetujuan itu diberikan di aplikasi. Identitasnya tidak diperiksa. [ISI: apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.]",
         "Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).",
+        "Verifikasi email: apakah emailmu sudah terbukti milikmu, tenggat verifikasi untuk akun lama, dan tanda kalau kamu perlu membuat kata sandi baru.",
+        "Kode masuk lewat email: kode yang dikirim ke emailmu disimpan dalam bentuk acak, bersama bentuk acak alamat email dan jumlah percobaannya, supaya kode hanya bisa dipakai sekali dan tidak diminta terlalu sering. Catatan kode yang berumur lebih dari 24 jam dibersihkan saat ada permintaan kode berikutnya. [ISI: penyedia layanan email yang mengirim kode, dan negara pemrosesannya.]",
+        "Data daftar sementara: saat kamu mendaftar dengan email, data daftarmu (nama pengguna, nama tampilan, kata sandi dalam bentuk acak, bentuk acak alamat email, kelas, jenis sekolah, dan prodi impian) disimpan sementara sampai kodenya benar. Data ini dihapus saat akun dibuat, atau setelah 30 menit.",
         "Catatan teknis server: setiap permintaan ke server mencatat fitur yang dibuka, hasilnya, lama prosesnya, dan ID akunmu (bukan namamu). Alamat IP perangkatmu dipakai sementara untuk membatasi permintaan yang terlalu sering, dan tidak disimpan di basis data. [ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]",
         "Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi masih tersimpan di server sampai akunmu dihapus (modul tidak termasuk: modul dihapus permanen). Saat akunmu dihapus, semuanya ikut terhapus permanen."
       ]
@@ -56,6 +62,9 @@
         "Menyimpan catatan portofolio dan fotomu supaya bisa kamu lihat lagi.",
         "Menghitung berapa siswa yang sudah mengisi Portofolio, untuk menilai apakah fiturnya berguna. Hasilnya berupa jumlah, dan ID akun bila diminta tim, tanpa isi catatan.",
         "Memberi saran mapel dan latihan dari prodi impian dan hasil latihanmu.",
+        "Menampilkan Eksplorasi Kampus sesuai bidang minatmu, mendahulukan mapel pilihanmu di Arsip Belajar dan Latihan, dan menyesuaikan saran dari jawaban kesiapan ujianmu.",
+        "Menampilkan ujian atau ulangan yang kamu catat di Persiapan Event.",
+        "Memastikan email benar-benar milikmu, dan mengirim kode masuk.",
         "Menjawab pesanmu di Ngobrol Bareng LANJUT lewat penyedia AI (lihat bagian Fitur AI).",
         "Menjaga keamanan akun.",
         "[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]"
@@ -65,7 +74,7 @@
       "judul": "Siapa yang bisa melihat datamu",
       "butir": [
         "Kamu sendiri, lewat aplikasi. Akun lain tidak bisa melihat datamu, termasuk modulmu.",
-        "Catatan portofolio dan fotomu hanya terlihat olehmu di aplikasi. Saat ini tidak ada fitur berbagi, dan foto tidak punya alamat yang bisa dibuka umum.",
+        "Catatan portofolio dan fotomu hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya. Saat ini tidak ada fitur berbagi, dan foto tidak punya alamat yang bisa dibuka umum.",
         "Tim pengelola LANJUT yang mengurus server. [ISI: siapa saja dan untuk keperluan apa.]",
         "Penyedia server dan basis data tempat LANJUT berjalan. [ISI: nama penyedia dan lokasi servernya.]",
         "Penyedia AI pihak ketiga, tetapi hanya data yang dikirim untuk fitur AI (lihat bagian Fitur AI).",
@@ -90,7 +99,8 @@
         "Pesan terbarumu, setelah sebagian data pribadi disamarkan (lihat bagian berikut).",
         "Riwayat obrolan di sesi itu, hingga 20 pesan terakhir, termasuk balasan sebelumnya. Riwayat juga disamarkan dulu. Salam pembuka yang memuat nama tampilanmu tidak ikut dikirim.",
         "Profil belajarmu dari akun: kelas, jenis sekolah, nama prodi impian, dan gaya belajar (kalau sudah kamu isi).",
-        "Untuk pertanyaan materi pelajaran: potongan modul yang berkaitan, dan hasil pencarian web bila fitur itu diaktifkan (lihat bagian Pertanyaan pelajaran)."
+        "Untuk pertanyaan materi pelajaran: potongan modul yang berkaitan, dan hasil pencarian web bila fitur itu diaktifkan (lihat bagian Pertanyaan pelajaran).",
+        "Kalau pertanyaanmu menyangkut latihan atau ujian: ringkasan singkat dari akunmu, yaitu nama mapel dan jenis saran latihanmu (dihitung dari hasil latihanmu), atau jenis, tanggal, dan mapel satu ujian terdekat yang kamu catat di Persiapan Event."
       ]
     },
     {
@@ -98,7 +108,7 @@
       "butir": [
         "Nama tampilan, nama pengguna, email, kata sandi, dan ID akunmu.",
         "Nama sekolahmu, karena LANJUT memang tidak menyimpannya.",
-        "Data lain di akunmu, seperti kartu, hasil latihan, dan centang Daftar Periksa.",
+        "Data lain di akunmu, seperti isi kartu, jawaban latihan per kartu, centang Daftar Periksa, catatan materi ujian, bidang minat, mapel pilihan, dan kesiapan ujian. Ringkasan singkat di atas adalah satu-satunya bagian dari data latihan dan Persiapan Event yang bisa ikut dikirim.",
         "Tetapi apa pun yang kamu tulis sendiri di pesan ikut terkirim, termasuk nama, alamat, atau nama sekolah, kecuali bagian yang disamarkan. Karena itu, jangan menulis data pribadimu atau data orang lain di Ngobrol."
       ]
     },
@@ -171,6 +181,7 @@
       "judul": "Berapa lama data disimpan",
       "paragraf": [
         "Akun dan data di dalamnya, termasuk modul, disimpan sampai kamu menghapus akunmu. Akun yang lama tidak dipakai tidak dihapus otomatis. Hapus akun berlaku seketika, tanpa masa tenggang.",
+        "Saat akunmu dihapus, bidang minat, mapel pilihan, kesiapan ujian, Persiapan Event, kode email, dan data daftar sementara ikut terhapus.",
         "Cadangan basis data tidak bisa disunting per akun, jadi cadangan lama masih memuat akun yang sudah dihapus sampai cadangan itu tergantikan. Kalau cadangan lama dipulihkan, akun yang pernah dihapus harus dihapus lagi. Foto disimpan terpisah dari basis data, jadi tidak ikut cadangan basis data. Catatan teknis server juga tidak ikut terhapus saat akunmu dihapus."
       ]
     },

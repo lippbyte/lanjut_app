@@ -38,6 +38,7 @@ Versi: `2.0.0`, `versionCode` 3. Setiap build yang dibagikan perlu `versionCode`
 | 1.11 | `docker exec <kontainer-api> sh -c 'touch /data/berkas/.uji && rm /data/berkas/.uji && echo BISA_DITULIS'` | Tercetak `BISA_DITULIS` | |
 | 1.12 | Cadangkan volume foto sesudah ada isinya: `docker run --rm -v <nama-volume>:/data -v "$PWD":/cadangan alpine tar czf /cadangan/berkas.tgz -C /data .` | Berkas terbentuk. **Belum terbukti:** belum pernah dijalankan di Dokploy | |
 | 1.13 | **Syarat sebelum `eas build`:** di folder `LANJUT_App`, jalankan `npm run periksa-gerbang-rilis` | Tercetak `LOLOS`. Bila `BELUM BOLEH BUILD`, bereskan daftar yang tercetak, lalu ulangi | |
+| 1.14 | **Syarat sebelum situs terbit:** di folder `landing`, jalankan `npm run periksa-gerbang-landing` | Tercetak `LOLOS`. Bila `BELUM BOLEH TERBIT`, situs tidak boleh diunggah | |
 
 ### Pemeriksa gerbang rilis
 
@@ -45,9 +46,16 @@ Versi: `2.0.0`, `versionCode` 3. Setiap build yang dibagikan perlu `versionCode`
 
 - kebijakan di aplikasi masih memuat penanda `[ISI`;
 - kebijakan masih menyatakan tidak mengumpulkan foto atau hapus akun belum ada, padahal fiturnya menyala di salah satu profil `eas.json`;
-- teks bertanda draf dipakai profil yang menyalakan fiturnya, dan belum disetujui.
+- teks bertanda draf dipakai profil yang menyalakan fiturnya, dan belum disetujui;
+- kalimat foto yang sudah diganti (K29) muncul lagi, padahal Portofolio menyala.
+
+Pemeriksa juga mencetak **peringatan** berisi jumlah teks lain yang masih berkomentar DRAF. Peringatan ini bukan kegagalan.
 
 **Cara menyetujui teks:** baca teksnya, jalankan `npm run periksa-gerbang-rilis -- --sidik`, salin baris teks yang disetujui ke bagian `disetujui` di `docs/persetujuan-teks-rilis.json`, lalu isi tanggalnya. Persetujuan terikat pada isi teks, jadi gugur sendiri bila teksnya berubah.
+
+### Pemeriksa gerbang landing
+
+`npm run periksa-gerbang-landing` (folder `landing` di repo induk) gagal bila teks situs masih memuat `[ISI`, atau salinan kebijakan tidak sama dengan `lib/kebijakan-privasi.json`. Jalankan dari folder kerja yang memuat repo `LANJUT_App` terbaru, karena salinan `LANJUT_App` yang dilacak repo induk sudah lama. Di tempat build yang tidak punya repo aplikasi, pakai `npm run periksa-gerbang-landing -- --hanya-isian`.
 
 ## 2. Uji APK 1.0.0 terhadap server baru
 

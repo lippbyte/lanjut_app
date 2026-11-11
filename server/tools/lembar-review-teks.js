@@ -239,7 +239,7 @@ const PETA = [
       {
         task: 'LANJUT_074',
         awal: '**Nama fitur `/cek-posisi`:**',
-        nama: 'Nama "Jalur Saya" untuk /cek-posisi',
+        nama: 'Nama "Profil Saya" untuk /cek-posisi',
         di: 'Judul bilah halaman /cek-posisi dan kartu pintu di Data Akun; label grid Beranda, tombol "Mulai dari Sini", dan pintu Jenjang Saya.',
         oleh: 'Bilah halaman & kartu pintu di Data Akun: semua akun kecuali kartu pintu untuk kelas 7–9 (disembunyikan sejak LANJUT_077b; kelas 10–11 melihat pengganti kelas 12). Grid, "Mulai dari Sini", pintu Jenjang Saya: kelas 12.',
       },
@@ -509,7 +509,7 @@ const PETA = [
       { task: 'LANJUT_037', awal: 'Ngobrol Bareng LANJUT', nama: 'Pintu Ngobrol Bareng LANJUT (tanpa kelas)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_037', awal: 'Eksplorasi Tujuan', nama: 'Pintu Eksplorasi Tujuan (tanpa kelas)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_037', awal: 'Pilih Mapel', nama: 'Pintu Pilih Mapel (tanpa kelas)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Akun tanpa kelas.' },
-      { task: 'LANJUT_037', awal: 'Jalur Saya', nama: 'Pintu Jalur Saya (/cek-posisi; nama sejak LANJUT_074)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 12.' },
+      { task: 'LANJUT_037', awal: 'Profil Saya', nama: 'Pintu Profil Saya (/cek-posisi; nama sejak LANJUT_013 seri v2)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 12.' },
       { task: 'LANJUT_037', awal: 'Daftar Periksa', nama: 'Pintu Daftar Periksa', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 12.' },
       { task: 'LANJUT_037', awal: '**Seksi SMK', nama: 'Judul seksi SMK', di: 'Jenjang Saya, seksi SMK.', oleh: 'Kelas 10–12 dengan jenis sekolah SMK.' },
       {
@@ -571,15 +571,15 @@ const PETA = [
     // tenggat hanya dirender untuk kelas 12, untuk kelas lain tidak ada apa pun.
     // LANJUT_076b (H.19): ketiga butir "Kelas 7–11" TIDAK dihapus dari lembar —
     // kalimatnya sudah tidak tampil di Daftar Periksa SMP, tetapi masih tampil
-    // untuk kelas 7–11 di Jalur Saya /cek-posisi, jadi masih dipakai di SMP.
-    kelompok: 'Bagian khusus kelas 12 (Jalur Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain',
+    // untuk kelas 7–11 di Profil Saya /cek-posisi, jadi masih dipakai di SMP.
+    kelompok: 'Bagian khusus kelas 12 (Profil Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain',
     butir: [
       {
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — judul:**',
         nama: 'Pengganti kelas 7–11 — judul',
-        di: 'Jalur Saya /cek-posisi (kelas 7–11), menggantikan isinya. Tidak lagi di Daftar Periksa: kelas 10–11 sejak LANJUT_069 dan kelas 7–9 sejak LANJUT_076b melihat kalimat netral. Tidak tampil di Beranda.',
-        oleh: 'Kelas 10–11, hanya di layar /cek-posisi (Jalur Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.',
+        di: 'Profil Saya /cek-posisi (kelas 7–11), menggantikan isinya. Tidak lagi di Daftar Periksa: kelas 10–11 sejak LANJUT_069 dan kelas 7–9 sejak LANJUT_076b melihat kalimat netral. Tidak tampil di Beranda.',
+        oleh: 'Kelas 10–11, hanya di layar /cek-posisi (Profil Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.',
         faktual: {
           klaim: 'Bersama isi di bawahnya: jadwal dan persiapan SNBP, SNBT, dan TKA hanya untuk kelas 12.',
           sumber: 'Kemendikdasmen (TKA: jenjang yang diikutkan), SNPMB (SNBP/SNBT). Perlu dipastikan apakah ada TKA untuk jenjang lain yang relevan bagi siswa kelas 7–9.',
@@ -589,15 +589,15 @@ const PETA = [
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — isi:**',
         nama: 'Pengganti kelas 7–11 — isi',
-        di: 'Sama dengan butir judul di atasnya: hanya Jalur Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.',
-        oleh: 'Kelas 10–11, hanya di layar /cek-posisi (Jalur Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.',
+        di: 'Sama dengan butir judul di atasnya: hanya Profil Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.',
+        oleh: 'Kelas 10–11, hanya di layar /cek-posisi (Profil Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.',
         faktual: {
           klaim: 'Isi bagian ini adalah jadwal dan persiapan SNBP, SNBT, dan TKA (lihat butir judul di atasnya).',
           sumber: 'Sama dengan butir judul di atasnya.',
         },
       },
-      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Sama dengan butir judul di atasnya: hanya Jalur Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.', oleh: 'Kelas 10–11, hanya di layar /cek-posisi (Jalur Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.' },
-      { task: 'LANJUT_035', awal: '**Kelas kosong — judul:**', nama: 'Pengganti tanpa kelas — judul', di: 'Jalur Saya /cek-posisi dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.', oleh: 'Akun tanpa kelas.' },
+      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Sama dengan butir judul di atasnya: hanya Profil Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.', oleh: 'Kelas 10–11, hanya di layar /cek-posisi (Profil Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.' },
+      { task: 'LANJUT_035', awal: '**Kelas kosong — judul:**', nama: 'Pengganti tanpa kelas — judul', di: 'Profil Saya /cek-posisi dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — isi:**', nama: 'Pengganti tanpa kelas — isi', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — tombol:**', nama: 'Pengganti tanpa kelas — tombol', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
     ],
@@ -791,14 +791,14 @@ const PETA = [
       },
       { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — judul kelompok:**', nama: 'Judul kelompok = nama rumpun', di: 'Tab Pilih Mapel, di atas pil mapel tiap rumpun favorit.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
       { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — tombol ubah rumpun:**', nama: 'Tombol "Ubah rumpun favorit"', di: 'Tab Pilih Mapel, bawah seksi; membuka pilihan rumpun di layar yang sama.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
-      { task: 'LANJUT_079', awal: '**Rumpun favorit (Jalur Saya', nama: 'Pilihan rumpun favorit (1–3)', di: 'Jalur Saya /cek-posisi (sesudah Langkah Berikutnya) dan ajakan di tab Pilih Mapel.', oleh: 'Kelas 12.' },
+      { task: 'LANJUT_079', awal: '**Rumpun favorit (Profil Saya', nama: 'Pilihan rumpun favorit (1–3)', di: 'Profil Saya /cek-posisi (sesudah Langkah Berikutnya) dan ajakan di tab Pilih Mapel.', oleh: 'Kelas 12.' },
       { task: 'LANJUT_079', awal: '**Mapel Saya — judul & pengantar:**', nama: 'Mapel Saya — judul & pengantar', di: 'Tab Pilih Mapel: judul layar untuk kelas 7–9; judul seksi di atas alur prodi untuk kelas 10–11.', oleh: 'Kelas 7–11.' },
       { task: 'LANJUT_079', awal: '**Pilihan mapel — hitungan & batas:**', nama: 'Hitungan dan batas pilihan', di: 'Tab Pilih Mapel (mapel) dan pilihan rumpun (batas saja).', oleh: 'Kelas 7–12.' },
       {
         task: 'LANJUT_079',
         awal: '**Rumpun favorit — lebih dari batas',
         nama: 'Rumpun lebih dari batas (akun lama, LANJUT_079b)',
-        di: 'Pilihan rumpun favorit (Pilih Mapel, terbuka sendiri; dan Jalur Saya) selama pilihan masih lebih dari 3.',
+        di: 'Pilihan rumpun favorit (Pilih Mapel, terbuka sendiri; dan Profil Saya) selama pilihan masih lebih dari 3.',
         oleh: 'Akun kelas 12 yang menyimpan lebih dari 3 rumpun sebelum batas 3 berlaku.',
       },
       { task: 'LANJUT_079', awal: '**Pilihan mapel — tombol:**', nama: 'Tombol "Simpan mapel"', di: 'Tab Pilih Mapel, tampil bila pilihan berubah.', oleh: 'Kelas 7–12.' },
@@ -807,7 +807,7 @@ const PETA = [
   {
     // §4.20 — percakapan 15 Okt 2026, tanpa nomor task (kepala blok tidak menyebut LANJUT_xxx).
     // Data: server/data-konten/checklist.json (kategori persiapan-ujian); teks lain di lib/kesiapanUjian.ts.
-    kelompok: 'Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Jalur Saya)',
+    kelompok: 'Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Profil Saya)',
     butir: [
       ...[
         ['**Kategori Daftar Periksa:**', 'Judul kategori "Persiapan Ujian"', 'Daftar Periksa, kategori keempat sesudah Jalur Pembiayaan.', 'Kelas 12 dengan jalur TKA atau SNBT.'],
@@ -828,18 +828,18 @@ const PETA = [
         },
       },
       ...[
-        ['**Kesiapan Ujian — judul seksi & pertanyaan:**', 'Judul & pertanyaan Kesiapan Ujian', 'Jalur Saya /cek-posisi, sesudah Langkah Berikutnya.'],
-        ['**Kesiapan Ujian — petunjuk:**', 'Petunjuk Kesiapan Ujian', 'Jalur Saya, di bawah pertanyaan.'],
-        ['**Kesiapan Ujian — pilihan:**', 'Empat pilihan kesiapan', 'Jalur Saya, pilihan berbentuk pil; ketukan langsung menyimpan.'],
-        ['**Kesiapan Ujian — saat menyimpan:**', 'Status "Menyimpan…"', 'Jalur Saya, di bawah pilihan selama menyimpan.'],
-        ['**Kesiapan Ujian — ringkasan:**', 'Ringkasan langkah Persiapan Ujian', 'Jalur Saya, kartu saran; hanya bila jalurnya punya butir Persiapan Ujian.'],
-        ['**Saran — belum siap:**', 'Saran: belum siap', 'Jalur Saya, kartu saran.'],
-        ['**Saran — mulai siap:**', 'Saran: mulai siap', 'Jalur Saya, kartu saran.'],
-        ['**Saran — hampir/sudah siap, belum tryout:**', 'Saran: belum tryout', 'Jalur Saya, kartu saran.'],
-        ['**Saran — hampir/sudah siap, sudah tryout', 'Saran: belum simulasi/gladi', 'Jalur Saya, kartu saran (jalur TKA).'],
-        ['**Saran — hampir siap, langkah ujian beres:**', 'Saran: hampir siap, langkah beres', 'Jalur Saya, kartu saran.'],
-        ['**Saran — sudah siap, langkah ujian beres:**', 'Saran: sudah siap, langkah beres', 'Jalur Saya, kartu saran (tanpa tombol).'],
-        ['**Penafian Jalur Saya (diubah):**', 'Penafian Jalur Saya (diubah)', 'Jalur Saya, paling bawah.'],
+        ['**Kesiapan Ujian — judul seksi & pertanyaan:**', 'Judul & pertanyaan Kesiapan Ujian', 'Profil Saya /cek-posisi, sesudah Langkah Berikutnya.'],
+        ['**Kesiapan Ujian — petunjuk:**', 'Petunjuk Kesiapan Ujian', 'Profil Saya, di bawah pertanyaan.'],
+        ['**Kesiapan Ujian — pilihan:**', 'Empat pilihan kesiapan', 'Profil Saya, pilihan berbentuk pil; ketukan langsung menyimpan.'],
+        ['**Kesiapan Ujian — saat menyimpan:**', 'Status "Menyimpan…"', 'Profil Saya, di bawah pilihan selama menyimpan.'],
+        ['**Kesiapan Ujian — ringkasan:**', 'Ringkasan langkah Persiapan Ujian', 'Profil Saya, kartu saran; hanya bila jalurnya punya butir Persiapan Ujian.'],
+        ['**Saran — belum siap:**', 'Saran: belum siap', 'Profil Saya, kartu saran.'],
+        ['**Saran — mulai siap:**', 'Saran: mulai siap', 'Profil Saya, kartu saran.'],
+        ['**Saran — hampir/sudah siap, belum tryout:**', 'Saran: belum tryout', 'Profil Saya, kartu saran.'],
+        ['**Saran — hampir/sudah siap, sudah tryout', 'Saran: belum simulasi/gladi', 'Profil Saya, kartu saran (jalur TKA).'],
+        ['**Saran — hampir siap, langkah ujian beres:**', 'Saran: hampir siap, langkah beres', 'Profil Saya, kartu saran.'],
+        ['**Saran — sudah siap, langkah ujian beres:**', 'Saran: sudah siap, langkah beres', 'Profil Saya, kartu saran (tanpa tombol).'],
+        ['**Penafian Profil Saya (diubah):**', 'Penafian Profil Saya (diubah)', 'Profil Saya, paling bawah.'],
       ].map(([awal, nama, di]) => ({ task: '(tidak disebut)', awal, nama, di, oleh: 'Kelas 12.' })),
     ],
   },

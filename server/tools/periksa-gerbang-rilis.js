@@ -10,7 +10,10 @@
 //   2. kebijakan masih menyatakan tidak mengumpulkan foto atau hapus akun belum ada, padahal saklarnya
 //      menyala di salah satu profil eas.json;
 //   3. teks bertanda draf dipakai profil yang menyalakan saklarnya dan belum disetujui. Persetujuan
-//      terikat pada sidik teks, jadi gugur sendiri bila teksnya berubah sesudah disetujui.
+//      terikat pada sidik teks, jadi gugur sendiri bila teksnya berubah sesudah disetujui;
+//   4. kalimat foto yang sudah diganti (K29) muncul lagi, padahal Portofolio menyala.
+//
+// Teks lain yang berkomentar DRAF hanya dihitung sebagai peringatan, bukan kegagalan.
 
 const crypto = require('crypto');
 const fs = require('fs');
@@ -28,6 +31,12 @@ const TEKS = [
   { id: 'portofolio', nama: 'Teks Portofolio', saklar: SAKLAR_PORTOFOLIO, berkas: ['lib/portofolio.ts', 'docs/draf-teks-portofolio.md'] },
   { id: 'hapus-akun', nama: 'Teks unduh data dan hapus akun', saklar: SAKLAR_HAPUS_AKUN, berkas: ['lib/dataAkun.ts', 'docs/draf-teks-hapus-akun.md'] },
 ];
+
+const BERKAS_TEKS_FOTO = ['lib/portofolio.ts', 'lib/beranda.ts'];
+const FOLDER_KODE = ['app', 'components', 'lib', 'hooks', 'providers', 'api'];
+// Sudah diperiksa lewat TEKS, atau hanya pembungkus teks itu.
+const SUDAH_DIGERBANG = new Set([...TEKS.flatMap((t) => t.berkas), 'lib/kebijakanPrivasi.ts', 'components/screens/KebijakanPrivasiScreen.tsx', 'components/screens/PortofolioScreens.tsx']);
+const POLA_DRAF = /\bDRAF\b|belum disetujui/g;
 
 const baca = (akar, rel) => fs.readFileSync(path.join(akar, rel), 'utf8').replace(/\r\n/g, '\n');
 
@@ -49,6 +58,10 @@ function kalimatKebijakan(k) {
 const menyatakanTanpaFoto = ({ letak, teks }) =>
   (/yang tidak kami kumpulkan/i.test(letak) && /\bfoto\b/i.test(teks) && !/kecuali foto/i.test(teks)) ||
   /tidak\s+(mengumpulkan|menyimpan)\b[^.]*\bfoto\b/i.test(teks);
+
+// K29: janji tentang perilaku tim, dan kalimat yang terlalu mutlak.
+const KALIMAT_FOTO_LAMA = [/tanpa keperluan/i, /hanya terlihat olehmu/i, /hanya kamu yang bisa melihat/i];
+const memuatKalimatFotoLama = (teks) => KALIMAT_FOTO_LAMA.some((p) => p.test(teks));
 
 const menyatakanHapusAkunBelumAda = ({ teks }) => /hapus akun[^.]*belum ada|belum ada[^.]*hapus akun/i.test(teks);
 
@@ -85,6 +98,25 @@ function periksaDraf(akar, build) {
   return masalah;
 }
 
+function berkasKode(akar, rel) {
+  const penuh = path.join(akar, rel);
+  if (!fs.existsSync(penuh)) return [];
+  return fs.readdirSync(penuh, { withFileTypes: true }).flatMap((e) => {
+    const anak = `${rel}/${e.name}`;
+    if (e.isDirectory()) return berkasKode(akar, anak);
+    return /\.tsx?$/.test(e.name) ? [anak] : [];
+  });
+}
+
+/** Berkas di luar gerbang yang masih berkomentar DRAF. Hanya untuk peringatan. */
+function teksDrafLain(akar = AKAR_BAWAAN) {
+  return FOLDER_KODE.flatMap((d) => berkasKode(akar, d))
+    .filter((rel) => !SUDAH_DIGERBANG.has(rel))
+    .map((rel) => ({ berkas: rel, jumlah: (baca(akar, rel).match(POLA_DRAF) ?? []).length }))
+    .filter((b) => b.jumlah > 0)
+    .sort((a, b) => a.berkas.localeCompare(b.berkas));
+}
+
 /** Daftar masalah. Kosong berarti lolos. */
 function periksa(akar = AKAR_BAWAAN) {
   const kebijakan = JSON.parse(baca(akar, BERKAS_KEBIJAKAN));
@@ -102,6 +134,12 @@ function periksa(akar = AKAR_BAWAAN) {
   if (portofolio.length) {
     for (const k of kalimat.filter(menyatakanTanpaFoto)) {
       masalah.push({ jenis: 'kalimat', pesan: `${k.letak}: masih menyatakan tidak mengumpulkan foto, padahal Portofolio menyala di profil ${portofolio.join(', ')}.` });
+    }
+    for (const k of kalimat.filter(({ teks }) => memuatKalimatFotoLama(teks))) {
+      masalah.push({ jenis: 'kalimat', pesan: `${k.letak}: masih memuat kalimat foto yang sudah diganti (K29).` });
+    }
+    for (const rel of BERKAS_TEKS_FOTO.filter((r) => fs.existsSync(path.join(akar, r)) && memuatKalimatFotoLama(baca(akar, r)))) {
+      masalah.push({ jenis: 'kalimat', pesan: `${rel}: masih memuat kalimat foto yang sudah diganti (K29).` });
     }
   }
   const hapusAkun = profilMenyala(build, SAKLAR_HAPUS_AKUN);
@@ -136,8 +174,15 @@ function jalankan(argv) {
   }
 
   const masalah = periksa(akar);
+  const lain = teksDrafLain(akar);
+  const peringatan = () => {
+    if (!lain.length) return;
+    const jumlah = lain.reduce((n, b) => n + b.jumlah, 0);
+    console.log(`\nPeringatan, bukan kegagalan: ${lain.length} berkas lain masih memuat ${jumlah} tanda DRAF. Rinciannya di docs/audit-teks-kebijakan-aplikasi.md.`);
+  };
   if (masalah.length === 0) {
     console.log('[periksa-gerbang-rilis] LOLOS. Semua syarat teks sudah terpenuhi.');
+    peringatan();
     return 0;
   }
   console.log(`[periksa-gerbang-rilis] BELUM BOLEH BUILD. Ada ${masalah.length} hal yang harus dibereskan.`);
@@ -147,6 +192,7 @@ function jalankan(argv) {
     console.log(`\n${JUDUL[jenis]} (${bagian.length}):`);
     bagian.forEach((m, i) => console.log(`  ${i + 1}. ${m.pesan}`));
   }
+  peringatan();
   return 1;
 }
 
@@ -159,4 +205,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { periksa, sidikTeks, TEKS };
+module.exports = { periksa, sidikTeks, teksDrafLain, TEKS };
