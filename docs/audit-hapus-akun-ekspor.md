@@ -113,4 +113,4 @@ Batas laju yang dipakai:
 
 - Berkas Unggah modul tidak ada di disk, jadi uji "berkas pengguna hilang" dilakukan dengan penyedia tiruan, dan uji modul memeriksa baris basis data.
 - Layar baru bisa terlihat tanpa APK, karena `web` di `docker-compose.yml` ikut dibangun saat deploy. Karena teksnya masih draf, layar ditutup saklar build `EXPO_PUBLIC_KELOLA_DATA_AKUN`.
-- Aplikasi belum punya modul penyimpanan berkas di HP, dan menambahnya perlu `npm install` dan build baru. Di HP, Unduh memakai lembar bagikan bawaan, dan dibatasi 400 KB. Di peramban, berkas langsung terunduh.
+- Saat audit ini ditulis, aplikasi belum punya modul penyimpanan berkas di HP, jadi Unduh memakai lembar bagikan bawaan dengan batas 400 KB. Sejak LANJUT_013, Unduh di HP memakai `expo-sharing` tanpa batas itu. Di peramban, berkas langsung terunduh.

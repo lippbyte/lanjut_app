@@ -60,7 +60,7 @@ Batas Level-In saat ini setengah rapi. Logika inti (`keputusan.js`, `konfigurasi
 | Kesiapan Ujian | `components/screens/KesiapanUjian.tsx`, `lib/kesiapanUjian.ts`; `pengguna.kesiapan_ujian` | Tetap | Khusus kelas 12 dan sudah sempit | Tidak ada |
 | Eksplorasi Tujuan F10 (kelas 12) | `components/screens/EksplorasiTujuanScreen.tsx`, `hooks/useEksplorasiTujuan.ts`; `GET /konten/eksplorasi-tujuan`; `profil_prodi` | Tetap | Konten profil prodi untuk Melanjutkan | Discover lintas jalur dibangun terpisah |
 | Eksplorasi Kampus (SMP, kelas 10–11) | `app/(app)/eksplorasi-tujuan.tsx`, `components/screens/EksplorasiKampusScreen.tsx`, `lib/eksplorasiKampus.ts` | Revisi | Sudah berupa eksplorasi, tetapi hanya menuju kuliah | Calon dasar Bagian 5 Discover |
-| Cek Posisi / Jalur Saya | `app/(app)/cek-posisi.tsx`, `components/screens/CekPosisiScreen.tsx`, `lib/cekPosisi.ts`, `hooks/usePosisi.ts` | Revisi | Tahapnya hanya persiapan PTN | Namanya akan rancu dengan `jalur_minat`. Lihat D8 di Bagian 9 |
+| Cek Posisi / Profil Saya | `app/(app)/cek-posisi.tsx`, `components/screens/CekPosisiScreen.tsx`, `lib/cekPosisi.ts`, `hooks/usePosisi.ts` | Revisi | Tahapnya hanya persiapan PTN | Namanya akan rancu dengan `jalur_minat`. Lihat D8 di Bagian 9 |
 | Gaya Belajar | `app/(app)/gaya-belajar.tsx`, `components/screens/GayaBelajarScreen.tsx`, `lib/gayaBelajar.ts`; `pengguna.gaya_belajar`; dipakai AI di `server/src/modul/ngobrol/ngobrol.layanan.js:147` | Perlu keputusan Khalifa | Empat tipe gaya belajar lemah dukungan risetnya, sedangkan v2 berprinsip "Evidence Over Claims" | Lihat D5 di Bagian 9 |
 | Persiapan Event | `components/screens/PersiapanEvent.tsx`, `server/src/modul/event-sekolah/`; `/pengguna/event`; `event_sekolah` | Tunda | Saklar bawaan mati, hanya kelas 7–9 | Saklar dibiarkan mati; lihat titik sambung T9–T11 |
 
@@ -344,7 +344,7 @@ Rekomendasi di bawah hanya usulan. Tidak ada yang sudah diterapkan.
 | D5 | Gaya Belajar diapakan? | Tetap apa adanya; tunda pengembangan; hapus | Tunda pengembangan. Biarkan sebagai preferensi, jangan dijadikan dasar rekomendasi |
 | D6 | Cerita Alumni diapakan? | Tunda sampai ada minimal 3 cerita nyata; revisi menjadi cerita lintas jalur; hapus | Tunda sekarang, revisi bersama Bagian 8 |
 | D7 | `POST /sinkron/klaim` diapakan? | Sudah diputuskan: hapus (K14) | Selesai di LANJUT_004, dan T3–T7 ikut hilang |
-| D8 | Nama fitur "Jalur Saya" (sisa LANJUT_001) | Pertahankan; ganti (mis. "Posisi Saya") | Ganti sebelum Bagian 4 dimulai |
+| D8 | Nama fitur "Jalur Saya" (sisa LANJUT_001) | Pertahankan; ganti (mis. "Posisi Saya") | Selesai di LANJUT_013: menjadi "Profil Saya" (K15) |
 
 Satu hal perlu ditinjau ulang saat Level-In mulai dibangun, sesuai catatan K7 rencana: semua tabel belajar menempel ke `pengguna` dengan kunci asing (T20). Bila dua akun benar-benar terpisah, riwayat belajar siswa lama perlu aturan pemindahan.
 
