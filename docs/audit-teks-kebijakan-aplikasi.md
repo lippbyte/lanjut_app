@@ -174,3 +174,11 @@ Profil `pilot` dan `apk-sekolah` hanya berbeda pada Portofolio dan unduh data se
 | `lib/ngobrol.ts` | 10 | Ngobrol | Ya | Ya | **Ya, data ke penyedia AI dan keselamatan** |
 | `lib/pembuka.ts` | 1 | Layar pembuka | Ya | Ya | Tidak |
 | `lib/tautanNgobrol.ts` | 2 | Kartu tautan di Ngobrol | Ya | Ya | Tidak |
+
+## 10. Butir "tujuan lain" dihapus (LANJUT_019)
+
+Yang dihapus dari bagian "Untuk apa datanya dipakai": penanda tentang tujuan lain, misalnya penelitian atau laporan ke sekolah.
+
+Dasar faktanya: pembacaan alur data tidak menemukan tujuan di luar yang sudah tertulis. Tidak ada pengiriman laporan ke sekolah, penelitian, analitik, atau iklan di kode, dan jalur keluar server hanya tiga (`docs/audit-pilot-tanpa-ai.md`). Khalifa menyatakan tidak ada tujuan tambahan yang direncanakan (11 November 2026).
+
+Tempat yang diubah: `lib/kebijakan-privasi.json`, dan di repo induk `docs/kebijakan-privasi-DRAF.md`, `docs/kebijakan-v2-klaim-vs-kode.md` (baris I4), `docs/lembar-isian-fakta.md`, `docs/hasil-pengisian-fakta.md`, serta salinan landing. Penanda kebijakan turun dari 20 menjadi 19.

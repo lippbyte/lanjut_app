@@ -74,7 +74,7 @@ describe('LANJUT_077b §A: saklar AI bawaan 0', () => {
       .sort();
     // Daftar ini dicek tangan di LANJUT_077b. Berkas baru yang mengubah saklar harus ditambahkan di sini.
     // LANJUT_078: + ngobrol-penghubung.test.js (menyalakan saklar hanya lewat denganSaklar, try/finally).
-    assert.deepEqual(pengubah, ['event-sekolah-smp.test.js', 'event-sekolah.test.js', 'ngobrol-materi.test.js', 'ngobrol-penghubung.test.js', 'ngobrol.test.js', 'skenario-ai.test.js']);
+    assert.deepEqual(pengubah, ['event-sekolah-smp.test.js', 'event-sekolah.test.js', 'ngobrol-materi.test.js', 'ngobrol-penghubung.test.js', 'ngobrol.test.js', 'pilot-tanpa-ai.test.js', 'skenario-ai.test.js']);
     for (const n of pengubah) {
       const isi = fs.readFileSync(path.join(dir, n), 'utf8').replace(/\r\n/g, '\n');
       assert.ok(isi.includes('await kunciKonfigurasiGlobal()'), `${n}: tanpa kunci tes`);
