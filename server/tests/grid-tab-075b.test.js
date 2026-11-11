@@ -163,9 +163,8 @@ describe('LANJUT_075b: DRAF kebijakan privasi untuk minat_rumpun', () => {
     assert.ok(lembar.includes(kalimat), 'kalimat usulan belum ada di lembar review');
   });
 
-  test('Tidak dipakai di layar dan kebijakan-privasi.json tidak menyebut minat_rumpun', () => {
-    const kebijakan = baca('lib', 'kebijakan-privasi.json');
-    assert.ok(!/minat_rumpun|bidang minat/i.test(kebijakan), 'kebijakan-privasi.json tidak boleh diubah di 075b');
+  // Bidang minat masuk kebijakan di LANJUT_017, dengan rumusan sendiri.
+  test('Kalimat usulan tidak dipakai di layar', () => {
     for (const dir of ['app', 'components', 'lib', 'hooks', 'providers']) {
       const berkasDi = (akar) =>
         fs.readdirSync(akar, { withFileTypes: true }).flatMap((e) => {

@@ -10,13 +10,13 @@ Layar memakai kata "catatan" untuk satu butir bukti, karena "butir" dan "bukti" 
 
 ## Usulan perubahan LANJUT_014
 
-**Draf, menunggu persetujuan Khalifa.** Tiga kalimat di bawah mengubah teks yang sudah disetujui (T17), karena "Hanya kamu yang bisa melihat" terlalu mutlak: tim pengelola server secara teknis bisa mengakses penyimpanan.
+**Draf, menunggu persetujuan Khalifa.** Tiga kalimat di bawah mengubah teks yang sudah disetujui (T17), karena "Hanya kamu yang bisa melihat" terlalu mutlak: tim pengelola server secara teknis bisa mengakses penyimpanan. Rumusan peringatan foto mengikuti keputusan K29 (11 November 2026), tanpa janji tentang perilaku tim.
 
 | Tempat | Sebelum | Usulan |
 |---|---|---|
 | Kartu di Beranda | Catat karya dan prosesmu. Hanya kamu yang bisa melihatnya. | Catat karya dan prosesmu. Hanya bisa dibuka lewat akunmu. |
 | Pengantar daftar | Catatan karyamu. Hanya kamu yang bisa melihatnya. | Catatan karyamu. Hanya bisa dibuka lewat akunmu. |
-| Peringatan privasi foto | Hanya kamu yang bisa melihat foto ini. | Foto ini hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya, dan tidak membukanya tanpa keperluan. |
+| Peringatan privasi foto | Hanya kamu yang bisa melihat foto ini. | Foto ini hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya. |
 
 ## Kartu di Beranda
 
@@ -95,7 +95,7 @@ Layar memakai kata "catatan" untuk satu butir bukti, karena "butir" dan "bukti" 
 | Tempat | Teks |
 |---|---|
 | Judul bagian | Foto |
-| Peringatan privasi | Foto ini hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya, dan tidak membukanya tanpa keperluan. Jangan unggah dokumen pribadi seperti KTP, kartu pelajar, atau rapor, dan jangan unggah wajah orang lain tanpa izin mereka. |
+| Peringatan privasi | Foto ini hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya. Jangan unggah dokumen pribadi seperti KTP, kartu pelajar, atau rapor, dan jangan unggah wajah orang lain tanpa izin mereka. |
 | Jumlah | Foto di catatan ini: 1 dari 3. Foto di akunmu: 12 dari 30. |
 | Tombol | Pilih dari galeri |
 | Tombol | Ambil foto |

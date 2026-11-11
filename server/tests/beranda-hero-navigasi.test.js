@@ -431,7 +431,7 @@ describe('LANJUT_074: salinan teks', () => {
     const semua = blok.join('\n');
     for (const teks of [
       '**Tab tengah — label:** Ngobrol',
-      '**Nama fitur `/cek-posisi`:** Jalur Saya',
+      '**Nama fitur `/cek-posisi`:** Profil Saya',
       '**Nama halaman akun `/akun`:** Data Akun',
       '**Data Akun — judul form ubah:** Ubah Data Akun',
       '**Ngobrol — tombol mikrofon (label pembaca layar):** Ucapkan pesan',
