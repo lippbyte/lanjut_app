@@ -8,12 +8,22 @@ Teks ini belum tampil ke siapa pun. Layarnya tidak ada di aplikasi sampai build 
 
 Layar memakai kata "catatan" untuk satu butir bukti, karena "butir" dan "bukti" terdengar teknis bagi siswa. Ini pilihan agen, bisa diganti.
 
+## Usulan perubahan LANJUT_014
+
+**Draf, menunggu persetujuan Khalifa.** Tiga kalimat di bawah mengubah teks yang sudah disetujui (T17), karena "Hanya kamu yang bisa melihat" terlalu mutlak: tim pengelola server secara teknis bisa mengakses penyimpanan.
+
+| Tempat | Sebelum | Usulan |
+|---|---|---|
+| Kartu di Beranda | Catat karya dan prosesmu. Hanya kamu yang bisa melihatnya. | Catat karya dan prosesmu. Hanya bisa dibuka lewat akunmu. |
+| Pengantar daftar | Catatan karyamu. Hanya kamu yang bisa melihatnya. | Catatan karyamu. Hanya bisa dibuka lewat akunmu. |
+| Peringatan privasi foto | Hanya kamu yang bisa melihat foto ini. | Foto ini hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya, dan tidak membukanya tanpa keperluan. |
+
 ## Kartu di Beranda
 
 | Tempat | Teks |
 |---|---|
 | Judul kartu | Portofolio |
-| Keterangan | Catat karya dan prosesmu. Hanya kamu yang bisa melihatnya. |
+| Keterangan | Catat karya dan prosesmu. Hanya bisa dibuka lewat akunmu. |
 
 ## Judul di bilah atas
 
@@ -28,7 +38,7 @@ Layar memakai kata "catatan" untuk satu butir bukti, karena "butir" dan "bukti" 
 | Tempat | Teks |
 |---|---|
 | Judul | Portofolio |
-| Pengantar | Catatan karyamu. Hanya kamu yang bisa melihatnya. |
+| Pengantar | Catatan karyamu. Hanya bisa dibuka lewat akunmu. |
 | Tombol | Tambah catatan |
 | Kosong, judul | Belum ada catatan. |
 | Kosong, ajakan | Mulai dari satu hal yang baru kamu buat. |
@@ -85,7 +95,7 @@ Layar memakai kata "catatan" untuk satu butir bukti, karena "butir" dan "bukti" 
 | Tempat | Teks |
 |---|---|
 | Judul bagian | Foto |
-| Peringatan privasi | Hanya kamu yang bisa melihat foto ini. Jangan unggah dokumen pribadi seperti KTP, kartu pelajar, atau rapor, dan jangan unggah wajah orang lain tanpa izin mereka. |
+| Peringatan privasi | Foto ini hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya, dan tidak membukanya tanpa keperluan. Jangan unggah dokumen pribadi seperti KTP, kartu pelajar, atau rapor, dan jangan unggah wajah orang lain tanpa izin mereka. |
 | Jumlah | Foto di catatan ini: 1 dari 3. Foto di akunmu: 12 dari 30. |
 | Tombol | Pilih dari galeri |
 | Tombol | Ambil foto |

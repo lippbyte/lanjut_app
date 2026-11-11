@@ -416,7 +416,7 @@ describe('Isi layar', () => {
 
   test('Peringatan privasi ada di bagian foto', () => {
     assert.ok(baca('components', 'screens', 'PortofolioFoto.tsx').includes('<Peringatan>{T.privasiFoto}</Peringatan>'));
-    for (const kata of ['KTP', 'kartu pelajar', 'rapor', 'wajah orang lain', 'Hanya kamu']) assert.ok(porto.TEKS_PORTOFOLIO.privasiFoto.includes(kata), kata);
+    for (const kata of ['KTP', 'kartu pelajar', 'rapor', 'wajah orang lain', 'hanya bisa dibuka lewat akunmu']) assert.ok(porto.TEKS_PORTOFOLIO.privasiFoto.includes(kata), kata);
   });
 
   test('Hapus menuntut konfirmasi; hapus catatan menjelaskan fotonya ikut terhapus', () => {

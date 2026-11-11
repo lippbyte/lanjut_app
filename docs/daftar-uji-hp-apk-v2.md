@@ -29,7 +29,7 @@ Versi: `2.0.0`, `versionCode` 3. Setiap build yang dibagikan perlu `versionCode`
 | 1.2 | T14: keputusan apakah pilot ikut membuka hapus akun. Bila tidak, hapus `EXPO_PUBLIC_KELOLA_DATA_AKUN` dari profil `pilot` | Diputuskan | |
 | 1.3 | T15: draf kebijakan privasi (LANJUT_012) ditinjau pihak berwenang | Disetujui | |
 | 1.4 | T17: cocokkan dengan rencana | Terpenuhi | |
-| 1.5 | **`lib/kebijakan-privasi.json` diselaraskan dengan draf kebijakan.** Teks ini tertanam di APK. Saat ini masih menyatakan LANJUT tidak mengumpulkan foto, dan hapus akun belum ada | Selesai, lewat task tersendiri yang juga memperbarui `landing/` | |
+| 1.5 | Teks kebijakan di aplikasi sudah selaras dengan draf (LANJUT_014 dan LANJUT_014b) | Sudah. Isian yang tersisa dipantau butir 1.13 | |
 | 1.6 | Teks draf disetujui: `docs/draf-teks-portofolio.md`, `docs/draf-teks-hapus-akun.md` | Disetujui | |
 | 1.7 | Keystore: APK v2 harus ditandatangani kunci yang sama dengan APK 1.0.0 (lihat `docs/rilis/lanjut-1.0.0.md`) | Kuncinya dipastikan. Kunci berbeda berarti HP harus menghapus aplikasi lama | |
 | 1.8 | Catat migrasi di server sekarang: `docker exec <kontainer-db> sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SELECT nama FROM _migrasi ORDER BY nama DESC LIMIT 5"'` | Nama migrasi terakhir tercatat, dibutuhkan untuk prosedur mundur | |
@@ -37,6 +37,17 @@ Versi: `2.0.0`, `versionCode` 3. Setiap build yang dibagikan perlu `versionCode`
 | 1.10 | Deploy, lalu periksa volume seperti `docs/audit-portofolio-server.md` bagian 4: `docker volume ls \| grep lanjut_berkas` | Volume ada | |
 | 1.11 | `docker exec <kontainer-api> sh -c 'touch /data/berkas/.uji && rm /data/berkas/.uji && echo BISA_DITULIS'` | Tercetak `BISA_DITULIS` | |
 | 1.12 | Cadangkan volume foto sesudah ada isinya: `docker run --rm -v <nama-volume>:/data -v "$PWD":/cadangan alpine tar czf /cadangan/berkas.tgz -C /data .` | Berkas terbentuk. **Belum terbukti:** belum pernah dijalankan di Dokploy | |
+| 1.13 | **Syarat sebelum `eas build`:** di folder `LANJUT_App`, jalankan `npm run periksa-gerbang-rilis` | Tercetak `LOLOS`. Bila `BELUM BOLEH BUILD`, bereskan daftar yang tercetak, lalu ulangi | |
+
+### Pemeriksa gerbang rilis
+
+`npm run periksa-gerbang-rilis` gagal bila:
+
+- kebijakan di aplikasi masih memuat penanda `[ISI`;
+- kebijakan masih menyatakan tidak mengumpulkan foto atau hapus akun belum ada, padahal fiturnya menyala di salah satu profil `eas.json`;
+- teks bertanda draf dipakai profil yang menyalakan fiturnya, dan belum disetujui.
+
+**Cara menyetujui teks:** baca teksnya, jalankan `npm run periksa-gerbang-rilis -- --sidik`, salin baris teks yang disetujui ke bagian `disetujui` di `docs/persetujuan-teks-rilis.json`, lalu isi tanggalnya. Persetujuan terikat pada isi teks, jadi gugur sendiri bila teksnya berubah.
 
 ## 2. Uji APK 1.0.0 terhadap server baru
 
@@ -116,7 +127,7 @@ APK pilot baru boleh dibagikan bila **semua** ini terpenuhi.
 
 | Syarat | Terpenuhi? |
 |---|---|
-| Bagian 1 selesai, termasuk 1.5 (kebijakan di aplikasi) | |
+| Bagian 1 selesai, termasuk `npm run periksa-gerbang-rilis` yang lolos (1.13) | |
 | Bagian 2 lolos | |
 | Bagian 3 lolos, terutama 3.4, 3.12, 3.14, dan 3.15 | |
 | Bagian 4 sampai 4.4 lolos | |

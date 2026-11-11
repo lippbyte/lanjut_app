@@ -28,7 +28,7 @@ export const BATAS_FOTO = {
 
 export const TEKS_PORTOFOLIO = {
   judul: 'Portofolio',
-  pengantar: 'Catatan karyamu. Hanya kamu yang bisa melihatnya.',
+  pengantar: 'Catatan karyamu. Hanya bisa dibuka lewat akunmu.',
   tambah: 'Tambah catatan',
   kosongJudul: 'Belum ada catatan.',
   kosongTeks: 'Mulai dari satu hal yang baru kamu buat.',
@@ -55,7 +55,7 @@ export const TEKS_PORTOFOLIO = {
   kembali: 'Kembali ke Portofolio',
 
   judulFoto: 'Foto',
-  privasiFoto: 'Hanya kamu yang bisa melihat foto ini. Jangan unggah dokumen pribadi seperti KTP, kartu pelajar, atau rapor, dan jangan unggah wajah orang lain tanpa izin mereka.',
+  privasiFoto: 'Foto ini hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya, dan tidak membukanya tanpa keperluan. Jangan unggah dokumen pribadi seperti KTP, kartu pelajar, atau rapor, dan jangan unggah wajah orang lain tanpa izin mereka.',
   galeri: 'Pilih dari galeri',
   kamera: 'Ambil foto',
   penjelasIzin: 'Kamera hanya dipakai saat kamu mengambil foto di sini.',

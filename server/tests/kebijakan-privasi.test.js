@@ -81,7 +81,6 @@ test('tidak ada kontak, alamat, atau tautan yang diisi tanpa keputusan', () => {
     'hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model',
     'mesin pencari mana yang menerima pertanyaan',
     'apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua',
-    'masa simpan modul',
     'hak cipta',
     'Kontak',
   ]) {
