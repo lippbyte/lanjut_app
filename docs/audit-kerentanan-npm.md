@@ -42,3 +42,22 @@ Sedang dan rendah: `@expo/config`, `@expo/fingerprint`, `@expo/metro-config`, `@
 1. **Server:** perbarui `body-parser`, `proxy-addr`, dan `multer` dalam satu task kecil, tanpa `npm audit fix`, lalu jalankan seluruh tes. Sebaiknya sebelum pilot, karena `body-parser` bisa dijangkau dari internet tanpa login.
 2. **Aplikasi:** tidak ada tindakan sebelum build v2. Satu-satunya temuan yang ikut ke HP butuh naik ke Expo SDK 58.
 3. **Tetap jangan** menjalankan `npm audit fix` di folder aplikasi, karena akan menarik SDK 58 dan merusak aplikasi.
+
+## Setelah LANJUT_016
+
+**Hasil `npm audit` di server per 11 November 2026:** 2 temuan (1 tinggi, 1 sedang), turun dari 5. Bagian aplikasi tidak disentuh dan tidak diperiksa ulang.
+
+| Paket | Sebelum | Sesudah | Jenis | Melewati versi mayor? |
+|---|---|---|---|---|
+| `body-parser` | 1.20.8 | 1.20.9 | Turunan `express`, rentang `~1.20.5` | Tidak |
+| `proxy-addr` | 2.0.7 | 2.0.8 | Turunan `express`, rentang `~2.0.7` | Tidak |
+| `multer` | 2.4.0 | 2.5.0 | Langsung. Batas bawah di `package.json` naik menjadi `^2.5.0` | Tidak |
+
+`express` tetap 4.22.3. Diff `server/package-lock.json` hanya memuat tiga paket itu dan rentang `multer`.
+
+Sisa temuan:
+
+| Paket | Tingkat | Alasan tersisa |
+|---|---|---|
+| `zod` 3.25.76 (langsung) | Tinggi | Menunggu keputusan. Perbaikannya hanya ada di zod 4, yaitu lompatan versi mayor. Dampaknya terbatas, karena badan permintaan dibatasi 1 MB |
+| `qs` 6.16.0 (turunan `express` dan `body-parser`) | Sedang | Tidak terjangkau. Temuannya ada di `qs.stringify` dengan `arrayFormat: 'comma'`, sedangkan server hanya memakai `qs.parse` lewat `express`. Versi 6.16.1 masih di rentang, tetapi di luar sasaran LANJUT_016 |
