@@ -104,7 +104,7 @@ export const KARTU_GAYA_BELAJAR: KartuBeranda = {
 /** LANJUT_011 (DRAF, docs/draf-teks-portofolio.md). Satu pintu masuk, di luar grid menu. */
 export const KARTU_PORTOFOLIO = {
   judul: 'Portofolio',
-  keterangan: 'Catat karya dan prosesmu. Hanya kamu yang bisa melihatnya.',
+  keterangan: 'Catat karya dan prosesmu. Hanya bisa dibuka lewat akunmu.',
 } as const;
 
 export const KARTU_DAFTAR_PERIKSA: KartuBeranda = {

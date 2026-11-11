@@ -28,6 +28,7 @@
     "test": "node --test --test-reporter=./tests/pelapor-ringkasan.js --test-reporter-destination=stdout tests/*.test.js",
     "bersihkan-berkas": "node tools/bersihkan-berkas.js",
     "metrik-portofolio": "node tools/metrik-portofolio.js",
+    "periksa-gerbang-rilis": "node tools/periksa-gerbang-rilis.js",
     "periksa-sql": "node tools/periksa-sql.js"
   },
   "license": "UNLICENSED",
