@@ -1,12 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import { Platform, Share } from 'react-native';
+import { Platform } from 'react-native';
 
 import { ApiError } from '../api/client';
 import { eksporDataSaya, hapusAkunSaya, kirimKodeHapusAkun } from '../api/auth';
-import { BATAS_BAGIKAN_HP, badanHapusAkun, namaBerkasEkspor, type MetodeKonfirmasi } from '../lib/dataAkun';
+import { badanHapusAkun, namaBerkasEkspor, type MetodeKonfirmasi } from '../lib/dataAkun';
+import { bagikanEkspor } from '../lib/eksporSementara';
 import { useSesi } from '../providers/AuthProvider';
 
-/** Peramban: berkas langsung terunduh. HP: lembar bagikan bawaan, karena app belum punya modul berkas. */
+/** Peramban: berkas langsung terunduh. HP: berkas sementara dibagikan lewat expo-sharing. */
 async function simpanBerkas(namaBerkas: string, isi: string) {
   if (Platform.OS === 'web') {
     const url = URL.createObjectURL(new Blob([isi], { type: 'application/json' }));
@@ -19,8 +20,13 @@ async function simpanBerkas(namaBerkas: string, isi: string) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     return;
   }
-  if (isi.length > BATAS_BAGIKAN_HP) throw new ApiError(0, 'Data terlalu besar untuk lembar bagikan.', 'TERLALU_BESAR_HP');
-  await Share.share({ title: namaBerkas, message: isi });
+  let hasil: Awaited<ReturnType<typeof bagikanEkspor>>;
+  try {
+    hasil = await bagikanEkspor(namaBerkas, isi);
+  } catch (err) {
+    throw new ApiError(0, `Berkas gagal dibagikan: ${(err as Error).message}`, 'BAGIKAN_GAGAL');
+  }
+  if (hasil === 'tidak_tersedia') throw new ApiError(0, 'Berbagi berkas tidak tersedia.', 'BAGIKAN_TIDAK_TERSEDIA');
 }
 
 export function useUnduhDataSaya() {

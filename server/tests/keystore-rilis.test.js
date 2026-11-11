@@ -103,11 +103,11 @@ test('idempoten, menjaga CRLF, dan menolak template yang berubah (prebuild berhe
   assert.throws(() => tambahkanTandaTanganRilis(TEMPLATE.replace('    signingConfigs {', '    signingKonfig {')), /signingConfigs/);
 });
 
-test('app.config.ts memakai plugin; versionName 1.0.0 dan versionCode 2', () => {
+test('app.config.ts memakai plugin; versionName 2.0.0 dan versionCode 3', () => {
   const konfig = fs.readFileSync(path.join(AKAR_APP, 'app.config.ts'), 'utf8');
   assert.match(konfig, /'\.\/plugins\/withKeystoreRilis'/);
-  assert.match(konfig, /version: '1\.0\.0',/);
-  assert.match(konfig, /versionCode: 2,/);
+  assert.match(konfig, /version: '2\.0\.0',/);
+  assert.match(konfig, /versionCode: 3,/);
 });
 
 /** Berkas keystore di bawah `akar`, di luar folder hasil build yang diabaikan git. */

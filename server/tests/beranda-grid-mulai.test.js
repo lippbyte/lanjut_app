@@ -127,11 +127,11 @@ describe('LANJUT_065 §B: Kartu "Mulai dari Sini"', () => {
       assert.ok(info.penjelas.length > 0);
     }
 
-    // Kelas 12 -> Jalur Saya (/cek-posisi; label baru LANJUT_074)
+    // Kelas 12 -> Profil Saya (/cek-posisi; label baru LANJUT_074)
     const info12 = infoMulaiDariSini('12');
     assert.equal(info12.judul, 'Mulai dari Sini');
     assert.equal(info12.href, '/cek-posisi');
-    assert.equal(info12.labelTombol, 'Jalur Saya');
+    assert.equal(info12.labelTombol, 'Profil Saya');
     assert.ok(info12.penjelas.length > 0);
 
     // Fallback tanpa kelas

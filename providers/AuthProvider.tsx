@@ -5,7 +5,8 @@ import Constants from 'expo-constants';
 import * as authApi from '../api/auth';
 import type { Pengguna, Sesi } from '../api/auth';
 import { ApiError, saatSesiBerakhir } from '../api/client';
-import { portofolioAktif } from '../lib/fiturApp';
+import { hapusEksporSementara } from '../lib/eksporSementara';
+import { kelolaDataAkunAktif, portofolioAktif } from '../lib/fiturApp';
 import { hapusFotoSementara } from '../lib/fotoSementara';
 
 // Cache data milik akun (useKemajuan, useButirPribadi, useKartuSaya, useRiwayatLatihan, usePersetujuan,
@@ -13,11 +14,14 @@ import { hapusFotoSementara } from '../lib/fotoSementara';
 const KUNCI_DATA_AKUN = [['kemajuan'], ['butir_pribadi'], ['kartu'], ['sesi_latihan'], ['persetujuan'], ['modul'], ['levelin'], ['event_sekolah'], ['pilihan_mapel'], ['butir_bukti']] as const;
 
 const PORTOFOLIO = portofolioAktif(Constants.expoConfig?.extra);
+const KELOLA_DATA_AKUN = kelolaDataAkunAktif(Constants.expoConfig?.extra);
 
 function hapusDataAkun(queryClient: QueryClient) {
   for (const queryKey of KUNCI_DATA_AKUN) queryClient.removeQueries({ queryKey });
   // LANJUT_011: foto portofolio yang tersisa di folder cache perangkat ikut dibuang.
   if (PORTOFOLIO) hapusFotoSementara();
+  // LANJUT_013: salinan data yang belum sempat dibuang ikut hilang.
+  if (KELOLA_DATA_AKUN) hapusEksporSementara();
 }
 
 type StatusSesi = 'memuat' | 'masuk' | 'keluar';

@@ -98,7 +98,7 @@ describe('LANJUT_069 §A: set kartu per kelas', () => {
     }
   });
 
-  // LANJUT_074 hanya mengganti dua nama: pintu /cek-posisi → "Jalur Saya", dan
+  // LANJUT_074 hanya mengganti dua nama: pintu /cek-posisi → "Profil Saya", dan
   // halaman akun di pengantar tanpa kelas → "Data Akun". Teks lain tetap LANJUT_037.
   test('Kelas 12 dan akun tanpa kelas tidak berubah (teks LANJUT_037, nama LANJUT_074)', () => {
     const k12 = isiJenjangSaya('12');
@@ -108,7 +108,7 @@ describe('LANJUT_069 §A: set kartu per kelas', () => {
     assert.deepEqual(
       k12.pintu.map((p) => [p.judul, p.keterangan, p.href]),
       [
-        ['Jalur Saya', 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', '/cek-posisi'],
+        ['Profil Saya', 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', '/cek-posisi'],
         ['Daftar Periksa', 'Satu per satu, tidak perlu sekaligus.', '/daftar-periksa'],
       ]
     );

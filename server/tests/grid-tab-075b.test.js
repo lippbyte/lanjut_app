@@ -34,7 +34,7 @@ describe('LANJUT_075b: grid Beranda per jenjang', () => {
   const HARAPAN = {
     smp: ['Eksplorasi Kampus', 'Gaya Belajar', 'Arsip Belajar', 'Level-In', 'Cerita Alumni'],
     kelas10_11: ['Pilih Mapel', 'Eksplorasi Kampus', 'Gaya Belajar', 'Arsip Belajar', 'Level-In', 'Daftar Periksa', 'Cerita Alumni'],
-    kelas12: ['Jalur Saya', 'Eksplorasi Kampus', 'Arsip Belajar', 'Level-In', 'Cerita Alumni'],
+    kelas12: ['Profil Saya', 'Eksplorasi Kampus', 'Arsip Belajar', 'Level-In', 'Cerita Alumni'],
     tanpaKelas: ['Arsip Belajar', 'Level-In', 'Cerita Alumni'],
   };
   const KELAS = { smp: ['7', '8', '9'], kelas10_11: ['10', '11'], kelas12: ['12'], tanpaKelas: [null, undefined, ''] };

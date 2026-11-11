@@ -50,11 +50,11 @@ export const KARTU_CERITA_ALUMNI: KartuBeranda = {
   varian: 'outline',
 };
 
-// LANJUT_074: fitur /cek-posisi kini bernama "Jalur Saya" (DRAF). id & rute tetap.
+// LANJUT_013 (K15): fitur /cek-posisi bernama "Profil Saya" (DRAF). id & rute tetap.
 export const KARTU_CEK_POSISI: KartuBeranda = {
   id: 'cek-posisi',
-  judul: 'Jalur Saya',
-  labelPendek: 'Jalur Saya',
+  judul: 'Profil Saya',
+  labelPendek: 'Profil Saya',
   keterangan: 'Lihat kamu lagi di tahap mana dan langkah yang cocok berikutnya.',
   ikon: 'posisi',
   href: '/cek-posisi',
@@ -119,12 +119,12 @@ export const KARTU_DAFTAR_PERIKSA: KartuBeranda = {
 /**
  * Menentukan daftar kartu pintu Beranda berdasarkan kelas akun (LANJUT_064).
  *
- * - SMP (kelas 7–9): TIDAK menampilkan "Jalur Saya" (/cek-posisi). Digantikan dengan kartu
+ * - SMP (kelas 7–9): TIDAK menampilkan "Profil Saya" (/cek-posisi). Digantikan dengan kartu
  *   dari "Jenjang Saya" untuk SMP (Eksplorasi Kampus, Gaya Belajar) plus kartu
  *   umum (Arsip Belajar, Level-In, Cerita Alumni).
  * - Kelas 10–11: kartu dari "Jenjang Saya" untuk 10–11 (Pilih Mapel, Eksplorasi Kampus,
  *   Gaya Belajar) plus kartu umum (Arsip Belajar, Level-In, Daftar Periksa, Cerita Alumni).
- * - Kelas 12: Jalur Saya, Eksplorasi Kampus (LANJUT_075), Arsip Belajar,
+ * - Kelas 12: Profil Saya, Eksplorasi Kampus (LANJUT_075), Arsip Belajar,
  *   Level-In, Cerita Alumni. Catatan: kartu hero tenggat dirender terpisah di atas
  *   kartu-kartu ini hanya untuk kelas 12 (LANJUT_074).
  * - Tanpa kelas / tidak dikenal: fallback ke kartu umum tanpa galat.
@@ -211,7 +211,7 @@ export function infoMulaiDariSini(kelas: Kelas | null | undefined): InfoMulaiDar
     return {
       judul: 'Mulai dari Sini',
       penjelas: 'Cek posisi persiapanmu sekarang dan langkah yang perlu diambil.',
-      labelTombol: 'Jalur Saya',
+      labelTombol: 'Profil Saya',
       href: '/cek-posisi',
     };
   }

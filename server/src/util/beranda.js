@@ -40,8 +40,8 @@ const KARTU_CERITA_ALUMNI = {
 
 const KARTU_CEK_POSISI = {
   id: 'cek-posisi',
-  judul: 'Jalur Saya',
-  labelPendek: 'Jalur Saya',
+  judul: 'Profil Saya',
+  labelPendek: 'Profil Saya',
   keterangan: 'Lihat kamu lagi di tahap mana dan langkah yang cocok berikutnya.',
   ikon: 'posisi',
   href: '/cek-posisi',
@@ -160,7 +160,7 @@ function infoMulaiDariSini(kelas) {
     return {
       judul: 'Mulai dari Sini',
       penjelas: 'Cek posisi persiapanmu sekarang dan langkah yang perlu diambil.',
-      labelTombol: 'Jalur Saya',
+      labelTombol: 'Profil Saya',
       href: '/cek-posisi',
     };
   }

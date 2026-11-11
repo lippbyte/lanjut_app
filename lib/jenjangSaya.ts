@@ -156,8 +156,8 @@ const PINTU_037_MAPEL: PintuJenjang = {
   href: '/pilih-mapel',
 };
 const PINTU_KELAS_12: PintuJenjang[] = [
-  // LANJUT_074: judul pintu /cek-posisi menjadi "Jalur Saya"; keterangan tetap.
-  { id: 'cek-posisi', ikon: 'posisi', judul: 'Jalur Saya', keterangan: 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', href: '/cek-posisi' },
+  // LANJUT_013 (K15): judul pintu /cek-posisi menjadi "Profil Saya"; keterangan tetap.
+  { id: 'cek-posisi', ikon: 'posisi', judul: 'Profil Saya', keterangan: 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', href: '/cek-posisi' },
   { id: 'daftar-periksa', ikon: 'checklist', judul: 'Daftar Periksa', keterangan: 'Satu per satu, tidak perlu sekaligus.', href: '/daftar-periksa' },
 ];
 const PINTU_TANPA_KELAS: PintuJenjang[] = [PINTU_037_MAPEL, PINTU_037_EKSPLORASI, PINTU_037_NGOBROL];

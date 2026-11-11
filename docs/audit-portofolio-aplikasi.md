@@ -47,7 +47,7 @@ Belum ada pemilih foto maupun pengolah gambar. `Image` dari `react-native` sudah
 
 Galeri tidak perlu izin. Kamera meminta izin saat dipakai.
 
-**Saat saklar mati:** plugin tidak dipasang dan `CAMERA` dicabut. Modul native-nya tetap terpasang di APK karena Expo menautkannya dari `package.json`, tetapi kodenya tidak pernah dipanggil.
+**Saat saklar mati:** `CAMERA` dan `RECORD_AUDIO` dicabut. Plugin tetap ditulis di `app.config.ts`, karena Expo memasangnya otomatis bila paketnya ada, dan tanpa opsi itu izin mikrofon ikut masuk (diperbaiki di LANJUT_013). Modul native-nya tetap terpasang di APK karena Expo menautkannya dari `package.json`, tetapi kodenya tidak pernah dipanggil.
 
 Ketiganya hanya berlaku pada build APK v2 pertama. APK 1.0.0 tidak berubah.
 
