@@ -50,8 +50,8 @@ services:
       SMTP_FROM: ${SMTP_FROM:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     command: >
-      sh -c "npm run migrasi &&
-      if [ \"$$JALANKAN_BENIH\" = \"true\" ]; then npm run benih; fi &&
+      sh -c "npm run migrasi -- --ya &&
+      if [ \"$$JALANKAN_BENIH\" = \"true\" ]; then npm run benih -- --ya; fi &&
       node src/index.js"
     volumes:
       - lanjut_berkas:/data/berkas

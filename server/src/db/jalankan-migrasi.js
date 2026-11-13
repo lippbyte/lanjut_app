@@ -86,6 +86,7 @@ async function jalankanMigrasi() {
 }
 
 if (require.main === module) {
+  require('./pagar-tujuan').pastikanTujuan('migrasi', require('../config/env'));
   jalankanMigrasi()
     .then(() => process.exit(0))
     .catch((galat) => {

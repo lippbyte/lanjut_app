@@ -2,6 +2,12 @@
 // butuh MySQL nyata (bukan mock) sesuai server/.env, dengan migrasi §3.6
 // sudah dijalankan. Lihat server/README.md bagian "Menjalankan test".
 
+// LANJUT_022 seri v2: tes menulis data sungguhan, jadi hanya boleh di basis data tes.
+const envUji = require('../src/config/env');
+if (!envUji.DB_NAME.startsWith('lanjut_test')) {
+  throw new Error(`Tes hanya boleh memakai basis data yang diawali lanjut_test, dapat "${envUji.DB_NAME}". Lihat docs/lingkungan-dev.md.`);
+}
+
 const app = require('../src/app');
 const pool = require('../src/db/koneksi');
 const pengirimOtp = require('../src/modul/auth/pengirimOtp');

@@ -2,13 +2,17 @@
 // tools/pulihkan-db.js
 // Pemulihan basis data dari berkas dump SQL menggunakan mysql.
 // Penggunaan: node tools/pulihkan-db.js <path/ke/cadangan.sql>
+// Tujuan dicetak dulu. Host yang bukan lokal butuh --ya, dan NODE_ENV=production ditolak (LANJUT_022).
 
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const env = require('../src/config/env');
+const { pastikanTujuan } = require('../src/db/pagar-tujuan');
 
-const berkasCadangan = process.argv[2];
+pastikanTujuan('pulihkan-db', env, process.argv.slice(2), { tolakProduksi: true });
+
+const berkasCadangan = process.argv.slice(2).find((a) => !a.startsWith('--'));
 
 if (!berkasCadangan) {
   console.error('Penggunaan: node tools/pulihkan-db.js <path/ke/cadangan.sql>');

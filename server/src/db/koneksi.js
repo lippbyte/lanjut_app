@@ -4,6 +4,11 @@
 const mysql = require('mysql2/promise');
 const env = require('../config/env');
 
+// LANJUT_022 seri v2: di bawah node --test, hanya basis data tes yang boleh disentuh.
+if (process.env.NODE_TEST_CONTEXT && !env.DB_NAME.startsWith('lanjut_test')) {
+  throw new Error(`Tes hanya boleh memakai basis data yang diawali lanjut_test, dapat "${env.DB_NAME}".`);
+}
+
 const pool = mysql.createPool({
   host: env.DB_HOST,
   port: env.DB_PORT,
