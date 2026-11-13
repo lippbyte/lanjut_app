@@ -53,8 +53,15 @@ async function daftarPilihan(penggunaId) {
   return (await pilihanRepo.daftarMilikSendiri(penggunaId)).map(bentukPilihan);
 }
 
+/**
+ * K37 lanjutan (13 Nov 2026): siswa hanya bisa memilih jalur yang aktif dan teksnya disetujui.
+ * Jalur draf, nonaktif, dan yang tidak ada mendapat jawaban yang sama, supaya keberadaan jalur
+ * draf tidak bisa ditebak. Pilihan lama di dev (benih-dummy) tidak disentuh.
+ */
 async function pilih(penggunaId, { jalur_minat_id: jalurMinatId }) {
-  await pastikanJalurAktif(jalurMinatId);
+  if (!(await jalurMinatRepo.ambilDisetujui(jalurMinatId))) {
+    throw new GalatApi('JALUR_BELUM_TERSEDIA', 'Jalur belum tersedia.', { jalur_minat_id: 'belum tersedia' });
+  }
   const id = buatUuid();
   const dibuat = await pilihanRepo.buat({ id, penggunaId, jalurMinatId, waktu: sekarangUntukDb() });
   if (!dibuat) throw new GalatApi('JALUR_SUDAH_DIPILIH', 'Jalur ini sudah kamu pilih.', { jalur_minat_id: 'sudah dipilih' });

@@ -41,4 +41,16 @@ async function ambil(jalurMinatId) {
   return baris[0] || null;
 }
 
-module.exports = { daftarAktif, daftarDisetujui, ambil };
+/** K37 lanjutan: satu jalur yang boleh dipilih siswa (aktif dan teksnya disetujui), atau null. */
+async function ambilDisetujui(jalurMinatId) {
+  const [baris] = await pool.execute(
+    `SELECT id, nama, deskripsi_singkat, status_teks, urutan
+       FROM jalur_minat
+      WHERE id = ? AND aktif = 1 AND status_teks = 'disetujui'
+      LIMIT 1`,
+    [jalurMinatId]
+  );
+  return baris[0] || null;
+}
+
+module.exports = { daftarAktif, daftarDisetujui, ambil, ambilDisetujui };

@@ -103,6 +103,7 @@ export const GALAT_UMUM_JALUR_TUJUAN = 'Belum bisa disimpan. Coba lagi sebentar 
 // DRAF, belum disetujui.
 const PESAN_GALAT: Readonly<Record<string, string>> = {
   JALUR_SUDAH_DIPILIH: 'Jalur ini sudah kamu pilih.',
+  JALUR_BELUM_TERSEDIA: 'Jalur ini belum tersedia.',
   PILIHAN_SUDAH_BERAKHIR: 'Jalur ini sudah tidak aktif. Pilih lagi untuk memulainya kembali.',
   TUJUAN_BUKAN_TERKINI: 'Tujuan ini sudah diperbarui. Muat ulang untuk melihat yang terbaru.',
   AI_BELUM_DIIZINKAN: 'Terima kebijakan privasi dulu supaya bisa menyimpan jalur dan tujuan.',

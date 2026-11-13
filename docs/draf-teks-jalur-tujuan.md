@@ -15,7 +15,7 @@ Nama fitur sengaja "Jalur & Tujuan", bukan "Jalur Saya", karena "Jalur Saya" sud
 1. **Nama dan deskripsi tiga jalur** di `server/data-konten/jalur-minat.json` (`status_teks: draf`). Isi berkas itu sendiri menulis "Jangan ditampilkan ke siswa sebelum disetujui".
 2. **Semua teks layar di bawah.**
 
-**Sudah diputuskan (K37, 13 Nov 2026):** server hanya mengirim jalur yang teksnya `disetujui`. Selama ketiga jalur masih draf, daftar jalur kosong, dan layar menampilkan "Pilihan jalur belum tersedia". Menulis tujuan tetap bisa. Nama fitur "Jalur & Tujuan" juga sudah diputuskan (K36).
+**Sudah diputuskan (K37, 13 Nov 2026):** server hanya mengirim jalur yang teksnya `disetujui`. Selama ketiga jalur masih draf, daftar jalur kosong, dan layar menampilkan "Pilihan jalur belum tersedia". Memilih jalur lewat API juga hanya menerima jalur yang disetujui (K37 lanjutan): jalur draf, nonaktif, atau yang tidak ada dijawab "Jalur belum tersedia". Menulis tujuan tetap bisa. Nama fitur "Jalur & Tujuan" juga sudah diputuskan (K36).
 
 ## Teks jalur dari server (`server/data-konten/jalur-minat.json`)
 
@@ -110,6 +110,7 @@ Nama fitur sengaja "Jalur & Tujuan", bukan "Jalur Saya", karena "Jalur Saya" sud
 | Kode | Teks |
 |---|---|
 | `JALUR_SUDAH_DIPILIH` | Jalur ini sudah kamu pilih. |
+| `JALUR_BELUM_TERSEDIA` | Jalur ini belum tersedia. |
 | `PILIHAN_SUDAH_BERAKHIR` | Jalur ini sudah tidak aktif. Pilih lagi untuk memulainya kembali. |
 | `TUJUAN_BUKAN_TERKINI` | Tujuan ini sudah diperbarui. Muat ulang untuk melihat yang terbaru. |
 | `AI_BELUM_DIIZINKAN` | Terima kebijakan privasi dulu supaya bisa menyimpan jalur dan tujuan. |

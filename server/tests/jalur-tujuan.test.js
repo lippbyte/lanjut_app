@@ -10,6 +10,7 @@ const { nyalakanServer, urlDari, daftarPenggunaBaru, pool, kunciKonfigurasiGloba
 const { buatUuid } = require('../src/util/id');
 const { benihJalurMinat } = require('../src/db/benih/benih');
 const butirRepo = require('../src/modul/butir-bukti/butir-bukti.repo');
+const { kunciJalurAktif } = require('./kunci-jalur-aktif');
 
 const SANDI = 'sandiujiaman1';
 const WAKTU = '2026-11-13 08:00:00';
@@ -17,6 +18,31 @@ let server;
 let baseUrl;
 let versiKebijakan;
 let lepasKunci;
+let lepasKunciJalur;
+
+// K37 lanjutan: hanya jalur aktif yang teksnya disetujui yang bisa dipilih. Teks jalur di data konten
+// masih draf, jadi tes memilih tiga jalur uji berstatus disetujui, dipasang saat pertama dibutuhkan
+// (sesudah tes daftar kosong K37) dan dihapus di after(). Nama logis dipetakan ke id jalur uji.
+const AKHIRAN = buatUuid().slice(0, 8);
+const JALUR_UJI = {
+  melanjutkan: `uji-jt-lanjut-${AKHIRAN}`,
+  bekerja: `uji-jt-kerja-${AKHIRAN}`,
+  wirausaha: `uji-jt-usaha-${AKHIRAN}`,
+};
+const JALUR_UJI_MATI = `uji-jt-mati-${AKHIRAN}`;
+let jalurUjiSiap = null;
+function siapkanJalurUji() {
+  jalurUjiSiap ??= (async () => {
+    const sisip = (id, aktif) =>
+      pool.query(
+        "INSERT INTO jalur_minat (id, nama, deskripsi_singkat, status_teks, urutan, aktif, pemilik, asal) VALUES (?, ?, 'Teks uji jalur.', 'disetujui', 90, ?, 'tim', 'uji')",
+        [id, `Uji ${id}`, aktif]
+      );
+    for (const id of Object.values(JALUR_UJI)) await sisip(id, 1);
+    await sisip(JALUR_UJI_MATI, 0);
+  })();
+  return jalurUjiSiap;
+}
 
 async function panggil(metode, jalur, token, body) {
   const res = await fetch(`${baseUrl}/api/v1${jalur}`, {
@@ -33,7 +59,8 @@ async function akun({ setuju = true } = {}) {
 }
 
 async function pilihJalur(a, jalur) {
-  const res = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: jalur });
+  await siapkanJalurUji();
+  const res = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: JALUR_UJI[jalur] ?? jalur });
   assert.equal(res.status, 201, JSON.stringify(res.json));
   return res.json.data;
 }
@@ -55,6 +82,7 @@ const barisTujuan = async (id) => (await pool.query('SELECT * FROM tujuan WHERE 
 
 before(async () => {
   lepasKunci = await kunciKonfigurasiGlobal();
+  lepasKunciJalur = await kunciJalurAktif(pool);
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   await benihJalurMinat();
@@ -64,6 +92,13 @@ before(async () => {
 
 after(async () => {
   await new Promise((r) => server.close(r));
+  try {
+    const id = [...Object.values(JALUR_UJI), JALUR_UJI_MATI];
+    await pool.query('DELETE FROM pengguna_jalur_minat WHERE jalur_minat_id IN (?)', [id]);
+    await pool.query('DELETE FROM jalur_minat WHERE id IN (?)', [id]);
+  } finally {
+    if (lepasKunciJalur) await lepasKunciJalur();
+  }
   if (lepasKunci) await lepasKunci();
   await pool.end();
 });
@@ -147,7 +182,7 @@ test('Memilih dua jalur sekaligus, menjeda, lalu memilih lagi: riwayat tidak per
   assert.equal(lanjut.status, 'aktif');
   assert.equal(kerja.status, 'aktif');
 
-  const ganda = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: 'bekerja' });
+  const ganda = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: JALUR_UJI.bekerja });
   assert.equal(ganda.status, 409);
   assert.equal(ganda.json.galat.kode, 'JALUR_SUDAH_DIPILIH');
 
@@ -172,14 +207,32 @@ test('Memilih dua jalur sekaligus, menjeda, lalu memilih lagi: riwayat tidak per
   const saya = (await panggil('GET', '/jalur-minat/saya', a.token)).json.data;
   assert.deepEqual(
     saya.map((p) => [p.jalur_minat_id, p.status]).sort(),
-    [['bekerja', 'aktif'], ['bekerja', 'dijeda'], ['melanjutkan', 'selesai']]
+    [[JALUR_UJI.bekerja, 'aktif'], [JALUR_UJI.bekerja, 'dijeda'], [JALUR_UJI.melanjutkan, 'selesai']].sort()
   );
 });
 
-test('Jalur: id yang tidak ada ditolak, dan status aktif tidak bisa dikirim lewat PATCH', async () => {
+test('K37 lanjutan: jalur draf, nonaktif, atau tidak ada ditolak dengan jawaban yang sama, "Jalur belum tersedia"', async () => {
+  await siapkanJalurUji();
   const a = await akun();
-  const salah = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: 'tidak-ada' });
-  assert.equal(salah.status, 400);
+  const [[draf]] = await pool.query("SELECT id FROM jalur_minat WHERE id = 'melanjutkan' AND aktif = 1 AND status_teks = 'draf'");
+  assert.ok(draf, 'jalur melanjutkan diharapkan masih draf di data konten');
+  const jawaban = [];
+  for (const id of ['melanjutkan', 'bekerja', 'wirausaha', JALUR_UJI_MATI, 'tidak-ada']) {
+    const res = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: id });
+    assert.equal(res.status, 400, id);
+    assert.equal(res.json.galat.kode, 'JALUR_BELUM_TERSEDIA', id);
+    assert.equal(res.json.galat.pesan, 'Jalur belum tersedia.', id);
+    jawaban.push(JSON.stringify(res.json));
+  }
+  assert.equal(new Set(jawaban).size, 1, 'draf, nonaktif, dan tidak ada tidak boleh bisa dibedakan');
+  const [[{ n }]] = await pool.query('SELECT COUNT(*) AS n FROM pengguna_jalur_minat WHERE pengguna_id = ?', [a.id]);
+  assert.equal(n, 0, 'tidak ada babak yang tercatat untuk jalur yang ditolak');
+  const ok = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: JALUR_UJI.wirausaha });
+  assert.equal(ok.status, 201, 'jalur yang disetujui tetap bisa dipilih');
+});
+
+test('Jalur: status aktif tidak bisa dikirim lewat PATCH', async () => {
+  const a = await akun();
   const p = await pilihJalur(a, 'wirausaha');
   const aktif = await panggil('PATCH', `/jalur-minat/saya/${p.id}`, a.token, { status: 'aktif' });
   assert.equal(aktif.status, 400);

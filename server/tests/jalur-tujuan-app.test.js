@@ -169,7 +169,7 @@ describe('Aturan di aplikasi', () => {
   });
 
   test('Setiap kode galat server punya pesan sendiri', () => {
-    for (const kode of ['JALUR_SUDAH_DIPILIH', 'PILIHAN_SUDAH_BERAKHIR', 'TUJUAN_BUKAN_TERKINI']) {
+    for (const kode of ['JALUR_SUDAH_DIPILIH', 'JALUR_BELUM_TERSEDIA', 'PILIHAN_SUDAH_BERAKHIR', 'TUJUAN_BUKAN_TERKINI']) {
       assert.notEqual(jt.pesanGalatJalurTujuan(kode), jt.GALAT_UMUM_JALUR_TUJUAN, kode);
     }
   });
@@ -198,7 +198,7 @@ describe('Teks baru berstatus draf', () => {
       'Tulis Tujuan',
     ];
     for (const teks of semua) assert.ok(draf.includes(teks), teks);
-    for (const kode of ['JALUR_SUDAH_DIPILIH', 'PILIHAN_SUDAH_BERAKHIR', 'TUJUAN_BUKAN_TERKINI', 'AI_BELUM_DIIZINKAN', 'TIDAK_DITEMUKAN', 'VALIDASI_GAGAL', 'TERLALU_SERING']) {
+    for (const kode of ['JALUR_SUDAH_DIPILIH', 'JALUR_BELUM_TERSEDIA', 'PILIHAN_SUDAH_BERAKHIR', 'TUJUAN_BUKAN_TERKINI', 'AI_BELUM_DIIZINKAN', 'TIDAK_DITEMUKAN', 'VALIDASI_GAGAL', 'TERLALU_SERING']) {
       assert.ok(draf.includes(jt.pesanGalatJalurTujuan(kode)), kode);
     }
     const konten = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data-konten', 'jalur-minat.json'), 'utf8'));

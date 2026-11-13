@@ -4,7 +4,7 @@
 //
 //   GET    /             daftar jalur aktif yang teksnya sudah disetujui (K37); kosong selama masih draf
 //   GET    /saya         semua babak jalur milik sendiri, termasuk yang sudah berakhir
-//   POST   /saya         memilih atau menambah jalur (babak baru)
+//   POST   /saya         memilih atau menambah jalur (babak baru); hanya jalur yang disetujui (K37)
 //   PATCH  /saya/:id     menjeda, menyelesaikan, atau meninggalkan babak yang aktif
 //
 // Tidak ada rute hapus: riwayat jalur tidak boleh hilang.
