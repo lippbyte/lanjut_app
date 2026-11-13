@@ -310,6 +310,18 @@ test('Repositori baru menolak data akun lain walau dipanggil langsung, tanpa lap
   assert.equal(n, 0);
 });
 
+test('Repositori: versi lama tidak bisa dicabangkan walau dipanggil langsung, riwayat tetap satu garis', async () => {
+  const tujuanRepo = require('../src/modul/tujuan/tujuan.repo');
+  const a = await akun();
+  const v1 = await buatTujuan(a, { judul: 'Versi satu' });
+  const v2 = (await panggil('POST', `/tujuan/${v1.id}/versi`, a.token, { judul: 'Versi dua' })).json.data;
+  const cabang = await tujuanRepo.buatVersiMilikSendiri(a.id, v1.id, { id: buatUuid(), jalurMinatId: null, judul: 'Cabang', uraian: null, targetPada: null, waktu: WAKTU });
+  assert.equal(cabang, 'bukan_terkini');
+  const [anak] = await pool.query('SELECT id FROM tujuan WHERE diubah_dari_id = ?', [v1.id]);
+  assert.deepEqual(anak.map((r) => r.id), [v2.id]);
+  assert.equal((await barisTujuan(v2.id)).status, 'aktif');
+});
+
 // --- perjalanan -------------------------------------------------------------------------
 
 test('Perjalanan: babak jalur dan versi tujuan tersusun menurut waktu', async () => {
