@@ -137,6 +137,9 @@ const env = {
   PORTOFOLIO_AKTIF: opsional('PORTOFOLIO_AKTIF', '0') === '1',
   // Folder foto, jalur lengkap, di luar folder statis. Wajib bila saklar di atas menyala.
   DIREKTORI_BERKAS: opsional('DIREKTORI_BERKAS', null),
+  // Jalur & Tujuan Saya (LANJUT_023). Bawaan MATI: semua rutenya 404 sampai sengaja dinyalakan.
+  // Baru untuk lingkungan dev; teks jalurnya masih DRAF.
+  JALUR_TUJUAN_AKTIF: opsional('JALUR_TUJUAN_AKTIF', '0') === '1',
   // Ngobrol Bareng LANJUT (LANJUT_051): AI lewat OpenRouter. Kunci KOSONG =
   // fitur AI mati (503 AI_TIDAK_TERSEDIA), server tetap menyala. Kunci hanya
   // ada di server: tidak pernah dikirim ke app dan tidak dicatat di log.

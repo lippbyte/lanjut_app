@@ -380,6 +380,42 @@ export type PilihanMapel =
     }
   | { mode: 'mapel_saya'; maks_mapel: number; mapel_pilihan: string[]; mapel: MapelRingkas[] };
 
+// Jalur & Tujuan (LANJUT_023): bentuk respons jalur-minat.layanan.js dan tujuan.layanan.js.
+export type JalurMinat = { id: string; nama: string; deskripsi_singkat: string; status_teks: 'draf' | 'disetujui'; urutan: number };
+export type StatusPilihanJalur = 'aktif' | 'dijeda' | 'selesai' | 'ditinggalkan';
+export type PilihanJalur = {
+  id: string;
+  jalur_minat_id: string;
+  status: StatusPilihanJalur;
+  mulai_pada: string;
+  berakhir_pada: string | null;
+  diubah_pada: string;
+};
+export type StatusTujuan = 'aktif' | 'tercapai' | 'diubah' | 'ditinggalkan';
+export type Tujuan = {
+  id: string;
+  jalur_minat_id: string | null;
+  judul: string;
+  uraian: string | null;
+  target_pada: string | null;
+  status: StatusTujuan;
+  diubah_dari_id: string | null;
+  dibuat_pada: string;
+  diubah_pada: string;
+};
+export type DaftarTujuan = {
+  tujuan: (Tujuan & { jumlah_versi: number })[];
+  prodi_impian: { prodi_id: string; nama: string | null; sumber: 'data_akun' } | null;
+};
+export type PeristiwaPerjalanan = {
+  jenis: string;
+  pada: string;
+  jalur_minat_id: string | null;
+  pilihan_id?: string;
+  tujuan_id?: string;
+  judul?: string;
+};
+
 // Portofolio (LANJUT_011): bentuk respons butir-bukti.layanan.js `bentukFoto` dan `bentukButir`.
 export type FotoButir = { id: string; jenis_berkas: string; ukuran_byte: number; nama_asli: string; dibuat_pada: string };
 export type ButirBukti = {

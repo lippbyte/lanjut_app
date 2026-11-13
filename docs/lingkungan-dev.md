@@ -60,11 +60,21 @@ Baris pertama keduanya menyebut tujuan, misalnya `Tujuan: host 127.0.0.1, basis 
 npm run benih-dummy
 ```
 
-Hasilnya tiga akun contoh, yaitu `demo_kelas12`, `demo_kelas10`, dan `uji_smp`, dengan email `@contoh.test`. Masing-masing punya persetujuan kebijakan, satu kartu, satu sesi latihan, jalur minat, dan satu tujuan. Kata sandinya dicetak sekali di layar. Bila ingin sandi tetap, isi `DUMMY_KATA_SANDI` di `.env` sebelum menjalankan. Akun yang sudah ada dilewati, jadi aman diulang.
+Hasilnya empat akun contoh, yaitu `demo_kelas12`, `demo_kelas10`, `uji_smp`, dan `uji_belum_memilih`, dengan email `@contoh.test`. Masing-masing punya persetujuan kebijakan, satu kartu, dan satu sesi latihan. Untuk Jalur & Tujuan (LANJUT_023): `demo_kelas10` memilih dua jalur, `demo_kelas12` punya tujuan yang sudah diperbarui sekali (dua versi), dan `uji_belum_memilih` belum memilih jalur maupun tujuan. Kata sandinya dicetak sekali di layar. Bila ingin sandi tetap, isi `DUMMY_KATA_SANDI` di `.env` sebelum menjalankan. Akun yang sudah ada dilewati, jadi aman diulang.
 
 ## 5. Menjalankan tes
 
 Tes memakai basis data terpisah, yang namanya harus diawali `lanjut_test`. Arahkan `DB_NAME` ke `lanjut_test`, jalankan `npm run migrasi` dan `npm run benih` sekali di sana, lalu `npm test`. Kembalikan `DB_NAME` ke `lanjut_dev` sesudahnya.
+
+## 6. Mencoba Jalur & Tujuan (LANJUT_023)
+
+Fitur ini mati di mana pun sampai sengaja dinyalakan, dan teksnya masih draf (`docs/draf-teks-jalur-tujuan.md`). Untuk mencobanya di dev:
+
+1. Di `server/.env`, isi `JALUR_TUJUAN_AKTIF=1`, lalu nyalakan ulang server. Tanpa itu, rute `/api/v1/jalur-minat` dan `/api/v1/tujuan` menjawab 404.
+2. Jalankan aplikasi dengan `EXPO_PUBLIC_JALUR_TUJUAN=1`, misalnya `EXPO_PUBLIC_JALUR_TUJUAN=1 npx expo start --web`. Pintunya muncul di Beranda, tepat di bawah grid menu.
+3. Masuk dengan akun dummy dari langkah 4.
+
+Jangan isi kedua saklar itu di Dokploy, EAS, atau `eas.json`. Rute dan kontraknya ada di `docs/kontrak-data-v2.md` bagian 5.
 
 ## Yang tidak dilakukan di lokal
 

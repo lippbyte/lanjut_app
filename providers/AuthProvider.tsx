@@ -11,7 +11,7 @@ import { hapusFotoSementara } from '../lib/fotoSementara';
 
 // Cache data milik akun (useKemajuan, useButirPribadi, useKartuSaya, useRiwayatLatihan, usePersetujuan,
 // useLevelIn). Dibuang setiap sesi berganti supaya data akun A tidak pernah tampil di akun B.
-const KUNCI_DATA_AKUN = [['kemajuan'], ['butir_pribadi'], ['kartu'], ['sesi_latihan'], ['persetujuan'], ['modul'], ['levelin'], ['event_sekolah'], ['pilihan_mapel'], ['butir_bukti']] as const;
+const KUNCI_DATA_AKUN = [['kemajuan'], ['butir_pribadi'], ['kartu'], ['sesi_latihan'], ['persetujuan'], ['modul'], ['levelin'], ['event_sekolah'], ['pilihan_mapel'], ['jalur_tujuan'], ['butir_bukti']] as const;
 
 const PORTOFOLIO = portofolioAktif(Constants.expoConfig?.extra);
 const KELOLA_DATA_AKUN = kelolaDataAkunAktif(Constants.expoConfig?.extra);

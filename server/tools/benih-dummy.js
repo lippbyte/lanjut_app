@@ -8,6 +8,9 @@
 //   npm run benih-dummy -- --akhiran=a1   nama akun diberi akhiran, mis. demo_kelas12_a1
 //
 // Kata sandi semua akun: DUMMY_KATA_SANDI bila diisi, selain itu dibuat acak dan dicetak sekali.
+//
+// Jalur & Tujuan (LANJUT_023): demo_kelas10 memilih dua jalur, demo_kelas12 punya tujuan yang sudah
+// diperbarui sekali (dua versi), dan uji_belum_memilih belum memilih jalur maupun tujuan.
 
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
@@ -16,9 +19,11 @@ const { hostLokal, teksTujuan } = require('../src/db/pagar-tujuan');
 const DOMAIN_EMAIL = 'contoh.test';
 const AWALAN_SAH = /^(uji|demo)_/;
 const AKUN = [
-  { nama: 'demo_kelas12', tampilan: 'Demo Kelas 12', kelas: '12', jenisSekolah: 'SMK', jalur: ['melanjutkan'], tujuan: 'Diterima di prodi incaran' },
-  { nama: 'demo_kelas10', tampilan: 'Demo Kelas 10', kelas: '10', jenisSekolah: 'SMA', jalur: ['bekerja', 'wirausaha'], tujuan: 'Menyelesaikan satu proyek kecil' },
-  { nama: 'uji_smp', tampilan: 'Uji SMP', kelas: '8', jenisSekolah: 'SMP', jalur: ['melanjutkan'], tujuan: 'Naik kelas dengan nilai baik' },
+  // `tujuan`: versi tujuan, lama ke baru. Lebih dari satu berarti tujuan itu sudah diperbarui.
+  { nama: 'demo_kelas12', tampilan: 'Demo Kelas 12', kelas: '12', jenisSekolah: 'SMK', jalur: ['melanjutkan'], tujuan: ['Diterima di prodi incaran', 'Diterima di prodi incaran lewat SNBP'] },
+  { nama: 'demo_kelas10', tampilan: 'Demo Kelas 10', kelas: '10', jenisSekolah: 'SMA', jalur: ['bekerja', 'wirausaha'], tujuan: ['Menyelesaikan satu proyek kecil'] },
+  { nama: 'uji_smp', tampilan: 'Uji SMP', kelas: '8', jenisSekolah: 'SMP', jalur: ['melanjutkan'], tujuan: ['Naik kelas dengan nilai baik'] },
+  { nama: 'uji_belum_memilih', tampilan: 'Uji Belum Memilih', kelas: '11', jenisSekolah: 'SMA', jalur: [], tujuan: [] },
 ];
 
 /** Alasan menolak, atau null bila boleh jalan. Tidak ada flag yang bisa melewatinya. */
@@ -91,7 +96,14 @@ async function jalankan({ env = require('../src/config/env'), akhiran = '', kata
     await levelinRepo.tutupSesiLatihan(id, sesiId, waktu);
     const jalur = a.jalur.filter((j) => jalurSah.has(j));
     for (const j of jalur) await penggunaJalurMinatRepo.buat({ id: buatUuid(), penggunaId: id, jalurMinatId: j, waktu });
-    await tujuanRepo.buat({ id: buatUuid(), penggunaId: id, jalurMinatId: jalur[0] ?? null, judul: a.tujuan, waktu });
+    let tujuanId = null;
+    for (const judul of a.tujuan) {
+      const idBaru = buatUuid();
+      const data = { id: idBaru, jalurMinatId: jalur[0] ?? null, judul, uraian: null, targetPada: null, waktu };
+      if (!tujuanId) await tujuanRepo.buat({ ...data, penggunaId: id });
+      else if ((await tujuanRepo.buatVersiMilikSendiri(id, tujuanId, data)) !== 'ok') throw new Error(`Versi tujuan ${nama} gagal dibuat.`);
+      tujuanId = idBaru;
+    }
     hasil.dibuat.push(nama);
   }
   log(`[benih-dummy] dibuat: ${hasil.dibuat.join(', ') || '-'}; dilewati karena sudah ada: ${hasil.dilewati.join(', ') || '-'}`);

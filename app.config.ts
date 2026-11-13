@@ -141,6 +141,9 @@ const config: ExpoConfig = {
     kelolaDataAkun: process.env.EXPO_PUBLIC_KELOLA_DATA_AKUN === '1',
     // LANJUT_011: dibaca lib/fiturApp.ts. Rutenya dikeluarkan dari bundel di metro.config.js.
     portofolio: PORTOFOLIO_AKTIF,
+    // LANJUT_023: Jalur & Tujuan MATI kecuali build dibuat dengan EXPO_PUBLIC_JALUR_TUJUAN=1
+    // (dibaca lib/fiturApp.ts). Rutenya dikeluarkan dari bundel di metro.config.js.
+    jalurTujuan: process.env.EXPO_PUBLIC_JALUR_TUJUAN === '1',
     // LANJUT_083: masuk dengan Google (lib/googleMasuk.ts). Client ID OAuth bersifat
     // publik; Client Secret TIDAK pernah diisi di app. Kosong = tombol Google tidak
     // tampil. Android/iOS juga butuh alamat halaman penerus di domain landing

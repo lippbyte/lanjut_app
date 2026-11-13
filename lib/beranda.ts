@@ -107,6 +107,12 @@ export const KARTU_PORTOFOLIO = {
   keterangan: 'Catat karya dan prosesmu. Hanya bisa dibuka lewat akunmu.',
 } as const;
 
+/** LANJUT_023 (DRAF, belum disetujui; docs/draf-teks-jalur-tujuan.md). Satu pintu masuk, di luar grid menu. */
+export const KARTU_JALUR_TUJUAN = {
+  judul: 'Jalur & Tujuan',
+  keterangan: 'Pilih jalur yang sedang kamu jalani dan tulis tujuanmu. Boleh berubah kapan saja.',
+} as const;
+
 export const KARTU_DAFTAR_PERIKSA: KartuBeranda = {
   id: 'daftar-periksa',
   judul: 'Daftar Periksa',
@@ -265,6 +271,7 @@ export type BagianBeranda =
   | 'progres'
   | 'persiapan'
   | 'grid'
+  | 'jalur_tujuan'
   | 'portofolio'
   | 'latihan'
   | 'info_penting'
@@ -295,6 +302,8 @@ export function urutanBeranda(data: {
   tampilPersiapan?: boolean;
   tampilLatihan?: boolean;
   tampilPortofolio?: boolean;
+  /** LANJUT_023: pintu Jalur & Tujuan, tepat sesudah grid, hanya bila saklar build menyala. */
+  tampilJalurTujuan?: boolean;
 }): BagianBeranda[] {
   const kelompok = kelompokJenjang(data.kelas);
   const kelas12 = kelompok === 'kelas12';
@@ -303,6 +312,7 @@ export function urutanBeranda(data: {
   urutan.push('progres');
   if (data.tampilPersiapan && kelompok === 'smp') urutan.push('persiapan');
   urutan.push('grid');
+  if (data.tampilJalurTujuan) urutan.push('jalur_tujuan');
   if (data.tampilPortofolio) urutan.push('portofolio');
   if (data.tampilLatihan) urutan.push('latihan');
   if (kelas12) urutan.push('info_penting');

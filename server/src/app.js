@@ -112,6 +112,11 @@ app.use('/api/v1/modul', modulRute); // LANJUT_049
 app.use('/api/v1/ngobrol', ngobrolRute); // LANJUT_051 — AI lewat OpenRouter, di balik gerbang persetujuan
 // LANJUT_010: saklar mati berarti rutenya sama sekali tidak ada, jadi jawabannya 404 biasa.
 if (env.PORTOFOLIO_AKTIF) app.use('/api/v1/butir-bukti', require('./modul/butir-bukti/butir-bukti.rute'));
+// LANJUT_023: sama dengan Portofolio. Saklar mati berarti rute Jalur & Tujuan Saya tidak ada (404).
+if (env.JALUR_TUJUAN_AKTIF) {
+  app.use('/api/v1/jalur-minat', require('./modul/jalur-minat/jalur-minat.rute'));
+  app.use('/api/v1/tujuan', require('./modul/tujuan/tujuan.rute'));
+}
 
 app.use((req, res) => {
   const { galat } = require('./util/respons');
