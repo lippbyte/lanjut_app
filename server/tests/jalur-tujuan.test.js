@@ -290,6 +290,26 @@ test('Siswa A tidak bisa membaca atau mengubah jalur, tujuan, dan bukti siswa B'
   for (const rahasia of [pb.id, tb.id, 'Rahasia B', b.id]) assert.ok(!teksA.includes(rahasia), rahasia);
 });
 
+test('Repositori baru menolak data akun lain walau dipanggil langsung, tanpa lapisan layanan', async () => {
+  const tujuanRepo = require('../src/modul/tujuan/tujuan.repo');
+  const pilihanRepo = require('../src/modul/jalur-minat/pengguna-jalur-minat.repo');
+  const a = await akun();
+  const b = await akun();
+  const pb = await pilihJalur(b, 'bekerja');
+  const tb = await buatTujuan(b, { judul: 'Milik B' });
+  const sebelum = { p: await barisPilihan(pb.id), t: await barisTujuan(tb.id) };
+
+  const versi = await tujuanRepo.buatVersiMilikSendiri(a.id, tb.id, { id: buatUuid(), jalurMinatId: null, judul: 'Dari A', uraian: null, targetPada: null, waktu: WAKTU });
+  assert.equal(versi, 'tidak_ada');
+  assert.equal(await tujuanRepo.akhiriMilikSendiri(a.id, tb.id, 'tercapai', WAKTU), false);
+  assert.equal(await pilihanRepo.akhiriAktifMilikSendiri(a.id, pb.id, 'ditinggalkan', WAKTU), false);
+
+  assert.deepEqual(await barisPilihan(pb.id), sebelum.p);
+  assert.deepEqual(await barisTujuan(tb.id), sebelum.t);
+  const [[{ n }]] = await pool.query('SELECT COUNT(*) AS n FROM tujuan WHERE diubah_dari_id = ? OR (pengguna_id = ? AND judul = ?)', [tb.id, a.id, 'Dari A']);
+  assert.equal(n, 0);
+});
+
 // --- perjalanan -------------------------------------------------------------------------
 
 test('Perjalanan: babak jalur dan versi tujuan tersusun menurut waktu', async () => {
