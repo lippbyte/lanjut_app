@@ -23,19 +23,20 @@ Jalankan `npm audit` lagi sebelum setiap deploy.
 
 ## 1. Menyiapkan lingkungan
 
-Butuh **Node.js 20+** dan **MySQL 8** yang menyala (lokal, atau layanan
-staging/produksi apa pun — konfigurasi di bawah tidak mengasumsikan satu
-penyedia hosting tertentu, sesuai keputusan PM).
+Butuh **Node.js 20+** dan **MySQL 8** lokal. Di luar `NODE_ENV=production`, server
+hanya mau menyambung ke basis data di `localhost` atau `127.0.0.1`, dan menolak nama
+basis data produksi. Langkah lengkap menyiapkan MySQL lokal, basis data `lanjut_dev` dan
+`lanjut_test`, dan data dummy ada di [`docs/lingkungan-dev.md`](../docs/lingkungan-dev.md).
 
 ```bash
 cd server
 npm install
 ```
 
-Buat basis data kosong (nama bebas, cocokkan dengan `.env`):
+Buat basis data kosong, atau pakai `docker-compose.dev.yml` (lihat `docs/lingkungan-dev.md`):
 
 ```sql
-CREATE DATABASE lanjut CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE lanjut_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 Salin `.env.example` menjadi `.env` dan isi nilainya:
@@ -52,7 +53,7 @@ cp .env.example .env
 | `DB_PORT` | `3306` | Port MySQL |
 | `DB_USER` | `root` | — |
 | `DB_PASSWORD` | (kosong bila tanpa sandi) | — |
-| `DB_NAME` | `lanjut` | Basis data yang sudah dibuat di atas |
+| `DB_NAME` | `lanjut_dev` | Basis data yang sudah dibuat di atas |
 | `ASAL_DIIZINKAN` | `http://localhost:5500` | CORS, dipisah koma, **tidak pernah** `*` |
 | `SESI_UMUR_HARI` | `90` | Umur sesi login, bergulir (§5.3) |
 | `JUMLAH_PROXY` | (kosong) | Opsional. Jumlah reverse proxy di depan server — lihat bagian **Deployment** |
@@ -874,7 +875,8 @@ test membuat pengguna & kartu sungguhan):
 
 ```bash
 # .env yang dipakai server dan tests/ SAMA (via dotenv) — arahkan DB_NAME ke
-# basis data khusus test sebelum menjalankan, mis. `lanjut_test`.
+# basis data khusus test sebelum menjalankan. Namanya WAJIB diawali `lanjut_test`;
+# tes menolak jalan di basis data lain (LANJUT_022).
 npm run migrasi
 npm run benih     # opsional, sebagian test kartu memakai mapel/kartu resmi
 npm test
@@ -992,11 +994,12 @@ npm ci
 #    ATAU isi lewat pengaturan env hosting (tanpa berkas .env).
 cp .env.production.example .env
 
-# 3. Buat semua tabel (hanya menjalankan migrasi yang belum pernah jalan)
-npm run migrasi
+# 3. Buat semua tabel (hanya menjalankan migrasi yang belum pernah jalan).
+#    Baris pertama menyebut tujuannya. --ya wajib bila host basis data bukan lokal.
+npm run migrasi -- --ya
 
 # 4. Isi konten dari server/data-konten/*.json (aman diulang) — lihat di bawah.
-npm run benih
+npm run benih -- --ya
 
 # 5. (Opsional) Tandai konten yang sudah dicek ke sumber resmi — tanda ini
 #    tersimpan di basis data, jadi di server baru harus ditandai ulang.

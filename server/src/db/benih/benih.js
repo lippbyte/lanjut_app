@@ -642,6 +642,7 @@ async function jalankanBenih() {
 }
 
 if (require.main === module) {
+  require('../pagar-tujuan').pastikanTujuan('benih', env);
   jalankanBenih()
     .then(() => process.exit(0))
     .catch((galat) => {

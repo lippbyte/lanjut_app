@@ -5,6 +5,8 @@
 // Pelari utama (jalankan-migrasi.js) tetap hanya maju dan tidak membaca folder ini.
 //
 //   npm run migrasi-turun -- 029_ganti_nama_jalur_seleksi.sql
+//
+// Tujuan dicetak dulu; host yang bukan lokal butuh --ya (LANJUT_022, src/db/pagar-tujuan.js).
 
 const fs = require('fs');
 const path = require('path');
@@ -42,10 +44,11 @@ async function turunkanSatu(koneksi, nama) {
 }
 
 if (require.main === module) {
+  require('./pagar-tujuan').pastikanTujuan('migrasi-turun', require('../config/env'));
   (async () => {
     const koneksi = await pool.getConnection();
     try {
-      await turunkanSatu(koneksi, process.argv[2]);
+      await turunkanSatu(koneksi, process.argv.slice(2).find((a) => !a.startsWith('--')));
     } finally {
       koneksi.release();
     }

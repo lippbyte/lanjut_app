@@ -151,7 +151,7 @@ test('railway.json: start "npm start", migrasi lewat preDeployCommand, health ch
   assert.equal(konfig.build.builder, 'RAILPACK', 'Dockerfile lama (port 4000 tertulis mati) tidak dipakai Railway');
   assert.equal(konfig.deploy.startCommand, 'npm start');
   assert.equal(paket.scripts.start, 'node src/index.js');
-  assert.deepEqual(konfig.deploy.preDeployCommand, ['npm run migrasi']);
+  assert.deepEqual(konfig.deploy.preDeployCommand, ['npm run migrasi -- --ya']); // LANJUT_022: host produksi bukan lokal
   assert.ok(paket.scripts.migrasi);
   assert.equal(konfig.deploy.healthcheckPath, '/health');
   const res = await fetch(`${baseUrl}${konfig.deploy.healthcheckPath}`);

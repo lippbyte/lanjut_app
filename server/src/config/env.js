@@ -159,6 +159,22 @@ const env = {
   GOOGLE_CLIENT_ID: opsional('GOOGLE_CLIENT_ID', null),
 };
 
+// LANJUT_022 seri v2: di luar produksi, basis data harus lokal dan tidak boleh bernama seperti produksi,
+// supaya server, skrip, dan tes di komputer sendiri tidak pernah menulis ke basis data produksi.
+if (NODE_ENV !== 'production') {
+  if (!require('../db/pagar-tujuan').hostLokal(env.DB_HOST)) {
+    throw new Error(
+      `NODE_ENV=${NODE_ENV}: DB_HOST harus localhost atau 127.0.0.1, dapat "${env.DB_HOST}". ` +
+        'Di luar produksi, server tidak menyambung ke basis data jarak jauh (docs/lingkungan-dev.md).'
+    );
+  }
+  if (env.DB_NAME.toLowerCase().startsWith('lanjut_db')) {
+    throw new Error(
+      `NODE_ENV=${NODE_ENV}: DB_NAME "${env.DB_NAME}" memakai nama produksi. Pakai lanjut_dev atau lanjut_test (docs/lingkungan-dev.md).`
+    );
+  }
+}
+
 // Kunci API tidak boleh terkirim lewat HTTP polos, kecuali ke server tiruan lokal.
 if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(env.OPENROUTER_BASE_URL)) {
   throw new Error(`OPENROUTER_BASE_URL harus https:// (atau http://localhost untuk uji), dapat: "${env.OPENROUTER_BASE_URL}".`);

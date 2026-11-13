@@ -1,0 +1,23 @@
+# MySQL lokal untuk development (LANJUT_022 seri v2). Hanya basis data, tanpa API, web, atau layanan
+# produksi. Membuat lanjut_dev dan lanjut_test. Port hanya dibuka di 127.0.0.1.
+# Cara pakai: docs/lingkungan-dev.md
+name: lanjut-dev
+
+services:
+  mysql-dev:
+    image: mysql:8.0
+    restart: "no"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DEV_DB_ROOT_PASSWORD:?Isi DEV_DB_ROOT_PASSWORD di .env.dev.local, lihat docs/lingkungan-dev.md}
+      MYSQL_DATABASE: lanjut_dev
+      MYSQL_USER: lanjut
+      MYSQL_PASSWORD: ${DEV_DB_PASSWORD:?Isi DEV_DB_PASSWORD di .env.dev.local, lihat docs/lingkungan-dev.md}
+    ports:
+      - "127.0.0.1:${DEV_DB_PORT:-3307}:3306"
+    volumes:
+      - lanjut_dev_data:/var/lib/mysql
+      - ./server/docker/dev-init:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  lanjut_dev_data:
