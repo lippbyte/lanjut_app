@@ -12,9 +12,10 @@ Nama fitur sengaja "Jalur & Tujuan", bukan "Jalur Saya", karena "Jalur Saya" sud
 
 ## Yang perlu diputuskan
 
-1. **Nama dan deskripsi tiga jalur** di `server/data-konten/jalur-minat.json` (`status_teks: draf`). Isi berkas itu sendiri menulis "Jangan ditampilkan ke siswa sebelum disetujui". Di dev, layar menampilkannya dengan lencana "Teks draf".
-2. **Rute daftar jalur mengirim jalur draf.** Task meminta "teks dari tabel, status disetujui". Bila hanya jalur `disetujui` yang dikirim, daftar jalur di dev kosong, karena ketiganya masih draf. Rute ini mengirim semua jalur aktif beserta `status_teks`, dan aplikasi menandai yang draf. Sebelum fitur menyala di produksi, perlu diputuskan: saring di server, atau setujui teksnya dulu.
-3. **Semua teks layar di bawah.**
+1. **Nama dan deskripsi tiga jalur** di `server/data-konten/jalur-minat.json` (`status_teks: draf`). Isi berkas itu sendiri menulis "Jangan ditampilkan ke siswa sebelum disetujui".
+2. **Semua teks layar di bawah.**
+
+**Sudah diputuskan (K37, 13 Nov 2026):** server hanya mengirim jalur yang teksnya `disetujui`. Selama ketiga jalur masih draf, daftar jalur kosong, dan layar menampilkan "Pilihan jalur belum tersedia". Menulis tujuan tetap bisa. Nama fitur "Jalur & Tujuan" juga sudah diputuskan (K36).
 
 ## Teks jalur dari server (`server/data-konten/jalur-minat.json`)
 
@@ -33,6 +34,7 @@ Nama fitur sengaja "Jalur & Tujuan", bukan "Jalur Saya", karena "Jalur Saya" sud
 | `labelDraf` | Teks draf |
 | `bagianJalur` | Jalurmu |
 | `petunjukJalur` | Pilih satu atau lebih. Kamu bisa menjedanya dan memilihnya lagi kapan saja. |
+| `jalurBelumTersedia` | Pilihan jalur belum tersedia. Sementara itu, kamu tetap bisa menulis tujuan. |
 | `pilih` | Pilih jalur ini |
 | `pilihLagi` | Pilih lagi |
 | `jeda` | Jeda dulu |

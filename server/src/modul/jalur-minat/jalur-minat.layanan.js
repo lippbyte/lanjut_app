@@ -18,8 +18,8 @@ async function pastikanBoleh(penggunaId) {
 }
 
 /**
- * `status_teks` ikut dikirim: semua deskripsi jalur masih DRAF (server/data-konten/jalur-minat.json),
- * dan aplikasi menandainya. Metadata konten lain tidak dibutuhkan layar.
+ * Metadata konten tidak dibutuhkan layar. `status_teks` selalu `disetujui` (K37), tetap dikirim
+ * supaya bentuk responsnya jelas.
  */
 function bentukJalur(j) {
   return { id: j.id, nama: j.nama, deskripsi_singkat: j.deskripsi_singkat, status_teks: j.status_teks, urutan: j.urutan };
@@ -36,8 +36,9 @@ function bentukPilihan(p) {
   };
 }
 
+/** K37: hanya jalur yang teksnya sudah disetujui. Selama semuanya masih draf, daftarnya kosong. */
 async function daftarJalur() {
-  return (await jalurMinatRepo.daftarAktif()).map(bentukJalur);
+  return (await jalurMinatRepo.daftarDisetujui()).map(bentukJalur);
 }
 
 /** jalur_minat adalah data bersama: boleh jalur mana pun yang ada dan aktif. */

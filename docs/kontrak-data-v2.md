@@ -242,7 +242,7 @@ Satu berkas memakai satu baris. Bila gagal lagi, alasan dan waktunya diperbarui.
 
 ## 5. Jalur & Tujuan Saya (LANJUT_023)
 
-Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalur-tujuan.md`). Tidak ada migrasi baru: semua kolom yang dibutuhkan sudah ada di `030_model_data_v2.sql`.
+Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalur-tujuan.md`). Fungsi repositori baru: `jalur-minat.repo.js` `daftarDisetujui()`. Tidak ada migrasi baru: semua kolom yang dibutuhkan sudah ada di `030_model_data_v2.sql`.
 
 **Saklar.** `JALUR_TUJUAN_AKTIF` di server dan `EXPO_PUBLIC_JALUR_TUJUAN` di aplikasi, bawaannya mati. Saat mati, semua rute di bawah menjawab sama persis dengan jalur yang tidak ada, dan berkas layar tidak masuk bundel aplikasi.
 
@@ -252,7 +252,7 @@ Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalu
 
 | Rute (`/api/v1/jalur-minat`) | Badan | Hasil |
 |---|---|---|
-| `GET /` | | Jalur aktif: `id`, `nama`, `deskripsi_singkat`, `status_teks`, `urutan`. Jalur draf ikut, dengan `status_teks: draf` |
+| `GET /` | | Jalur aktif yang teksnya sudah disetujui (K37): `id`, `nama`, `deskripsi_singkat`, `status_teks`, `urutan`. Jalur draf tidak pernah terkirim, jadi selama teksnya masih draf daftar ini kosong |
 | `GET /saya` | | Semua babak milik sendiri, lama ke baru |
 | `POST /saya` | `jalur_minat_id` | 201, babak baru. 409 `JALUR_SUDAH_DIPILIH` bila jalur itu sudah aktif |
 | `PATCH /saya/:id` | `status`: `dijeda`, `selesai`, atau `ditinggalkan` | Babak yang diakhiri. 409 `PILIHAN_SUDAH_BERAKHIR` bila sudah tidak aktif |

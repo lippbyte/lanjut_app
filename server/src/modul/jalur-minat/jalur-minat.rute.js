@@ -2,7 +2,7 @@
 // Urutan gerbang sama dengan Portofolio: 401 belum masuk, 403 kebijakan privasi belum diterima.
 // Pilihan akun lain menjawab 404, supaya keberadaannya tidak bisa ditebak.
 //
-//   GET    /             daftar jalur aktif (teks DRAF ditandai status_teks)
+//   GET    /             daftar jalur aktif yang teksnya sudah disetujui (K37); kosong selama masih draf
 //   GET    /saya         semua babak jalur milik sendiri, termasuk yang sudah berakhir
 //   POST   /saya         memilih atau menambah jalur (babak baru)
 //   PATCH  /saya/:id     menjeda, menyelesaikan, atau meninggalkan babak yang aktif

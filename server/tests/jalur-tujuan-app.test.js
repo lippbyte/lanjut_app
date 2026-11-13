@@ -161,6 +161,13 @@ describe('Aturan di aplikasi', () => {
     assert.equal(jt.teksPeristiwa({ jenis: 'tak_dikenal', pada: '', jalur_minat_id: null }, () => ''), '');
   });
 
+  test('K37: tanpa jalur yang terkirim, kalimat tetap utuh dan layar memberi tahu', () => {
+    assert.equal(jt.teksPeristiwa({ jenis: 'jalur_dipilih', pada: '', jalur_minat_id: 'melanjutkan' }, () => ''), 'Memilih jalur');
+    assert.equal(jt.teksPeristiwa({ jenis: 'jalur_dijeda', pada: '', jalur_minat_id: 'bekerja' }, () => 'Bekerja'), 'Menjeda jalur Bekerja');
+    const layar = baca('components', 'screens', 'JalurTujuanScreens.tsx');
+    assert.match(layar, /\{jalur\.length === 0 \? \(\s*<Text style=\{s\.keterangan\}>\{T\.jalurBelumTersedia\}<\/Text>/);
+  });
+
   test('Setiap kode galat server punya pesan sendiri', () => {
     for (const kode of ['JALUR_SUDAH_DIPILIH', 'PILIHAN_SUDAH_BERAKHIR', 'TUJUAN_BUKAN_TERKINI']) {
       assert.notEqual(jt.pesanGalatJalurTujuan(kode), jt.GALAT_UMUM_JALUR_TUJUAN, kode);

@@ -114,7 +114,11 @@ function BagianJalur({ jalur }: { jalur: readonly JalurMinat[] }) {
   return (
     <>
       <SeksiJudul>{T.bagianJalur}</SeksiJudul>
-      <Text style={gaya.teksBody}>{T.petunjukJalur}</Text>
+      {jalur.length === 0 ? (
+        <Text style={s.keterangan}>{T.jalurBelumTersedia}</Text>
+      ) : (
+        <Text style={gaya.teksBody}>{T.petunjukJalur}</Text>
+      )}
       {galat ? <PesanGalat teks={pesanGalatJalurTujuan(galat.kode)} /> : null}
       <View style={s.daftar}>
         {susunJalur(jalur, pilihan.data ?? []).map(({ jalur: j, aktif, jumlahBabak }) => (

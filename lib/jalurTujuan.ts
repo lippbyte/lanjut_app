@@ -4,7 +4,8 @@
  *
  * DRAF, belum disetujui. Semua teks di sini menunggu persetujuan Khalifa
  * (docs/draf-teks-jalur-tujuan.md). Nama dan deskripsi jalur datang dari server, dari
- * server/data-konten/jalur-minat.json, dan juga masih DRAF (`status_teks`). Layarnya tidak ada
+ * server/data-konten/jalur-minat.json. K37: server hanya mengirim jalur yang teksnya sudah
+ * disetujui, jadi selama semuanya masih draf, daftar jalurnya kosong. Layarnya tidak ada
  * di aplikasi sampai build dibuat dengan EXPO_PUBLIC_JALUR_TUJUAN=1 (lib/fiturApp.ts).
  *
  * Nama fitur sengaja "Jalur & Tujuan", bukan "Jalur Saya": nama itu sudah dipakai layar posisi
@@ -24,6 +25,7 @@ export const TEKS_JALUR_TUJUAN = {
 
   bagianJalur: 'Jalurmu',
   petunjukJalur: 'Pilih satu atau lebih. Kamu bisa menjedanya dan memilihnya lagi kapan saja.',
+  jalurBelumTersedia: 'Pilihan jalur belum tersedia. Sementara itu, kamu tetap bisa menulis tujuan.',
   pilih: 'Pilih jalur ini',
   pilihLagi: 'Pilih lagi',
   jeda: 'Jeda dulu',
@@ -114,19 +116,23 @@ export function pesanGalatJalurTujuan(kode: string | undefined): string {
   return (kode && PESAN_GALAT[kode]) || GALAT_UMUM_JALUR_TUJUAN;
 }
 
-/** Kalimat perjalanan. DRAF, belum disetujui. */
+/**
+ * Kalimat perjalanan. DRAF, belum disetujui. Nama jalur hanya ada bila jalurnya terkirim (K37);
+ * tanpa nama, kalimatnya tetap utuh ("Memilih jalur").
+ */
 export function teksPeristiwa(p: PeristiwaPerjalanan, namaJalur: (id: string | null) => string): string {
-  const jalur = namaJalur(p.jalur_minat_id);
+  const nama = namaJalur(p.jalur_minat_id);
+  const jalur = nama ? ` ${nama}` : '';
   const judul = `"${p.judul ?? ''}"`;
   switch (p.jenis) {
     case 'jalur_dipilih':
-      return `Memilih jalur ${jalur}`;
+      return `Memilih jalur${jalur}`;
     case 'jalur_dijeda':
-      return `Menjeda jalur ${jalur}`;
+      return `Menjeda jalur${jalur}`;
     case 'jalur_selesai':
-      return `Menyelesaikan jalur ${jalur}`;
+      return `Menyelesaikan jalur${jalur}`;
     case 'jalur_ditinggalkan':
-      return `Meninggalkan jalur ${jalur}`;
+      return `Meninggalkan jalur${jalur}`;
     case 'tujuan_dibuat':
       return `Menulis tujuan ${judul}`;
     case 'tujuan_diperbarui':

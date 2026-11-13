@@ -97,15 +97,47 @@ test('Gerbang: 401 tanpa sesi, 403 bila kebijakan privasi belum diterima', async
 
 // --- jalur ----------------------------------------------------------------------------
 
-test('Daftar jalur: tiga jalur aktif, teksnya bertanda draf, tanpa metadata konten', async () => {
+// K37 (13 Nov 2026): daftar jalur hanya berisi jalur yang teksnya sudah disetujui.
+test('K37: jalur draf tidak pernah terkirim; selama semua teks jalur masih draf, daftarnya kosong', async () => {
+  const konten = JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'data-konten', 'jalur-minat.json'), 'utf8'));
+  assert.ok(konten.data.every((j) => j.status_teks === 'draf'), 'tes ini mengandaikan teks jalur di data konten masih draf');
+  const [draf] = await pool.query("SELECT id, nama, deskripsi_singkat FROM jalur_minat WHERE status_teks <> 'disetujui'");
+  assert.ok(draf.length >= 3);
   const a = await akun();
   const res = await panggil('GET', '/jalur-minat', a.token);
   assert.equal(res.status, 200);
-  assert.deepEqual(res.json.data.map((j) => j.id), ['melanjutkan', 'bekerja', 'wirausaha']);
-  for (const j of res.json.data) {
-    assert.deepEqual(Object.keys(j).sort(), ['deskripsi_singkat', 'id', 'nama', 'status_teks', 'urutan']);
-    assert.equal(j.status_teks, 'draf');
+  assert.deepEqual(res.json.data, []);
+  const teks = JSON.stringify(res.json);
+  for (const j of draf) {
+    assert.ok(!teks.includes(j.deskripsi_singkat), `deskripsi draf terkirim: ${j.id}`);
+    assert.ok(!teks.includes(`"${j.id}"`), `id jalur draf terkirim: ${j.id}`);
   }
+});
+
+test('K37: jalur yang sudah disetujui terkirim, draf dan nonaktif tidak (SQL asli, dalam transaksi yang dibatalkan)', async () => {
+  // Baris contoh hanya ada di dalam transaksi ini, jadi tidak pernah terlihat tes lain yang berjalan bersamaan.
+  const jalurMinatRepo = require('../src/modul/jalur-minat/jalur-minat.repo');
+  const akhiran = buatUuid().slice(0, 8);
+  const koneksi = await pool.getConnection();
+  try {
+    await koneksi.beginTransaction();
+    const sisip = (id, status, aktif) =>
+      koneksi.query(
+        "INSERT INTO jalur_minat (id, nama, deskripsi_singkat, status_teks, urutan, aktif, pemilik, asal) VALUES (?, ?, 'Teks uji K37.', ?, 0, ?, 'tim', 'uji')",
+        [id, `Uji ${status}`, status, aktif]
+      );
+    await sisip(`uji-k37-setuju-${akhiran}`, 'disetujui', 1);
+    await sisip(`uji-k37-mati-${akhiran}`, 'disetujui', 0);
+    await sisip(`uji-k37-draf-${akhiran}`, 'draf', 1);
+    const hasil = await jalurMinatRepo.daftarDisetujui(koneksi);
+    assert.deepEqual(hasil.map((j) => j.id), [`uji-k37-setuju-${akhiran}`]);
+    assert.ok(hasil.every((j) => j.status_teks === 'disetujui'));
+  } finally {
+    await koneksi.rollback();
+    koneksi.release();
+  }
+  const [[{ n }]] = await pool.query('SELECT COUNT(*) AS n FROM jalur_minat WHERE id LIKE ?', [`uji-k37-%-${akhiran}`]);
+  assert.equal(n, 0, 'baris contoh tidak boleh tertinggal');
 });
 
 test('Memilih dua jalur sekaligus, menjeda, lalu memilih lagi: riwayat tidak pernah hilang', async () => {
