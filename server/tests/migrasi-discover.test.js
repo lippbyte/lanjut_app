@@ -92,3 +92,38 @@ test('Naik lagi tidak mengubah apa pun (idempoten), lalu turun menghapus ketiga 
   await jalankanSatu(c, NAMA);
   assert.deepEqual(await tabelAda(), [...TABEL].sort());
 });
+
+// Prosedur mundur (docs/daftar-uji-hp-apk-v2.md bagian 2, cara B): 033 diturunkan lebih dulu,
+// baru 032 dan seterusnya.
+const terakhir = async () => (await c.query('SELECT nama FROM _migrasi ORDER BY nama DESC LIMIT 1'))[0][0]?.nama;
+
+test('Prosedur mundur: 032 ditolak selama 033 ada; 033 turun pada database berisi, lalu 032 boleh turun', async () => {
+  const ID_B = '44444444-4444-4444-8444-444444444444';
+  await c.query("INSERT INTO pengguna (id, nama_pengguna, kata_sandi_hash, dibuat_pada) VALUES (?, 'uji033b', 'x', ?)", [ID_B, WAKTU]);
+  await c.query("INSERT INTO kartu_discover (id, jenis, judul, ringkasan, urutan, pemilik, asal) VALUES ('k2', 'usaha', 'K', 'R', 1, 'tim', 'uji')");
+  await c.query("INSERT INTO refleksi_discover (id, pengguna_id, kartu_discover_id, ketertarikan, yang_menarik, dibuat_pada, diubah_pada) VALUES (?, ?, 'k2', 'tertarik', 'isi', ?, ?)", [ID_P1, ID_B, WAKTU, WAKTU]);
+  await c.query("INSERT INTO profil_eksplorasi (id, pengguna_id, isi, status, dibuat_pada, diubah_pada) VALUES (?, ?, '{}', 'diubah', ?, ?)", [ID_P2, ID_B, WAKTU, WAKTU]);
+  await c.query("INSERT INTO profil_eksplorasi (id, pengguna_id, isi, status, diubah_dari_id, dibuat_pada, diubah_pada) VALUES (?, ?, '{}', 'aktif', ?, ?, ?)", [ID_A, ID_B, ID_P2, WAKTU, WAKTU]);
+  assert.equal(await terakhir(), NAMA);
+
+  // Urutan salah: 032 bukan migrasi terakhir. Tidak ada yang berubah.
+  await assert.rejects(turunkanSatu(c, '032_berkas_tertunda_hapus.sql'), /bukan migrasi terakhir/);
+  assert.deepEqual(await tabelAda(), [...TABEL].sort());
+  assert.equal((await c.query('SELECT COUNT(*) AS n FROM refleksi_discover'))[0][0].n, 1);
+
+  // 033 turun walau berisi refleksi dan profil bertingkat versi; catatannya ikut hilang.
+  await turunkanSatu(c, NAMA);
+  assert.deepEqual(await tabelAda(), []);
+  assert.equal(await terakhir(), '032_berkas_tertunda_hapus.sql');
+  assert.equal((await c.query('SELECT COUNT(*) AS n FROM pengguna WHERE id = ?', [ID_B]))[0][0].n, 1, 'akun tidak ikut terhapus');
+
+  // Sesudah 033, migrasi berikutnya di prosedur mundur boleh diturunkan.
+  await turunkanSatu(c, '032_berkas_tertunda_hapus.sql');
+  assert.equal(await terakhir(), '031_kode_hapus_akun.sql');
+
+  // Naik lagi: 032 lalu 033, skemanya kembali utuh.
+  await jalankanSatu(c, '032_berkas_tertunda_hapus.sql');
+  await jalankanSatu(c, NAMA);
+  assert.deepEqual(await tabelAda(), [...TABEL].sort());
+  assert.equal(await terakhir(), NAMA);
+});

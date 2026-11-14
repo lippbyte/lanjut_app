@@ -275,7 +275,7 @@ Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalu
 
 ## 6. Discover dan Profil Eksplorasi (LANJUT_024)
 
-Untuk lingkungan dev. Isi kartu dan teks layar masih draf (`docs/draf-teks-discover.md`). **Migrasi baru `033_discover.sql`** membuat tiga tabel, karena belum ada tempat untuk konten Discover, refleksi, dan profil yang bertingkat versi. Migrasi ini baru dijalankan di `lanjut_dev` dan `lanjut_test`, dan butuh persetujuan sebelum rilis: deploy produksi menjalankan migrasi otomatis.
+Untuk lingkungan dev. Isi kartu dan teks layar masih draf (`docs/draf-teks-discover.md`). **Migrasi baru `033_discover.sql`** membuat tiga tabel, karena belum ada tempat untuk konten Discover, refleksi, dan profil yang bertingkat versi. Migrasi ini baru dijalankan di `lanjut_dev` dan `lanjut_test`, dan butuh persetujuan sebelum rilis: deploy produksi menjalankan migrasi otomatis. Langkah turunnya `src/db/migrasi-turun/033_discover.sql`, dan urutannya di prosedur mundur ada di `docs/daftar-uji-hp-apk-v2.md` bagian 2, cara B: `033` diturunkan lebih dulu sebelum `032`.
 
 | Tabel | Isi | Hapus akun |
 |---|---|---|
