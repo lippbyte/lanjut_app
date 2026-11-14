@@ -57,6 +57,9 @@ const STATUS_PER_KODE = {
   PILIHAN_SUDAH_BERAKHIR: 409, // babak jalur yang sudah berakhir tidak diubah lagi
   TUJUAN_BUKAN_TERKINI: 409, // versi lama atau tujuan yang sudah berakhir
   JALUR_BELUM_TERSEDIA: 400, // K37: jalur draf, nonaktif, atau tidak ada tidak bisa dipilih
+  // LANJUT_024 — Discover
+  KARTU_BELUM_TERSEDIA: 400, // kartu draf, nonaktif, atau tidak ada tidak bisa diberi refleksi
+  PROFIL_BUKAN_TERKINI: 409, // profil berganti di antara membaca dan menyimpan
   GALAT_SERVER: 500,
 };
 

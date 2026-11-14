@@ -26,6 +26,8 @@ Semua memakai `ON DELETE CASCADE`, jadi ikut terhapus saat baris `pengguna` diha
 | `tujuan` | `pengguna_id` | Tabel v2 |
 | `butir_bukti` | `pengguna_id` | Tabel v2 |
 | `lampiran_butir_bukti` | lewat `butir_bukti` | Tabel v2, berantai dari `butir_bukti` |
+| `refleksi_discover` | `pengguna_id` | LANJUT_024, ikut di ekspor |
+| `profil_eksplorasi` | `pengguna_id` | LANJUT_024, semua versi ikut di ekspor |
 
 `pengguna.disetel_ulang_oleh` memakai `SET NULL`, jadi menghapus akun tim hanya mengosongkan kolom itu di akun lain.
 

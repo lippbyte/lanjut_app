@@ -8,11 +8,13 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { nyalakanServer, urlDari, daftarPenggunaBaru, kodeTerakhir, pool } = require('./bantuan');
 const { buatUuid } = require('../src/util/id');
-const { benihJalurMinat } = require('../src/db/benih/benih');
+const { benihJalurMinat, benihDiscover } = require('../src/db/benih/benih');
 const pilihan = require('../src/modul/jalur-minat/pengguna-jalur-minat.repo');
 const tujuan = require('../src/modul/tujuan/tujuan.repo');
 const butir = require('../src/modul/butir-bukti/butir-bukti.repo');
 const lampiran = require('../src/modul/butir-bukti/lampiran-butir-bukti.repo');
+const refleksiDiscover = require('../src/modul/discover/refleksi-discover.repo');
+const profilEksplorasi = require('../src/modul/discover/profil-eksplorasi.repo');
 const modulLayanan = require('../src/modul/modul/modul.layanan');
 const dataPengguna = require('../src/modul/data-pengguna/data-pengguna.layanan');
 const { daftarkanPenyediaBerkas } = require('../src/modul/data-pengguna/berkas-pengguna');
@@ -89,12 +91,16 @@ async function isiSemuaTabel(penggunaId, penanda) {
   const idButir = buatUuid();
   await butir.buat({ id: idButir, penggunaId, tujuanId: idTujuan, judul: `Bukti ${penanda}`, jenis: 'karya', waktu: WAKTU });
   await lampiran.buat({ id: buatUuid(), penggunaId, butirBuktiId: idButir, jenisBerkas: 'image/png', ukuranByte: 10, namaTersimpan: `${buatUuid()}.png`, namaAsli: 'foto.png', waktu: WAKTU });
+  // LANJUT_024: refleksi Discover dan profil eksplorasi.
+  await refleksiDiscover.buatTanpaPeriksaKartu({ id: buatUuid(), penggunaId, kartuId: 'bidang-kesehatan', ketertarikan: 'tertarik', yangMenarik: `Refleksi ${penanda}`, waktu: WAKTU });
+  await profilEksplorasi.buatVersiMilikSendiri(penggunaId, { id: buatUuid(), indukId: null, isi: { refleksi: [] }, catatan: `Profil ${penanda}`, waktu: WAKTU });
 }
 
 before(async () => {
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   await benihJalurMinat();
+  await benihDiscover();
   referensi = {
     butir: (await pool.query('SELECT id FROM butir_daftar_periksa LIMIT 1'))[0][0].id,
     prodi: (await pool.query('SELECT id FROM prodi LIMIT 1'))[0][0].id,

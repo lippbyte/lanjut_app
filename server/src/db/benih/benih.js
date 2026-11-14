@@ -75,6 +75,7 @@ const BERKAS_DATA = [
   'profil-prodi.json',
   'levelin-konfig.json',
   'jalur-minat.json',
+  'discover.json',
 ];
 
 function asalLokasi() {
@@ -624,6 +625,69 @@ function kampusUntukDb(kampus) {
   );
 }
 
+// Kartu Discover (LANJUT_024 seri v2). Pola sama dengan jalur_minat: tanda verifikasi hanya diisi
+// saat INSERT, lalu dipertahankan selama isinya tidak berubah. url_sumber yang masih penanda
+// [ISI: ...] disimpan sebagai NULL, supaya basis data tidak pernah memuat alamat palsu.
+// Kartu yang disetujui wajib punya sumber: benih menolak seluruh berkas bila tidak.
+// `berkas` bisa diganti fixture di tes.
+const JENIS_DISCOVER = new Set(['bidang', 'profesi', 'usaha']);
+const penandaIsi = (nilai) => typeof nilai === 'string' && nilai.trim().startsWith('[ISI');
+
+function periksaBerkasDiscover(berkas) {
+  for (const item of berkas.data) {
+    if (!/^[a-z0-9-]{1,64}$/.test(item.id)) throw new Error(`discover.json: id "${item.id}" tidak sah.`);
+    if (!JENIS_DISCOVER.has(item.jenis)) throw new Error(`discover.json: jenis "${item.jenis}" pada ${item.id} tidak dikenal.`);
+    if (!item.judul || !item.ringkasan) throw new Error(`discover.json: ${item.id} tanpa judul atau ringkasan.`);
+    if (!['draf', 'disetujui'].includes(item.status_teks)) throw new Error(`discover.json: status_teks ${item.id} tidak sah.`);
+    if (item.status_teks === 'disetujui' && (!item.url_sumber || penandaIsi(item.url_sumber))) {
+      throw new Error(`discover.json: ${item.id} disetujui, tetapi sumbernya belum diisi. Tidak ada data yang ditulis.`);
+    }
+  }
+}
+
+async function benihDiscover(berkas = bacaJson('discover.json')) {
+  periksaBerkasDiscover(berkas);
+  for (const item of berkas.data) {
+    const url = penandaIsi(item.url_sumber) ? null : item.url_sumber || null;
+    await pool.execute(
+      `INSERT INTO kartu_discover
+         (id, jenis, judul, ringkasan, status_teks, urutan, aktif, sumber, pemilik,
+          status_verifikasi, asal, url_sumber, diperiksa_pada)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(jenis <=> VALUES(jenis) AND judul <=> VALUES(judul) AND
+            ringkasan <=> VALUES(ringkasan) AND status_teks <=> VALUES(status_teks) AND
+            urutan <=> VALUES(urutan) AND aktif <=> VALUES(aktif) AND sumber <=> VALUES(sumber) AND
+            pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(jenis <=> VALUES(jenis) AND judul <=> VALUES(judul) AND
+            ringkasan <=> VALUES(ringkasan) AND status_teks <=> VALUES(status_teks) AND
+            urutan <=> VALUES(urutan) AND aktif <=> VALUES(aktif) AND sumber <=> VALUES(sumber) AND
+            pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            diperiksa_pada, NULL),
+         jenis=VALUES(jenis), judul=VALUES(judul), ringkasan=VALUES(ringkasan), status_teks=VALUES(status_teks),
+         urutan=VALUES(urutan), aktif=VALUES(aktif), sumber=VALUES(sumber), pemilik=VALUES(pemilik),
+         asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
+      [
+        item.id,
+        item.jenis,
+        item.judul,
+        item.ringkasan,
+        item.status_teks,
+        item.urutan,
+        item.aktif ? 1 : 0,
+        berkas.sumber,
+        berkas.pemilik,
+        berkas.status || 'belum_diverifikasi',
+        berkas.asal,
+        url,
+        item.diperiksa_pada || null,
+      ]
+    );
+  }
+  console.log(`[benih] kartu_discover: ${berkas.data.length} baris`);
+}
+
 async function jalankanBenih() {
   pastikanFolderData();
   console.log(`[benih] data konten: ${DIR_DATA}`);
@@ -638,6 +702,7 @@ async function jalankanBenih() {
   await benihArsipKartu();
   await benihKonfigurasiLevelin();
   await benihJalurMinat();
+  await benihDiscover();
   console.log('[benih] selesai.');
 }
 
@@ -651,4 +716,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanBenih, benihLinimasa, benihChecklist, benihProfilProdi, benihArsipKartu, benihJalurMinat, DIR_DATA };
+module.exports = { jalankanBenih, benihLinimasa, benihChecklist, benihProfilProdi, benihArsipKartu, benihJalurMinat, benihDiscover, periksaBerkasDiscover, DIR_DATA };

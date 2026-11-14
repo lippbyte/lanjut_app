@@ -20,4 +20,12 @@ if (process.env.EXPO_PUBLIC_JALUR_TUJUAN !== '1') {
   ];
 }
 
+// LANJUT_024: rute Discover keluar dari bundel saat EXPO_PUBLIC_DISCOVER bukan '1'.
+if (process.env.EXPO_PUBLIC_DISCOVER !== '1') {
+  config.resolver.blockList = [
+    ...[].concat(config.resolver.blockList || []),
+    /[\\/]app[\\/]\(app\)[\\/]discover(-[a-z]+)?\.tsx$/,
+  ];
+}
+
 module.exports = config;

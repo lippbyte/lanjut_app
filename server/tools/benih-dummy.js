@@ -11,6 +11,10 @@
 //
 // Jalur & Tujuan (LANJUT_023): demo_kelas10 memilih dua jalur, demo_kelas12 punya tujuan yang sudah
 // diperbarui sekali (dua versi), dan uji_belum_memilih belum memilih jalur maupun tujuan.
+//
+// Discover (LANJUT_024): demo_kelas12 punya refleksi di dua kartu dan profil eksplorasi yang sudah
+// diperbarui sekali (dua versi). uji_belum_memilih belum mengisi apa pun. Kartu di data konten
+// masih draf, jadi refleksi dummy ditulis langsung lewat repositori (hanya di basis data lokal).
 
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
@@ -20,7 +24,12 @@ const DOMAIN_EMAIL = 'contoh.test';
 const AWALAN_SAH = /^(uji|demo)_/;
 const AKUN = [
   // `tujuan`: versi tujuan, lama ke baru. Lebih dari satu berarti tujuan itu sudah diperbarui.
-  { nama: 'demo_kelas12', tampilan: 'Demo Kelas 12', kelas: '12', jenisSekolah: 'SMK', jalur: ['melanjutkan'], tujuan: ['Diterima di prodi incaran', 'Diterima di prodi incaran lewat SNBP'] },
+  { nama: 'demo_kelas12', tampilan: 'Demo Kelas 12', kelas: '12', jenisSekolah: 'SMK', jalur: ['melanjutkan'], tujuan: ['Diterima di prodi incaran', 'Diterima di prodi incaran lewat SNBP'],
+    refleksi: [
+      { kartu: 'bidang-kesehatan', ketertarikan: 'tertarik', yangMenarik: 'Aku suka membantu orang yang sedang sakit.' },
+      { kartu: 'profesi-guru', ketertarikan: 'belum_yakin', yangKurangMenarik: 'Aku belum tahu apakah aku sabar menjelaskan.' },
+    ],
+    catatanProfil: ['Aku masih menjelajah.', 'Aku mau cari tahu lebih banyak tentang bidang kesehatan.'] },
   { nama: 'demo_kelas10', tampilan: 'Demo Kelas 10', kelas: '10', jenisSekolah: 'SMA', jalur: ['bekerja', 'wirausaha'], tujuan: ['Menyelesaikan satu proyek kecil'] },
   { nama: 'uji_smp', tampilan: 'Uji SMP', kelas: '8', jenisSekolah: 'SMP', jalur: ['melanjutkan'], tujuan: ['Naik kelas dengan nilai baik'] },
   { nama: 'uji_belum_memilih', tampilan: 'Uji Belum Memilih', kelas: '11', jenisSekolah: 'SMA', jalur: [], tujuan: [] },
@@ -51,6 +60,9 @@ async function jalankan({ env = require('../src/config/env'), akhiran = '', kata
   const kartuRepo = require('../src/modul/kartu/kartu.repo');
   const levelinRepo = require('../src/modul/levelin/levelin.repo');
   const tujuanRepo = require('../src/modul/tujuan/tujuan.repo');
+  const refleksiRepo = require('../src/modul/discover/refleksi-discover.repo');
+  const profilRepo = require('../src/modul/discover/profil-eksplorasi.repo');
+  const { susunIsiProfil, dataSiswaSaatIni } = require('../src/modul/discover/discover.layanan');
   const penggunaJalurMinatRepo = require('../src/modul/jalur-minat/pengguna-jalur-minat.repo');
   const { buatUuid } = require('../src/util/id');
   const { sekarangUntukDb } = require('../src/util/waktu');
@@ -61,6 +73,8 @@ async function jalankan({ env = require('../src/config/env'), akhiran = '', kata
   if (!versi) throw new Error('Versi kebijakan belum ada. Jalankan migrasi lokal dulu.');
   const [jalurAda] = await pool.query('SELECT id FROM jalur_minat WHERE aktif = 1');
   const jalurSah = new Set(jalurAda.map((b) => b.id));
+  const [kartuAda] = await pool.query('SELECT id FROM kartu_discover WHERE aktif = 1');
+  const kartuSah = new Set(kartuAda.map((b) => b.id));
 
   const sandi = kataSandi || crypto.randomBytes(9).toString('base64url');
   const hash = await bcrypt.hash(sandi, 12);
@@ -103,6 +117,20 @@ async function jalankan({ env = require('../src/config/env'), akhiran = '', kata
       if (!tujuanId) await tujuanRepo.buat({ ...data, penggunaId: id });
       else if ((await tujuanRepo.buatVersiMilikSendiri(id, tujuanId, data)) !== 'ok') throw new Error(`Versi tujuan ${nama} gagal dibuat.`);
       tujuanId = idBaru;
+    }
+    const refleksi = (a.refleksi ?? []).filter((r) => kartuSah.has(r.kartu));
+    for (const r of refleksi) {
+      await refleksiRepo.buatTanpaPeriksaKartu({ id: buatUuid(), penggunaId: id, kartuId: r.kartu, ketertarikan: r.ketertarikan, yangMenarik: r.yangMenarik ?? null, yangKurangMenarik: r.yangKurangMenarik ?? null, waktu });
+    }
+    if (refleksi.length) {
+      // Profil disusun dengan aturan yang sama dengan rute: hanya salinan data siswa sendiri.
+      const isi = susunIsiProfil(await dataSiswaSaatIni(id));
+      let induk = null;
+      for (const catatan of a.catatanProfil ?? [null]) {
+        const idProfil = buatUuid();
+        if ((await profilRepo.buatVersiMilikSendiri(id, { id: idProfil, indukId: induk, isi, catatan, waktu })) !== 'ok') throw new Error(`Profil eksplorasi ${nama} gagal dibuat.`);
+        induk = idProfil;
+      }
     }
     hasil.dibuat.push(nama);
   }

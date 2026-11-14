@@ -76,6 +76,11 @@ const SQL = {
                     DATE_FORMAT(diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
                FROM tahapan_linimasa
               ORDER BY tanggal_mulai, id`,
+  // LANJUT_024: kartu Discover. Persetujuan teks (status_teks) terpisah dari verifikasi sumber.
+  discover: `SELECT id, jenis, judul, ringkasan, status_teks, aktif, asal, url_sumber, status_verifikasi,
+                    DATE_FORMAT(diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
+               FROM kartu_discover
+              ORDER BY urutan, id`,
   cerita: `SELECT id, nama, asal_smk, jurusan_smk, ptn, prodi, jalur_seleksi, hambatan, yang_dilakukan, izin_tayang, tayang,
                   asal, url_sumber, status_verifikasi, DATE_FORMAT(diperiksa_pada, '%Y-%m-%d') AS diperiksa_pada
              FROM cerita_alumni
@@ -387,6 +392,31 @@ async function bagianLinimasa() {
   };
 }
 
+async function bagianDiscover() {
+  const [baris] = await pool.query(SQL.discover);
+  const berkas = bacaJson('discover.json');
+  return {
+    jenis: 'discover',
+    labelIsi: 'Isi kartu (tampil hanya bila teksnya disetujui)',
+    judul: 'Kartu Discover (LANJUT_024)',
+    pengantar: [
+      'Di aplikasi sekarang: server hanya mengirim kartu yang teksnya **disetujui** (status_teks) dan aktif. Menandai terverifikasi di sini tidak membuat kartu tampil; persetujuan teks dicatat terpisah di discover.json.',
+      amanCatatan(berkas._peringatan),
+      'Kartu yang sumbernya masih [ISI: sumber] **jangan ditandai**: isi url_sumber di discover.json dulu → `npm run benih` → baru dicek dan ditandai.',
+    ],
+    butir: baris.map((k) => ({
+      id: k.id,
+      judul: aman(k.judul),
+      isi: [
+        `**Jenis:** ${aman(k.jenis)} · **Teks:** ${aman(k.status_teks)} · **Aktif:** ${yaTidak(k.aktif)}`,
+        `**Ringkasan:** ${aman(k.ringkasan)}`,
+      ],
+      sumber: [`Tempat memverifikasi (url_sumber): ${tautan(k.url_sumber)}`, `Asal isi: ${aman(k.asal)}`],
+      terverifikasi: terverifikasi(k),
+    })),
+  };
+}
+
 async function bagianCerita() {
   const [baris] = await pool.query(SQL.cerita);
   const berkas = bacaJson('cerita-alumni.json');
@@ -416,7 +446,7 @@ async function bagianCerita() {
 }
 
 /** Urutan = urutan di lembar. F10 paling atas (fitur jadi yang paling terhambat). */
-const BAGIAN = [bagianProfil, bagianKartu, bagianProdi, bagianMapel, bagianKhususSmk, bagianChecklist, bagianLinimasa, bagianCerita];
+const BAGIAN = [bagianProfil, bagianKartu, bagianProdi, bagianMapel, bagianKhususSmk, bagianChecklist, bagianLinimasa, bagianDiscover, bagianCerita];
 
 // --- susun Markdown ------------------------------------------------------------
 

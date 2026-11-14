@@ -1,0 +1,76 @@
+{
+  "_catatan": "Kartu Discover (LANJUT_024 seri v2): bidang, profesi, dan usaha untuk dijelajahi siswa. Tabel kartu_discover. Hanya kartu aktif dengan status_teks 'disetujui' yang dikirim ke siswa (sama dengan jalur_minat, K37). Cerita Alumni sengaja tidak dipakai (K13).",
+  "_peringatan": "SEMUA KARTU DI BAWAH ADALAH CONTOH DRAF yang ditulis agen, belum disetujui Khalifa dan belum diverifikasi. Ringkasan sengaja hanya menjelaskan apa bidang, profesi, atau usaha itu, tanpa angka gaji, prospek, peringkat, atau klaim lapangan kerja. Setiap url_sumber masih [ISI: sumber] dan diperiksa_pada masih kosong. Jangan ditampilkan ke siswa sebelum sumbernya diisi, diverifikasi lewat npm run verifikasi-konten -- --jenis=discover, dan status_teks diubah menjadi disetujui oleh Khalifa.",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "status": "belum_diverifikasi",
+  "asal": "contoh LANJUT_024",
+  "data": [
+    {
+      "id": "bidang-kesehatan",
+      "jenis": "bidang",
+      "judul": "Kesehatan",
+      "ringkasan": "Bidang yang berhubungan dengan menjaga, memeriksa, dan memulihkan kesehatan orang.",
+      "status_teks": "draf",
+      "urutan": 1,
+      "aktif": true,
+      "url_sumber": "[ISI: sumber]",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "bidang-teknologi-informasi",
+      "jenis": "bidang",
+      "judul": "Teknologi Informasi",
+      "ringkasan": "Bidang yang berhubungan dengan membuat dan merawat perangkat lunak, jaringan komputer, dan data.",
+      "status_teks": "draf",
+      "urutan": 2,
+      "aktif": true,
+      "url_sumber": "[ISI: sumber]",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "profesi-guru",
+      "jenis": "profesi",
+      "judul": "Guru",
+      "ringkasan": "Pekerjaan mendampingi orang lain belajar, di sekolah maupun di tempat lain.",
+      "status_teks": "draf",
+      "urutan": 3,
+      "aktif": true,
+      "url_sumber": "[ISI: sumber]",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "profesi-teknisi-listrik",
+      "jenis": "profesi",
+      "judul": "Teknisi Listrik",
+      "ringkasan": "Pekerjaan memasang, memeriksa, dan memperbaiki instalasi listrik.",
+      "status_teks": "draf",
+      "urutan": 4,
+      "aktif": true,
+      "url_sumber": "[ISI: sumber]",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "usaha-kuliner",
+      "jenis": "usaha",
+      "judul": "Usaha Kuliner",
+      "ringkasan": "Usaha membuat dan menjual makanan atau minuman.",
+      "status_teks": "draf",
+      "urutan": 5,
+      "aktif": true,
+      "url_sumber": "[ISI: sumber]",
+      "diperiksa_pada": null
+    },
+    {
+      "id": "usaha-jasa-desain",
+      "jenis": "usaha",
+      "judul": "Jasa Desain Grafis",
+      "ringkasan": "Usaha membuat desain untuk kebutuhan orang lain, misalnya logo atau poster.",
+      "status_teks": "draf",
+      "urutan": 6,
+      "aktif": true,
+      "url_sumber": "[ISI: sumber]",
+      "diperiksa_pada": null
+    }
+  ]
+}

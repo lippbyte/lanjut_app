@@ -27,6 +27,7 @@ import { useSaranHarian } from '../../hooks/useLevelIn';
 import { useMapel } from '../../hooks/useMapel';
 import { namaMapel } from '../../lib/arsip';
 import {
+  KARTU_DISCOVER,
   KARTU_JALUR_TUJUAN,
   KARTU_PORTOFOLIO,
   apakahPunyaKemajuan,
@@ -41,7 +42,7 @@ import {
   type BagianBeranda,
 } from '../../lib/beranda';
 import { TEKS_EVENT, eventTerdekat, labelJenis, selisihHari, teksHitungMundur, untukPersiapanEvent } from '../../lib/eventSekolah';
-import { jalurTujuanAktif, portofolioAktif } from '../../lib/fiturApp';
+import { discoverAktif, jalurTujuanAktif, portofolioAktif } from '../../lib/fiturApp';
 import type { Kelas } from '../../lib/jenjang';
 import { TEKS_LEVELIN, latihanBerikutnya } from '../../lib/levelin';
 import {
@@ -71,6 +72,8 @@ const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 const PORTOFOLIO = portofolioAktif(Constants.expoConfig?.extra);
 // LANJUT_023: pintu Jalur & Tujuan hanya bila build dibuat dengan EXPO_PUBLIC_JALUR_TUJUAN=1.
 const JALUR_TUJUAN = jalurTujuanAktif(Constants.expoConfig?.extra);
+// LANJUT_024: pintu Discover hanya bila build dibuat dengan EXPO_PUBLIC_DISCOVER=1.
+const DISCOVER = discoverAktif(Constants.expoConfig?.extra);
 
 /**
  * Tab Beranda — padanan MVP-PWA/beranda.html. Dari atas (LANJUT_074,
@@ -146,6 +149,7 @@ export function LinimasaScreen() {
     tampilLatihan: latihan !== null,
     tampilPortofolio: PORTOFOLIO,
     tampilJalurTujuan: JALUR_TUJUAN,
+    tampilDiscover: DISCOVER,
   });
 
   const bagian: Record<BagianBeranda, React.ReactNode> = {
@@ -199,6 +203,7 @@ export function LinimasaScreen() {
       </View>
     ),
     jalur_tujuan: <KartuPintu ikon="posisi" judul={KARTU_JALUR_TUJUAN.judul} keterangan={KARTU_JALUR_TUJUAN.keterangan} onPress={() => router.push('/jalur-tujuan' as any)} />,
+    discover: <KartuPintu ikon="info" judul={KARTU_DISCOVER.judul} keterangan={KARTU_DISCOVER.keterangan} onPress={() => router.push('/discover' as any)} />,
     portofolio: <KartuPintu ikon="foto" judul={KARTU_PORTOFOLIO.judul} keterangan={KARTU_PORTOFOLIO.keterangan} onPress={() => router.push('/portofolio' as any)} />,
     // LANJUT_065 §B: kartu "Mulai dari Sini" untuk akun baru / belum punya kemajuan.
     mulai_dari_sini: <KartuMulaiDariSini kelas={kelas} onPress={(href) => router.push(href as any)} />,
