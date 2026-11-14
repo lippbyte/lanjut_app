@@ -194,7 +194,7 @@ Tidak ada rute berbagi, tidak ada alamat publik untuk foto, dan tidak ada rute y
 | `uraian` | Paling panjang 5000 karakter |
 | `tautan` | Hanya `http` dan `https`, paling panjang 500 karakter |
 | `tanggal_karya` | `YYYY-MM-DD` yang sah |
-| `jalur_minat_id` | Id `jalur_minat` yang ada dan aktif. `jalur_minat` adalah data bersama, jadi jalur mana pun yang aktif boleh dipakai. Selain itu 400 |
+| `jalur_minat_id` | Id `jalur_minat` yang aktif dan teksnya disetujui (K37, LANJUT_023). Jalur draf, nonaktif, atau tidak ada: 400 `JALUR_BELUM_TERSEDIA` "Jalur belum tersedia.", jawabannya sama. `null` melepas tautan |
 | `tujuan_id` | Tujuan milik akun sendiri. Selain itu 400 |
 
 `uraian` dan `tautan` yang kosong disimpan sebagai `NULL`. Medan lain dibuang: `visibilitas` selalu `privat` (K18), dan `rujukan_jenis` serta `rujukan_id` tidak bisa diisi klien. Respons tidak memuat `nama_tersimpan` maupun `rujukan_*`.
@@ -265,9 +265,9 @@ Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalu
 | `GET /:id/riwayat` | | Semua versi satu tujuan, lama ke baru |
 | `POST /:id/versi` | Medan tujuan, sebagian | 201, versi baru. Medan yang tidak dikirim disalin, `null` mengosongkan. 409 `TUJUAN_BUKAN_TERKINI` dari versi lama atau tujuan yang sudah berakhir. 400 bila tidak ada perubahan |
 | `PATCH /:id/status` | `status`: `tercapai` atau `ditinggalkan` | Hanya dari `aktif`, selain itu 409 `TUJUAN_BUKAN_TERKINI` |
-| `PATCH /bukti/:butirId` | `jalur_minat_id`, `tujuan_id` | Menautkan butir bukti milik sendiri. Tujuan akun lain: 400 |
+| `PATCH /bukti/:butirId` | `jalur_minat_id`, `tujuan_id` | Menautkan butir bukti milik sendiri. Tujuan akun lain: 400. Jalur yang belum disetujui: 400 `JALUR_BELUM_TERSEDIA` |
 
-**Medan tujuan.** `judul` 1 sampai 200 karakter, wajib saat membuat. `uraian` paling panjang 2000 karakter, kosong menjadi `NULL`. `target_pada` `YYYY-MM-DD` yang sah. `jalur_minat_id` jalur yang ada dan aktif. Medan lain, termasuk `status`, `diubah_dari_id`, dan `pengguna_id`, dibuang.
+**Medan tujuan.** `judul` 1 sampai 200 karakter, wajib saat membuat. `uraian` paling panjang 2000 karakter, kosong menjadi `NULL`. `target_pada` `YYYY-MM-DD` yang sah. `jalur_minat_id` hanya jalur aktif yang teksnya disetujui (K37), selain itu 400 `JALUR_BELUM_TERSEDIA`; `null` melepas tautan. Aturan ini satu tempat (`jalur-minat.layanan.js` `pastikanJalurTersedia`) dan dipakai juga oleh rute Portofolio. Medan lain, termasuk `status`, `diubah_dari_id`, dan `pengguna_id`, dibuang.
 
 **Peristiwa perjalanan.** `jalur_dipilih`, `jalur_dijeda`, `jalur_selesai`, `jalur_ditinggalkan`, `tujuan_dibuat`, `tujuan_diperbarui`, `tujuan_tercapai`, `tujuan_ditinggalkan`. Versi baru selalu sesudah induknya, walau dibuat pada detik yang sama.
 

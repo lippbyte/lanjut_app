@@ -10,7 +10,7 @@ const { nyalakanServer, urlDari, daftarPenggunaBaru, pool, kunciKonfigurasiGloba
 const { buatUuid } = require('../src/util/id');
 const { benihJalurMinat } = require('../src/db/benih/benih');
 const butirRepo = require('../src/modul/butir-bukti/butir-bukti.repo');
-const { kunciJalurAktif } = require('./kunci-jalur-aktif');
+const { kunciJalurAktif, jalurUjiDisetujui } = require('./kunci-jalur-aktif');
 
 const SANDI = 'sandiujiaman1';
 const WAKTU = '2026-11-13 08:00:00';
@@ -20,29 +20,14 @@ let versiKebijakan;
 let lepasKunci;
 let lepasKunciJalur;
 
-// K37 lanjutan: hanya jalur aktif yang teksnya disetujui yang bisa dipilih. Teks jalur di data konten
-// masih draf, jadi tes memilih tiga jalur uji berstatus disetujui, dipasang saat pertama dibutuhkan
-// (sesudah tes daftar kosong K37) dan dihapus di after(). Nama logis dipetakan ke id jalur uji.
-const AKHIRAN = buatUuid().slice(0, 8);
-const JALUR_UJI = {
-  melanjutkan: `uji-jt-lanjut-${AKHIRAN}`,
-  bekerja: `uji-jt-kerja-${AKHIRAN}`,
-  wirausaha: `uji-jt-usaha-${AKHIRAN}`,
-};
-const JALUR_UJI_MATI = `uji-jt-mati-${AKHIRAN}`;
-let jalurUjiSiap = null;
-function siapkanJalurUji() {
-  jalurUjiSiap ??= (async () => {
-    const sisip = (id, aktif) =>
-      pool.query(
-        "INSERT INTO jalur_minat (id, nama, deskripsi_singkat, status_teks, urutan, aktif, pemilik, asal) VALUES (?, ?, 'Teks uji jalur.', 'disetujui', 90, ?, 'tim', 'uji')",
-        [id, `Uji ${id}`, aktif]
-      );
-    for (const id of Object.values(JALUR_UJI)) await sisip(id, 1);
-    await sisip(JALUR_UJI_MATI, 0);
-  })();
-  return jalurUjiSiap;
-}
+// K37: memilih jalur dan menautkan tujuan atau bukti ke jalur hanya boleh ke jalur aktif yang
+// disetujui. Teks jalur di data konten masih draf, jadi tes memakai tiga jalur uji sementara
+// berstatus disetujui, dipasang saat pertama dibutuhkan (sesudah tes daftar kosong K37) dan
+// dihapus di after(). Nama logis (melanjutkan, bekerja, wirausaha) dipetakan ke id jalur uji.
+const UJI = jalurUjiDisetujui(pool, 'jt');
+const JALUR_UJI = UJI.id;
+const JALUR_UJI_MATI = UJI.idMati;
+const siapkanJalurUji = () => UJI.siapkan();
 
 async function panggil(metode, jalur, token, body) {
   const res = await fetch(`${baseUrl}/api/v1${jalur}`, {
@@ -60,13 +45,15 @@ async function akun({ setuju = true } = {}) {
 
 async function pilihJalur(a, jalur) {
   await siapkanJalurUji();
-  const res = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: JALUR_UJI[jalur] ?? jalur });
+  const res = await panggil('POST', '/jalur-minat/saya', a.token, { jalur_minat_id: UJI.peta(jalur) });
   assert.equal(res.status, 201, JSON.stringify(res.json));
   return res.json.data;
 }
 
+/** Nama logis jalur di badan dipetakan ke jalur uji yang disetujui. */
 async function buatTujuan(a, badan) {
-  const res = await panggil('POST', '/tujuan', a.token, badan);
+  if (badan.jalur_minat_id) await siapkanJalurUji();
+  const res = await panggil('POST', '/tujuan', a.token, { ...badan, ...(badan.jalur_minat_id ? { jalur_minat_id: UJI.peta(badan.jalur_minat_id) } : {}) });
   assert.equal(res.status, 201, JSON.stringify(res.json));
   return res.json.data;
 }
@@ -93,9 +80,7 @@ before(async () => {
 after(async () => {
   await new Promise((r) => server.close(r));
   try {
-    const id = [...Object.values(JALUR_UJI), JALUR_UJI_MATI];
-    await pool.query('DELETE FROM pengguna_jalur_minat WHERE jalur_minat_id IN (?)', [id]);
-    await pool.query('DELETE FROM jalur_minat WHERE id IN (?)', [id]);
+    await UJI.hapus();
   } finally {
     if (lepasKunciJalur) await lepasKunciJalur();
   }
@@ -255,7 +240,7 @@ test('Memperbarui tujuan membuat versi baru; versi lama tetap ada dan isinya tid
   assert.equal(v2.judul, 'Masuk prodi teknik sipil');
   assert.equal(v2.uraian, 'Mulai belajar fisika', 'medan yang tidak dikirim disalin');
   assert.equal(v2.target_pada, '2027-06-30');
-  assert.equal(v2.jalur_minat_id, 'melanjutkan');
+  assert.equal(v2.jalur_minat_id, JALUR_UJI.melanjutkan);
 
   const lama = await barisTujuan(v1.id);
   assert.equal(lama.status, 'diubah');
@@ -331,11 +316,48 @@ test('Menautkan butir bukti ke jalur dan tujuan milik sendiri', async () => {
   const a = await akun();
   const t = await buatTujuan(a, { judul: 'Punya portofolio desain' });
   const butirId = await buatButir(a);
-  const res = await panggil('PATCH', `/tujuan/bukti/${butirId}`, a.token, { jalur_minat_id: 'wirausaha', tujuan_id: t.id });
+  await siapkanJalurUji();
+  const res = await panggil('PATCH', `/tujuan/bukti/${butirId}`, a.token, { jalur_minat_id: JALUR_UJI.wirausaha, tujuan_id: t.id });
   assert.equal(res.status, 200, JSON.stringify(res.json));
-  assert.deepEqual(res.json.data, { id: butirId, jalur_minat_id: 'wirausaha', tujuan_id: t.id });
+  assert.deepEqual(res.json.data, { id: butirId, jalur_minat_id: JALUR_UJI.wirausaha, tujuan_id: t.id });
   const lepas = await panggil('PATCH', `/tujuan/bukti/${butirId}`, a.token, { tujuan_id: null });
-  assert.deepEqual(lepas.json.data, { id: butirId, jalur_minat_id: 'wirausaha', tujuan_id: null });
+  assert.deepEqual(lepas.json.data, { id: butirId, jalur_minat_id: JALUR_UJI.wirausaha, tujuan_id: null });
+});
+
+test('K37, penutupan celah: tujuan dan butir bukti hanya bisa ditautkan ke jalur yang disetujui', async () => {
+  await siapkanJalurUji();
+  const a = await akun();
+  const t = await buatTujuan(a, { judul: 'Tujuan untuk ditautkan', jalur_minat_id: 'bekerja' });
+  const butirId = await buatButir(a);
+  const sebelum = { t: await barisTujuan(t.id), b: (await pool.query('SELECT jalur_minat_id, tujuan_id FROM butir_bukti WHERE id = ?', [butirId]))[0][0] };
+  const [[{ jumlahTujuan }]] = await pool.query('SELECT COUNT(*) AS jumlahTujuan FROM tujuan WHERE pengguna_id = ?', [a.id]);
+
+  const jawaban = [];
+  for (const id of ['melanjutkan', 'bekerja', 'wirausaha', JALUR_UJI_MATI, 'tidak-ada']) {
+    for (const [m, j, badan] of [
+      ['POST', '/tujuan', { judul: 'Ke jalur draf', jalur_minat_id: id }],
+      ['POST', `/tujuan/${t.id}/versi`, { jalur_minat_id: id }],
+      ['PATCH', `/tujuan/bukti/${butirId}`, { jalur_minat_id: id }],
+    ]) {
+      const res = await panggil(m, j, a.token, badan);
+      assert.equal(res.status, 400, `${m} ${j} ${id}`);
+      assert.equal(res.json.galat.kode, 'JALUR_BELUM_TERSEDIA', `${m} ${j} ${id}`);
+      assert.equal(res.json.galat.pesan, 'Jalur belum tersedia.', `${m} ${j} ${id}`);
+      jawaban.push(JSON.stringify(res.json));
+    }
+  }
+  assert.equal(new Set(jawaban).size, 1, 'draf, nonaktif, dan tidak ada dijawab sama persis di ketiga rute');
+
+  assert.deepEqual(await barisTujuan(t.id), sebelum.t, 'tujuan tidak berubah');
+  const [[{ jumlahSesudah }]] = await pool.query('SELECT COUNT(*) AS jumlahSesudah FROM tujuan WHERE pengguna_id = ?', [a.id]);
+  assert.equal(jumlahSesudah, jumlahTujuan, 'tidak ada tujuan atau versi baru');
+  const [[b]] = await pool.query('SELECT jalur_minat_id, tujuan_id FROM butir_bukti WHERE id = ?', [butirId]);
+  assert.deepEqual({ ...b }, { ...sebelum.b }, 'butir tidak berubah');
+
+  // Jalur yang disetujui dan null (melepas tautan) tetap boleh.
+  assert.equal((await panggil('POST', `/tujuan/${t.id}/versi`, a.token, { jalur_minat_id: null })).status, 201);
+  assert.equal((await panggil('PATCH', `/tujuan/bukti/${butirId}`, a.token, { jalur_minat_id: JALUR_UJI.melanjutkan })).status, 200);
+  assert.equal((await panggil('PATCH', `/tujuan/bukti/${butirId}`, a.token, { jalur_minat_id: null })).status, 200);
 });
 
 // --- isolasi antarsiswa ------------------------------------------------------------------

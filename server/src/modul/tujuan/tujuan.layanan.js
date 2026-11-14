@@ -14,7 +14,7 @@ const pilihanRepo = require('../jalur-minat/pengguna-jalur-minat.repo');
 const butirRepo = require('../butir-bukti/butir-bukti.repo');
 const penggunaRepo = require('../pengguna/pengguna.repo');
 const kontenRepo = require('../konten/konten.repo');
-const { pastikanJalurAktif } = require('../jalur-minat/jalur-minat.layanan');
+const { pastikanJalurTersedia } = require('../jalur-minat/jalur-minat.layanan');
 
 const tujuanTidakAda = () => new GalatApi('TIDAK_DITEMUKAN', 'Tujuan tidak ditemukan.');
 const bukanTerkini = () =>
@@ -72,7 +72,7 @@ async function daftar(penggunaId) {
 }
 
 async function buat(penggunaId, data) {
-  await pastikanJalurAktif(data.jalur_minat_id);
+  await pastikanJalurTersedia(data.jalur_minat_id);
   const id = buatUuid();
   await tujuanRepo.buat({
     id,
@@ -91,7 +91,7 @@ async function perbarui(penggunaId, id, data) {
   const lama = await tujuanRepo.ambilMilikSendiri(penggunaId, id);
   if (!lama) throw tujuanTidakAda();
   if (lama.status !== 'aktif') throw bukanTerkini();
-  await pastikanJalurAktif(data.jalur_minat_id);
+  await pastikanJalurTersedia(data.jalur_minat_id);
   const pilih = (medan, kolom) => (data[medan] !== undefined ? data[medan] : kolom);
   const baru = {
     judul: pilih('judul', lama.judul),
@@ -129,7 +129,7 @@ async function riwayat(penggunaId, id) {
 /** Menautkan butir bukti milik sendiri ke jalur dan/atau tujuan milik sendiri. */
 async function tautkanBukti(penggunaId, butirId, data) {
   if (!(await butirRepo.ambilMilikSendiri(penggunaId, butirId))) throw new GalatApi('TIDAK_DITEMUKAN', 'Butir tidak ditemukan.');
-  await pastikanJalurAktif(data.jalur_minat_id);
+  await pastikanJalurTersedia(data.jalur_minat_id);
   const galatTujuan = () => new GalatApi('VALIDASI_GAGAL', 'Tujuan tidak ditemukan.', { tujuan_id: 'tidak ditemukan' });
   if (data.tujuan_id && !(await tujuanRepo.ambilMilikSendiri(penggunaId, data.tujuan_id))) throw galatTujuan();
   const berhasil = await butirRepo.ubahKaitanMilikSendiri(penggunaId, butirId, {

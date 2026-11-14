@@ -41,11 +41,17 @@ async function daftarJalur() {
   return (await jalurMinatRepo.daftarDisetujui()).map(bentukJalur);
 }
 
-/** jalur_minat adalah data bersama: boleh jalur mana pun yang ada dan aktif. */
-async function pastikanJalurAktif(jalurMinatId, medan = 'jalur_minat_id') {
+const jalurBelumTersedia = () => new GalatApi('JALUR_BELUM_TERSEDIA', 'Jalur belum tersedia.', { jalur_minat_id: 'belum tersedia' });
+
+/**
+ * K37 (13 Nov 2026), penutupan celah: menautkan tujuan atau butir bukti ke jalur hanya boleh ke
+ * jalur aktif yang teksnya disetujui, sama dengan memilih jalur. Draf, nonaktif, dan yang tidak
+ * ada dijawab sama. `null` atau tidak dikirim berarti tidak menautkan, dan selalu boleh.
+ * Dipakai juga oleh Portofolio (butir-bukti.layanan.js).
+ */
+async function pastikanJalurTersedia(jalurMinatId) {
   if (jalurMinatId === undefined || jalurMinatId === null) return;
-  const jalur = await jalurMinatRepo.ambil(jalurMinatId);
-  if (!jalur || !jalur.aktif) throw new GalatApi('VALIDASI_GAGAL', 'Jalur tidak ditemukan.', { [medan]: 'tidak ditemukan' });
+  if (!(await jalurMinatRepo.ambilDisetujui(jalurMinatId))) throw jalurBelumTersedia();
 }
 
 /** Semua babak milik akun, lama ke baru. Ini juga riwayat jalurnya. */
@@ -60,7 +66,7 @@ async function daftarPilihan(penggunaId) {
  */
 async function pilih(penggunaId, { jalur_minat_id: jalurMinatId }) {
   if (!(await jalurMinatRepo.ambilDisetujui(jalurMinatId))) {
-    throw new GalatApi('JALUR_BELUM_TERSEDIA', 'Jalur belum tersedia.', { jalur_minat_id: 'belum tersedia' });
+    throw jalurBelumTersedia();
   }
   const id = buatUuid();
   const dibuat = await pilihanRepo.buat({ id, penggunaId, jalurMinatId, waktu: sekarangUntukDb() });
@@ -78,4 +84,4 @@ async function akhiri(penggunaId, id, { status }) {
   return bentukPilihan(await pilihanRepo.ambilMilikSendiri(penggunaId, id));
 }
 
-module.exports = { pastikanBoleh, pastikanJalurAktif, daftarJalur, daftarPilihan, pilih, akhiri, bentukJalur };
+module.exports = { pastikanBoleh, pastikanJalurTersedia, daftarJalur, daftarPilihan, pilih, akhiri, bentukJalur };
