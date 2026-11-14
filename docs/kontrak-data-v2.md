@@ -283,7 +283,7 @@ Untuk lingkungan dev. Isi kartu dan teks layar masih draf (`docs/draf-teks-disco
 | `refleksi_discover` | Satu baris per siswa dan kartu: `ketertarikan` (`tertarik`, `belum_yakin`, `tidak_tertarik`), `yang_menarik` dan `yang_kurang_menarik` (paling panjang 280 karakter) | Berantai |
 | `profil_eksplorasi` | Satu baris per versi: `isi` (JSON), `catatan` (paling panjang 500 karakter), `status` (`aktif`, `diubah`), `diubah_dari_id`. Satu versi aktif per siswa | Berantai |
 
-**Konten.** Hanya kartu aktif dengan `status_teks = 'disetujui'` yang dikirim atau bisa diberi refleksi (sama dengan K37). Benih menolak kartu `disetujui` tanpa `url_sumber`, dan `url_sumber` yang masih `[ISI: ...]` disimpan sebagai `NULL`. Verifikasi sumber: `npm run verifikasi-konten -- --jenis=discover`.
+**Konten.** Hanya kartu aktif dengan `status_teks = 'disetujui'` yang dikirim atau bisa diberi refleksi (sama dengan K37). Benih menolak kartu `disetujui` tanpa `url_sumber`, dan `url_sumber` yang masih `[ISI: ...]` disimpan sebagai `NULL`. Verifikasi sumber: `npm run verifikasi-konten -- --jenis=discover`, dan kartunya tercantum di lembar review (`npm run lembar-review`).
 
 **Saklar.** `DISCOVER_AKTIF` di server dan `EXPO_PUBLIC_DISCOVER` di aplikasi, bawaannya mati. Saat mati, semua rute di bawah menjawab sama persis dengan jalur yang tidak ada, dan berkas layar tidak masuk bundel aplikasi.
 
@@ -304,7 +304,6 @@ Untuk lingkungan dev. Isi kartu dan teks layar masih draf (`docs/draf-teks-disco
 
 ## 7. Yang sengaja belum ada
 
-- Bagian Discover di lembar review (`npm run lembar-review`). `verifikasi-konten` sudah mengenal jenis `discover`.
 
 - Fitur berbagi dan nilai visibilitas selain `privat` (K18, Bagian 9).
 - `ProjectRecord` (K17, Bagian 8).
