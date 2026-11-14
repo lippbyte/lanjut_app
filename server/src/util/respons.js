@@ -52,6 +52,11 @@ const STATUS_PER_KODE = {
   FOTO_RUSAK: 422,
   BATAS_FOTO_BUTIR: 409,
   BATAS_FOTO_AKUN: 409,
+  // LANJUT_023 — Jalur & Tujuan Saya
+  JALUR_SUDAH_DIPILIH: 409, // jalur itu sudah punya babak aktif
+  PILIHAN_SUDAH_BERAKHIR: 409, // babak jalur yang sudah berakhir tidak diubah lagi
+  TUJUAN_BUKAN_TERKINI: 409, // versi lama atau tujuan yang sudah berakhir
+  JALUR_BELUM_TERSEDIA: 400, // K37: jalur draf, nonaktif, atau tidak ada tidak bisa dipilih
   GALAT_SERVER: 500,
 };
 

@@ -26,6 +26,15 @@ export function portofolioAktif(extra: unknown): boolean {
   return (extra as { portofolio?: unknown }).portofolio === true;
 }
 
+/**
+ * Jalur & Tujuan (LANJUT_023): fitur baru untuk lingkungan dev, teksnya masih draf.
+ * Bawaan: MATI. Menyala hanya bila build dibuat dengan EXPO_PUBLIC_JALUR_TUJUAN=1.
+ */
+export function jalurTujuanAktif(extra: unknown): boolean {
+  if (!extra || typeof extra !== 'object') return false;
+  return (extra as { jalurTujuan?: unknown }).jalurTujuan === true;
+}
+
 export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;

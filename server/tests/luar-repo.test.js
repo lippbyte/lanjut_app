@@ -78,6 +78,22 @@ test('satu path hilang dari beberapa sudah cukup, dan alasannya hanya menyebut y
   assert.equal(adaSemua(ADA), true);
 });
 
+// LANJUT_023 langkah 0b: repo di satu drive (mis. D:) dan path hilang di drive lain (mis. folder
+// sementara di C:). path.relative lintas drive mengembalikan path absolut, bukan '..\...'.
+const DRIVE_LAIN = /^c:/i.test(path.parse(__dirname).root) ? 'Z:\\' : 'C:\\';
+const HILANG_DRIVE_LAIN = path.join(DRIVE_LAIN, `lanjut-lintas-drive-tidak-ada-${process.pid}`, 'berkas.md');
+
+test(
+  'path hilang di drive lain dari repo: alasan menyebut path apa adanya (lintas drive)',
+  { skip: process.platform !== 'win32' && 'huruf drive hanya ada di Windows' },
+  () => {
+    process.env[SAKLAR] = '1';
+    const alasan = alasanLewati(HILANG_DRIVE_LAIN);
+    assert.equal(typeof alasan, 'string', 'path di drive lain adalah path luar repo, jadi boleh dilewati');
+    assert.ok(alasan.includes(HILANG_DRIVE_LAIN), `alasan harus menyebut ${HILANG_DRIVE_LAIN}, dapat: ${alasan}`);
+  }
+);
+
 test('bungkusan menjaga opsi tes, bentuk (nama, opsi, fn), dan boleh ditumpuk', () => {
   process.env[SAKLAR] = '1';
   const rekam = rekamTes();

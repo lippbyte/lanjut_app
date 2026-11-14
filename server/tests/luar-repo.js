@@ -35,7 +35,8 @@ function diDalamRepo(p) {
 /** Path relatif terhadap repo induk bila ada di dalamnya, supaya alasan lewat bisa dikelompokkan. */
 function tampil(p) {
   const relatif = path.relative(AKAR_INDUK, p);
-  return relatif.startsWith('..') ? p : relatif.replace(/\\/g, '/');
+  // Di drive lain (mis. repo di D:, folder sementara di C:), path.relative mengembalikan path absolut.
+  return relatif.startsWith('..') || path.isAbsolute(relatif) ? p : relatif.replace(/\\/g, '/');
 }
 
 /**

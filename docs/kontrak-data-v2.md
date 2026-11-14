@@ -1,9 +1,9 @@
 # Kontrak data v2
 
-**Task:** LANJUT_008 seri v2, Bagian 2. Rute dan penyimpanan foto dari LANJUT_010, Bagian 3. **Migrasi:** `030_model_data_v2.sql`, `032_berkas_tertunda_hapus.sql`.
-**Keadaan:** tabel, lapisan data, dan rute server sudah ada. Rute portofolio berada di balik saklar `PORTOFOLIO_AKTIF` yang bawaannya mati. Belum ada layar yang memakainya.
+**Task:** LANJUT_008 seri v2, Bagian 2. Rute dan penyimpanan foto dari LANJUT_010, Bagian 3. Rute Jalur & Tujuan dari LANJUT_023, Bagian 5. **Migrasi:** `030_model_data_v2.sql`, `032_berkas_tertunda_hapus.sql`.
+**Keadaan:** tabel, lapisan data, dan rute server sudah ada. Rute portofolio berada di balik saklar `PORTOFOLIO_AKTIF`, dan rute Jalur & Tujuan di balik `JALUR_TUJUAN_AKTIF`. Keduanya bawaannya mati.
 
-Tes: `tests/migrasi-model-data-v2.test.js`, `tests/model-data-v2.test.js`, `tests/benih-jalur-minat.test.js`, `tests/portofolio.test.js`, `tests/portofolio-saklar.test.js`, `tests/foto-murni.test.js`, `tests/migrasi-berkas-tertunda.test.js`. Hasil audit: `docs/audit-model-data-v2.md`, `docs/audit-portofolio-server.md`.
+Tes: `tests/migrasi-model-data-v2.test.js`, `tests/model-data-v2.test.js`, `tests/benih-jalur-minat.test.js`, `tests/portofolio.test.js`, `tests/portofolio-saklar.test.js`, `tests/foto-murni.test.js`, `tests/migrasi-berkas-tertunda.test.js`, `tests/jalur-tujuan.test.js`, `tests/jalur-tujuan-saklar.test.js`, `tests/jalur-tujuan-app.test.js`. Hasil audit: `docs/audit-model-data-v2.md`, `docs/audit-portofolio-server.md`.
 
 ## 1. Tabel
 
@@ -54,7 +54,7 @@ Siswa boleh memiliki beberapa jalur. Berganti arah berarti mengubah status, dan 
 
 Mengganti tujuan: buat tujuan baru dengan `diubahDariId`, lalu ubah status yang lama menjadi `diubah`.
 
-`pengguna.prodi_tujuan` (medan API `prodi_impian`) tidak diubah. Bagian 4 yang memutuskan caranya menjadi salah satu bentuk tujuan.
+`pengguna.prodi_tujuan` (medan API `prodi_impian`) tidak diubah dan tidak dipindah. Sejak LANJUT_023, `GET /api/v1/tujuan` menampilkannya sebagai salah satu tujuan dengan sumber Data Akun (bagian 5).
 
 ### `butir_bukti`
 
@@ -107,10 +107,13 @@ Pada fungsi `ubah`, medan bernilai `undefined` berarti tidak diubah, dan `null` 
 | `modul/jalur-minat/pengguna-jalur-minat.repo.js` | `daftarMilikSendiri`, `ambilMilikSendiri` | Baris, atau `null` |
 | | `buat({id, penggunaId, jalurMinatId, waktu})` | `false` bila sudah ada baris aktif |
 | | `ubahStatusMilikSendiri(penggunaId, id, status, waktu)` | `false` bila bukan milik sendiri, atau akan membuat dua baris aktif |
+| | `akhiriAktifMilikSendiri(penggunaId, id, status, waktu)` | LANJUT_023. Hanya dari `aktif`. `false` bila bukan milik sendiri atau sudah tidak aktif |
 | | `hapusMilikSendiri(penggunaId, id)` | Hanya untuk baris yang salah dibuat |
 | `modul/tujuan/tujuan.repo.js` | `daftarMilikSendiri`, `ambilMilikSendiri` | Baris, atau `null` |
 | | `buat({id, penggunaId, jalurMinatId, judul, uraian, targetPada, status, diubahDariId, waktu})` | `false` bila `diubahDariId` milik akun lain |
 | | `ubahMilikSendiri(penggunaId, id, {...})`, `hapusMilikSendiri(penggunaId, id)` | `false` bila bukan milik sendiri |
+| | `buatVersiMilikSendiri(penggunaId, idLama, {id, jalurMinatId, judul, uraian, targetPada, waktu})` | LANJUT_023. Satu transaksi: versi baru, lalu versi lama menjadi `diubah`. `'ok'`, `'tidak_ada'`, atau `'bukan_terkini'` |
+| | `akhiriMilikSendiri(penggunaId, id, status, waktu)` | LANJUT_023. Hanya dari `aktif`. `false` bila tidak berlaku |
 | `modul/butir-bukti/butir-bukti.repo.js` | `daftarMilikSendiri`, `ambilMilikSendiri` | Baris, atau `null` |
 | | `buat({id, penggunaId, jalurMinatId, tujuanId, judul, uraian, tautan, jenis, tanggalKarya, rujukan, waktu})` | `false` bila `tujuanId` milik akun lain |
 | | `ubahMilikSendiri(penggunaId, id, {judul, uraian, tautan, jenis, tanggalKarya, waktu})` | `false` bila bukan milik sendiri |
@@ -191,7 +194,7 @@ Tidak ada rute berbagi, tidak ada alamat publik untuk foto, dan tidak ada rute y
 | `uraian` | Paling panjang 5000 karakter |
 | `tautan` | Hanya `http` dan `https`, paling panjang 500 karakter |
 | `tanggal_karya` | `YYYY-MM-DD` yang sah |
-| `jalur_minat_id` | Id `jalur_minat` yang ada dan aktif. `jalur_minat` adalah data bersama, jadi jalur mana pun yang aktif boleh dipakai. Selain itu 400 |
+| `jalur_minat_id` | Id `jalur_minat` yang aktif dan teksnya disetujui (K37, LANJUT_023). Jalur draf, nonaktif, atau tidak ada: 400 `JALUR_BELUM_TERSEDIA` "Jalur belum tersedia.", jawabannya sama. `null` melepas tautan |
 | `tujuan_id` | Tujuan milik akun sendiri. Selain itu 400 |
 
 `uraian` dan `tautan` yang kosong disimpan sebagai `NULL`. Medan lain dibuang: `visibilitas` selalu `privat` (K18), dan `rujukan_jenis` serta `rujukan_id` tidak bisa diisi klien. Respons tidak memuat `nama_tersimpan` maupun `rujukan_*`.
@@ -237,10 +240,43 @@ Satu berkas memakai satu baris. Bila gagal lagi, alasan dan waktunya diperbarui.
 
 **Volume dan cadangan.** Langkah pemasangan volume di Dokploy ada di audit bagian 4. Foto tidak ikut cadangan database, jadi volumenya perlu dicadangkan tersendiri.
 
-## 5. Yang sengaja belum ada
+## 5. Jalur & Tujuan Saya (LANJUT_023)
 
-- Layar aplikasi, dan rute untuk `pengguna_jalur_minat` serta `tujuan` (Bagian 3 tahap 2 dan Bagian 4).
+Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalur-tujuan.md`). Fungsi repositori baru: `jalur-minat.repo.js` `daftarDisetujui()` dan `ambilDisetujui(id)`. Tidak ada migrasi baru: semua kolom yang dibutuhkan sudah ada di `030_model_data_v2.sql`.
+
+**Saklar.** `JALUR_TUJUAN_AKTIF` di server dan `EXPO_PUBLIC_JALUR_TUJUAN` di aplikasi, bawaannya mati. Saat mati, semua rute di bawah menjawab sama persis dengan jalur yang tidak ada, dan berkas layar tidak masuk bundel aplikasi.
+
+**Gerbang semua rute.** Sama dengan Portofolio: 401 bila belum masuk, lalu 403 `AI_BELUM_DIIZINKAN` bila kebijakan privasi belum diterima. Data akun lain, dan id yang bukan UUID, menjawab 404. Pemilik selalu diperiksa di dalam SQL.
+
+**Riwayat tidak pernah hilang.** Tidak ada rute hapus. Setiap baris `pengguna_jalur_minat` adalah satu babak: dimulai saat jalur dipilih, berakhir saat dijeda, selesai, atau ditinggalkan. Babak yang berakhir tidak diubah lagi, dan memilih jalur itu lagi membuat babak baru. Memperbarui tujuan membuat versi baru lewat `diubah_dari_id`, dan versi lama menjadi `diubah` tanpa isinya berubah.
+
+| Rute (`/api/v1/jalur-minat`) | Badan | Hasil |
+|---|---|---|
+| `GET /` | | Jalur aktif yang teksnya sudah disetujui (K37): `id`, `nama`, `deskripsi_singkat`, `status_teks`, `urutan`. Jalur draf tidak pernah terkirim, jadi selama teksnya masih draf daftar ini kosong |
+| `GET /saya` | | Semua babak milik sendiri, lama ke baru |
+| `POST /saya` | `jalur_minat_id` | 201, babak baru. Hanya jalur aktif yang teksnya disetujui (K37 lanjutan); jalur draf, nonaktif, atau tidak ada: 400 `JALUR_BELUM_TERSEDIA` "Jalur belum tersedia.", jawabannya sama untuk ketiganya. 409 `JALUR_SUDAH_DIPILIH` bila jalur itu sudah aktif. Pilihan yang sudah ada tidak diubah |
+| `PATCH /saya/:id` | `status`: `dijeda`, `selesai`, atau `ditinggalkan` | Babak yang diakhiri. 409 `PILIHAN_SUDAH_BERAKHIR` bila sudah tidak aktif |
+
+| Rute (`/api/v1/tujuan`) | Badan | Hasil |
+|---|---|---|
+| `GET /` | | `{ tujuan, prodi_impian }`. `tujuan`: versi terkini dengan `jumlah_versi`. `prodi_impian`: `{ prodi_id, nama, sumber: 'data_akun' }` atau `null` |
+| `POST /` | `judul`, `uraian`, `target_pada`, `jalur_minat_id` | 201, tujuan baru |
+| `GET /perjalanan` | | Peristiwa jalur dan tujuan, lama ke baru |
+| `GET /:id/riwayat` | | Semua versi satu tujuan, lama ke baru |
+| `POST /:id/versi` | Medan tujuan, sebagian | 201, versi baru. Medan yang tidak dikirim disalin, `null` mengosongkan. 409 `TUJUAN_BUKAN_TERKINI` dari versi lama atau tujuan yang sudah berakhir. 400 bila tidak ada perubahan |
+| `PATCH /:id/status` | `status`: `tercapai` atau `ditinggalkan` | Hanya dari `aktif`, selain itu 409 `TUJUAN_BUKAN_TERKINI` |
+| `PATCH /bukti/:butirId` | `jalur_minat_id`, `tujuan_id` | Menautkan butir bukti milik sendiri. Tujuan akun lain: 400. Jalur yang belum disetujui: 400 `JALUR_BELUM_TERSEDIA` |
+
+**Medan tujuan.** `judul` 1 sampai 200 karakter, wajib saat membuat. `uraian` paling panjang 2000 karakter, kosong menjadi `NULL`. `target_pada` `YYYY-MM-DD` yang sah. `jalur_minat_id` hanya jalur aktif yang teksnya disetujui (K37), selain itu 400 `JALUR_BELUM_TERSEDIA`; `null` melepas tautan. Aturan ini satu tempat (`jalur-minat.layanan.js` `pastikanJalurTersedia`) dan dipakai juga oleh rute Portofolio. Medan lain, termasuk `status`, `diubah_dari_id`, dan `pengguna_id`, dibuang.
+
+**Peristiwa perjalanan.** `jalur_dipilih`, `jalur_dijeda`, `jalur_selesai`, `jalur_ditinggalkan`, `tujuan_dibuat`, `tujuan_diperbarui`, `tujuan_tercapai`, `tujuan_ditinggalkan`. Versi baru selalu sesudah induknya, walau dibuat pada detik yang sama.
+
+**Ekspor dan hapus akun.** Tidak berubah: ekspor sudah memuat semua baris `pengguna_jalur_minat` dan `tujuan`, termasuk babak yang berakhir dan versi lama, dan hapus akun menghapus keduanya lewat `ON DELETE CASCADE`.
+
+## 6. Yang sengaja belum ada
+
 - Fitur berbagi dan nilai visibilitas selain `privat` (K18, Bagian 9).
 - `ProjectRecord` (K17, Bagian 8).
-- Pemindahan `prodi_tujuan` menjadi tujuan (Bagian 4).
+- Pemindahan `prodi_tujuan` menjadi baris `tujuan` (Bagian 4). Sejak LANJUT_023 hanya ditampilkan, tidak dipindah.
+- Persetujuan teks Jalur & Tujuan, dan saklarnya di lingkungan mana pun selain dev.
 - Pendaftaran `jalur_minat` di `npm run verifikasi-konten` dan lembar review. Kolom verifikasinya sudah ada.

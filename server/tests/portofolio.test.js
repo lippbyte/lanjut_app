@@ -21,6 +21,7 @@ const { benihJalurMinat } = require('../src/db/benih/benih');
 const { sidikAkun, SUBFOLDER } = require('../src/modul/butir-bukti/penyimpanan-foto');
 const pilihan = require('../src/modul/jalur-minat/pengguna-jalur-minat.repo');
 const foto = require('./contoh/foto-uji');
+const { kunciJalurAktif, jalurUjiDisetujui } = require('./kunci-jalur-aktif');
 
 const WAKTU = '2026-11-10 08:00:00';
 const SANDI = 'sandiujiaman1';
@@ -30,6 +31,10 @@ let server;
 let baseUrl;
 let versiKebijakan;
 let lepasKunci;
+let lepasKunciJalur;
+// K37 (LANJUT_023): butir hanya bisa ditautkan ke jalur aktif yang disetujui, padahal teks jalur di
+// data konten masih draf. Tes memakai tiga jalur uji sementara berstatus disetujui (tests/kunci-jalur-aktif.js).
+const UJI = jalurUjiDisetujui(pool, 'porto');
 
 async function panggil(metode, jalur, token, body) {
   const res = await fetch(`${baseUrl}/api/v1${jalur}`, {
@@ -72,6 +77,7 @@ const angkaDari = (teks, label) => Number(new RegExp(`${label}: (\\d+)`).exec(te
 
 before(async () => {
   lepasKunci = await kunciKonfigurasiGlobal();
+  lepasKunciJalur = await kunciJalurAktif(pool);
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   await benihJalurMinat();
@@ -81,6 +87,11 @@ before(async () => {
 
 after(async () => {
   await new Promise((r) => server.close(r));
+  try {
+    await UJI.hapus();
+  } finally {
+    if (lepasKunciJalur) await lepasKunciJalur();
+  }
   if (lepasKunci) await lepasKunci();
   await pool.end();
   fs.rmSync(DIREKTORI, { recursive: true, force: true });
@@ -117,21 +128,22 @@ test('Gerbang: kebijakan privasi belum diterima ditolak di semua rute, seperti r
 
 test('Butir: buat, daftar, baca, ubah, hapus', async () => {
   const a = await akun();
-  const b = await buatButir(a, { uraian: 'Uraian', tautan: 'https://contoh.test/karya', tanggal_karya: '2026-10-01', jalur_minat_id: 'bekerja' });
+  await UJI.siapkan();
+  const b = await buatButir(a, { uraian: 'Uraian', tautan: 'https://contoh.test/karya', tanggal_karya: '2026-10-01', jalur_minat_id: UJI.id.bekerja });
   assert.equal(b.visibilitas, 'privat');
   assert.equal(b.tanggal_karya, '2026-10-01');
-  assert.equal(b.jalur_minat_id, 'bekerja');
+  assert.equal(b.jalur_minat_id, UJI.id.bekerja);
   assert.deepEqual(b.foto, []);
 
   assert.deepEqual((await panggil('GET', '/butir-bukti', a.token)).json.data.map((x) => x.id), [b.id]);
   assert.equal((await panggil('GET', `/butir-bukti/${b.id}`, a.token)).json.data.judul, 'Karya uji');
 
-  const ubah = await panggil('PATCH', `/butir-bukti/${b.id}`, a.token, { judul: 'Baru', jenis: 'refleksi', tautan: null, jalur_minat_id: 'wirausaha' });
+  const ubah = await panggil('PATCH', `/butir-bukti/${b.id}`, a.token, { judul: 'Baru', jenis: 'refleksi', tautan: null, jalur_minat_id: UJI.id.wirausaha });
   assert.equal(ubah.status, 200);
   assert.equal(ubah.json.data.judul, 'Baru');
   assert.equal(ubah.json.data.jenis, 'refleksi');
   assert.equal(ubah.json.data.tautan, null);
-  assert.equal(ubah.json.data.jalur_minat_id, 'wirausaha');
+  assert.equal(ubah.json.data.jalur_minat_id, UJI.id.wirausaha);
   assert.equal(ubah.json.data.uraian, 'Uraian', 'medan yang tidak dikirim tidak berubah');
 
   assert.equal((await panggil('DELETE', `/butir-bukti/${b.id}`, a.token)).status, 200);
@@ -171,10 +183,24 @@ test('Klien tidak bisa mengatur visibilitas atau rujukan eksternal', async () =>
   assert.deepEqual(baris, { pengguna_id: a.id, visibilitas: 'privat', rujukan_jenis: null, rujukan_id: null });
 });
 
-test('jalur_minat: jalur aktif mana pun boleh; id tak dikenal, tidak aktif, dan baris pilihan akun lain ditolak', async () => {
+test('jalur_minat: hanya jalur aktif yang disetujui (K37); draf, tak dikenal, tidak aktif, dan baris pilihan akun lain ditolak', async () => {
   const a = await akun();
   const b = await akun();
-  for (const id of ['melanjutkan', 'bekerja', 'wirausaha']) assert.equal((await buatButir(a, { jalur_minat_id: id })).jalur_minat_id, id);
+  await UJI.siapkan();
+  for (const id of Object.values(UJI.id)) assert.equal((await buatButir(a, { jalur_minat_id: id })).jalur_minat_id, id);
+  // K37 (LANJUT_023): jalur yang teksnya masih draf tidak bisa ditautkan, sama dengan memilih jalur.
+  const milik = await buatButir(a);
+  for (const id of ['melanjutkan', 'bekerja', 'wirausaha', UJI.idMati]) {
+    for (const res of [
+      await panggil('POST', '/butir-bukti', a.token, { judul: 'x', jenis: 'karya', jalur_minat_id: id }),
+      await panggil('PATCH', `/butir-bukti/${milik.id}`, a.token, { jalur_minat_id: id }),
+    ]) {
+      assert.equal(res.status, 400, id);
+      assert.equal(res.json.galat.kode, 'JALUR_BELUM_TERSEDIA', id);
+      assert.equal(res.json.galat.pesan, 'Jalur belum tersedia.', id);
+    }
+  }
+  assert.equal((await panggil('GET', `/butir-bukti/${milik.id}`, a.token)).json.data.jalur_minat_id, null);
 
   const idPilihanB = buatUuid();
   await pilihan.buat({ id: idPilihanB, penggunaId: b.id, jalurMinatId: 'bekerja', waktu: WAKTU });

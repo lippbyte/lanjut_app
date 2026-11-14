@@ -62,11 +62,75 @@ test('Membuat akun contoh lengkap dengan datanya, dan aman diulang', async () =>
   assert.equal(DOMAIN_EMAIL, 'contoh.test', 'domain contoh, bukan alamat nyata');
   for (const a of akun) assert.equal(a.email, `${a.nama_pengguna}@contoh.test`);
   const id = akun.map((a) => a.id);
-  for (const [tabel, kolom] of [['persetujuan', 'pengguna_id'], ['kartu', 'pemilik_id'], ['sesi_latihan', 'pengguna_id'], ['riwayat_latihan', 'pengguna_id'], ['tujuan', 'pengguna_id'], ['pengguna_jalur_minat', 'pengguna_id']]) {
+  for (const [tabel, kolom] of [['persetujuan', 'pengguna_id'], ['kartu', 'pemilik_id'], ['sesi_latihan', 'pengguna_id'], ['riwayat_latihan', 'pengguna_id']]) {
     const [[{ n }]] = await pool.query(`SELECT COUNT(DISTINCT ${kolom}) AS n FROM ${tabel} WHERE ${kolom} IN (?)`, [id]);
     assert.equal(n, AKUN.length, tabel);
+  }
+  // LANJUT_023: satu akun sengaja belum memilih jalur maupun tujuan.
+  for (const [tabel, medan] of [['tujuan', 'tujuan'], ['pengguna_jalur_minat', 'jalur']]) {
+    const [[{ n }]] = await pool.query(`SELECT COUNT(DISTINCT pengguna_id) AS n FROM ${tabel} WHERE pengguna_id IN (?)`, [id]);
+    assert.equal(n, AKUN.filter((a) => a[medan].length > 0).length, tabel);
   }
   const ulang = await jalankan({ akhiran, kataSandi: 'sandiujiaman1', log: () => {} });
   assert.deepEqual(ulang.dibuat, []);
   assert.deepEqual(ulang.dilewati.sort(), [...hasil.dibuat].sort());
+});
+
+test('Jalur & Tujuan dummy (LANJUT_023): dua jalur, tujuan dua versi, akun kosong, dan tidak menulis di luar akun dummy', async (t) => {
+  assert.ok(AKUN.some((a) => a.jalur.length >= 2), 'ada akun yang memilih dua jalur');
+  assert.ok(AKUN.some((a) => a.tujuan.length === 2), 'ada akun dengan tujuan dua versi');
+  assert.ok(AKUN.some((a) => a.jalur.length === 0 && a.tujuan.length === 0), 'ada akun yang belum memilih apa pun');
+
+  // Setiap fungsi tulis yang dipakai benih-dummy disadap: akun yang ditulisnya harus akun dummy yang baru
+  // dibuat. Menghitung baris seluruh tabel tidak bisa dipakai, karena berkas tes lain berjalan bersamaan.
+  const ditulis = [];
+  const akunBaru = new Set();
+  const sadap = (modul, fungsi, ambilId) => {
+    const objek = require(modul);
+    const asli = objek[fungsi];
+    t.mock.method(objek, fungsi, async (...arg) => {
+      ditulis.push([fungsi, ambilId(...arg)]);
+      return asli.apply(objek, arg);
+    });
+  };
+  const penggunaRepo = require('../src/modul/pengguna/pengguna.repo');
+  const buatPenggunaAsli = penggunaRepo.buatPengguna;
+  t.mock.method(penggunaRepo, 'buatPengguna', async (data) => {
+    assert.match(data.namaPengguna, /^(uji|demo)_/);
+    assert.ok(data.email.endsWith('@contoh.test'));
+    akunBaru.add(data.id);
+    return buatPenggunaAsli.call(penggunaRepo, data);
+  });
+  sadap('../src/modul/persetujuan/persetujuan.repo', 'tambah', (d) => d.penggunaId);
+  sadap('../src/modul/kartu/kartu.repo', 'buatKartu', (d) => d.pemilikId);
+  sadap('../src/modul/levelin/levelin.repo', 'buatSesiLatihan', (d) => d.penggunaId);
+  sadap('../src/modul/levelin/levelin.repo', 'simpanSatuRiwayat', (id) => id);
+  sadap('../src/modul/levelin/levelin.repo', 'tutupSesiLatihan', (id) => id);
+  sadap('../src/modul/jalur-minat/pengguna-jalur-minat.repo', 'buat', (d) => d.penggunaId);
+  sadap('../src/modul/tujuan/tujuan.repo', 'buat', (d) => d.penggunaId);
+  sadap('../src/modul/tujuan/tujuan.repo', 'buatVersiMilikSendiri', (id) => id);
+
+  const akhiran = `j${acak().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'a1'}`;
+  const hasil = await jalankan({ akhiran, kataSandi: 'sandiujiaman1', log: () => {} });
+  dibuat.push(...hasil.dibuat);
+  assert.equal(akunBaru.size, AKUN.length);
+  assert.ok(ditulis.length > 0);
+  for (const [fungsi, id] of ditulis) assert.ok(akunBaru.has(id), `${fungsi} menulis ke akun yang bukan dummy: ${id}`);
+  assert.ok(ditulis.some(([f]) => f === 'buatVersiMilikSendiri'), 'tujuan diperbarui lewat versi, bukan ditimpa');
+
+  for (const a of AKUN) {
+    const nama = namaAkun(a.nama, akhiran);
+    const [[p]] = await pool.query('SELECT id FROM pengguna WHERE nama_pengguna = ?', [nama]);
+    const [jalur] = await pool.query("SELECT jalur_minat_id FROM pengguna_jalur_minat WHERE pengguna_id = ? AND status = 'aktif' ORDER BY jalur_minat_id", [p.id]);
+    assert.deepEqual(jalur.map((r) => r.jalur_minat_id), [...a.jalur].sort(), nama);
+    const [tujuan] = await pool.query('SELECT id, judul, status, diubah_dari_id FROM tujuan WHERE pengguna_id = ?', [p.id]);
+    assert.equal(tujuan.length, a.tujuan.length, nama);
+    if (a.tujuan.length === 2) {
+      const lama = tujuan.find((t) => t.judul === a.tujuan[0]);
+      const baru = tujuan.find((t) => t.judul === a.tujuan[1]);
+      assert.equal(lama.status, 'diubah');
+      assert.equal(baru.status, 'aktif');
+      assert.equal(baru.diubah_dari_id, lama.id);
+    }
+  }
 });

@@ -5,7 +5,6 @@ const { GalatApi } = require('../../util/respons');
 const { buatUuid } = require('../../util/id');
 const { sekarangUntukDb, keIso } = require('../../util/waktu');
 const persetujuanLayanan = require('../persetujuan/persetujuan.layanan');
-const jalurMinatRepo = require('../jalur-minat/jalur-minat.repo');
 const butirRepo = require('./butir-bukti.repo');
 const lampiranRepo = require('./lampiran-butir-bukti.repo');
 const penyimpanan = require('./penyimpanan-foto');
@@ -49,12 +48,9 @@ function bentukButir(b, foto) {
   };
 }
 
-/** jalur_minat adalah data bersama: boleh jalur mana pun yang ada dan aktif. */
-async function pastikanJalurAktif(jalurMinatId) {
-  if (jalurMinatId === undefined || jalurMinatId === null) return;
-  const jalur = await jalurMinatRepo.ambil(jalurMinatId);
-  if (!jalur || !jalur.aktif) throw new GalatApi('VALIDASI_GAGAL', 'Jalur tidak ditemukan.', { jalur_minat_id: 'tidak ditemukan' });
-}
+// K37 (LANJUT_023): butir hanya bisa ditautkan ke jalur aktif yang teksnya disetujui. Aturannya satu,
+// di jalur-minat.layanan.js, sama dengan rute Jalur & Tujuan.
+const { pastikanJalurTersedia: pastikanJalurAktif } = require('../jalur-minat/jalur-minat.layanan');
 
 const galatTujuan = () => new GalatApi('VALIDASI_GAGAL', 'Tujuan tidak ditemukan.', { tujuan_id: 'tidak ditemukan' });
 

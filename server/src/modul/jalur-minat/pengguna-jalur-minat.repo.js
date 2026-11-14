@@ -65,6 +65,22 @@ async function ubahStatusMilikSendiri(penggunaId, id, status, waktu) {
   }
 }
 
+/**
+ * Mengakhiri satu babak jalur (LANJUT_023): hanya baris `aktif` yang bisa dijeda, diselesaikan,
+ * atau ditinggalkan. Baris yang sudah berakhir tidak pernah diubah lagi, jadi riwayatnya tetap.
+ * Memilih jalur itu lagi membuat baris baru lewat `buat`. False bila bukan milik akun ini atau
+ * sudah tidak aktif.
+ */
+async function akhiriAktifMilikSendiri(penggunaId, id, status, waktu) {
+  const [hasil] = await pool.execute(
+    `UPDATE pengguna_jalur_minat
+        SET status = ?, berakhir_pada = ?, diubah_pada = ?
+      WHERE id = ? AND pengguna_id = ? AND status = 'aktif'`,
+    [status, STATUS_BERAKHIR.has(status) ? waktu : null, waktu, id, penggunaId]
+  );
+  return hasil.affectedRows > 0;
+}
+
 async function hapusMilikSendiri(penggunaId, id) {
   const [hasil] = await pool.execute('DELETE FROM pengguna_jalur_minat WHERE id = ? AND pengguna_id = ?', [
     id,
@@ -73,4 +89,11 @@ async function hapusMilikSendiri(penggunaId, id) {
   return hasil.affectedRows > 0;
 }
 
-module.exports = { daftarMilikSendiri, ambilMilikSendiri, buat, ubahStatusMilikSendiri, hapusMilikSendiri };
+module.exports = {
+  daftarMilikSendiri,
+  ambilMilikSendiri,
+  buat,
+  ubahStatusMilikSendiri,
+  akhiriAktifMilikSendiri,
+  hapusMilikSendiri,
+};

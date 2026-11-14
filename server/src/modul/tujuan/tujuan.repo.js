@@ -71,10 +71,67 @@ async function ubahMilikSendiri(penggunaId, tujuanId, { jalurMinatId, judul, ura
   return hasil.affectedRows > 0;
 }
 
+/**
+ * Memperbarui tujuan tanpa menimpa (LANJUT_023): versi baru dibuat dengan `diubah_dari_id`,
+ * lalu versi lama menjadi `diubah`. Satu transaksi. Versi lama dikunci, dan harus milik akun
+ * ini dan masih `aktif`, jadi riwayat selalu satu garis lurus.
+ * Hasil: 'ok', 'tidak_ada' (bukan milik akun ini atau tidak ada), atau 'bukan_terkini'.
+ */
+async function buatVersiMilikSendiri(penggunaId, tujuanLamaId, { id, jalurMinatId, judul, uraian, targetPada, waktu }) {
+  const koneksi = await pool.getConnection();
+  try {
+    await koneksi.beginTransaction();
+    const [baris] = await koneksi.execute(
+      'SELECT id, status FROM tujuan WHERE id = ? AND pengguna_id = ? FOR UPDATE',
+      [tujuanLamaId, penggunaId]
+    );
+    const lama = baris[0];
+    if (!lama || lama.status !== 'aktif') {
+      await koneksi.rollback();
+      return lama ? 'bukan_terkini' : 'tidak_ada';
+    }
+    await koneksi.execute(
+      `INSERT INTO tujuan
+         (id, pengguna_id, jalur_minat_id, judul, uraian, target_pada, status, diubah_dari_id, dibuat_pada, diubah_pada)
+       VALUES (?, ?, ?, ?, ?, ?, 'aktif', ?, ?, ?)`,
+      [id, penggunaId, jalurMinatId, judul, uraian, targetPada, tujuanLamaId, waktu, waktu]
+    );
+    await koneksi.execute("UPDATE tujuan SET status = 'diubah', diubah_pada = ? WHERE id = ? AND pengguna_id = ?", [
+      waktu,
+      tujuanLamaId,
+      penggunaId,
+    ]);
+    await koneksi.commit();
+    return 'ok';
+  } catch (galat) {
+    await koneksi.rollback();
+    throw galat;
+  } finally {
+    koneksi.release();
+  }
+}
+
+/** Menandai tujuan terkini tercapai atau ditinggalkan. Hanya dari `aktif`. False bila tidak berlaku. */
+async function akhiriMilikSendiri(penggunaId, tujuanId, status, waktu) {
+  const [hasil] = await pool.execute(
+    "UPDATE tujuan SET status = ?, diubah_pada = ? WHERE id = ? AND pengguna_id = ? AND status = 'aktif'",
+    [status, waktu, tujuanId, penggunaId]
+  );
+  return hasil.affectedRows > 0;
+}
+
 /** DELETE sungguhan. Butir bukti yang menunjuk tujuan ini tetap ada, tujuan_id menjadi NULL. */
 async function hapusMilikSendiri(penggunaId, tujuanId) {
   const [hasil] = await pool.execute('DELETE FROM tujuan WHERE id = ? AND pengguna_id = ?', [tujuanId, penggunaId]);
   return hasil.affectedRows > 0;
 }
 
-module.exports = { daftarMilikSendiri, ambilMilikSendiri, buat, ubahMilikSendiri, hapusMilikSendiri };
+module.exports = {
+  daftarMilikSendiri,
+  ambilMilikSendiri,
+  buat,
+  ubahMilikSendiri,
+  buatVersiMilikSendiri,
+  akhiriMilikSendiri,
+  hapusMilikSendiri,
+};

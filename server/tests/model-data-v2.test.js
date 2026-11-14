@@ -12,6 +12,7 @@ const tujuan = require('../src/modul/tujuan/tujuan.repo');
 const butir = require('../src/modul/butir-bukti/butir-bukti.repo');
 const lampiran = require('../src/modul/butir-bukti/lampiran-butir-bukti.repo');
 const { eksporDataV2 } = require('../src/modul/data-pengguna/data-pengguna.layanan');
+const { kunciJalurAktif } = require('./kunci-jalur-aktif');
 
 const WAKTU = '2026-11-10 08:00:00';
 const WAKTU_2 = '2026-11-11 09:00:00';
@@ -70,8 +71,14 @@ after(async () => {
 });
 
 test('jalur_minat: tiga jalur aktif berurutan; id tak dikenal menghasilkan null', async () => {
-  const daftar = await jalurMinat.daftarAktif();
-  assert.deepEqual(daftar.map((j) => j.id), ['melanjutkan', 'bekerja', 'wirausaha']);
+  // LANJUT_023: jalur-tujuan.test.js sementara memasang jalur uji aktif; kunci ini menunggunya selesai.
+  const lepas = await kunciJalurAktif(pool);
+  try {
+    const daftar = await jalurMinat.daftarAktif();
+    assert.deepEqual(daftar.map((j) => j.id), ['melanjutkan', 'bekerja', 'wirausaha']);
+  } finally {
+    await lepas();
+  }
   assert.equal((await jalurMinat.ambil('bekerja')).nama, 'Bekerja');
   assert.equal(await jalurMinat.ambil('tidak-ada'), null);
 });
