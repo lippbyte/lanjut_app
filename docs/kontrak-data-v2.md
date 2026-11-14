@@ -150,7 +150,7 @@ Penghapusan berlaku seketika dan tidak bisa dibatalkan.
 
 **`hapusBerkasPengguna`.** Penyedianya saat ini satu, yaitu foto butir bukti (bagian 4). Fungsi ini berjalan sesudah barisnya hilang, jadi setiap penyedia harus bisa menemukan berkas dari `penggunaId` saja. Kegagalan tidak membatalkan penghapusan akun, dan dicatat di log server dengan kata kunci `[hapus-berkas-gagal]` beserta ID akun dan nama penyedia.
 
-**Ekspor: yang disertakan.** `pengguna`, `percobaan_masuk`, `sesi_pengguna`, `kemajuan`, `butir_pribadi`, `kartu` milik sendiri, `sesi_latihan`, `riwayat_latihan`, `persetujuan`, `modul`, `event_sekolah`, `pengguna_jalur_minat`, `tujuan`, `butir_bukti`, `lampiran_butir_bukti`. Baris yang dihapus lunak ikut, karena masih tersimpan. Nama medan mengikuti nama kolom. Foto ikut sebagai data lampirannya saja, isi berkas fotonya tidak ada di ekspor.
+**Ekspor: yang disertakan.** `pengguna`, `percobaan_masuk`, `sesi_pengguna`, `kemajuan`, `butir_pribadi`, `kartu` milik sendiri, `sesi_latihan`, `riwayat_latihan`, `persetujuan`, `modul`, `event_sekolah`, `pengguna_jalur_minat`, `tujuan`, `butir_bukti`, `lampiran_butir_bukti`, dan sejak LANJUT_024 `refleksi_discover` dan `profil_eksplorasi`. Baris yang dihapus lunak ikut, karena masih tersimpan. Nama medan mengikuti nama kolom. Foto ikut sebagai data lampirannya saja, isi berkas fotonya tidak ada di ekspor.
 
 **Ekspor: yang sengaja dikecualikan.**
 
@@ -273,7 +273,38 @@ Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalu
 
 **Ekspor dan hapus akun.** Tidak berubah: ekspor sudah memuat semua baris `pengguna_jalur_minat` dan `tujuan`, termasuk babak yang berakhir dan versi lama, dan hapus akun menghapus keduanya lewat `ON DELETE CASCADE`.
 
-## 6. Yang sengaja belum ada
+## 6. Discover dan Profil Eksplorasi (LANJUT_024)
+
+Untuk lingkungan dev. Isi kartu dan teks layar masih draf (`docs/draf-teks-discover.md`). **Migrasi baru `033_discover.sql`** membuat tiga tabel, karena belum ada tempat untuk konten Discover, refleksi, dan profil yang bertingkat versi. Migrasi ini baru dijalankan di `lanjut_dev` dan `lanjut_test`, dan butuh persetujuan sebelum rilis: deploy produksi menjalankan migrasi otomatis.
+
+| Tabel | Isi | Hapus akun |
+|---|---|---|
+| `kartu_discover` | Konten terkurasi: `id`, `jenis` (`bidang`, `profesi`, `usaha`), `judul`, `ringkasan`, `status_teks` (`draf`, `disetujui`), `urutan`, `aktif`, dan metadata konten (`sumber`, `pemilik`, `status_verifikasi`, `asal`, `url_sumber`, `diperiksa_pada`). Dibenihkan dari `server/data-konten/discover.json` | Bukan milik pengguna |
+| `refleksi_discover` | Satu baris per siswa dan kartu: `ketertarikan` (`tertarik`, `belum_yakin`, `tidak_tertarik`), `yang_menarik` dan `yang_kurang_menarik` (paling panjang 280 karakter) | Berantai |
+| `profil_eksplorasi` | Satu baris per versi: `isi` (JSON), `catatan` (paling panjang 500 karakter), `status` (`aktif`, `diubah`), `diubah_dari_id`. Satu versi aktif per siswa | Berantai |
+
+**Konten.** Hanya kartu aktif dengan `status_teks = 'disetujui'` yang dikirim atau bisa diberi refleksi (sama dengan K37). Benih menolak kartu `disetujui` tanpa `url_sumber`, dan `url_sumber` yang masih `[ISI: ...]` disimpan sebagai `NULL`. Verifikasi sumber: `npm run verifikasi-konten -- --jenis=discover`.
+
+**Saklar.** `DISCOVER_AKTIF` di server dan `EXPO_PUBLIC_DISCOVER` di aplikasi, bawaannya mati. Saat mati, semua rute di bawah menjawab sama persis dengan jalur yang tidak ada, dan berkas layar tidak masuk bundel aplikasi.
+
+**Gerbang.** 401 bila belum masuk, lalu 403 `AI_BELUM_DIIZINKAN` bila kebijakan privasi belum diterima. Semua data dibaca dari akun yang sedang masuk, dan pemilik diperiksa dua kali: di layanan, lalu di SQL.
+
+| Rute (`/api/v1/discover`) | Badan | Hasil |
+|---|---|---|
+| `GET /kartu` | | Kartu yang disetujui: `id`, `jenis`, `judul`, `ringkasan`, `url_sumber`, `diperiksa_pada`. Kosong selama semua kartu masih draf |
+| `GET /refleksi` | | Refleksi milik sendiri |
+| `PUT /refleksi/:kartuId` | `ketertarikan`, `yang_menarik`, `yang_kurang_menarik` | Simpan atau perbarui. Kartu draf, nonaktif, atau tidak ada: 400 `KARTU_BELUM_TERSEDIA` "Kartu belum tersedia.", jawabannya sama |
+| `GET /profil` | | `{ profil, jumlah_versi }`. `profil` bernilai `null` sebelum disusun |
+| `POST /profil` | `catatan` | 201, versi baru dari refleksi dan data akun saat ini. `catatan` yang tidak dikirim disalin. Tanpa perubahan: 400. Profil berganti di tengah jalan: 409 `PROFIL_BUKAN_TERKINI` |
+| `GET /profil/riwayat` | | Semua versi, lama ke baru |
+
+**Profil: aturan, bukan AI.** `isi` hanya berisi salinan data siswa sendiri: `refleksi`, `minat_rumpun`, `mapel_pilihan`, `jalur_minat_id` (jalur aktif), dan `tujuan` (`id` dan `judul` tujuan aktif). Tidak ada skor, kategori, atau label kepribadian, kemampuan, atau sifat. Saat dikirim, judul kartu hanya muncul untuk kartu yang disetujui; refleksi pada kartu lain hanya dihitung (`refleksi_disembunyikan`). Nama jalur hanya untuk jalur yang disetujui (K37). Modul ini tidak membuka koneksi keluar dan tidak memanggil AI atau mesin pencari.
+
+**Ekspor dan hapus akun.** Ekspor memuat `refleksi_discover` dan semua versi `profil_eksplorasi`. Hapus akun menghapus keduanya lewat `ON DELETE CASCADE`.
+
+## 7. Yang sengaja belum ada
+
+- Bagian Discover di lembar review (`npm run lembar-review`). `verifikasi-konten` sudah mengenal jenis `discover`.
 
 - Fitur berbagi dan nilai visibilitas selain `privat` (K18, Bagian 9).
 - `ProjectRecord` (K17, Bagian 8).

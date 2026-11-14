@@ -40,6 +40,8 @@ const JENIS = {
   // kartu kurasi tim (sumber 'resmi') yang belum dihapus — id kartu siswa
   // diperlakukan sebagai "tidak ditemukan".
   kartu: { tabel: 'kartu', judul: 'judul', label: 'Kartu kurasi Arsip Belajar', kurasi: true },
+  // LANJUT_024: kartu Discover (bidang, profesi, usaha). Verifikasi sumber terpisah dari persetujuan teks (status_teks).
+  discover: { tabel: 'kartu_discover', judul: 'judul', label: 'Kartu Discover' },
 };
 
 // Query statis (§2.2 aturan 2: tidak ada SQL yang dirakit dari potongan).

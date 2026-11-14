@@ -109,6 +109,8 @@ test('Jalur & Tujuan dummy (LANJUT_023): dua jalur, tujuan dua versi, akun koson
   sadap('../src/modul/jalur-minat/pengguna-jalur-minat.repo', 'buat', (d) => d.penggunaId);
   sadap('../src/modul/tujuan/tujuan.repo', 'buat', (d) => d.penggunaId);
   sadap('../src/modul/tujuan/tujuan.repo', 'buatVersiMilikSendiri', (id) => id);
+  sadap('../src/modul/discover/refleksi-discover.repo', 'buatTanpaPeriksaKartu', (d) => d.penggunaId);
+  sadap('../src/modul/discover/profil-eksplorasi.repo', 'buatVersiMilikSendiri', (id) => id);
 
   const akhiran = `j${acak().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'a1'}`;
   const hasil = await jalankan({ akhiran, kataSandi: 'sandiujiaman1', log: () => {} });
@@ -131,6 +133,30 @@ test('Jalur & Tujuan dummy (LANJUT_023): dua jalur, tujuan dua versi, akun koson
       assert.equal(lama.status, 'diubah');
       assert.equal(baru.status, 'aktif');
       assert.equal(baru.diubah_dari_id, lama.id);
+    }
+  }
+});
+
+test('Discover dummy (LANJUT_024): refleksi di dua kartu, profil dua versi, dan akun yang belum mengisi apa pun', async () => {
+  const demo = AKUN.find((a) => (a.refleksi ?? []).length === 2 && (a.catatanProfil ?? []).length === 2);
+  assert.ok(demo, 'ada akun dengan refleksi di dua kartu dan profil yang sudah diperbarui sekali');
+  assert.ok(AKUN.some((a) => !(a.refleksi ?? []).length && !a.jalur.length && !a.tujuan.length), 'ada akun yang belum mengisi apa pun');
+  const akhiran = `d${acak().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'a1'}`;
+  const hasil = await jalankan({ akhiran, kataSandi: 'sandiujiaman1', log: () => {} });
+  dibuat.push(...hasil.dibuat);
+  for (const a of AKUN) {
+    const [[p]] = await pool.query('SELECT id FROM pengguna WHERE nama_pengguna = ?', [namaAkun(a.nama, akhiran)]);
+    const [refleksi] = await pool.query('SELECT kartu_discover_id FROM refleksi_discover WHERE pengguna_id = ? ORDER BY kartu_discover_id', [p.id]);
+    assert.deepEqual(refleksi.map((r) => r.kartu_discover_id), (a.refleksi ?? []).map((r) => r.kartu).sort(), a.nama);
+    const [profil] = await pool.query('SELECT id, status, diubah_dari_id, catatan FROM profil_eksplorasi WHERE pengguna_id = ?', [p.id]);
+    if (a === demo) {
+      const lama = profil.find((x) => x.status === 'diubah');
+      const baru = profil.find((x) => x.status === 'aktif');
+      assert.equal(profil.length, 2);
+      assert.equal(baru.diubah_dari_id, lama.id);
+      assert.deepEqual([lama.catatan, baru.catatan], a.catatanProfil);
+    } else {
+      assert.equal(profil.length, 0, a.nama);
     }
   }
 });

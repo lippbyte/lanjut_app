@@ -117,6 +117,8 @@ if (env.JALUR_TUJUAN_AKTIF) {
   app.use('/api/v1/jalur-minat', require('./modul/jalur-minat/jalur-minat.rute'));
   app.use('/api/v1/tujuan', require('./modul/tujuan/tujuan.rute'));
 }
+// LANJUT_024: Discover di balik saklarnya sendiri. Mati berarti rutenya tidak ada (404).
+if (env.DISCOVER_AKTIF) app.use('/api/v1/discover', require('./modul/discover/discover.rute'));
 
 app.use((req, res) => {
   const { galat } = require('./util/respons');

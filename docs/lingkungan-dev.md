@@ -60,7 +60,7 @@ Baris pertama keduanya menyebut tujuan, misalnya `Tujuan: host 127.0.0.1, basis 
 npm run benih-dummy
 ```
 
-Hasilnya empat akun contoh, yaitu `demo_kelas12`, `demo_kelas10`, `uji_smp`, dan `uji_belum_memilih`, dengan email `@contoh.test`. Masing-masing punya persetujuan kebijakan, satu kartu, dan satu sesi latihan. Untuk Jalur & Tujuan (LANJUT_023): `demo_kelas10` memilih dua jalur, `demo_kelas12` punya tujuan yang sudah diperbarui sekali (dua versi), dan `uji_belum_memilih` belum memilih jalur maupun tujuan. Kata sandinya dicetak sekali di layar. Bila ingin sandi tetap, isi `DUMMY_KATA_SANDI` di `.env` sebelum menjalankan. Akun yang sudah ada dilewati, jadi aman diulang.
+Hasilnya empat akun contoh, yaitu `demo_kelas12`, `demo_kelas10`, `uji_smp`, dan `uji_belum_memilih`, dengan email `@contoh.test`. Masing-masing punya persetujuan kebijakan, satu kartu, dan satu sesi latihan. Untuk Jalur & Tujuan (LANJUT_023): `demo_kelas10` memilih dua jalur, `demo_kelas12` punya tujuan yang sudah diperbarui sekali (dua versi), dan `uji_belum_memilih` belum memilih jalur maupun tujuan. Untuk Discover (LANJUT_024): `demo_kelas12` punya refleksi di dua kartu dan profil eksplorasi dua versi, dan `uji_belum_memilih` belum mengisi apa pun. Kata sandinya dicetak sekali di layar. Bila ingin sandi tetap, isi `DUMMY_KATA_SANDI` di `.env` sebelum menjalankan. Akun yang sudah ada dilewati, jadi aman diulang.
 
 ## 5. Menjalankan tes
 
@@ -75,6 +75,12 @@ Fitur ini mati di mana pun sampai sengaja dinyalakan, dan teksnya masih draf (`d
 3. Masuk dengan akun dummy dari langkah 4.
 
 Jangan isi kedua saklar itu di Dokploy, EAS, atau `eas.json`. Rute dan kontraknya ada di `docs/kontrak-data-v2.md` bagian 5.
+
+## 7. Mencoba Discover (LANJUT_024)
+
+Butuh migrasi 033 di basis data dev (`npm run migrasi`, lalu `npm run benih`). Untuk mencobanya, isi `DISCOVER_AKTIF=1` di `server/.env` dan jalankan aplikasi dengan `EXPO_PUBLIC_DISCOVER=1`. Selama isi `server/data-konten/discover.json` masih draf, daftar kartu kosong: kartu draf tidak pernah terkirim, dan tidak ada cara untuk menyetujuinya selain mengubah `status_teks` di berkas itu sesudah sumbernya diisi. Profil eksplorasi tetap bisa disusun dari data akun.
+
+Jangan isi kedua saklar itu di Dokploy, EAS, atau `eas.json`. Rute dan kontraknya ada di `docs/kontrak-data-v2.md` bagian 6.
 
 ## Yang tidak dilakukan di lokal
 

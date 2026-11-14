@@ -35,6 +35,15 @@ export function jalurTujuanAktif(extra: unknown): boolean {
   return (extra as { jalurTujuan?: unknown }).jalurTujuan === true;
 }
 
+/**
+ * Discover dan Profil Eksplorasi (LANJUT_024): fitur baru untuk lingkungan dev, kontennya masih draf.
+ * Bawaan: MATI. Menyala hanya bila build dibuat dengan EXPO_PUBLIC_DISCOVER=1.
+ */
+export function discoverAktif(extra: unknown): boolean {
+  if (!extra || typeof extra !== 'object') return false;
+  return (extra as { discover?: unknown }).discover === true;
+}
+
 export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;

@@ -416,6 +416,43 @@ export type PeristiwaPerjalanan = {
   judul?: string;
 };
 
+// Discover (LANJUT_024): bentuk respons discover.layanan.js.
+export type JenisKartuDiscover = 'bidang' | 'profesi' | 'usaha';
+export type Ketertarikan = 'tertarik' | 'belum_yakin' | 'tidak_tertarik';
+export type KartuDiscover = {
+  id: string;
+  jenis: JenisKartuDiscover;
+  judul: string;
+  ringkasan: string;
+  url_sumber: string | null;
+  diperiksa_pada: string | null;
+};
+export type RefleksiDiscover = {
+  kartu_discover_id: string;
+  ketertarikan: Ketertarikan;
+  yang_menarik: string | null;
+  yang_kurang_menarik: string | null;
+  dibuat_pada: string;
+  diubah_pada: string;
+};
+export type ButirProfil = { kartu_discover_id: string; judul: string; jenis: JenisKartuDiscover; alasan?: string | null };
+export type ProfilEksplorasi = {
+  id: string;
+  status: 'aktif' | 'diubah';
+  diubah_dari_id: string | null;
+  catatan: string | null;
+  dibuat_pada: string;
+  tertarik: ButirProfil[];
+  belum_yakin: ButirProfil[];
+  kurang_tertarik: ButirProfil[];
+  refleksi_disembunyikan: number;
+  minat_rumpun: string[];
+  mapel_pilihan: { id: string; nama: string | null }[];
+  jalur: { id: string; nama: string }[];
+  tujuan: { id: string; judul: string }[];
+};
+export type ProfilEksplorasiSaya = { profil: ProfilEksplorasi | null; jumlah_versi: number };
+
 // Portofolio (LANJUT_011): bentuk respons butir-bukti.layanan.js `bentukFoto` dan `bentukButir`.
 export type FotoButir = { id: string; jenis_berkas: string; ukuran_byte: number; nama_asli: string; dibuat_pada: string };
 export type ButirBukti = {

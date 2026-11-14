@@ -8,6 +8,8 @@ const percobaanRepo = require('../auth/percobaanMasuk.repo');
 const otp = require('../auth/otp.layanan');
 const penggunaJalurMinatRepo = require('../jalur-minat/pengguna-jalur-minat.repo');
 const tujuanRepo = require('../tujuan/tujuan.repo');
+const refleksiDiscoverRepo = require('../discover/refleksi-discover.repo');
+const profilEksplorasiRepo = require('../discover/profil-eksplorasi.repo');
 const butirBuktiRepo = require('../butir-bukti/butir-bukti.repo');
 const lampiranRepo = require('../butir-bukti/lampiran-butir-bukti.repo');
 const modulLayanan = require('../modul/modul.layanan');
@@ -29,6 +31,15 @@ async function eksporDataV2(penggunaId) {
   return { pengguna_jalur_minat, tujuan, butir_bukti, lampiran_butir_bukti };
 }
 
+/** LANJUT_024: refleksi Discover dan semua versi profil eksplorasi milik akun itu. */
+async function eksporDiscover(penggunaId) {
+  const [refleksi_discover, profil_eksplorasi] = await Promise.all([
+    refleksiDiscoverRepo.daftarMilikSendiri(penggunaId),
+    profilEksplorasiRepo.daftarMilikSendiri(penggunaId),
+  ]);
+  return { refleksi_discover, profil_eksplorasi };
+}
+
 const galatEksporBesar = () =>
   new GalatApi('EKSPOR_TERLALU_BESAR', 'Data akun ini terlalu besar untuk diunduh sekaligus.');
 
@@ -37,14 +48,15 @@ async function eksporSemua(penggunaId, batas = BATAS_BAWAAN) {
   if (!pengguna) throw new GalatApi('TIDAK_DITEMUKAN', 'Pengguna tidak ditemukan.');
 
   // Satu baris lebih banyak dari batas: cukup untuk tahu datanya melewati batas.
-  const [lama, v2, percobaan_masuk] = await Promise.all([
+  const [lama, v2, discover, percobaan_masuk] = await Promise.all([
     repo.barisUntukEkspor(penggunaId, batas.barisPerTabel + 1),
     eksporDataV2(penggunaId),
+    eksporDiscover(penggunaId),
     repo.percobaanMasukUntukEkspor(pengguna.nama_pengguna),
   ]);
   if (Object.values(lama).some((baris) => baris.length > batas.barisPerTabel)) throw galatEksporBesar();
 
-  const hasil = { versi_ekspor: 1, dibuat_pada: sekarangIso(), pengguna, percobaan_masuk, ...lama, ...v2 };
+  const hasil = { versi_ekspor: 1, dibuat_pada: sekarangIso(), pengguna, percobaan_masuk, ...lama, ...v2, ...discover };
   if (Buffer.byteLength(JSON.stringify(hasil), 'utf8') > batas.byte) throw galatEksporBesar();
   return hasil;
 }
@@ -109,4 +121,4 @@ async function hapusAkun(penggunaId, { kata_sandi, kode_email }) {
   return { dihapus: true };
 }
 
-module.exports = { eksporDataV2, eksporSemua, kirimKodeHapus, hapusAkun, BATAS_BAWAAN };
+module.exports = { eksporDataV2, eksporDiscover, eksporSemua, kirimKodeHapus, hapusAkun, BATAS_BAWAAN };
