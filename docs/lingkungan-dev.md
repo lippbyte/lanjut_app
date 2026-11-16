@@ -9,6 +9,7 @@ Server di komputer sendiri selalu memakai MySQL lokal, terpisah dari produksi. P
 | Tes hanya jalan di basis data yang diawali `lanjut_test` | `server/tests/bantuan.js`, `server/src/db/koneksi.js` | `npm test` berhenti bila `DB_NAME` lain |
 | `migrasi`, `migrasi-turun`, `benih`, dan `pulihkan-db` mencetak tujuannya | `server/src/db/pagar-tujuan.js` | Host yang bukan lokal butuh `--ya`, dan pemulihan di produksi ditolak |
 | `benih-dummy` hanya untuk lokal | `server/tools/benih-dummy.js` | Tidak ada tanda yang bisa melewatinya |
+| `benih-persetujuan-dummy` hanya untuk basis data yang diawali `lanjut_dev` | `server/tools/benih-persetujuan-dummy.js` | Menolak produksi, host yang bukan lokal, dan nama basis data lain, tanpa tanda yang bisa melewatinya. Tidak menulis berkas di `server/data-konten` |
 
 ## 1. Nyalakan MySQL lokal
 
@@ -27,6 +28,8 @@ docker compose --env-file .env.dev.local -f docker-compose.dev.yml up -d
 ```
 
 Hasilnya MySQL di `127.0.0.1:3307` dengan dua basis data, `lanjut_dev` dan `lanjut_test`, dan pengguna `lanjut`. Port hanya terbuka untuk komputer ini. Untuk mematikannya, ganti `up -d` dengan `down`. Isi basis data tetap tersimpan di volume `lanjut_dev_data`.
+
+Kontainer ini tidak menyala sendiri sesudah komputer dinyalakan ulang. Bila port sudah dipakai kontainer proyek lain, ganti `DEV_DB_PORT` di `.env.dev.local` dan `DB_PORT` di `server/.env` ke port yang kosong, lalu jalankan perintah di atas lagi. Isi volume tetap.
 
 Bila sudah punya MySQL lokal lain, misalnya Laragon, langkah ini boleh dilewati. Buat sendiri `lanjut_dev` dan `lanjut_test` di sana.
 
@@ -78,9 +81,29 @@ Jangan isi kedua saklar itu di Dokploy, EAS, atau `eas.json`. Rute dan kontrakny
 
 ## 7. Mencoba Discover (LANJUT_024)
 
-Butuh migrasi 033 di basis data dev (`npm run migrasi`, lalu `npm run benih`). Untuk mencobanya, isi `DISCOVER_AKTIF=1` di `server/.env` dan jalankan aplikasi dengan `EXPO_PUBLIC_DISCOVER=1`. Selama isi `server/data-konten/discover.json` masih draf, daftar kartu kosong: kartu draf tidak pernah terkirim, dan tidak ada cara untuk menyetujuinya selain mengubah `status_teks` di berkas itu sesudah sumbernya diisi. Profil eksplorasi tetap bisa disusun dari data akun.
+Butuh migrasi 033 di basis data dev (`npm run migrasi`, lalu `npm run benih`). Untuk mencobanya, isi `DISCOVER_AKTIF=1` di `server/.env` dan jalankan aplikasi dengan `EXPO_PUBLIC_DISCOVER=1`. Selama isi `server/data-konten/discover.json` masih draf, daftar kartu kosong: kartu draf tidak pernah terkirim. Menyetujui kartu sungguhan hanya lewat `status_teks` di berkas itu, sesudah sumbernya diisi. Untuk melihat layarnya di dev sebelum itu, pakai bagian 8. Profil eksplorasi tetap bisa disusun dari data akun.
 
 Jangan isi kedua saklar itu di Dokploy, EAS, atau `eas.json`. Rute dan kontraknya ada di `docs/kontrak-data-v2.md` bagian 6.
+
+## 8. Melihat layar dengan konten dummy (LANJUT_025)
+
+Karena semua jalur dan kartu masih draf, daftar di kedua layar kosong. Untuk mencobanya di dev:
+
+```
+npm run benih-persetujuan-dummy
+```
+
+Skrip ini menandai satu jalur (`melanjutkan`) dan satu kartu Discover (`bidang-kesehatan`) sebagai disetujui, **hanya di basis data**. Nama, teks, dan sumbernya diganti teks yang terbaca palsu, diawali `[DUMMY]` atau "[DUMMY – bukan sumber nyata]". Berkas di `server/data-konten` tidak ditulis. Skrip menolak jalan bila `NODE_ENV=production`, bila host bukan lokal, atau bila nama basis data tidak diawali `lanjut_dev`, dan tidak ada flag untuk melewatinya. Setiap perubahan dicetak dan dicatat di `server/benih-persetujuan-dummy.log`.
+
+Untuk membaliknya:
+
+```
+npm run benih-persetujuan-dummy -- --cabut
+```
+
+Kedua baris kembali persis seperti isi berkas konten (draf), dan daftar kembali kosong. `npm run benih` juga mengembalikannya.
+
+Hasil pemeriksaan layar di peramban 360 px ada di `docs/periksa-layar-025/`. Bagian Data Saya (unduh data dan hapus akun) di layar Akun butuh saklar ketiga, `EXPO_PUBLIC_KELOLA_DATA_AKUN=1`, juga hanya di lingkungan lokal.
 
 ## Yang tidak dilakukan di lokal
 
