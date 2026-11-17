@@ -168,6 +168,30 @@ describe('Aturan di aplikasi', () => {
     assert.match(layar, /\{jalur\.length === 0 \? \(\s*<Text style=\{s\.keterangan\}>\{T\.jalurBelumTersedia\}<\/Text>/);
   });
 
+  test('LANJUT_026: pilihan yang jalurnya kini draf tampil netral dengan tombol jeda, tidak tercampur jalur lain, dan perjalanannya netral', () => {
+    const tersembunyi = (id, status) => ({ ...pilihan(id, null, status), jalur_belum_tersedia: true });
+    const semua = [tersembunyi('9', 'aktif'), tersembunyi('8', 'dijeda'), { ...pilihan('2', 'bekerja', 'aktif'), jalur_belum_tersedia: false }];
+    assert.deepEqual(jt.pilihanTersembunyiAktif(semua).map((p) => p.id), ['9'], 'hanya babak aktif yang perlu tombol jeda');
+    assert.deepEqual(jt.susunJalur(jalur, semua).map((b) => [b.jalur.id, b.aktif?.id ?? null, b.jumlahBabak]), [['melanjutkan', null, 0], ['bekerja', '2', 1]]);
+    const netral = { pada: '', jalur_minat_id: null, jalur_belum_tersedia: true };
+    const panggilNama = () => assert.fail('nama jalur tidak boleh dicari untuk jalur yang belum tersedia');
+    assert.equal(jt.teksPeristiwa({ jenis: 'jalur_dipilih', ...netral }, panggilNama), 'Memilih jalur (belum tersedia)');
+    assert.equal(jt.teksPeristiwa({ jenis: 'jalur_dijeda', ...netral }, panggilNama), 'Menjeda jalur (belum tersedia)');
+    const layar = baca('components', 'screens', 'JalurTujuanScreens.tsx');
+    const kartu = /\{pilihanTersembunyiAktif\([\s\S]*?<\/Kartu>/.exec(layar)[0];
+    assert.match(kartu, /\{T\.jalurTersembunyi\}/);
+    assert.match(kartu, /label=\{T\.jeda\}[^>]*onPress=\{\(\) => jeda\.mutate\(p\.id\)\}/);
+    assert.doesNotMatch(kartu, /pilih\.mutate|T\.pilih/, 'jalur yang belum tersedia tidak bisa dipilih lagi dari layar');
+  });
+
+  test('LANJUT_026: riwayat tujuan bernomor dengan tanggal dan jam', () => {
+    const satu = jt.teksVersiTujuan({ versi_ke: 1, dibuat_pada: '2026-11-17T01:05:00Z', judul: 'Magang' });
+    const dua = jt.teksVersiTujuan({ versi_ke: 2, dibuat_pada: '2026-11-17T01:06:00Z', judul: 'Magang resmi' });
+    assert.match(satu, /^Versi ke-1 \(.*\d{1,2}[.:]05\): Magang$/);
+    assert.match(dua, /^Versi ke-2 \(.*\d{1,2}[.:]06\): Magang resmi$/);
+    assert.match(baca('components', 'screens', 'JalurTujuanScreens.tsx'), /\{teksVersiTujuan\(t\)\}/);
+  });
+
   test('Setiap kode galat server punya pesan sendiri', () => {
     for (const kode of ['JALUR_SUDAH_DIPILIH', 'JALUR_BELUM_TERSEDIA', 'PILIHAN_SUDAH_BERAKHIR', 'TUJUAN_BUKAN_TERKINI']) {
       assert.notEqual(jt.pesanGalatJalurTujuan(kode), jt.GALAT_UMUM_JALUR_TUJUAN, kode);

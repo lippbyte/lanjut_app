@@ -114,21 +114,43 @@ describe('Saklar build: mati berarti tidak ada jejak, APK lama tidak berubah', (
 });
 
 describe('Aturan di aplikasi', () => {
-  test('Kalimat profil hanya mengulang judul kartu dan tulisan siswa, tanpa label', () => {
+  test('LANJUT_026: profil mengutip kedua isian siswa di setiap pilihan, berlabel, tanpa tafsiran; isian kosong tidak tampil', () => {
+    const b = (id, judul, jenis, m, k) => ({ kartu_discover_id: id, judul, jenis, yang_menarik: m, yang_kurang_menarik: k });
     const profil = {
-      tertarik: [{ kartu_discover_id: 'a', judul: 'Usaha Kuliner', jenis: 'usaha', alasan: 'Aku senang memasak.' }],
-      belum_yakin: [{ kartu_discover_id: 'b', judul: 'Guru', jenis: 'profesi' }],
-      kurang_tertarik: [{ kartu_discover_id: 'c', judul: 'Kesehatan', jenis: 'bidang', alasan: null }],
+      tertarik: [b('a', 'Usaha Kuliner', 'usaha', 'Aku senang memasak.', 'Aku belum suka menghitung uang.')],
+      belum_yakin: [b('b', 'Guru', 'profesi', 'Aku suka menjelaskan.', null)],
+      kurang_tertarik: [b('c', 'Kesehatan', 'bidang', '   ', 'Aku takut melihat darah.')],
     };
-    const kalimat = dc.kalimatProfil(profil);
-    assert.deepEqual(kalimat, [
-      'Kamu tertarik ke Usaha Kuliner karena kamu menulis: "Aku senang memasak."',
-      'Kamu masih memikirkan Guru.',
-      'Kamu kurang tertarik ke Kesehatan.',
+    const M = dc.TEKS_DISCOVER.labelProfilMenarik;
+    const K = dc.TEKS_DISCOVER.labelProfilKurangMenarik;
+    const blok = dc.blokProfil(profil);
+    assert.deepEqual(blok, [
+      { kalimat: 'Kamu tertarik ke Usaha Kuliner.', kutipan: [{ label: M, teks: 'Aku senang memasak.' }, { label: K, teks: 'Aku belum suka menghitung uang.' }] },
+      { kalimat: 'Kamu masih memikirkan Guru.', kutipan: [{ label: M, teks: 'Aku suka menjelaskan.' }] },
+      { kalimat: 'Kamu kurang tertarik ke Kesehatan.', kutipan: [{ label: K, teks: 'Aku takut melihat darah.' }] },
     ]);
-    for (const k of kalimat) assert.doesNotMatch(k, KATA_LABEL);
+    // Setiap kutipan adalah tulisan siswa apa adanya; kalimat hanya pilihan dan judul kartu.
+    const tulisan = new Set(Object.values(profil).flat().flatMap((x) => [x.yang_menarik, x.yang_kurang_menarik]));
+    for (const x of blok) {
+      assert.doesNotMatch(x.kalimat, KATA_LABEL);
+      assert.doesNotMatch(x.kalimat, /karena|berarti|sepertinya|mungkin|cocok/i);
+      for (const k of x.kutipan) assert.ok(tulisan.has(k.teks), k.teks);
+    }
     // Tanpa isian siswa, tidak ada kalimat: tidak ada yang ditebak.
-    assert.deepEqual(dc.kalimatProfil({ tertarik: [], belum_yakin: [], kurang_tertarik: [] }), []);
+    assert.deepEqual(dc.blokProfil({ tertarik: [], belum_yakin: [], kurang_tertarik: [] }), []);
+    assert.deepEqual(dc.blokProfil({ tertarik: [], belum_yakin: [b('d', 'Teknisi', 'profesi', null, null)], kurang_tertarik: [] }), [
+      { kalimat: 'Kamu masih memikirkan Teknisi.', kutipan: [] },
+    ]);
+  });
+
+  test('LANJUT_026: teks versi profil memuat nomor, tanggal, dan jam; dua versi di hari yang sama terbedakan', () => {
+    const a = dc.teksVersi(1, '2026-11-17T01:05:00Z');
+    const b = dc.teksVersi(2, '2026-11-17T01:06:00Z');
+    assert.match(a, /^Versi ke-1 · /);
+    assert.match(b, /^Versi ke-2 · /);
+    assert.match(a, /\d{1,2}[.:]\d{2}/, 'ada jam');
+    assert.notEqual(a.replace('ke-1', ''), b.replace('ke-2', ''), 'jamnya berbeda');
+    assert.equal(dc.teksVersi(3, 'bukan-waktu'), 'Versi ke-3');
   });
 
   test('Isian yang diterima aplikasi selalu diterima server, dan batasnya sama', () => {

@@ -97,24 +97,35 @@ const isiObjek = (isi) => (typeof isi === 'string' ? JSON.parse(isi) : isi);
  * Bentuk untuk siswa. Judul kartu hanya untuk kartu yang masih aktif dan disetujui; refleksi pada
  * kartu lain disembunyikan (dihitung saja), supaya teks draf tidak pernah terkirim. Nama jalur
  * hanya untuk jalur yang disetujui (K37).
+ *
+ * LANJUT_026: setiap kartu membawa KEDUA isian siswa apa adanya, apa pun pilihan ketertarikannya.
+ * Isian kosong tetap null; tidak ada teks pengganti dan tidak ada kalimat penafsiran.
+ * `versi_ke` diisi pemanggil dari urutan rantai versi.
  */
-function bentukProfil(baris, rujukan) {
+function bentukProfil(baris, rujukan, versiKe) {
   const isi = isiObjek(baris.isi);
   const kartu = (id) => rujukan.kartu.get(id);
   const tampil = isi.refleksi.filter((r) => kartu(r.kartu_discover_id));
-  const butir = (r, alasan) => {
+  const butir = (r) => {
     const k = kartu(r.kartu_discover_id);
-    return { kartu_discover_id: k.id, judul: k.judul, jenis: k.jenis, ...(alasan === undefined ? {} : { alasan }) };
+    return {
+      kartu_discover_id: k.id,
+      judul: k.judul,
+      jenis: k.jenis,
+      yang_menarik: r.yang_menarik ?? null,
+      yang_kurang_menarik: r.yang_kurang_menarik ?? null,
+    };
   };
   return {
     id: baris.id,
+    versi_ke: versiKe,
     status: baris.status,
     diubah_dari_id: baris.diubah_dari_id,
     catatan: baris.catatan,
     dibuat_pada: keIso(baris.dibuat_pada),
-    tertarik: tampil.filter((r) => r.ketertarikan === 'tertarik').map((r) => butir(r, r.yang_menarik)),
-    belum_yakin: tampil.filter((r) => r.ketertarikan === 'belum_yakin').map((r) => butir(r)),
-    kurang_tertarik: tampil.filter((r) => r.ketertarikan === 'tidak_tertarik').map((r) => butir(r, r.yang_kurang_menarik)),
+    tertarik: tampil.filter((r) => r.ketertarikan === 'tertarik').map(butir),
+    belum_yakin: tampil.filter((r) => r.ketertarikan === 'belum_yakin').map(butir),
+    kurang_tertarik: tampil.filter((r) => r.ketertarikan === 'tidak_tertarik').map(butir),
     refleksi_disembunyikan: isi.refleksi.length - tampil.length,
     minat_rumpun: isi.minat_rumpun,
     mapel_pilihan: isi.mapel_pilihan.map((id) => ({ id, nama: rujukan.mapel.get(id) ?? null })),
@@ -134,11 +145,15 @@ async function muatRujukan() {
 
 async function ambilProfil(penggunaId) {
   const [versi, rujukan] = await Promise.all([profilRepo.daftarMilikSendiri(penggunaId), muatRujukan()]);
-  const terkini = versi.find((v) => v.status === 'aktif');
-  return { profil: terkini ? bentukProfil(terkini, rujukan) : null, jumlah_versi: versi.length };
+  const urut = urutkanRantai(versi);
+  const ke = urut.findIndex((v) => v.status === 'aktif');
+  return { profil: ke === -1 ? null : bentukProfil(urut[ke], rujukan, ke + 1), jumlah_versi: versi.length };
 }
 
-/** Versi lama ke baru menurut rantai diubah_dari_id, karena dua versi bisa dibuat pada detik yang sama. */
+/**
+ * Versi lama ke baru menurut rantai diubah_dari_id, karena dua versi bisa dibuat pada detik yang sama.
+ * Posisi di sini juga nomor versinya (`versi_ke`, LANJUT_026).
+ */
 function urutkanRantai(versi) {
   const perId = new Set(versi.map((v) => v.id));
   const anak = new Map(versi.filter((v) => v.diubah_dari_id).map((v) => [v.diubah_dari_id, v]));
@@ -155,7 +170,7 @@ function urutkanRantai(versi) {
 
 async function riwayatProfil(penggunaId) {
   const [versi, rujukan] = await Promise.all([profilRepo.daftarMilikSendiri(penggunaId), muatRujukan()]);
-  return urutkanRantai(versi).map((v) => bentukProfil(v, rujukan));
+  return urutkanRantai(versi).map((v, i) => bentukProfil(v, rujukan, i + 1));
 }
 
 /** Data siswa saat ini, untuk satu versi profil. Semua dibaca lewat repositori milik sendiri. */

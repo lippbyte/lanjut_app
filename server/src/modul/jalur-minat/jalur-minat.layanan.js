@@ -25,10 +25,26 @@ function bentukJalur(j) {
   return { id: j.id, nama: j.nama, deskripsi_singkat: j.deskripsi_singkat, status_teks: j.status_teks, urutan: j.urutan };
 }
 
-function bentukPilihan(p) {
+/** Id jalur yang boleh disebut ke siswa: aktif dan teksnya disetujui (K37). */
+async function idJalurTersedia() {
+  return new Set((await jalurMinatRepo.daftarDisetujui()).map((j) => j.id));
+}
+
+/**
+ * LANJUT_026: jalur yang pernah dipilih siswa bisa kembali draf atau nonaktif. Pilihannya tetap
+ * milik siswa dan tetap dikirim, tetapi id jalurnya diganti null dan ditandai
+ * `jalur_belum_tersedia`, supaya nama atau teks draf tidak terkirim (K37). Aplikasi menampilkan
+ * label netral. Ekspor data tetap memuat id aslinya, karena itu salinan data milik siswa.
+ */
+function samarkanJalur(jalurMinatId, tersedia) {
+  const tersembunyi = jalurMinatId !== null && jalurMinatId !== undefined && !tersedia.has(jalurMinatId);
+  return { jalur_minat_id: tersembunyi ? null : jalurMinatId ?? null, jalur_belum_tersedia: tersembunyi };
+}
+
+function bentukPilihan(p, tersedia) {
   return {
     id: p.id,
-    jalur_minat_id: p.jalur_minat_id,
+    ...samarkanJalur(p.jalur_minat_id, tersedia),
     status: p.status,
     mulai_pada: keIso(p.mulai_pada),
     berakhir_pada: keIso(p.berakhir_pada),
@@ -56,7 +72,8 @@ async function pastikanJalurTersedia(jalurMinatId) {
 
 /** Semua babak milik akun, lama ke baru. Ini juga riwayat jalurnya. */
 async function daftarPilihan(penggunaId) {
-  return (await pilihanRepo.daftarMilikSendiri(penggunaId)).map(bentukPilihan);
+  const [pilihan, tersedia] = await Promise.all([pilihanRepo.daftarMilikSendiri(penggunaId), idJalurTersedia()]);
+  return pilihan.map((p) => bentukPilihan(p, tersedia));
 }
 
 /**
@@ -71,9 +88,14 @@ async function pilih(penggunaId, { jalur_minat_id: jalurMinatId }) {
   const id = buatUuid();
   const dibuat = await pilihanRepo.buat({ id, penggunaId, jalurMinatId, waktu: sekarangUntukDb() });
   if (!dibuat) throw new GalatApi('JALUR_SUDAH_DIPILIH', 'Jalur ini sudah kamu pilih.', { jalur_minat_id: 'sudah dipilih' });
-  return bentukPilihan(await pilihanRepo.ambilMilikSendiri(penggunaId, id));
+  return bentukPilihan(await pilihanRepo.ambilMilikSendiri(penggunaId, id), await idJalurTersedia());
 }
 
+/**
+ * Menjeda, menyelesaikan, atau meninggalkan satu babak. Tidak memeriksa status jalurnya: siswa
+ * selalu boleh mengakhiri pilihannya sendiri, juga bila jalurnya kini draf (LANJUT_026).
+ * Pemiliknya diperiksa di SQL.
+ */
 async function akhiri(penggunaId, id, { status }) {
   const ada = await pilihanRepo.ambilMilikSendiri(penggunaId, id);
   if (!ada) throw new GalatApi('TIDAK_DITEMUKAN', 'Pilihan jalur tidak ditemukan.');
@@ -81,7 +103,7 @@ async function akhiri(penggunaId, id, { status }) {
   if (!berhasil) {
     throw new GalatApi('PILIHAN_SUDAH_BERAKHIR', 'Pilihan ini sudah tidak aktif. Pilih jalurnya lagi untuk memulai babak baru.');
   }
-  return bentukPilihan(await pilihanRepo.ambilMilikSendiri(penggunaId, id));
+  return bentukPilihan(await pilihanRepo.ambilMilikSendiri(penggunaId, id), await idJalurTersedia());
 }
 
-module.exports = { pastikanBoleh, pastikanJalurTersedia, daftarJalur, daftarPilihan, pilih, akhiri, bentukJalur };
+module.exports = { pastikanBoleh, pastikanJalurTersedia, daftarJalur, daftarPilihan, pilih, akhiri, bentukJalur, idJalurTersedia, samarkanJalur };

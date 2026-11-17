@@ -272,8 +272,8 @@ test('Profil disusun dari jawaban siswa dan data akunnya, terhubung ke jalur dan
   await refleksi(a, PROFESI, { ketertarikan: 'belum_yakin' });
   const p = await perbaruiProfil(a);
 
-  assert.deepEqual(p.tertarik, [{ kartu_discover_id: BIDANG.id, judul: BIDANG.judul, jenis: 'bidang', alasan: 'Aku suka membantu orang.' }]);
-  assert.deepEqual(p.belum_yakin, [{ kartu_discover_id: PROFESI.id, judul: PROFESI.judul, jenis: 'profesi' }]);
+  assert.deepEqual(p.tertarik, [{ kartu_discover_id: BIDANG.id, judul: BIDANG.judul, jenis: 'bidang', yang_menarik: 'Aku suka membantu orang.', yang_kurang_menarik: null }]);
+  assert.deepEqual(p.belum_yakin, [{ kartu_discover_id: PROFESI.id, judul: PROFESI.judul, jenis: 'profesi', yang_menarik: null, yang_kurang_menarik: null }]);
   assert.deepEqual(p.minat_rumpun, ['Kesehatan']);
   assert.deepEqual(p.mapel_pilihan, [{ id: mapel.id, nama: mapel.nama }]);
   assert.deepEqual(p.tujuan, [{ id: idTujuan, judul: 'Masuk prodi keperawatan' }]);
@@ -296,8 +296,11 @@ test('Profil hanya memuat yang siswa tulis dan pilih: tanpa label kepribadian, k
   const p = await perbaruiProfil(a, { catatan: tulisan.catatan });
 
   // Medan tetap, tidak ada medan tambahan.
-  assert.deepEqual(Object.keys(p).sort(), ['belum_yakin', 'catatan', 'dibuat_pada', 'diubah_dari_id', 'id', 'jalur', 'kurang_tertarik', 'mapel_pilihan', 'minat_rumpun', 'refleksi_disembunyikan', 'status', 'tertarik', 'tujuan']);
-  for (const b of [...p.tertarik, ...p.kurang_tertarik]) assert.deepEqual(Object.keys(b).sort(), ['alasan', 'jenis', 'judul', 'kartu_discover_id']);
+  // LANJUT_026: ditambah `versi_ke` (nomor dari rantai versi), dan setiap kartu membawa kedua isian.
+  assert.deepEqual(Object.keys(p).sort(), ['belum_yakin', 'catatan', 'dibuat_pada', 'diubah_dari_id', 'id', 'jalur', 'kurang_tertarik', 'mapel_pilihan', 'minat_rumpun', 'refleksi_disembunyikan', 'status', 'tertarik', 'tujuan', 'versi_ke']);
+  for (const b of [...p.tertarik, ...p.belum_yakin, ...p.kurang_tertarik]) {
+    assert.deepEqual(Object.keys(b).sort(), ['jenis', 'judul', 'kartu_discover_id', 'yang_kurang_menarik', 'yang_menarik']);
+  }
 
   // Setiap teks di profil berasal dari siswa, dari kartu, atau dari data akunnya.
   const boleh = new Set([...Object.values(tulisan), USAHA.judul, BIDANG.judul, USAHA.id, BIDANG.id, 'usaha', 'bidang', 'Teknik', 'aktif', p.id]);
@@ -314,6 +317,22 @@ test('Profil hanya memuat yang siswa tulis dan pilih: tanpa label kepribadian, k
   const isi = typeof baris.isi === 'string' ? JSON.parse(baris.isi) : baris.isi;
   assert.deepEqual(Object.keys(isi).sort(), ['jalur_minat_id', 'mapel_pilihan', 'minat_rumpun', 'refleksi', 'tujuan']);
   assert.doesNotMatch(JSON.stringify(isi), KATA_LABEL);
+});
+
+test('LANJUT_026: profil memuat kedua isian siswa di setiap pilihan, juga "Belum yakin"; isian kosong tetap kosong', async () => {
+  const a = await akun();
+  const t = { usahaM: 'Aku senang memasak.', usahaK: 'Aku belum suka menghitung uang.', profesiM: 'Aku suka menjelaskan.', profesiK: 'Aku belum tahu apakah aku sabar.', bidangK: 'Aku takut melihat darah.' };
+  await refleksi(a, USAHA, { ketertarikan: 'tertarik', yang_menarik: t.usahaM, yang_kurang_menarik: t.usahaK });
+  await refleksi(a, PROFESI, { ketertarikan: 'belum_yakin', yang_menarik: t.profesiM, yang_kurang_menarik: t.profesiK });
+  await refleksi(a, BIDANG, { ketertarikan: 'tidak_tertarik', yang_kurang_menarik: t.bidangK });
+  const p = await perbaruiProfil(a);
+  const butir = (k, m, kr) => ({ kartu_discover_id: k.id, judul: k.judul, jenis: k.jenis, yang_menarik: m, yang_kurang_menarik: kr });
+  assert.deepEqual(p.tertarik, [butir(USAHA, t.usahaM, t.usahaK)], 'tertarik: kedua isian');
+  assert.deepEqual(p.belum_yakin, [butir(PROFESI, t.profesiM, t.profesiK)], 'belum yakin: kedua isian, tanpa kutipan karangan');
+  assert.deepEqual(p.kurang_tertarik, [butir(BIDANG, null, t.bidangK)], 'isian kosong tetap null, tidak diganti teks lain');
+  // Riwayat membawa bentuk yang sama.
+  const [v] = (await panggil('GET', '/discover/profil/riwayat', a.token)).json.data;
+  assert.deepEqual([v.tertarik, v.belum_yakin, v.kurang_tertarik], [p.tertarik, p.belum_yakin, p.kurang_tertarik]);
 });
 
 test('Refleksi pada kartu yang belum disetujui tersimpan, tetapi judul kartunya tidak pernah terkirim', async () => {

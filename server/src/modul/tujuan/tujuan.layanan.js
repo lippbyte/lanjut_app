@@ -14,7 +14,7 @@ const pilihanRepo = require('../jalur-minat/pengguna-jalur-minat.repo');
 const butirRepo = require('../butir-bukti/butir-bukti.repo');
 const penggunaRepo = require('../pengguna/pengguna.repo');
 const kontenRepo = require('../konten/konten.repo');
-const { pastikanJalurTersedia } = require('../jalur-minat/jalur-minat.layanan');
+const { pastikanJalurTersedia, idJalurTersedia, samarkanJalur } = require('../jalur-minat/jalur-minat.layanan');
 
 const tujuanTidakAda = () => new GalatApi('TIDAK_DITEMUKAN', 'Tujuan tidak ditemukan.');
 const bukanTerkini = () =>
@@ -120,10 +120,15 @@ async function akhiri(penggunaId, id, { status }) {
   return bentukTujuan(await tujuanRepo.ambilMilikSendiri(penggunaId, id));
 }
 
+/**
+ * Semua versi satu tujuan, lama ke baru. `versi_ke` (LANJUT_026) dihitung dari urutan rantai
+ * `diubah_dari_id`, bukan dari waktu, jadi dua versi pada detik yang sama tetap terbedakan dan
+ * nomornya tidak berubah antarpanggilan. Tidak ada kolom baru.
+ */
 async function riwayat(penggunaId, id) {
   const semua = await tujuanRepo.daftarMilikSendiri(penggunaId);
   if (!semua.some((t) => t.id === id)) throw tujuanTidakAda();
-  return rantaiVersi(semua, id).map(bentukTujuan);
+  return rantaiVersi(semua, id).map((t, i) => ({ ...bentukTujuan(t), versi_ke: i + 1 }));
 }
 
 /** Menautkan butir bukti milik sendiri ke jalur dan/atau tujuan milik sendiri. */
@@ -142,24 +147,30 @@ async function tautkanBukti(penggunaId, butirId, data) {
   return { id: b.id, jalur_minat_id: b.jalur_minat_id, tujuan_id: b.tujuan_id };
 }
 
-/** Peristiwa jalur dan tujuan, lama ke baru. Hanya membaca data akun ini. */
+/**
+ * Peristiwa jalur dan tujuan, lama ke baru. Hanya membaca data akun ini. Jalur yang kini draf atau
+ * nonaktif disamarkan (`jalur_minat_id: null`, `jalur_belum_tersedia: true`), sama dengan daftar
+ * pilihan jalur (LANJUT_026, K37).
+ */
 async function perjalanan(penggunaId) {
-  const [pilihan, semuaTujuan] = await Promise.all([
+  const [pilihan, semuaTujuan, tersedia] = await Promise.all([
     pilihanRepo.daftarMilikSendiri(penggunaId),
     tujuanRepo.daftarMilikSendiri(penggunaId),
+    idJalurTersedia(),
   ]);
   const peristiwa = [];
   for (const p of pilihan) {
-    peristiwa.push({ jenis: 'jalur_dipilih', pada: keIso(p.mulai_pada), jalur_minat_id: p.jalur_minat_id, pilihan_id: p.id });
+    const jalur = samarkanJalur(p.jalur_minat_id, tersedia);
+    peristiwa.push({ jenis: 'jalur_dipilih', pada: keIso(p.mulai_pada), ...jalur, pilihan_id: p.id });
     if (p.status !== 'aktif') {
-      peristiwa.push({ jenis: `jalur_${p.status}`, pada: keIso(p.berakhir_pada ?? p.diubah_pada), jalur_minat_id: p.jalur_minat_id, pilihan_id: p.id });
+      peristiwa.push({ jenis: `jalur_${p.status}`, pada: keIso(p.berakhir_pada ?? p.diubah_pada), ...jalur, pilihan_id: p.id });
     }
   }
   // Per rantai versi, supaya versi baru selalu sesudah induknya walau dibuat pada detik yang sama.
   const perId = new Set(semuaTujuan.map((t) => t.id));
   const akar = semuaTujuan.filter((t) => !t.diubah_dari_id || !perId.has(t.diubah_dari_id));
   for (const t of akar.flatMap((a) => rantaiVersi(semuaTujuan, a.id))) {
-    const dasar = { jalur_minat_id: t.jalur_minat_id, tujuan_id: t.id, judul: t.judul };
+    const dasar = { ...samarkanJalur(t.jalur_minat_id, tersedia), tujuan_id: t.id, judul: t.judul };
     peristiwa.push({ jenis: t.diubah_dari_id ? 'tujuan_diperbarui' : 'tujuan_dibuat', pada: keIso(t.dibuat_pada), ...dasar });
     if (t.status === 'tercapai' || t.status === 'ditinggalkan') {
       peristiwa.push({ jenis: `tujuan_${t.status}`, pada: keIso(t.diubah_pada), ...dasar });

@@ -271,6 +271,10 @@ Untuk lingkungan dev. Teks layar dan teks jalur masih draf (`docs/draf-teks-jalu
 
 **Peristiwa perjalanan.** `jalur_dipilih`, `jalur_dijeda`, `jalur_selesai`, `jalur_ditinggalkan`, `tujuan_dibuat`, `tujuan_diperbarui`, `tujuan_tercapai`, `tujuan_ditinggalkan`. Versi baru selalu sesudah induknya, walau dibuat pada detik yang sama.
 
+**Jalur yang kembali draf (LANJUT_026).** Babak di `GET`, `POST`, dan `PATCH /jalur-minat/saya`, serta peristiwa di `GET /tujuan/perjalanan`, membawa `jalur_belum_tersedia` (boolean). Bila jalurnya kini draf, nonaktif, atau tidak ada, `jalur_minat_id` dikirim `null` dan `jalur_belum_tersedia` bernilai `true`: babaknya tetap milik siswa dan tetap dikirim, tetapi id, nama, dan deskripsi jalur itu tidak (K37). Babak itu tetap bisa diakhiri dengan `PATCH /saya/:id`; memilih jalur itu lagi tetap 400 `JALUR_BELUM_TERSEDIA`. Ekspor data tidak berubah dan memuat id aslinya, karena ekspor adalah salinan data milik siswa. **Belum disamarkan:** `jalur_minat_id` pada tujuan (`GET /tujuan`, riwayat) dan pada butir Portofolio tetap dikirim seperti sebelumnya. Itu id, bukan nama atau teks, dan rute-rute ini tidak dipakai APK 1.0.0.
+
+**Nomor versi (LANJUT_026).** Setiap versi di `GET /:id/riwayat` membawa `versi_ke`, mulai dari 1, dihitung dari rantai `diubah_dari_id`, bukan dari waktu. Tidak ada kolom baru.
+
 **Ekspor dan hapus akun.** Tidak berubah: ekspor sudah memuat semua baris `pengguna_jalur_minat` dan `tujuan`, termasuk babak yang berakhir dan versi lama, dan hapus akun menghapus keduanya lewat `ON DELETE CASCADE`.
 
 ## 6. Discover dan Profil Eksplorasi (LANJUT_024)
@@ -299,6 +303,8 @@ Untuk lingkungan dev. Isi kartu dan teks layar masih draf (`docs/draf-teks-disco
 | `GET /profil/riwayat` | | Semua versi, lama ke baru |
 
 **Profil: aturan, bukan AI.** `isi` hanya berisi salinan data siswa sendiri: `refleksi`, `minat_rumpun`, `mapel_pilihan`, `jalur_minat_id` (jalur aktif), dan `tujuan` (`id` dan `judul` tujuan aktif). Tidak ada skor, kategori, atau label kepribadian, kemampuan, atau sifat. Saat dikirim, judul kartu hanya muncul untuk kartu yang disetujui; refleksi pada kartu lain hanya dihitung (`refleksi_disembunyikan`). Nama jalur hanya untuk jalur yang disetujui (K37). Modul ini tidak membuka koneksi keluar dan tidak memanggil AI atau mesin pencari.
+
+**Bentuk profil yang dikirim (LANJUT_026).** Setiap butir di `tertarik`, `belum_yakin`, dan `kurang_tertarik` membawa `kartu_discover_id`, `judul`, `jenis`, `yang_menarik`, dan `yang_kurang_menarik`. Kedua isian dikirim apa adanya, apa pun pilihannya; isian kosong `null`. Medan `alasan` (satu isian saja) tidak ada lagi. Setiap versi juga membawa `versi_ke`, mulai dari 1, dihitung dari rantai `diubah_dari_id`. Tidak ada kolom baru, dan `isi` yang tersimpan tidak berubah bentuk.
 
 **Ekspor dan hapus akun.** Ekspor memuat `refleksi_discover` dan semua versi `profil_eksplorasi`. Hapus akun menghapus keduanya lewat `ON DELETE CASCADE`.
 

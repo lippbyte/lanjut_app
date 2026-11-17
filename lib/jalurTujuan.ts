@@ -12,7 +12,8 @@
  * kelas 12 (LANJUT_074).
  */
 
-import type { JalurMinat, PeristiwaPerjalanan, PilihanJalur, StatusPilihanJalur, StatusTujuan, Tujuan } from '../api/types';
+import type { JalurMinat, PeristiwaPerjalanan, PilihanJalur, StatusPilihanJalur, StatusTujuan, Tujuan, VersiTujuan } from '../api/types';
+import { formatWaktuSesi } from './latihan';
 
 /** Sama dengan server/src/modul/tujuan/tujuan.skema.js. */
 export const BATAS_TUJUAN = { judul: 200, uraian: 2000 } as const;
@@ -30,6 +31,10 @@ export const TEKS_JALUR_TUJUAN = {
   pilihLagi: 'Pilih lagi',
   jeda: 'Jeda dulu',
   sedangDijalani: 'Sedang kamu jalani',
+  // LANJUT_026: pilihan siswa yang jalurnya kini draf atau nonaktif. Namanya tidak terkirim (K37).
+  jalurTersembunyi: 'Jalur yang kamu pilih (belum tersedia)',
+  jalurTersembunyiTeks: 'Jalur ini sedang disiapkan. Kamu tetap bisa menjedanya.',
+  sisipanBelumTersedia: '(belum tersedia)',
 
   bagianTujuan: 'Tujuanmu',
   tambahTujuan: 'Tambah tujuan',
@@ -41,7 +46,7 @@ export const TEKS_JALUR_TUJUAN = {
   tandaiTercapai: 'Tandai tercapai',
   lihatRiwayat: 'Lihat perubahan',
   tutupRiwayat: 'Tutup perubahan',
-  sebelumnya: 'Sebelumnya',
+  versiKe: 'Versi ke-',
   targetPrefix: 'Target',
 
   bagianPerjalanan: 'Perjalananmu',
@@ -118,11 +123,11 @@ export function pesanGalatJalurTujuan(kode: string | undefined): string {
 }
 
 /**
- * Kalimat perjalanan. DRAF, belum disetujui. Nama jalur hanya ada bila jalurnya terkirim (K37);
- * tanpa nama, kalimatnya tetap utuh ("Memilih jalur").
+ * Kalimat perjalanan. DRAF, belum disetujui. Nama jalur hanya ada bila jalurnya terkirim (K37).
+ * Jalur yang kini draf atau nonaktif ditulis netral (LANJUT_026): "Memilih jalur (belum tersedia)".
  */
 export function teksPeristiwa(p: PeristiwaPerjalanan, namaJalur: (id: string | null) => string): string {
-  const nama = namaJalur(p.jalur_minat_id);
+  const nama = p.jalur_belum_tersedia ? TEKS_JALUR_TUJUAN.sisipanBelumTersedia : namaJalur(p.jalur_minat_id);
   const jalur = nama ? ` ${nama}` : '';
   const judul = `"${p.judul ?? ''}"`;
   switch (p.jenis) {
@@ -165,9 +170,23 @@ export type BarisJalur = { jalur: JalurMinat; aktif: PilihanJalur | null; jumlah
 /** Setiap jalur bersama babak aktifnya (bila ada) dan jumlah babak yang pernah dijalani. */
 export function susunJalur(jalur: readonly JalurMinat[], pilihan: readonly PilihanJalur[]): BarisJalur[] {
   return jalur.map((j) => {
-    const milik = pilihan.filter((p) => p.jalur_minat_id === j.id);
+    const milik = pilihan.filter((p) => !p.jalur_belum_tersedia && p.jalur_minat_id === j.id);
     return { jalur: j, aktif: milik.find((p) => p.status === 'aktif') ?? null, jumlahBabak: milik.length };
   });
+}
+
+/**
+ * LANJUT_026: babak aktif yang jalurnya kini draf atau nonaktif. Tampil dengan label netral dan
+ * tombol jeda, tanpa tombol pilih lagi (memilih jalur draf tetap ditolak, K37).
+ */
+export function pilihanTersembunyiAktif(pilihan: readonly PilihanJalur[]): PilihanJalur[] {
+  return pilihan.filter((p) => p.jalur_belum_tersedia && p.status === 'aktif');
+}
+
+/** "Versi ke-1 (16 November 2026 pukul 14.05): <judul>" (LANJUT_026). DRAF. Jam menurut zona waktu perangkat. */
+export function teksVersiTujuan(t: Pick<VersiTujuan, 'versi_ke' | 'dibuat_pada' | 'judul'>): string {
+  const waktu = formatWaktuSesi(t.dibuat_pada);
+  return `${TEKS_JALUR_TUJUAN.versiKe}${t.versi_ke}${waktu ? ` (${waktu})` : ''}: ${t.judul}`;
 }
 
 function tanggalSah(nilai: string): boolean {
