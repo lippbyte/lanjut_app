@@ -13,6 +13,7 @@
     "migrasi-turun": "node src/db/turunkan-migrasi.js",
     "benih": "node src/db/benih/benih.js",
     "benih-dummy": "node tools/benih-dummy.js",
+    "benih-persetujuan-dummy": "node tools/benih-persetujuan-dummy.js",
     "verifikasi-konten": "node src/db/verifikasi/verifikasi-konten.js",
     "lembar-review": "node src/db/verifikasi/lembar-review.js",
     "lembar-review-teks": "node tools/lembar-review-teks.js",

@@ -81,8 +81,34 @@ Pakai bila uji di atas gagal. Pilih yang paling ringan.
 | Cara | Langkah | Akibat | Status |
 |---|---|---|---|
 | **A. Kembalikan gambar lama, skema dibiarkan** | Di Dokploy, deploy ulang commit sebelumnya | Tidak ada data hilang. Migrasi `030`–`033` hanya menambah, dan pelari migrasi lama mengabaikan baris yang berkasnya tidak ia punya. Tabel `033` (Discover) ikut dibiarkan: selama `DISCOVER_AKTIF` mati, isinya paling banyak kartu draf dari benih. Hapus akun tetap membersihkan refleksi dan profil eksplorasi lewat foreign key, tetapi ekspor di gambar lama tidak memuatnya | Terbukti dari kode dan uji lokal. **Belum terbukti** di Dokploy. Hanya aman bila 1.8 menunjukkan `029` sudah ada sebelum deploy |
-| **B. Turunkan migrasi** | **Sebelum** mengembalikan gambar lama, di kontainer API dan berurutan: `npm run migrasi-turun -- --ya 033_discover.sql`, lalu `032_berkas_tertunda_hapus.sql`, lalu `031_kode_hapus_akun.sql`, lalu `030_model_data_v2.sql`. Untuk mundur dari LANJUT_024 saja, cukup `033_discover.sql`. Sesudah itu baru cara A, ke commit sebelum migrasi yang diturunkan | `033` menghapus kartu Discover, semua refleksi, dan semua versi profil eksplorasi. Bila sudah ada isinya, cadangkan dulu: `docker exec <kontainer-db> sh -c 'exec mysqldump --single-transaction -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" kartu_discover refleksi_discover profil_eksplorasi' > cadangan-discover.sql`. `030` menghapus semua butir dan data foto; jalankan `npm run bersihkan-berkas` lebih dulu. Hanya migrasi terakhir yang bisa diturunkan | Terbukti lokal, termasuk penolakan urutan yang salah. Untuk `033` juga terbukti pada database berisi refleksi dan profil bertingkat versi, dan `032` baru bisa turun sesudahnya (`server/tests/migrasi-discover.test.js`). **Belum terbukti** di Dokploy, dan perintah cadangan Discover belum pernah dijalankan |
+| **B. Turunkan migrasi** | **Sebelum** mengembalikan gambar lama, di kontainer API dan berurutan: `npm run migrasi-turun -- --ya 033_discover.sql`, lalu `032_berkas_tertunda_hapus.sql`, lalu `031_kode_hapus_akun.sql`, lalu `030_model_data_v2.sql`. Untuk mundur dari LANJUT_024 saja, cukup `033_discover.sql`. Sesudah itu baru cara A, ke commit sebelum migrasi yang diturunkan | `033` menghapus kartu Discover, semua refleksi, dan semua versi profil eksplorasi. Bila sudah ada isinya, cadangkan dulu dan kembalikan sesudah naik lagi (lihat "Cadangan tiga tabel Discover" di bawah tabel ini). `030` menghapus semua butir dan data foto; jalankan `npm run bersihkan-berkas` lebih dulu. Hanya migrasi terakhir yang bisa diturunkan | Terbukti lokal, termasuk penolakan urutan yang salah. Untuk `033` juga terbukti pada database berisi refleksi dan profil bertingkat versi, dan `032` baru bisa turun sesudahnya (`server/tests/migrasi-discover.test.js`). Cadangan, turun, naik, dan pemulihan Discover dicoba di `lanjut_dev` (LANJUT_025). **Belum terbukti** di Dokploy |
 | **C. Pulihkan cadangan** | Hentikan API. `docker exec <kontainer-db> sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "DROP DATABASE \`$MYSQL_DATABASE\`; CREATE DATABASE \`$MYSQL_DATABASE\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"'`, lalu `docker exec -i <kontainer-db> sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < cadangan-sebelum-v2.sql`. Sesudah itu cara A | Semua data sesudah cadangan hilang. Akun yang dihapus sesudah cadangan kembali, dan harus dihapus lagi. Belum ada alat yang mencatat akun itu | Terbukti lokal. **Belum terbukti** di Dokploy |
+
+#### Cadangan tiga tabel Discover (untuk cara B)
+
+Jalankan di shell Linux server, bukan PowerShell: di PowerShell 5.1, `>` menulis berkas UTF-16 yang tidak bisa dibaca `mysql`.
+
+1. Cadangkan sebelum `033` diturunkan:
+   `docker exec <kontainer-db> sh -c 'exec mysqldump --single-transaction -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" kartu_discover refleksi_discover profil_eksplorasi' > cadangan-discover.sql`
+2. Sesudah `033` naik lagi (deploy menjalankan migrasi dan benih), kembalikan isinya:
+   `docker exec -i <kontainer-db> sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < cadangan-discover.sql`
+3. **Wajib sesudah langkah 2:** buang refleksi dan profil milik akun yang sudah tidak ada. Berkas cadangan mematikan pemeriksaan foreign key selama pemulihan, jadi data akun yang dihapus sesudah cadangan dibuat ikut kembali tanpa akunnya:
+   `docker exec <kontainer-db> sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "DELETE r FROM refleksi_discover r LEFT JOIN pengguna p ON p.id = r.pengguna_id WHERE p.id IS NULL; DELETE x FROM profil_eksplorasi x LEFT JOIN pengguna p ON p.id = x.pengguna_id WHERE p.id IS NULL;"'`
+4. Kartu Discover ikut kembali seperti saat dicadangkan. Jalankan `npm run benih -- --ya` di kontainer API supaya kartunya kembali mengikuti `server/data-konten/discover.json` saat ini.
+
+Dicoba di `lanjut_dev` (MySQL 8.0.46 di Docker, LANJUT_025, 16 Nov 2026):
+
+| Saat | `kartu_discover` | `refleksi_discover` | `profil_eksplorasi` | Tanpa akun (refleksi/profil) |
+|---|---|---|---|---|
+| Sebelum cadangan | 6 | 4 | 4 | 0/0 |
+| Cadangan dipulihkan ke basis data sementara | 6 | 4 | 4 | |
+| Satu akun dummy dihapus (2 refleksi, 2 versi profil) | 6 | 2 | 2 | 0/0 |
+| Sesudah `033` turun | tabel tidak ada | tabel tidak ada | tabel tidak ada | |
+| Sesudah migrasi dan benih | 6 | 0 | 0 | 0/0 |
+| Sesudah langkah 2 | 6 | 4 | 4 | **2/2** |
+| Sesudah langkah 3 | 6 | 2 | 2 | 0/0 |
+
+Sesudah langkah 2, isi ketiga tabel sama persis dengan sebelum cadangan (sidik isi dibandingkan). Sesudah langkah 3, isinya sama persis dengan keadaan sesudah akun itu dihapus. Langkah 3 dan 4 sebelumnya belum ada di dokumen ini. Semua ini hanya di Docker lokal: **tidak membuktikan apa pun tentang Dokploy**, termasuk nama kontainer dan variabel `MYSQL_ROOT_PASSWORD`/`MYSQL_DATABASE` di sana.
 
 **Jangan memulihkan tanpa membuang database dulu.** Uji lokal menunjukkan tabel `030`–`032` beserta isinya tertinggal, karena tidak ada di berkas cadangan. Tabel `033` akan tertinggal dengan cara yang sama bila cadangannya dibuat sebelum migrasi itu; ini belum diuji tersendiri.
 
@@ -113,6 +139,34 @@ Butuh `PORTOFOLIO_AKTIF=1` di server (bagian 4). Pakai akun uji.
 | 3.17 | Bila ada akun Google uji: hapus akun dengan kode email | Sama dengan 3.16 | |
 | 3.18 | Sesudah 3.16, cek `docker exec <kontainer-api> npm run bersihkan-berkas -- --cek` | `Tertunda: 0` | |
 | 3.19 | Lihat daftar izin aplikasi di Pengaturan HP | Kamera, dan penyimpanan sampai Android 12. Tidak ada mikrofon | |
+
+## 3a. Uji layar Jalur & Tujuan dan Discover di HP (dev saja)
+
+Bukan bagian dari APK pilot atau APK sekolah. Kedua fitur mati di semua profil `eas.json`, dan itu tidak diubah. Uji ini memakai server dev di komputer dan Expo Go, dengan data dummy. Hasil uji di peramban 360 px ada di `docs/periksa-layar-025/`, tetapi itu bukan bukti untuk HP.
+
+Persiapan di komputer, HP dan komputer di Wi-Fi yang sama:
+1. `server/.env` mengarah ke `lanjut_dev`, dengan `JALUR_TUJUAN_AKTIF=1` dan `DISCOVER_AKTIF=1`.
+2. Di folder `server`: `npm run benih-persetujuan-dummy`, lalu `npm start`. Satu jalur dan satu kartu bertanda `[DUMMY]` menjadi disetujui, hanya di `lanjut_dev`.
+3. Di folder aplikasi: `EXPO_PUBLIC_API_URL=http://<IP-komputer>:4000/api/v1 EXPO_PUBLIC_JALUR_TUJUAN=1 EXPO_PUBLIC_DISCOVER=1 npx expo start --go --lan`, lalu pindai kodenya dengan Expo Go.
+4. Masuk dengan akun dummy dari `npm run benih-dummy` (`docs/lingkungan-dev.md` bagian 4).
+
+| No | Langkah | Hasil yang diharapkan | Hasil |
+|---|---|---|---|
+| 3a.1 | Buka Beranda | Pintu Jalur & Tujuan dan Discover tampil, tanpa menutupi menu lain | |
+| 3a.2 | Dengan `uji_belum_memilih`, buka Jalur & Tujuan | Satu jalur `[DUMMY]`, belum ada tujuan dan perjalanan | |
+| 3a.3 | Pilih jalur itu | Lencana "Sedang kamu jalani" | |
+| 3a.4 | Tambah tujuan: isi judul, pilih jalur, cerita singkat, target `2027-06-30`, Simpan | Papan ketik tidak menutupi tombol Simpan, dan tujuan tampil di daftar | |
+| 3a.5 | Perbarui tujuan itu dengan judul lain, lalu Lihat perubahan | Judul baru tampil, versi lama tetap ada di bawahnya | |
+| 3a.6 | Jeda dulu, lalu Pilih lagi | Perjalanan mencatat pilih, jeda, dan pilih lagi | |
+| 3a.7 | Buka formulir tujuan, ketik sesuatu, tekan tombol kembali Android | Kembali tanpa menyimpan | |
+| 3a.8 | Buka Discover | Hanya kartu `[DUMMY]`, dengan "Sumber: [DUMMY – bukan sumber nyata]" | |
+| 3a.9 | Tulis refleksi: pilih Tertarik, tempel teks lebih dari 280 karakter di kedua isian, Simpan | Isian berhenti di 280 karakter. Kartu bertanda "Sudah kamu tulis" | |
+| 3a.10 | Buka profil eksplorasi, tempel catatan lebih dari 500 karakter, Susun profilku | Isian berhenti di 500. Profil hanya berisi tulisan dan pilihan akun ini | |
+| 3a.11 | Ubah catatan, Perbarui profilku, lalu Lihat versi sebelumnya | Versi lama tampil | |
+| 3a.12 | Perbesar ukuran huruf di Pengaturan HP, buka ketiga layar Discover dan Jalur & Tujuan | Teks tidak terpotong dan tombol tetap bisa diketuk | |
+| 3a.13 | Matikan Wi-Fi dan data, buka Discover, nyalakan lagi, Coba lagi | Pesan tidak bisa terhubung, lalu daftar tampil | |
+| 3a.14 | Masuk dengan akun dummy lain | Tidak melihat tujuan, refleksi, atau profil akun sebelumnya | |
+| 3a.15 | Di komputer: `npm run benih-persetujuan-dummy -- --cabut`, lalu buka lagi kedua layar | "Pilihan jalur belum tersedia." dan "Kartu belum tersedia." | |
 
 ## 4. Setelah deploy
 
