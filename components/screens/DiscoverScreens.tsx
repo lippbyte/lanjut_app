@@ -18,15 +18,15 @@ import {
   PILIHAN_KETERTARIKAN,
   TEKS_DISCOVER as T,
   badanRefleksi,
-  kalimatProfil,
+  blokProfil,
   keadaanData,
   periksaIsianRefleksi,
   pesanGalatDiscover,
   teksDisembunyikan,
+  teksVersi,
   type GalatIsianRefleksi,
   type KeadaanData,
 } from '../../lib/discover';
-import { formatTanggal } from '../../lib/linimasa';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import { Kartu, Kepala, Kosong, Lencana, Memuat, Peringatan, SeksiJudul, Tombol, gaya } from '../ui';
 import { DaftarOpsi, Field, Input, OpsiPil, PesanGalat } from './auth/AuthUI';
@@ -198,17 +198,31 @@ export function ProfilEksplorasiScreen() {
   );
 }
 
+/** Satu blok per kartu: kalimat pilihan, lalu kutipan isian siswa yang tidak kosong (LANJUT_026). */
+function BlokKartu({ profil }: { profil: ProfilEksplorasi }) {
+  return (
+    <>
+      {blokProfil(profil).map((b, i) => (
+        <View key={i} style={s.blok}>
+          <Text style={gaya.teksBody}>{b.kalimat}</Text>
+          {b.kutipan.map((k) => (
+            <View key={k.label} style={s.kutipan}>
+              <Text style={s.labelKutipan}>{k.label}</Text>
+              <Text style={gaya.teksBody}>{`"${k.teks}"`}</Text>
+            </View>
+          ))}
+        </View>
+      ))}
+    </>
+  );
+}
+
 function IsiProfil({ profil }: { profil: ProfilEksplorasi }) {
-  const kalimat = kalimatProfil(profil);
   const mapel = profil.mapel_pilihan.map((m) => m.nama ?? m.id);
   return (
     <View style={s.daftar}>
-      <Text style={s.keterangan}>{formatTanggal(profil.dibuat_pada)}</Text>
-      {kalimat.map((k, i) => (
-        <Text key={i} style={gaya.teksBody}>
-          {k}
-        </Text>
-      ))}
+      <Text style={s.keterangan}>{teksVersi(profil.versi_ke, profil.dibuat_pada)}</Text>
+      <BlokKartu profil={profil} />
       {profil.refleksi_disembunyikan > 0 ? <Text style={s.keterangan}>{teksDisembunyikan(profil.refleksi_disembunyikan)}</Text> : null}
       {profil.catatan ? <Text style={gaya.teksBody}>{`"${profil.catatan}"`}</Text> : null}
       {profil.minat_rumpun.length || mapel.length ? (
@@ -270,12 +284,8 @@ function Riwayat() {
       {buka
         ? lama.map((v) => (
             <Kartu key={v.id} varian="soft" style={s.kartu}>
-              <Text style={s.keterangan}>{`${T.versiPrefix} ${formatTanggal(v.dibuat_pada)}`}</Text>
-              {kalimatProfil(v).map((k, i) => (
-                <Text key={i} style={gaya.teksBody}>
-                  {k}
-                </Text>
-              ))}
+              <Text style={s.keterangan}>{teksVersi(v.versi_ke, v.dibuat_pada)}</Text>
+              <BlokKartu profil={v} />
               {v.catatan ? <Text style={gaya.teksBody}>{`"${v.catatan}"`}</Text> : null}
             </Kartu>
           ))
@@ -293,4 +303,7 @@ const s = StyleSheet.create({
   tautan: { ...teks.caption, fontFamily: font.semibold, color: color.blue600 },
   ditekan: { opacity: 0.85 },
   isian: { minHeight: 96, textAlignVertical: 'top' },
+  blok: { gap: spacing.s1 },
+  kutipan: { gap: 2, paddingLeft: spacing.s3, borderLeftWidth: 2, borderLeftColor: color.ink100 },
+  labelKutipan: { ...teks.caption, fontFamily: font.semibold, color: color.textMuted },
 });

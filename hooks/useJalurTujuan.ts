@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { type ApiError, apiFetch } from '../api/client';
-import type { DaftarTujuan, JalurMinat, PeristiwaPerjalanan, PilihanJalur, Tujuan } from '../api/types';
+import type { DaftarTujuan, JalurMinat, PeristiwaPerjalanan, PilihanJalur, Tujuan, VersiTujuan } from '../api/types';
 import type { BadanTujuan } from '../lib/jalurTujuan';
 import { useSesi } from '../providers/AuthProvider';
 
@@ -23,7 +23,7 @@ export const useDaftarJalur = () => useAmbil<JalurMinat[]>('jalur', '/jalur-mina
 export const usePilihanJalur = () => useAmbil<PilihanJalur[]>('pilihan', '/jalur-minat/saya');
 export const useDaftarTujuan = () => useAmbil<DaftarTujuan>('tujuan', '/tujuan');
 export const usePerjalanan = () => useAmbil<PeristiwaPerjalanan[]>('perjalanan', '/tujuan/perjalanan');
-export const useRiwayatTujuan = (id: string, aktif: boolean) => useAmbil<Tujuan[]>(`riwayat:${id}`, `/tujuan/${id}/riwayat`, aktif);
+export const useRiwayatTujuan = (id: string, aktif: boolean) => useAmbil<VersiTujuan[]>(`riwayat:${id}`, `/tujuan/${id}/riwayat`, aktif);
 
 /** Semua data fitur ini saling terkait (perjalanan memuat jalur dan tujuan), jadi disegarkan bersama. */
 function useUbah<V, H>(fn: (v: V, token: string) => Promise<H>) {

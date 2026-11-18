@@ -4,7 +4,7 @@
 
 Teks ini belum tampil ke siswa. Layarnya tidak ada di aplikasi sampai build dibuat dengan `EXPO_PUBLIC_JALUR_TUJUAN=1`, dan rutenya tidak ada di server sampai `JALUR_TUJUAN_AKTIF=1`. Keduanya bawaannya mati, dan tidak ada profil `eas.json` yang menyalakannya. Fitur ini baru untuk lingkungan dev.
 
-**Kolom "Terlihat di layar (LANJUT_025)"**: `ya` berarti teks itu tampil saat layar dicoba di peramban 360 px, di `lanjut_dev`, dengan data dummy (`docs/periksa-layar-025/`). `belum` berarti tidak muncul selama uji itu, misalnya pesan galat atau keadaan fitur mati. Kolom ini **bukan tanda disetujui**: semua teks tetap draf. Belum ada yang dicoba di HP.
+**Kolom "Terlihat di layar (LANJUT_025)"**: `ya` berarti teks itu tampil saat layar dicoba di peramban 360 px, di `lanjut_dev`, dengan data dummy (`docs/periksa-layar-025/`). `belum` berarti tidak muncul selama uji itu, misalnya pesan galat atau keadaan fitur mati. Kolom ini **bukan tanda disetujui**: semua teks tetap draf. Belum ada yang dicoba di HP. `ya (LANJUT_026)` berarti teks baru atau yang berubah di LANJUT_026, dan tampil di pemeriksaan ulang `docs/periksa-layar-026/`, juga bukan tanda disetujui.
 
 `docs/persetujuan-teks-rilis.json` sengaja tidak diubah, karena fitur ini belum masuk rilis. Setelah teksnya disetujui, teksnya dipindahkan ke `docs/salinan-teks-lanjut.md` di repo induk dan dicatat di berkas persetujuan rilis.
 
@@ -16,6 +16,7 @@ Nama fitur sengaja "Jalur & Tujuan", bukan "Jalur Saya", karena "Jalur Saya" sud
 
 1. **Nama dan deskripsi tiga jalur** di `server/data-konten/jalur-minat.json` (`status_teks: draf`). Isi berkas itu sendiri menulis "Jangan ditampilkan ke siswa sebelum disetujui".
 2. **Semua teks layar di bawah.**
+3. **Teks baru LANJUT_026** (DRAF): kartu "Jalur yang kamu pilih (belum tersedia)" dengan keterangan "Jalur ini sedang disiapkan. Kamu tetap bisa menjedanya.", sisipan "(belum tersedia)" di kalimat perjalanan, dan "Versi ke-<nomor> (<tanggal> pukul <jam>): <judul tujuan>" di riwayat tujuan.
 
 **Sudah diputuskan (K37, 13 Nov 2026):** server hanya mengirim jalur yang teksnya `disetujui`. Selama ketiga jalur masih draf, daftar jalur kosong, dan layar menampilkan "Pilihan jalur belum tersedia". Memilih jalur lewat API juga hanya menerima jalur yang disetujui (K37 lanjutan): jalur draf, nonaktif, atau yang tidak ada dijawab "Jalur belum tersedia". Menulis tujuan tetap bisa. Nama fitur "Jalur & Tujuan" juga sudah diputuskan (K36).
 
@@ -45,6 +46,9 @@ Status jalur di tabel `LABEL_STATUS_PILIHAN` di bawah tidak dipakai layar mana p
 | `pilihLagi` | Pilih lagi | ya |
 | `jeda` | Jeda dulu | ya |
 | `sedangDijalani` | Sedang kamu jalani | ya |
+| `jalurTersembunyi` | Jalur yang kamu pilih (belum tersedia) | ya (LANJUT_026) |
+| `jalurTersembunyiTeks` | Jalur ini sedang disiapkan. Kamu tetap bisa menjedanya. | ya (LANJUT_026) |
+| `sisipanBelumTersedia` | (belum tersedia) | ya (LANJUT_026) |
 | `bagianTujuan` | Tujuanmu | ya |
 | `tambahTujuan` | Tambah tujuan | ya |
 | `kosongTujuan` | Belum ada tujuan. Tulis satu hal yang ingin kamu capai. | ya |
@@ -55,7 +59,7 @@ Status jalur di tabel `LABEL_STATUS_PILIHAN` di bawah tidak dipakai layar mana p
 | `tandaiTercapai` | Tandai tercapai | ya |
 | `lihatRiwayat` | Lihat perubahan | ya |
 | `tutupRiwayat` | Tutup perubahan | ya |
-| `sebelumnya` | Sebelumnya | ya |
+| `versiKe` | Versi ke- | ya (LANJUT_026) |
 | `targetPrefix` | Target | ya |
 | `bagianPerjalanan` | Perjalananmu | ya |
 | `kosongPerjalanan` | Pilihan jalur dan tujuanmu akan tercatat di sini. | ya |
@@ -138,6 +142,17 @@ Status jalur di tabel `LABEL_STATUS_PILIHAN` di bawah tidak dipakai layar mana p
 | `tujuan_diperbarui` | Memperbarui tujuan menjadi "<judul tujuan>" | ya |
 | `tujuan_tercapai` | Mencapai tujuan "<judul tujuan>" | belum |
 | `tujuan_ditinggalkan` | Meninggalkan tujuan "<judul tujuan>" | belum |
+| jalur yang kini draf atau nonaktif (LANJUT_026) | Memilih jalur (belum tersedia), Menjeda jalur (belum tersedia), dan seterusnya | ya (LANJUT_026) |
+
+Sebelum LANJUT_026, peristiwa pada jalur yang kembali draf tertulis "Memilih jalur" tanpa nama. Sekarang server menandainya `jalur_belum_tersedia` tanpa id jalurnya, dan kalimatnya memakai sisipan netral yang sama dengan kartu "Jalur yang kamu pilih (belum tersedia)".
+
+## Riwayat tujuan (`teksVersiTujuan`, LANJUT_026)
+
+| Tempat | Teks | Terlihat di layar (LANJUT_025) |
+|---|---|---|
+| satu versi lama di "Lihat perubahan" | Versi ke-<nomor> (<tanggal> pukul <jam>): <judul tujuan> | ya (LANJUT_026) |
+
+Menggantikan "Sebelumnya (<tanggal>): <judul tujuan>" (`sebelumnya`, tidak dipakai lagi). Nomor versi dihitung server dari rantai versi yang tersimpan, jam mengikuti zona waktu perangkat.
 
 ## Kartu di Beranda (`KARTU_JALUR_TUJUAN`)
 

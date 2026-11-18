@@ -4,7 +4,7 @@
 
 Teks ini belum tampil ke siswa. Layarnya tidak ada di aplikasi sampai build dibuat dengan `EXPO_PUBLIC_DISCOVER=1`, dan rutenya tidak ada di server sampai `DISCOVER_AKTIF=1`. Keduanya bawaannya mati, dan tidak ada profil `eas.json` yang menyalakannya. Fitur ini baru untuk lingkungan dev.
 
-**Kolom "Terlihat di layar (LANJUT_025)"**: `ya` berarti teks itu tampil saat layar dicoba di peramban 360 px, di `lanjut_dev`, dengan data dummy (`docs/periksa-layar-025/`). `belum` berarti tidak muncul selama uji itu, misalnya pesan galat atau keadaan fitur mati. Kolom ini **bukan tanda disetujui**: semua teks tetap draf. Belum ada yang dicoba di HP.
+**Kolom "Terlihat di layar (LANJUT_025)"**: `ya` berarti teks itu tampil saat layar dicoba di peramban 360 px, di `lanjut_dev`, dengan data dummy (`docs/periksa-layar-025/`). `belum` berarti tidak muncul selama uji itu, misalnya pesan galat atau keadaan fitur mati. Kolom ini **bukan tanda disetujui**: semua teks tetap draf. Belum ada yang dicoba di HP. `ya (LANJUT_026)` berarti teks baru atau yang berubah di LANJUT_026, dan tampil di pemeriksaan ulang `docs/periksa-layar-026/`, juga bukan tanda disetujui.
 
 `docs/persetujuan-teks-rilis.json` sengaja tidak diubah, karena fitur ini belum masuk rilis. Teks kebijakan, surat, dan landing tidak diubah.
 
@@ -16,6 +16,7 @@ Sumber teks: `lib/discover.ts`, `lib/beranda.ts`, `components/layout/AppShell.ts
 2. **Batas panjang refleksi**: 280 karakter untuk "apa yang menarik" dan 280 untuk "apa yang kurang menarik". Catatan profil 500 karakter. Ini pilihan agen.
 3. **Kalimat privasi**: "Refleksi dan profilmu tersimpan di akunmu. Keduanya ikut saat kamu mengunduh data akunmu, dan ikut terhapus saat akunmu dihapus." Kalimat ini sengaja tidak menjanjikan "hanya kamu yang bisa melihat", karena pengelola layanan secara teknis bisa mengakses basis data (K29).
 4. **Semua teks layar di bawah.**
+5. **Teks baru LANJUT_026** (DRAF): susunan isi profil per kartu dengan kedua isian, label "Yang menarik buatmu" dan "Yang kurang menarik buatmu", serta "Versi ke-<nomor> · <tanggal> pukul <jam>". Lihat bagian "Isi profil per kartu".
 
 ## Isi kartu contoh (`server/data-konten/discover.json`)
 
@@ -68,7 +69,9 @@ Pada LANJUT_025, isi keenam kartu ini **belum** ditampilkan. Layar diperiksa den
 | `labelTujuan` | Tujuan | ya |
 | `lihatRiwayat` | Lihat versi sebelumnya | ya |
 | `tutupRiwayat` | Tutup versi sebelumnya | ya |
-| `versiPrefix` | Versi | ya |
+| `versiKe` | Versi ke- | ya (LANJUT_026) |
+| `labelProfilMenarik` | Yang menarik buatmu | ya (LANJUT_026) |
+| `labelProfilKurangMenarik` | Yang kurang menarik buatmu | ya (LANJUT_026) |
 | `fiturMatiJudul` | Fitur ini belum tersedia. | belum |
 | `fiturMatiTeks` | Discover sedang disiapkan. Coba buka lagi nanti. | belum |
 | `perluKebijakanJudul` | Terima kebijakan privasi dulu. | belum |
@@ -119,18 +122,22 @@ Pada LANJUT_025, isi keenam kartu ini **belum** ditampilkan. Layar diperiksa den
 | `JARINGAN` | Tidak bisa terhubung ke server. Periksa sambunganmu, lalu coba lagi. | belum |
 | lainnya | Belum bisa disimpan. Coba lagi sebentar lagi. | belum |
 
-## Kalimat profil (`kalimatProfil`, `teksDisembunyikan`)
+## Isi profil per kartu (`blokProfil`, `teksDisembunyikan`, `teksVersi`)
 
-Setiap kalimat hanya mengulang judul kartu dan tulisan siswa sendiri.
+**Diubah di LANJUT_026, masih DRAF, belum disetujui.** Sebelumnya hanya satu isian yang dikutip ("… karena kamu menulis: …"), sehingga isian "apa yang kurang menarik" tidak tampil bila siswa memilih "Tertarik", dan untuk "Belum yakin" tidak ada yang dikutip. Sekarang setiap kartu punya satu kalimat yang hanya menyebut pilihan dan judul kartu, lalu **kedua isian siswa dikutip apa adanya**, masing-masing dengan labelnya, apa pun pilihannya. Isian kosong tidak ditampilkan dan tidak diganti teks lain. Kata "karena" dibuang, supaya tidak ada kalimat yang menafsirkan hubungan antara pilihan dan tulisan siswa.
 
 | Keadaan | Teks | Terlihat di layar (LANJUT_025) |
 |---|---|---|
-| tertarik, dengan tulisan | Kamu tertarik ke <judul kartu> karena kamu menulis: "<tulisan siswa>" | ya |
-| tertarik, tanpa tulisan | Kamu tertarik ke <judul kartu>. | belum |
-| belum yakin | Kamu masih memikirkan <judul kartu>. | belum |
-| kurang tertarik, dengan tulisan | Kamu kurang tertarik ke <judul kartu> karena kamu menulis: "<tulisan siswa>" | belum |
-| kurang tertarik, tanpa tulisan | Kamu kurang tertarik ke <judul kartu>. | belum |
+| tertarik | Kamu tertarik ke <judul kartu>. | ya (LANJUT_026) |
+| belum yakin | Kamu masih memikirkan <judul kartu>. | ya (LANJUT_026) |
+| kurang tertarik | Kamu kurang tertarik ke <judul kartu>. | ya (LANJUT_026) |
+| label kutipan isian pertama (`labelProfilMenarik`), bila tidak kosong | Yang menarik buatmu | ya (LANJUT_026) |
+| label kutipan isian kedua (`labelProfilKurangMenarik`), bila tidak kosong | Yang kurang menarik buatmu | ya (LANJUT_026) |
+| kutipan | "<tulisan siswa apa adanya>" | ya |
+| nomor dan waktu versi (`versiKe`, `teksVersi`) | Versi ke-<nomor> · <tanggal> pukul <jam> | ya (LANJUT_026) |
 | refleksi pada kartu yang belum disetujui | <jumlah> refleksi pada kartu yang sedang disiapkan belum ditampilkan. | ya |
+
+Tidak dipakai lagi sejak LANJUT_026: "Kamu tertarik ke <judul kartu> karena kamu menulis: "<tulisan siswa>"", "Kamu kurang tertarik ke <judul kartu> karena kamu menulis: "<tulisan siswa>"", dan awalan versi "Versi <tanggal>" (`versiPrefix`). Nomor versi dihitung dari rantai versi yang tersimpan, jam mengikuti zona waktu perangkat.
 
 ## Kartu di Beranda (`KARTU_DISCOVER`)
 

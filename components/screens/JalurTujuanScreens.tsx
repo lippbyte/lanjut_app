@@ -24,8 +24,10 @@ import {
   keadaanData,
   periksaIsianTujuan,
   pesanGalatJalurTujuan,
+  pilihanTersembunyiAktif,
   susunJalur,
   teksPeristiwa,
+  teksVersiTujuan,
   type GalatIsianTujuan,
   type KeadaanData,
 } from '../../lib/jalurTujuan';
@@ -141,6 +143,16 @@ function BagianJalur({ jalur }: { jalur: readonly JalurMinat[] }) {
             )}
           </Kartu>
         ))}
+        {pilihanTersembunyiAktif(pilihan.data ?? []).map((p) => (
+          <Kartu key={p.id} style={s.kartu}>
+            <View style={s.baris}>
+              <Text style={s.judulKartu}>{T.jalurTersembunyi}</Text>
+              <Lencana>{T.sedangDijalani}</Lencana>
+            </View>
+            <Text style={s.keterangan}>{T.jalurTersembunyiTeks}</Text>
+            <Tombol label={T.jeda} varian="hantu" kecil proses={jeda.isPending && jeda.variables === p.id} onPress={() => jeda.mutate(p.id)} />
+          </Kartu>
+        ))}
       </View>
     </>
   );
@@ -206,7 +218,9 @@ function RiwayatTujuan({ id }: { id: string }) {
   return (
     <View style={s.riwayat}>
       {lama.map((t) => (
-        <Text key={t.id} style={s.keterangan}>{`${T.sebelumnya} (${formatTanggal(t.dibuat_pada)}): ${t.judul}`}</Text>
+        <Text key={t.id} style={s.keterangan}>
+          {teksVersiTujuan(t)}
+        </Text>
       ))}
     </View>
   );

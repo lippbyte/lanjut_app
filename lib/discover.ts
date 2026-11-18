@@ -10,7 +10,8 @@
  * Tidak ada kalimat yang menebak kepribadian, kemampuan, atau sifat siswa.
  */
 
-import type { JenisKartuDiscover, Ketertarikan, ProfilEksplorasi } from '../api/types';
+import type { ButirProfil, JenisKartuDiscover, Ketertarikan, ProfilEksplorasi } from '../api/types';
+import { formatWaktuSesi } from './latihan';
 
 /** Sama dengan server/src/modul/discover/discover.skema.js. */
 export const BATAS_DISCOVER = { refleksi: 280, catatan: 500 } as const;
@@ -53,7 +54,9 @@ export const TEKS_DISCOVER = {
   labelTujuan: 'Tujuan',
   lihatRiwayat: 'Lihat versi sebelumnya',
   tutupRiwayat: 'Tutup versi sebelumnya',
-  versiPrefix: 'Versi',
+  versiKe: 'Versi ke-',
+  labelProfilMenarik: 'Yang menarik buatmu',
+  labelProfilKurangMenarik: 'Yang kurang menarik buatmu',
 
   fiturMatiJudul: 'Fitur ini belum tersedia.',
   fiturMatiTeks: 'Discover sedang disiapkan. Coba buka lagi nanti.',
@@ -108,17 +111,35 @@ export function teksDisembunyikan(jumlah: number): string {
   return `${jumlah} refleksi pada kartu yang sedang disiapkan belum ditampilkan.`;
 }
 
+export type KutipanProfil = { label: string; teks: string };
+export type BlokProfil = { kalimat: string; kutipan: KutipanProfil[] };
+
 /**
- * Kalimat profil. DRAF, belum disetujui. Setiap kalimat hanya mengulang judul kartu dan kata-kata
- * siswa sendiri; tidak ada kalimat yang menyimpulkan sesuatu tentang siswa.
+ * Isi profil per kartu (LANJUT_026). DRAF, belum disetujui. Kalimatnya hanya menyebut pilihan
+ * ketertarikan dan judul kartu; di bawahnya kedua isian siswa dikutip apa adanya, masing-masing
+ * dengan labelnya, apa pun pilihannya (juga "Belum yakin"). Isian kosong tidak ditampilkan dan
+ * tidak diganti teks lain. Tidak ada kalimat yang menafsirkan atau menyimpulkan sesuatu tentang siswa.
  */
-export function kalimatProfil(profil: Pick<ProfilEksplorasi, 'tertarik' | 'belum_yakin' | 'kurang_tertarik'>): string[] {
-  const alasan = (a: string | null | undefined) => (a ? ` karena kamu menulis: "${a}"` : '.');
+export function blokProfil(profil: Pick<ProfilEksplorasi, 'tertarik' | 'belum_yakin' | 'kurang_tertarik'>): BlokProfil[] {
+  const kutipan = (b: ButirProfil): KutipanProfil[] => {
+    const hasil: KutipanProfil[] = [];
+    const ada = (t: string | null | undefined): t is string => typeof t === 'string' && t.trim().length > 0;
+    if (ada(b.yang_menarik)) hasil.push({ label: TEKS_DISCOVER.labelProfilMenarik, teks: b.yang_menarik });
+    if (ada(b.yang_kurang_menarik)) hasil.push({ label: TEKS_DISCOVER.labelProfilKurangMenarik, teks: b.yang_kurang_menarik });
+    return hasil;
+  };
   return [
-    ...profil.tertarik.map((b) => `Kamu tertarik ke ${b.judul}${alasan(b.alasan)}`),
-    ...profil.belum_yakin.map((b) => `Kamu masih memikirkan ${b.judul}.`),
-    ...profil.kurang_tertarik.map((b) => `Kamu kurang tertarik ke ${b.judul}${alasan(b.alasan)}`),
+    ...profil.tertarik.map((b) => ({ kalimat: `Kamu tertarik ke ${b.judul}.`, kutipan: kutipan(b) })),
+    ...profil.belum_yakin.map((b) => ({ kalimat: `Kamu masih memikirkan ${b.judul}.`, kutipan: kutipan(b) })),
+    ...profil.kurang_tertarik.map((b) => ({ kalimat: `Kamu kurang tertarik ke ${b.judul}.`, kutipan: kutipan(b) })),
   ];
+}
+
+/** "Versi ke-2 · 16 November 2026 pukul 14.05" (LANJUT_026). DRAF. Jam menurut zona waktu perangkat. */
+export function teksVersi(versiKe: number, iso: string): string {
+  const waktu = formatWaktuSesi(iso);
+  const nomor = `${TEKS_DISCOVER.versiKe}${versiKe}`;
+  return waktu ? `${nomor} · ${waktu}` : nomor;
 }
 
 export type KeadaanData = 'memuat' | 'fitur_mati' | 'perlu_kebijakan' | 'jaringan' | 'server' | 'siap';

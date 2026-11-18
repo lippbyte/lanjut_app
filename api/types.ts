@@ -385,7 +385,9 @@ export type JalurMinat = { id: string; nama: string; deskripsi_singkat: string; 
 export type StatusPilihanJalur = 'aktif' | 'dijeda' | 'selesai' | 'ditinggalkan';
 export type PilihanJalur = {
   id: string;
-  jalur_minat_id: string;
+  /** null bila jalurnya kini draf atau nonaktif (LANJUT_026): namanya tidak boleh terkirim (K37). */
+  jalur_minat_id: string | null;
+  jalur_belum_tersedia: boolean;
   status: StatusPilihanJalur;
   mulai_pada: string;
   berakhir_pada: string | null;
@@ -403,6 +405,8 @@ export type Tujuan = {
   dibuat_pada: string;
   diubah_pada: string;
 };
+/** GET /tujuan/:id/riwayat: `versi_ke` dihitung server dari rantai versi (LANJUT_026). */
+export type VersiTujuan = Tujuan & { versi_ke: number };
 export type DaftarTujuan = {
   tujuan: (Tujuan & { jumlah_versi: number })[];
   prodi_impian: { prodi_id: string; nama: string | null; sumber: 'data_akun' } | null;
@@ -411,6 +415,7 @@ export type PeristiwaPerjalanan = {
   jenis: string;
   pada: string;
   jalur_minat_id: string | null;
+  jalur_belum_tersedia?: boolean;
   pilihan_id?: string;
   tujuan_id?: string;
   judul?: string;
@@ -435,9 +440,17 @@ export type RefleksiDiscover = {
   dibuat_pada: string;
   diubah_pada: string;
 };
-export type ButirProfil = { kartu_discover_id: string; judul: string; jenis: JenisKartuDiscover; alasan?: string | null };
+/** Kedua isian siswa apa adanya, null bila kosong (LANJUT_026). */
+export type ButirProfil = {
+  kartu_discover_id: string;
+  judul: string;
+  jenis: JenisKartuDiscover;
+  yang_menarik: string | null;
+  yang_kurang_menarik: string | null;
+};
 export type ProfilEksplorasi = {
   id: string;
+  versi_ke: number;
   status: 'aktif' | 'diubah';
   diubah_dari_id: string | null;
   catatan: string | null;
