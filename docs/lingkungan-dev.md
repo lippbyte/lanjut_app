@@ -105,6 +105,14 @@ Kedua baris kembali persis seperti isi berkas konten (draf), dan daftar kembali 
 
 Hasil pemeriksaan layar di peramban 360 px ada di `docs/periksa-layar-025/`. Bagian Data Saya (unduh data dan hapus akun) di layar Akun butuh saklar ketiga, `EXPO_PUBLIC_KELOLA_DATA_AKUN=1`, juga hanya di lingkungan lokal.
 
+## 9. Server dev dan jaringan lokal (LANJUT_027)
+
+Sejak LANJUT_027, di luar `NODE_ENV=production` server hanya mendengar di `127.0.0.1`: perangkat lain di Wi-Fi tidak bisa menjangkaunya. Sebelumnya server dev mendengar di semua antarmuka. Produksi tidak berubah.
+
+Untuk uji HP lewat Expo Go, isi `DEV_DENGAN_JARINGAN_LOKAL=1` di `server/.env`. Server lalu terbuka di Wi-Fi yang sama dan mencetak alamatnya. Opsi ini ditolak, dan server tidak menyala, bila `NODE_ENV=production`, host basis data bukan lokal, atau nama basis data tidak diawali `lanjut_dev`. Batas laju tetap 300 permintaan per 15 menit. Ini juga dibutuhkan oleh `npm run dev` (development build di HP). Langkah lengkapnya ada di `docs/uji-hp-expo-go.md`.
+
+Expo CLI memuat `LANJUT_App/.env` otomatis. Bila berkas itu berisi `EXPO_PUBLIC_API_URL` ke server lain, aplikasi dev ikut memakainya. Karena itu, selalu isi `EXPO_PUBLIC_API_URL` di sesi saat menguji dengan server dev.
+
 ## Yang tidak dilakukan di lokal
 
 - Jangan mengarahkan `.env` lokal ke basis data produksi. Pagar di atas menolaknya.
