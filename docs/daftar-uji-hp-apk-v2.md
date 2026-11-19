@@ -144,11 +144,11 @@ Butuh `PORTOFOLIO_AKTIF=1` di server (bagian 4). Pakai akun uji.
 
 Bukan bagian dari APK pilot atau APK sekolah. Kedua fitur mati di semua profil `eas.json`, dan itu tidak diubah. Uji ini memakai server dev di komputer dan Expo Go, dengan data dummy. Hasil uji di peramban 360 px ada di `docs/periksa-layar-025/`, tetapi itu bukan bukti untuk HP.
 
-Persiapan di komputer, HP dan komputer di Wi-Fi yang sama:
-1. `server/.env` mengarah ke `lanjut_dev`, dengan `JALUR_TUJUAN_AKTIF=1` dan `DISCOVER_AKTIF=1`.
-2. Di folder `server`: `npm run benih-persetujuan-dummy`, lalu `npm start`. Satu jalur dan satu kartu bertanda `[DUMMY]` menjadi disetujui, hanya di `lanjut_dev`.
-3. Di folder aplikasi: `EXPO_PUBLIC_API_URL=http://<IP-komputer>:4000/api/v1 EXPO_PUBLIC_JALUR_TUJUAN=1 EXPO_PUBLIC_DISCOVER=1 npx expo start --go --lan`, lalu pindai kodenya dengan Expo Go.
-4. Masuk dengan akun dummy dari `npm run benih-dummy` (`docs/lingkungan-dev.md` bagian 4).
+Persiapan: ikuti `docs/uji-hp-expo-go.md` langkah 1 sampai 6 (LANJUT_027). Ringkasnya:
+1. `server/.env` mengarah ke `lanjut_dev`, dengan `JALUR_TUJUAN_AKTIF=1`, `DISCOVER_AKTIF=1`, dan `DEV_DENGAN_JARINGAN_LOKAL=1`. Tanpa opsi terakhir, server dev hanya bisa dijangkau dari komputer itu sendiri.
+2. Di folder `server`: `npm run benih-persetujuan-dummy`, lalu `npm start`. Log harus menulis "TERBUKA DI JARINGAN LOKAL". Satu jalur dan satu kartu bertanda `[DUMMY]` menjadi disetujui, hanya di `lanjut_dev`.
+3. Di folder aplikasi, di jendela PowerShell yang sama, isi `$env:EXPO_PUBLIC_API_URL` dengan alamat Wi-Fi komputer (`http://<IP-komputer>:4000/api/v1`) serta `$env:EXPO_PUBLIC_JALUR_TUJUAN`, `$env:EXPO_PUBLIC_DISCOVER`, dan `$env:EXPO_PUBLIC_KELOLA_DATA_AKUN` bernilai `1`, lalu `npx expo start --go --lan` dan pindai kodenya dengan Expo Go. **Wajib mengisi `EXPO_PUBLIC_API_URL`**: tanpa itu, aplikasi bisa memakai alamat dari `LANJUT_App/.env`, yang di komputer pengembang bisa berisi alamat produksi.
+4. Masuk dengan akun dummy dari `npm run benih-dummy` (`docs/lingkungan-dev.md` bagian 4). Jendela server harus mencatat `POST /api/v1/auth/masuk 200`; bila tidak, berhenti.
 
 | No | Langkah | Hasil yang diharapkan | Hasil |
 |---|---|---|---|
@@ -167,6 +167,20 @@ Persiapan di komputer, HP dan komputer di Wi-Fi yang sama:
 | 3a.13 | Matikan Wi-Fi dan data, buka Discover, nyalakan lagi, Coba lagi | Pesan tidak bisa terhubung, lalu daftar tampil | |
 | 3a.14 | Masuk dengan akun dummy lain | Tidak melihat tujuan, refleksi, atau profil akun sebelumnya | |
 | 3a.15 | Di komputer: `npm run benih-persetujuan-dummy -- --cabut`, lalu buka lagi kedua layar | "Pilihan jalur belum tersedia." dan "Kartu belum tersedia." | |
+| 3a.16 | Sesudah 3a.15, dengan akun yang memilih jalur di 3a.3, buka Jalur & Tujuan (LANJUT_026) | Kartu "Jalur yang kamu pilih (belum tersedia)" dengan tombol "Jeda dulu"; nama jalur tidak tampil. Perjalanan menulis "Memilih jalur (belum tersedia)" | |
+| 3a.17 | Ketuk "Jeda dulu" di kartu itu | Kartu hilang, Perjalanan mencatat "Menjeda jalur (belum tersedia)" | |
+| 3a.18 | Ubah refleksi menjadi "Belum yakin" dengan kedua isian terisi, lalu Perbarui profilku (LANJUT_026) | Kedua isian tampil berlabel "Yang menarik buatmu" dan "Yang kurang menarik buatmu" | |
+| 3a.19 | Buka Lihat versi sebelumnya di profil, dan Lihat perubahan di tujuan | Setiap versi bernomor ("Versi ke-…") dengan tanggal dan jam di zona waktu HP | |
+| 3a.20 | Putar HP ke posisi mendatar, lalu kembali tegak, di layar Discover dan profil | Isi tidak terpotong dan tidak ada isian yang hilang | |
+
+**Yang tidak bisa dibuktikan lewat Expo Go** (LANJUT_027), tetap menunggu uji APK di bagian 2 dan 3:
+- Izin aplikasi dan teks permintaan izin (kamera, galeri, penyimpanan): Expo Go memakai izin dan teksnya sendiri, bukan yang ditulis di `app.config.ts`.
+- Kamera, galeri, foto HEIC, dan foto besar: modulnya ada di Expo Go, tetapi perilakunya bisa berbeda dari APK.
+- Membagikan berkas lewat `expo-sharing` dan isi folder cache sesudah keluar akun (3.12 sampai 3.14).
+- Ukuran APK, ikon, nama aplikasi, nama paket, dan `versionCode`.
+- Bundel produksi: Expo Go menjalankan mode pengembangan, jadi kecepatan, pesan galat, dan bagian kode yang hanya ada di bundel produksi tidak teruji.
+- Pemasangan di atas APK 1.0.0, sesi yang tetap masuk, dan alamat server produksi (`https`).
+- Saklar yang terkunci di profil build `eas.json`: di Expo Go, saklar dinyalakan lewat variabel sesi.
 
 ## 4. Setelah deploy
 

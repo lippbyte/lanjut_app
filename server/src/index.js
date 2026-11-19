@@ -1,6 +1,17 @@
 // Titik masuk: baca env → nyalakan port → penutupan halus. docs/SDD-Backend-Foundation.md §9.2.
 
 const env = require('./config/env');
+const { alamatDengar, alamatLan, SEMUA_ANTARMUKA } = require('./config/jaringan-lokal');
+
+// LANJUT_027: alamat dengar diperiksa paling awal, sebelum apa pun dimuat atau port dibuka.
+let host;
+try {
+  host = alamatDengar(env);
+} catch (galat) {
+  console.error(`[server] DIHENTIKAN. ${galat.message}`);
+  process.exit(1);
+}
+
 const app = require('./app');
 const pool = require('./db/koneksi');
 
@@ -15,9 +26,21 @@ try {
   process.exit(1);
 }
 
-const server = app.listen(env.PORT, () => {
+function saatSiap() {
   console.log(`[server] LANJUT API berjalan di port ${env.PORT} (${env.NODE_ENV})`);
-});
+  if (host === SEMUA_ANTARMUKA && env.NODE_ENV !== 'production') {
+    const alamat = alamatLan().map((ip) => `http://${ip}:${env.PORT}`);
+    console.log('[server] ==================================================================');
+    console.log(`[server] TERBUKA DI JARINGAN LOKAL (DEV_DENGAN_JARINGAN_LOKAL=1), basis data ${env.DB_NAME}.`);
+    console.log(`[server] Bisa dijangkau dari perangkat di Wi-Fi yang sama: ${alamat.join(', ') || '(alamat LAN tidak ditemukan)'}`);
+    console.log('[server] Hanya untuk uji HP dengan data dummy. Matikan opsi ini sesudah selesai.');
+    console.log('[server] ==================================================================');
+  } else if (host) {
+    console.log(`[server] Hanya untuk komputer ini (${host}). Untuk uji HP: docs/uji-hp-expo-go.md.`);
+  }
+}
+
+const server = host ? app.listen(env.PORT, host, saatSiap) : app.listen(env.PORT, saatSiap);
 
 // LANJUT_083c: data daftar sementara dihapus setelah 30 menit, juga bila tidak ada pendaftaran
 // baru yang memicu pembersihan. Tiap 5 menit; tidak menahan proses saat ditutup.

@@ -143,6 +143,10 @@ const env = {
   // Discover dan Profil Eksplorasi (LANJUT_024). Bawaan MATI: semua rutenya 404 sampai sengaja
   // dinyalakan. Baru untuk lingkungan dev; kontennya masih draf. Tidak memanggil AI.
   DISCOVER_AKTIF: opsional('DISCOVER_AKTIF', '0') === '1',
+  // Uji HP lewat Expo Go (LANJUT_027). Bawaan MATI: di luar produksi server hanya mendengar di
+  // 127.0.0.1. Bila menyala, server dev terbuka di jaringan lokal (0.0.0.0), hanya untuk basis data
+  // lanjut_dev di komputer ini; ditolak di produksi (src/config/jaringan-lokal.js).
+  DEV_DENGAN_JARINGAN_LOKAL: ['1', 'true'].includes(String(opsional('DEV_DENGAN_JARINGAN_LOKAL', '')).toLowerCase()),
   // Ngobrol Bareng LANJUT (LANJUT_051): AI lewat OpenRouter. Kunci KOSONG =
   // fitur AI mati (503 AI_TIDAK_TERSEDIA), server tetap menyala. Kunci hanya
   // ada di server: tidak pernah dikirim ke app dan tidak dicatat di log.
