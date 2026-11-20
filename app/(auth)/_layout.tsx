@@ -6,12 +6,15 @@ import { LayarMemuat } from '../../components/layout/LayarMemuat';
 import { OnboardingScreen } from '../../components/screens/auth/OnboardingScreen';
 import { PengantarV2 } from '../../components/screens/v2/PengantarV2';
 import { alurMasukV2Aktif } from '../../lib/fiturApp';
+import { ruteAwalApp } from '../../lib/navigasiV2';
 import type { TujuanOnboarding } from '../../lib/onboarding';
 import { useSesi } from '../../providers/AuthProvider';
 import Constants from 'expo-constants';
 
 // LANJUT_030: saklar dibaca sekali saat modul dimuat (nilai build, tidak berubah selama app jalan).
 const ALUR_MASUK_V2 = alurMasukV2Aktif(Constants.expoConfig?.extra);
+// LANJUT_031: alur v1 dan v2 sama-sama berujung ke navigasi yang sedang aktif menurut saklar.
+const TUJUAN_MASUK = ruteAwalApp(Constants.expoConfig?.extra);
 
 // Masuk/Daftar hanya untuk yang belum masuk; begitu sesi terbentuk (login atau daftar
 // sukses), layout ini yang memindahkan pengguna ke Linimasa.
@@ -26,6 +29,7 @@ function AuthGroupLayout() {
   const pathname = usePathname();
   const [memudar, setMemudar] = useState(false);
   if (status === 'memuat') return <LayarMemuat />;
+  if (status === 'masuk' && TUJUAN_MASUK !== '/linimasa') return <Redirect href={TUJUAN_MASUK} />;
   if (status === 'masuk') return <Redirect href="/linimasa" />;
 
   const pilih = (tujuan: TujuanOnboarding) => {
@@ -56,6 +60,7 @@ function AuthGroupLayoutV2() {
   const router = useRouter();
   const pathname = usePathname();
   if (status === 'memuat') return <LayarMemuat />;
+  if (status === 'masuk' && TUJUAN_MASUK !== '/linimasa') return <Redirect href={TUJUAN_MASUK} />;
   if (status === 'masuk') return <Redirect href="/linimasa" />;
 
   const pilih = (tujuan: TujuanOnboarding) => {

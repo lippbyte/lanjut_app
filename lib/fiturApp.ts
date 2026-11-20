@@ -54,6 +54,16 @@ export function alurMasukV2Aktif(extra: unknown): boolean {
   return (extra as { alurMasukV2?: unknown }).alurMasukV2 === true;
 }
 
+/**
+ * Navigasi v2 dan Arah Saya (LANJUT_031): bilah tab v2 dan beranda v2. Teksnya masih draf.
+ * Bawaan: MATI, dan navigasi v1 berjalan persis seperti sebelumnya.
+ * Menyala hanya bila build dibuat dengan EXPO_PUBLIC_NAVIGASI_V2=1 (variabel sesi lokal).
+ */
+export function navigasiV2Aktif(extra: unknown): boolean {
+  if (!extra || typeof extra !== 'object') return false;
+  return (extra as { navigasiV2?: unknown }).navigasiV2 === true;
+}
+
 export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;

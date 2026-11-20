@@ -1,9 +1,10 @@
 import React from 'react';
+import Constants from 'expo-constants';
 import { Redirect } from 'expo-router';
 
-// Index diarahkan ke Linimasa: SDD Bagian 14 "Alur A" menyebut Linimasa
-// sebagai "NILAI PERTAMA" yang wajib terlihat begitu pengguna baru masuk,
-// jadi rute "/" tidak boleh punya isi sendiri yang bersaing dengan itu.
+import { ruteAwalApp } from '../lib/navigasiV2';
+
+// Index diarahkan ke layar awal sesuai saklar navigasi: Linimasa (v1) atau Arah Saya (v2).
 export default function IndexRoute() {
-  return <Redirect href="/linimasa" />;
+  return <Redirect href={ruteAwalApp(Constants.expoConfig?.extra)} />;
 }

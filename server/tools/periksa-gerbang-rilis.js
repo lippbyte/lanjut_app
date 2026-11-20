@@ -26,7 +26,9 @@ const SAKLAR_PORTOFOLIO = 'EXPO_PUBLIC_PORTOFOLIO';
 const SAKLAR_HAPUS_AKUN = 'EXPO_PUBLIC_KELOLA_DATA_AKUN';
 // LANJUT_030: alur masuk dan onboarding v2. Teksnya draf; build yang menyalakannya ditahan.
 const SAKLAR_ALUR_MASUK_V2 = 'EXPO_PUBLIC_ALUR_MASUK_V2';
-const SEMUA_SAKLAR = [SAKLAR_PORTOFOLIO, SAKLAR_HAPUS_AKUN, SAKLAR_ALUR_MASUK_V2];
+// LANJUT_031: navigasi v2 dan Arah Saya. Teksnya draf; build yang menyalakannya ditahan.
+const SAKLAR_NAVIGASI_V2 = 'EXPO_PUBLIC_NAVIGASI_V2';
+const SEMUA_SAKLAR = [SAKLAR_PORTOFOLIO, SAKLAR_HAPUS_AKUN, SAKLAR_ALUR_MASUK_V2, SAKLAR_NAVIGASI_V2];
 
 // `saklar` null: tertanam di semua build, jadi berlaku bila ada saklar mana pun yang menyala.
 const TEKS = [
@@ -34,6 +36,7 @@ const TEKS = [
   { id: 'portofolio', nama: 'Teks Portofolio', saklar: SAKLAR_PORTOFOLIO, berkas: ['lib/portofolio.ts', 'docs/draf-teks-portofolio.md'] },
   { id: 'hapus-akun', nama: 'Teks unduh data dan hapus akun', saklar: SAKLAR_HAPUS_AKUN, berkas: ['lib/dataAkun.ts', 'docs/draf-teks-hapus-akun.md'] },
   { id: 'alur-masuk-v2', nama: 'Teks alur masuk v2', saklar: SAKLAR_ALUR_MASUK_V2, berkas: ['lib/alurMasukV2.ts', 'docs/draf-teks-alur-masuk-v2.md'] },
+  { id: 'navigasi-v2', nama: 'Teks navigasi v2 dan Arah Saya', saklar: SAKLAR_NAVIGASI_V2, berkas: ['lib/arahSaya.ts', 'lib/navigasiV2.ts', 'docs/draf-teks-navigasi-v2.md'] },
 ];
 
 const BERKAS_TEKS_FOTO = ['lib/portofolio.ts', 'lib/beranda.ts'];

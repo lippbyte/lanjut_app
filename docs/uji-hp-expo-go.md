@@ -182,3 +182,35 @@ Alur ini **mati bawaan**. Langkah di bawah belum pernah dijalankan di HP; hasiln
 8. Nyalakan **Hapus animasi** (Android: Setelan > Aksesibilitas) dan **Ukuran font** besar. Semua langkah harus tetap bisa diselesaikan.
 
 Catat hasil di tabel 3a `docs/daftar-uji-hp-apk-v2.md`. Akun uji baru ini milik `lanjut_dev` saja.
+
+## 11. Navigasi v2 dan Arah Saya (LANJUT_031)
+
+Navigasi ini **mati bawaan**. Langkah di bawah belum dijalankan di HP; belum ada klaim hasil di HP, pembaca layar, atau skala huruf besar.
+
+> **Penting — selalu gunakan `--clear`:** setiap kali mengganti kombinasi saklar (`EXPO_PUBLIC_*`), jalankan Expo dengan `--clear` (mis. `npx expo start --go --lan --clear` atau `npx expo start --web --clear`). Cache Metro pernah membawa nilai saklar dari sesi sebelumnya sehingga tab atau kartu tampil dengan konfigurasi lama.
+
+1. Ikuti langkah 2 sampai 4 (server dev lokal + database `lanjut_dev`). Untuk melihat Rekam Jejak, pastikan juga `PORTOFOLIO_AKTIF=1` dan `DIREKTORI_BERKAS` di `server/.env` terisi bila ingin mencoba menyimpan catatan.
+2. Di PowerShell kedua, nyalakan saklar hanya untuk sesi lokal ini (ganti `192.168.x.x` dengan IP Wi-Fi komputer):
+   ```powershell
+   cd "D:\DATA ALIF\Project - Profesional\EDILAKSO Group\LANJUT - Project\EDILAKSO-LANJUT-repo\LANJUT_App"
+   $env:EXPO_PUBLIC_API_URL = "http://192.168.x.x:4000/api/v1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_DISCOVER = "1"
+   $env:EXPO_PUBLIC_JALUR_TUJUAN = "1"
+   $env:EXPO_PUBLIC_PORTOFOLIO = "1"
+   npx expo start --go --lan --clear
+   ```
+3. Masuk dengan akun dummy:
+   - `demo_kelas12_dc` — memeriksa Arah Saya dengan jalur/langkah nyata, 4 tab bawah (`Arah Saya`, `Jelajah`, `Jejak Waktu`, `Profil Saya`), pintu `Akun & Privasi` di tab Profil Saya, dan pintu `Langkah Saya` di tab Jejak Waktu.
+   - `uji_belum_memilih` — memeriksa keadaan "Pilih arahmu" dan keadaan kosong "Langkah berikutnya" dengan maskot kelinci.
+   - `demo_kelas12_p26` — memeriksa jalur yang masih draf tampil netral (`Jalur belum tersedia`) tanpa id mentah atau teks draf.
+4. Uji **kombinasi saklar**: hentikan Expo, kosongkan `$env:EXPO_PUBLIC_DISCOVER = ""` dan `$env:EXPO_PUBLIC_PORTOFOLIO = ""`, lalu jalankan lagi dengan `--clear`. Pastikan:
+   - hanya 3 tab tampil (`Arah Saya`, `Jejak Waktu`, `Profil Saya`) merata tanpa celah;
+   - kartu Rekam Jejak dan Jelajah tidak tampil;
+   - tab Profil Saya tetap terbuka (`/akun`).
+5. Uji **tombol kembali Android**:
+   - buka layar anak (mis. `Alat belajar` → `Arsip Belajar`), lalu tekan Kembali → kembali ke Arah Saya;
+   - pindah beberapa tab (`Arah Saya` → `Jejak Waktu` → `Profil Saya`), lalu tekan Kembali → kembali sekali ke `Arah Saya` tanpa bolak-balik antar-tab;
+   - dari `Arah Saya`, tekan Kembali → keluar aplikasi seperti biasa.
+6. Uji **Aksesibilitas** (belum terverifikasi sampai dicoba di HP): nyalakan Hapus animasi, perbesar ukuran huruf, dan uji dengan TalkBack/VoiceOver pada bilah tab dan kartu Arah Saya.
+
