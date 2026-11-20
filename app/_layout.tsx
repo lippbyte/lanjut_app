@@ -5,12 +5,15 @@ import {
   Poppins_600SemiBold,
   useFonts,
 } from '@expo-google-fonts/poppins';
+import Constants from 'expo-constants';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LayarMemuat } from '../components/layout/LayarMemuat';
+import { alurMasukV2Aktif } from '../lib/fiturApp';
+import { aturMinTampil, minTampilMs } from '../lib/pembuka';
 import { PembukaKelinci, TandaSesiSiap } from '../components/layout/PembukaKelinci';
 import { AuthProvider } from '../providers/AuthProvider';
 import { QueryProvider } from '../providers/QueryProvider';
@@ -21,11 +24,25 @@ import { QueryProvider } from '../providers/QueryProvider';
  * khusus yang belum masuk) dan app/(app)/_layout.tsx (khusus yang sudah masuk).
  * Di atas semuanya: layar pembuka kelinci (lib/pembuka.ts), sekali tiap app dibuka.
  */
+// LANJUT_030: alur masuk v2 (saklar EXPO_PUBLIC_ALUR_MASUK_V2, mati bawaan).
+const ALUR_MASUK_V2 = alurMasukV2Aktif(Constants.expoConfig?.extra);
+// Layar pembuka minimal 800 ms di v2; v1 tetap 2 detik (lib/pembuka.ts).
+aturMinTampil(minTampilMs(ALUR_MASUK_V2));
+// Source Sans 3 (isi, design.md §3) hanya dimuat bila alur v2 menyala. Berkas lokal berlisensi SIL OFL
+// (assets/fonts/). Galeri komponen dev memuatnya sendiri.
+const HURUF_V2 = ALUR_MASUK_V2
+  ? {
+      SourceSans3_400Regular: require('../assets/fonts/SourceSans3_400Regular.ttf'),
+      SourceSans3_600SemiBold: require('../assets/fonts/SourceSans3_600SemiBold.ttf'),
+    }
+  : {};
+
 export default function RootLayout() {
   const [hurufSiap, galatHuruf] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_600SemiBold,
+    ...HURUF_V2,
   });
   const [sesiSiap, setSesiSiap] = useState(false);
 

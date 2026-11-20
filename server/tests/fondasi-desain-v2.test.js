@@ -81,13 +81,19 @@ describe('Kontras token v2', () => {
     }
   });
 
-  test('Biru tua, sukses, dan galat memakai opsi pertama dan ditandai MENUNGGU KEPUTUSAN', () => {
-    assert.equal(tema.warna.aksen, tema.OPSI_BIRU_TUA[0].hex);
-    assert.equal(tema.warna.sukses, tema.OPSI_SUKSES[0].hex);
-    assert.equal(tema.warna.galat, tema.OPSI_GALAT[0].hex);
+  // LANJUT_030: keputusan Khalifa 20 Nov 2026 menggantikan "opsi pertama, MENUNGGU KEPUTUSAN" (029).
+  test('Biru tua, sukses, dan galat memakai keputusan 20 Nov, ditulis di satu tempat', () => {
+    assert.equal(tema.warna.aksen, '#3B5F80');
+    assert.equal(tema.warna.fokus, '#3B5F80');
+    assert.equal(tema.warna.sukses, '#276749');
+    assert.equal(tema.warna.galat, '#A33A3A');
     for (const o of [tema.OPSI_BIRU_TUA, tema.OPSI_SUKSES, tema.OPSI_GALAT]) assert.ok(o.length >= 2 && o.length <= 3);
     const sumber = baca('theme/v2/warna.ts');
-    assert.equal((sumber.match(/\/\/ MENUNGGU KEPUTUSAN/g) || []).length, 3);
+    assert.equal((sumber.match(/\/\/ MENUNGGU KEPUTUSAN/g) || []).length, 0);
+    assert.equal((sumber.match(/\/\/ KEPUTUSAN 20 NOV, dapat diubah/g) || []).length, 3);
+    // Satu tempat: nilai HEX keputusan hanya tertulis di daftar opsi warna.ts, tidak di komponen atau layar.
+    const lain = ['components', 'app', 'lib', 'hooks'].flatMap(berkasDi).filter((f) => f !== 'theme/v2/warna.ts');
+    for (const f of lain) assert.doesNotMatch(baca(f), /#3B5F80|#276749|#A33A3A/i, f);
     // Anti-pattern design.md: tidak ada merah/oranye terang. Galat redup: kanal merah ≤ 0xB0.
     for (const o of tema.OPSI_GALAT) assert.ok(parseInt(o.hex.slice(1, 3), 16) <= 0xb0, o.hex);
   });
@@ -216,9 +222,12 @@ describe('Tanpa warna atau jarak yang ditulis langsung di komponen baru', () => 
     for (const [k, v] of Object.entries(tema.ruang)) assert.equal(v % 8, 0, `ruang.${k} = ${v}`);
     for (const [k, v] of Object.entries(tema.tipografi)) {
       assert.ok(v.fontSize >= 14 && v.lineHeight >= v.fontSize * 1.2, `tipografi.${k}`);
-      assert.ok(typeof v.fontFamily === 'string' && v.fontFamily.startsWith('Poppins_'), `tipografi.${k}: huruf yang belum dimuat`);
+      // LANJUT_030: hanya huruf yang benar-benar dimuat app/_layout.tsx (Poppins, Source Sans 3).
+      assert.ok(typeof v.fontFamily === 'string' && /^(Poppins|SourceSans3)_/.test(v.fontFamily), `tipografi.${k}: huruf yang belum dimuat`);
     }
-    assert.match(baca('theme/v2/token.ts'), /badan: 'Poppins_400Regular', \/\/ MENUNGGU KEPUTUSAN: Source Sans 3 belum dimuat/);
+    // Judul dan tombol Poppins, isi Source Sans 3 (keputusan 20 Nov).
+    for (const k of ['h1', 'h2', 'judulKecil', 'tombol']) assert.match(tema.tipografi[k].fontFamily, /^Poppins_/, k);
+    for (const k of ['badan', 'badanKecil', 'keterangan']) assert.match(tema.tipografi[k].fontFamily, /^SourceSans3_/, k);
   });
 });
 
@@ -406,7 +415,9 @@ describe('Layar yang ada tidak berubah', () => {
   test('Tidak ada layar, tata letak, penyedia, atau komponen v1 yang memakai tema atau komponen v2', () => {
     const lama = ['app', 'components/screens', 'components/layout', 'components/ui', 'providers', 'hooks', 'lib', 'api']
       .flatMap(berkasDi)
-      .filter((f) => !['app/galeri-komponen.tsx', 'hooks/useKurangiGerak.ts', 'lib/kurangiGerak.ts', 'lib/galeriKomponen.ts', 'lib/pilihan.ts'].includes(f));
+      .filter((f) => !['app/galeri-komponen.tsx', 'hooks/useKurangiGerak.ts', 'lib/kurangiGerak.ts', 'lib/galeriKomponen.ts', 'lib/pilihan.ts', 'lib/alurMasukV2.ts'].includes(f))
+      // LANJUT_030: layar alur masuk v2 (di balik saklar) memang dibangun dari komponen v2.
+      .filter((f) => !f.startsWith('components/screens/v2/'));
     for (const f of lama) assert.doesNotMatch(baca(f), /theme\/v2|components\/v2|\/v2'|useKurangiGerak/, f);
   });
 

@@ -3,10 +3,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { JenisSekolah, Kelas } from '../lib/jenjang';
 import type { KesiapanUjian } from '../lib/kesiapanUjian';
 import { kunciProfilLokal } from '../lib/profilLokal';
+import { bacaToken, hapusToken, simpanToken, type TempatSimpan } from '../lib/sesiAman';
+import { kunciTandaArah } from '../lib/tandaArah';
 import { ApiError, apiFetch } from './client';
+import { penyimpananAman } from './penyimpananAman';
 
-export const KUNCI_TOKEN = 'auth_token';
+export { KUNCI_TOKEN } from '../lib/sesiAman';
 const KUNCI_PENGGUNA = 'auth_pengguna';
+
+// LANJUT_030: token sesi di penyimpanan aman (lib/sesiAman.ts), dengan migrasi sekali jalan dari
+// AsyncStorage. Profil (bukan rahasia) tetap di AsyncStorage seperti sebelumnya.
+const penyimpananLama: TempatSimpan = {
+  ambil: (k) => AsyncStorage.getItem(k),
+  simpan: (k, v) => AsyncStorage.setItem(k, v),
+  hapus: (k) => AsyncStorage.removeItem(k),
+};
+// Pesan tetap dari lib/sesiAman.ts (CATATAN); token tidak pernah ikut dicatat.
+const catatSesi = (pesan: string) => console.warn(`[sesi] ${pesan}`);
+
+/** "Tetap masuk di HP ini" mati untuk sesi yang sedang berjalan: profil juga tidak ditulis. */
+let sesiSementara = false;
+
+/** Pilihan "Tetap masuk di HP ini" (LANJUT_030). Bawaan aktif, sama dengan perilaku v1. */
+export type OpsiSesi = { tetapMasuk?: boolean };
 
 // Bentuk persis `bentukProfil` di server/src/modul/auth/auth.layanan.js.
 export type Pengguna = {
@@ -59,12 +78,12 @@ export type DataDaftar = {
   versi_kebijakan?: number;
 };
 
-export async function masuk(nama_pengguna: string, kata_sandi: string): Promise<Sesi> {
+export async function masuk(nama_pengguna: string, kata_sandi: string, opsi: OpsiSesi = {}): Promise<Sesi> {
   const sesi = await apiFetch<Sesi>('/auth/masuk', {
     method: 'POST',
     body: { nama_pengguna, kata_sandi },
   });
-  await simpanSesi(sesi);
+  await simpanSesi(sesi, opsi);
   return sesi;
 }
 
@@ -74,9 +93,9 @@ export async function kirimKodeEmail(email: string): Promise<{ diproses: boolean
   return apiFetch('/auth/otp/kirim', { method: 'POST', body: { email } });
 }
 
-export async function masukDenganKode(email: string, kode: string): Promise<Sesi> {
+export async function masukDenganKode(email: string, kode: string, opsi: OpsiSesi = {}): Promise<Sesi> {
   const sesi = await apiFetch<Sesi>('/auth/otp/verifikasi', { method: 'POST', body: { email, kode } });
-  await simpanSesi(sesi);
+  await simpanSesi(sesi, opsi);
   return sesi;
 }
 
@@ -98,9 +117,9 @@ export async function kirimKodeDaftar(data: DataDaftar & { email: string }): Pro
   return apiFetch('/auth/daftar/kirim-kode', { method: 'POST', body: data });
 }
 
-export async function verifikasiDaftar(email: string, kode: string): Promise<Sesi> {
+export async function verifikasiDaftar(email: string, kode: string, opsi: OpsiSesi = {}): Promise<Sesi> {
   const sesi = await apiFetch<Sesi>('/auth/daftar/verifikasi', { method: 'POST', body: { email, kode } });
-  await simpanSesi(sesi);
+  await simpanSesi(sesi, opsi);
   return sesi;
 }
 
@@ -121,9 +140,9 @@ export async function buatSandiBaru(token: string, kata_sandi_baru: string): Pro
 }
 
 /** Daftar tanpa email (langsung). Dengan email memakai kirimKodeDaftar + verifikasiDaftar. */
-export async function daftar(data: DataDaftar): Promise<Sesi> {
+export async function daftar(data: DataDaftar, opsi: OpsiSesi = {}): Promise<Sesi> {
   const sesi = await apiFetch<Sesi>('/auth/daftar', { method: 'POST', body: data });
-  await simpanSesi(sesi);
+  await simpanSesi(sesi, opsi);
   return sesi;
 }
 
@@ -181,30 +200,34 @@ export async function hapusAkunSaya(token: string, data: DataHapusAkun): Promise
   return apiFetch('/pengguna/saya', { method: 'DELETE', body: data, token });
 }
 
-async function simpanSesi(sesi: Sesi) {
-  await AsyncStorage.multiSet([
-    [KUNCI_TOKEN, sesi.token],
-    [KUNCI_PENGGUNA, JSON.stringify(sesi.pengguna)],
-  ]);
+async function simpanSesi(sesi: Sesi, { tetapMasuk = true }: OpsiSesi = {}) {
+  await simpanToken(penyimpananAman, penyimpananLama, sesi.token, tetapMasuk, catatSesi);
+  sesiSementara = !tetapMasuk;
+  if (tetapMasuk) await AsyncStorage.setItem(KUNCI_PENGGUNA, JSON.stringify(sesi.pengguna));
+  else await AsyncStorage.removeItem(KUNCI_PENGGUNA);
 }
 
 export async function bacaSesiTersimpan(): Promise<{ token: string; pengguna: Pengguna | null } | null> {
-  const [[, token], [, pengguna]] = await AsyncStorage.multiGet([KUNCI_TOKEN, KUNCI_PENGGUNA]);
+  const { token } = await bacaToken(penyimpananAman, penyimpananLama, catatSesi);
   if (!token) return null;
+  const pengguna = await AsyncStorage.getItem(KUNCI_PENGGUNA);
   return { token, pengguna: pengguna ? (JSON.parse(pengguna) as Pengguna) : null };
 }
 
 export async function simpanPengguna(pengguna: Pengguna) {
+  if (sesiSementara) return;
   await AsyncStorage.setItem(KUNCI_PENGGUNA, JSON.stringify(pengguna));
 }
 
 export async function hapusSesiLokal() {
-  await AsyncStorage.multiRemove([KUNCI_TOKEN, KUNCI_PENGGUNA]);
+  sesiSementara = false;
+  await hapusToken(penyimpananAman, penyimpananLama);
+  await AsyncStorage.removeItem(KUNCI_PENGGUNA);
 }
 
 /** Dipanggil saat akun dihapus (LANJUT_009): profil lokal akun itu ikut dibuang dari perangkat. */
 export async function hapusProfilLokalAkun(penggunaId: string) {
-  await AsyncStorage.removeItem(kunciProfilLokal(penggunaId));
+  await AsyncStorage.multiRemove([kunciProfilLokal(penggunaId), kunciTandaArah(penggunaId)]);
 }
 
 // Kalimat disalin dari PESAN_GALAT di MVP-PWA/assets/api.js supaya kedua

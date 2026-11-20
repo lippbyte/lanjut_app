@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import * as authApi from '../api/auth';
-import type { DataDaftar } from '../api/auth';
+import type { DataDaftar, OpsiSesi } from '../api/auth';
 import { ApiError } from '../api/client';
 import { useSesi } from '../providers/AuthProvider';
 
@@ -31,19 +31,19 @@ export function useAuth() {
   );
 
   const login = useCallback(
-    (nama_pengguna: string, kata_sandi: string) =>
-      jalankan(() => authApi.masuk(nama_pengguna, kata_sandi)),
+    (nama_pengguna: string, kata_sandi: string, opsi?: OpsiSesi) =>
+      jalankan(() => authApi.masuk(nama_pengguna, kata_sandi, opsi)),
     [jalankan]
   );
 
   const register = useCallback(
-    (data: DataDaftar) => jalankan(() => authApi.daftar(data)),
+    (data: DataDaftar, opsi?: OpsiSesi) => jalankan(() => authApi.daftar(data, opsi)),
     [jalankan]
   );
 
   // LANJUT_083
   const loginKode = useCallback(
-    (email: string, kode: string) => jalankan(() => authApi.masukDenganKode(email, kode)),
+    (email: string, kode: string, opsi?: OpsiSesi) => jalankan(() => authApi.masukDenganKode(email, kode, opsi)),
     [jalankan]
   );
 
@@ -54,7 +54,7 @@ export function useAuth() {
 
   // LANJUT_083c: langkah kedua daftar dengan email.
   const registerKode = useCallback(
-    (email: string, kode: string) => jalankan(() => authApi.verifikasiDaftar(email, kode)),
+    (email: string, kode: string, opsi?: OpsiSesi) => jalankan(() => authApi.verifikasiDaftar(email, kode, opsi)),
     [jalankan]
   );
 

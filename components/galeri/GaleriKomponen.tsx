@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useFonts } from 'expo-font';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -42,6 +43,11 @@ function Bagian({ judul, children }: { judul: string; children: React.ReactNode 
 }
 
 export function GaleriKomponen() {
+  // LANJUT_030: huruf isi v2 (Source Sans 3) dimuat galeri sendiri; root layout hanya memuatnya untuk alur v2.
+  useFonts({
+    SourceSans3_400Regular: require('../../assets/fonts/SourceSans3_400Regular.ttf'),
+    SourceSans3_600SemiBold: require('../../assets/fonts/SourceSans3_600SemiBold.ttf'),
+  });
   const { top, bottom } = useSafeAreaInsets();
   const kurangiGerak = useKurangiGerak();
   const [satu, setSatu] = useState<string[]>(['melanjutkan']);

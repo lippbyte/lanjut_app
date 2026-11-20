@@ -151,6 +151,9 @@ const config: ExpoConfig = {
     // pernah di profil EAS selain development. Layarnya juga butuh __DEV__ (lib/galeriKomponen.ts), dan
     // rutenya dikeluarkan dari bundel di metro.config.js.
     galeriKomponen: process.env.EXPO_PUBLIC_GALERI_KOMPONEN === '1' && !tanpaUrlDev,
+    // LANJUT_030: alur masuk dan onboarding v2 MATI kecuali build dibuat dengan EXPO_PUBLIC_ALUR_MASUK_V2=1
+    // (dibaca lib/fiturApp.ts). Teksnya draf; periksa-gerbang-rilis menahan build yang menyalakannya.
+    alurMasukV2: process.env.EXPO_PUBLIC_ALUR_MASUK_V2 === '1',
     // LANJUT_083: masuk dengan Google (lib/googleMasuk.ts). Client ID OAuth bersifat
     // publik; Client Secret TIDAK pernah diisi di app. Kosong = tombol Google tidak
     // tampil. Android/iOS juga butuh alamat halaman penerus di domain landing

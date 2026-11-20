@@ -8,18 +8,19 @@
 import type { TextStyle } from 'react-native';
 
 /**
- * Poppins (judul) dimuat di app/_layout.tsx. Source Sans 3 (badan, design.md §3) BELUM ada di
- * aplikasi: tidak ada paket atau berkas hurufnya (lihat docs/audit-ui-v1.md). Memasangnya butuh
- * persetujuan dependensi, jadi badan sementara memakai Poppins.
+ * Poppins untuk judul dan tombol; Source Sans 3 untuk isi (design.md §3, keputusan 20 Nov 2026).
+ * Source Sans 3 Regular dan SemiBold adalah berkas lokal berlisensi SIL OFL di assets/fonts/
+ * (LANJUT_030), dimuat app/_layout.tsx hanya bila alur masuk v2 atau galeri komponen menyala.
+ * Bila belum termuat, React Native memakai huruf sistem.
  */
 export const keluargaHuruf = {
   judulTebal: 'Poppins_600SemiBold',
   judulSedang: 'Poppins_500Medium',
-  badan: 'Poppins_400Regular', // MENUNGGU KEPUTUSAN: Source Sans 3 belum dimuat
-  badanTebal: 'Poppins_600SemiBold', // MENUNGGU KEPUTUSAN: Source Sans 3 belum dimuat
+  badan: 'SourceSans3_400Regular',
+  badanTebal: 'SourceSans3_600SemiBold',
 } as const;
 
-/** Nama keluarga yang dituju design.md §3 untuk badan, setelah hurufnya dipasang. */
+/** Nama keluarga untuk badan menurut design.md §3. */
 export const HURUF_BADAN_TUJUAN = 'Source Sans 3';
 
 export type VarianTeks = 'h1' | 'h2' | 'judulKecil' | 'badan' | 'badanKecil' | 'keterangan' | 'tombol';
