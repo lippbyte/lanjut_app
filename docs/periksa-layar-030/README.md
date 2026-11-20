@@ -27,8 +27,8 @@
 ## Hasil pemeriksaan (47/47 lolos)
 
 **Layar pembuka**
-- v2 tampil 1.349 ms: minimal 800 ms ditambah pudar 550 ms.
-- v1 tampil 2.543 ms, tidak berubah.
+- v2 tampil 1.375 ms: minimal 800 ms ditambah pudar 550 ms.
+- v1 tampil 2.606 ms, tidak berubah.
 
 **Pengantar dan Daftar**
 - Semua kontrol di layar yang diukur minimal 44×44, dan semua isian punya label untuk pembaca layar.
