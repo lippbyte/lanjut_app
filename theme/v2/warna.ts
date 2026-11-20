@@ -1,9 +1,9 @@
 /**
  * Warna tema v2 (LANJUT_029, usulan di docs/desain-token-v2.md). Modul murni.
  *
- * Belum dipakai layar mana pun: hanya komponen di components/v2 dan galeri komponen dev.
- * Warna inti design.md v3.1 tidak diubah. Biru tua, sukses, dan galat MENUNGGU KEPUTUSAN
- * Khalifa: sampai diputuskan, opsi pertama yang dipakai.
+ * Dipakai komponen di components/v2, galeri komponen dev, dan alur masuk v2 (LANJUT_030, di balik
+ * saklar). Warna inti design.md v3.1 tidak diubah. Biru tua, sukses, dan galat diputuskan Khalifa
+ * 20 Nov 2026 (bisa diubah di bawah, satu tempat).
  */
 import type { JenisPasangan } from './kontras';
 
@@ -47,9 +47,10 @@ export const OPSI_GALAT: readonly OpsiWarna[] = [
   { kode: 'C', nama: 'Plum (bukan merah; wajib selalu dengan ikon dan teks)', hex: '#7B3F6E', latar: '#F5ECF3' },
 ];
 
-const BIRU_TUA = OPSI_BIRU_TUA[0]; // MENUNGGU KEPUTUSAN: biru tua (A/B/C)
-const SUKSES = OPSI_SUKSES[0]; // MENUNGGU KEPUTUSAN: warna sukses (A/B/C)
-const GALAT = OPSI_GALAT[0]; // MENUNGGU KEPUTUSAN: warna galat (A/B/C)
+// Satu-satunya tempat pilihan warna ini ditentukan (LANJUT_030).
+export const BIRU_TUA = OPSI_BIRU_TUA[1]; // KEPUTUSAN 20 NOV, dapat diubah: biru tua B #3B5F80
+export const SUKSES = OPSI_SUKSES[1]; // KEPUTUSAN 20 NOV, dapat diubah: sukses B #276749
+export const GALAT = OPSI_GALAT[0]; // KEPUTUSAN 20 NOV, dapat diubah: galat A #A33A3A (selalu dengan ikon dan kalimat)
 
 /** Peran warna. Komponen v2 hanya boleh memakai nama di sini, tidak pernah HEX. */
 export const warna = {

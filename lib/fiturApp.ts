@@ -44,6 +44,16 @@ export function discoverAktif(extra: unknown): boolean {
   return (extra as { discover?: unknown }).discover === true;
 }
 
+/**
+ * Alur masuk dan onboarding v2 (LANJUT_030): pengantar, masuk, daftar bertahap, dan kecenderungan
+ * arah. Teksnya masih draf. Bawaan: MATI, dan alur v1 berjalan persis seperti sebelumnya.
+ * Menyala hanya bila build dibuat dengan EXPO_PUBLIC_ALUR_MASUK_V2=1 (variabel sesi lokal).
+ */
+export function alurMasukV2Aktif(extra: unknown): boolean {
+  if (!extra || typeof extra !== 'object') return false;
+  return (extra as { alurMasukV2?: unknown }).alurMasukV2 === true;
+}
+
 export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;

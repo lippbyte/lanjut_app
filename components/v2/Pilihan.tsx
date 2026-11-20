@@ -27,8 +27,12 @@ export function Pilihan({
   memuat = false,
   nonaktif = false,
   galat,
+  judulTersembunyi = false,
 }: {
+  /** Judul pertanyaan; selalu menjadi label kelompok untuk pembaca layar. */
   judul: string;
+  /** LANJUT_030: judul sudah tertulis di HeaderLayar, jadi tidak ditulis dua kali. */
+  judulTersembunyi?: boolean;
   opsi: readonly OpsiPilihan[];
   mode: ModePilihan;
   terpilih: readonly string[];
@@ -42,7 +46,7 @@ export function Pilihan({
   const semua = belumTahu ? [...opsi, { nilai: BELUM_TAHU, label: belumTahu }] : opsi;
   return (
     <View style={s.wadah} accessibilityRole={mode === 'satu' ? 'radiogroup' : undefined} accessibilityLabel={judul}>
-      <Teks varian="judulKecil">{judul}</Teks>
+      {judulTersembunyi ? null : <Teks varian="judulKecil">{judul}</Teks>}
       <Teks varian="keterangan" warna="teksSekunder">
         {`${mode === 'satu' ? 'Pilih satu' : 'Boleh pilih lebih dari satu'} · ${teksStatusPilihan(terpilih.length, mode)}`}
       </Teks>

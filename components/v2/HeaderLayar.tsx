@@ -19,7 +19,10 @@ export function HeaderLayar({
   kembaliNonaktif = false,
   memuat = false,
   galat,
+  tanpaTepi = false,
 }: {
+  /** LANJUT_030: di dalam kerangka yang sudah bertepi (KerangkaV2), tepi kiri-kanan tidak diulang. */
+  tanpaTepi?: boolean;
   judul: string;
   ringkasan?: string;
   onKembali?: () => void;
@@ -28,7 +31,7 @@ export function HeaderLayar({
   galat?: string;
 }) {
   return (
-    <View style={s.wadah}>
+    <View style={StyleSheet.flatten([s.wadah, tanpaTepi && s.tanpaTepi])}>
       {onKembali ? (
         <Sentuh peran="button" label="Kembali" onPress={onKembali} nonaktif={kembaliNonaktif} gaya={() => s.kembali}>
           <Ikon nama="kembali" ukuran={ukuran.ikon} warna={kembaliNonaktif ? warna.nonaktifTeks : warna.teks} />
@@ -53,5 +56,6 @@ export function HeaderLayar({
 
 const s = StyleSheet.create({
   wadah: { gap: ruang.r1, paddingHorizontal: ruang.tepi, paddingTop: ruang.r2, paddingBottom: ruang.r3, backgroundColor: warna.halaman },
+  tanpaTepi: { paddingHorizontal: 0, paddingTop: 0, paddingBottom: ruang.r1 },
   kembali: { alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' },
 });

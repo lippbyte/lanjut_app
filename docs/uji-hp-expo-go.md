@@ -154,3 +154,31 @@ Expo Go menjalankan aplikasi dalam mode pengembangan, di dalam aplikasi Expo Go 
 - Kecepatan dan perilaku bundel produksi.
 
 Daftar lengkapnya ada di bagian 3a `docs/daftar-uji-hp-apk-v2.md`.
+
+## 10. Alur masuk dan onboarding v2 (LANJUT_030)
+
+Alur ini **mati bawaan**. Langkah di bawah belum pernah dijalankan di HP; hasilnya belum ada.
+
+**Syarat:** paket `expo-secure-store` harus sudah terpasang di `LANJUT_App` (`npx expo install expo-secure-store`). Tanpa paket itu, bundel untuk HP gagal disusun. Web tidak memerlukannya.
+
+1. Ikuti langkah 2 sampai 5, lalu sebelum `npx expo start` tambahkan satu baris di jendela PowerShell yang sama:
+   ```powershell
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2 = "1"
+   ```
+   Baris ini hanya berlaku di jendela itu. Tutup jendela untuk kembali ke alur v1.
+2. Bila Expo Go sudah pernah dipakai dengan akun lain, keluar dulu dari akun, lalu tutup Expo Go sepenuhnya.
+3. Buka lagi lewat QR. Catat:
+   - Layar kelinci tidak menahan lebih dari sekitar 1 detik.
+   - Tiga kartu pengantar bisa digeser; "Berikutnya", "Lewati", "Mulai", dan "Saya sudah punya akun" berfungsi.
+4. **Daftar** dengan nama pengguna uji baru (huruf kecil, mis. `uji_hp_030_a`), tanpa email:
+   - Setiap langkah satu pertanyaan; "Kembali" mengembalikan isian sebelumnya.
+   - "Baca lengkap" di langkah Privasi membuka kebijakan lengkap, dan "Lanjut" ditolak sebelum kotak dicentang.
+   - Papan ketik tidak menutup kolom dan tombol.
+5. Sesudah akun dibuat, layar **kecenderungan arah** muncul. Selama jalur masih draf, isinya "Pilihan jalur sedang disiapkan". Untuk mencoba pilihan jalur, jalankan `npm run benih-persetujuan-dummy` di `server` dulu; jalur `melanjutkan` lalu tampil sebagai `[DUMMY]`.
+6. **Tetap masuk:**
+   - Keluar, lalu masuk lagi dengan "Tetap masuk di HP ini" **dimatikan**. Tutup Expo Go sepenuhnya, lalu buka lagi: harus kembali ke pengantar atau Masuk.
+   - Ulangi dengan pilihan itu **menyala**: harus langsung masuk.
+7. **Migrasi sesi:** tidak bisa dibuktikan lewat Expo Go. Perlu APK v2 yang dipasang di atas APK 1.0.0 dengan akun yang sedang masuk.
+8. Nyalakan **Hapus animasi** (Android: Setelan > Aksesibilitas) dan **Ukuran font** besar. Semua langkah harus tetap bisa diselesaikan.
+
+Catat hasil di tabel 3a `docs/daftar-uji-hp-apk-v2.md`. Akun uji baru ini milik `lanjut_dev` saja.

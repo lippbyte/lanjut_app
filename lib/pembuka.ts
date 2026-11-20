@@ -38,15 +38,31 @@ export const DURASI_KELUAR_TANPA_GERAK_MS = 150;
 export const KURVA_MASUK = [0.22, 1, 0.36, 1] as const; // ease-out panjang: cepat di awal, mendarat pelan
 export const KURVA_KELUAR = [0.4, 0, 0.2, 1] as const; // ease-in-out standar: tanpa sentakan di awal maupun akhir
 
+/**
+ * Alur masuk v2 (LANJUT_030, saklar EXPO_PUBLIC_ALUR_MASUK_V2): layar pembuka tampil sampai app
+ * siap, minimal 800 ms saja, supaya tidak menahan siswa. Alur v1 tetap MIN_TAMPIL_MS.
+ */
+export const MIN_TAMPIL_V2_MS = 800;
+
+/** Minimum tampil yang berlaku untuk alur yang menyala. */
+export const minTampilMs = (alurMasukV2: boolean) => (alurMasukV2 ? MIN_TAMPIL_V2_MS : MIN_TAMPIL_MS);
+
+// Minimum yang dipakai bila pemanggil tidak menyebutnya. Bawaan v1; app/_layout.tsx mengaturnya sekali
+// saat modul dimuat, sesuai saklar build (nilainya tidak berubah selama app jalan).
+let minTampilBerlaku: number = MIN_TAMPIL_MS;
+export function aturMinTampil(ms: number): void {
+  minTampilBerlaku = ms;
+}
+
 /** Layar pembuka boleh mulai memudar keluar? `lewatMs` dihitung sejak animasi masuk dimulai. */
-export function bolehTutup(siap: boolean, lewatMs: number): boolean {
-  return (siap && lewatMs >= MIN_TAMPIL_MS) || lewatMs >= MAKS_TAMPIL_MS;
+export function bolehTutup(siap: boolean, lewatMs: number, minMs: number = minTampilBerlaku): boolean {
+  return (siap && lewatMs >= minMs) || lewatMs >= MAKS_TAMPIL_MS;
 }
 
 /** Sisa waktu (ms) sebelum boleh menutup, untuk penjadwal; 0 bila sudah boleh. */
-export function sisaSebelumTutup(siap: boolean, lewatMs: number): number {
-  if (bolehTutup(siap, lewatMs)) return 0;
-  return siap ? MIN_TAMPIL_MS - lewatMs : MAKS_TAMPIL_MS - lewatMs;
+export function sisaSebelumTutup(siap: boolean, lewatMs: number, minMs: number = minTampilBerlaku): number {
+  if (bolehTutup(siap, lewatMs, minMs)) return 0;
+  return siap ? minMs - lewatMs : MAKS_TAMPIL_MS - lewatMs;
 }
 
 /**

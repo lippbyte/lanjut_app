@@ -24,12 +24,16 @@ const BERKAS_KEBIJAKAN = 'lib/kebijakan-privasi.json';
 const BERKAS_PERSETUJUAN = 'docs/persetujuan-teks-rilis.json';
 const SAKLAR_PORTOFOLIO = 'EXPO_PUBLIC_PORTOFOLIO';
 const SAKLAR_HAPUS_AKUN = 'EXPO_PUBLIC_KELOLA_DATA_AKUN';
+// LANJUT_030: alur masuk dan onboarding v2. Teksnya draf; build yang menyalakannya ditahan.
+const SAKLAR_ALUR_MASUK_V2 = 'EXPO_PUBLIC_ALUR_MASUK_V2';
+const SEMUA_SAKLAR = [SAKLAR_PORTOFOLIO, SAKLAR_HAPUS_AKUN, SAKLAR_ALUR_MASUK_V2];
 
 // `saklar` null: tertanam di semua build, jadi berlaku bila ada saklar mana pun yang menyala.
 const TEKS = [
   { id: 'kebijakan-privasi', nama: 'Kebijakan privasi', saklar: null, berkas: [BERKAS_KEBIJAKAN] },
   { id: 'portofolio', nama: 'Teks Portofolio', saklar: SAKLAR_PORTOFOLIO, berkas: ['lib/portofolio.ts', 'docs/draf-teks-portofolio.md'] },
   { id: 'hapus-akun', nama: 'Teks unduh data dan hapus akun', saklar: SAKLAR_HAPUS_AKUN, berkas: ['lib/dataAkun.ts', 'docs/draf-teks-hapus-akun.md'] },
+  { id: 'alur-masuk-v2', nama: 'Teks alur masuk v2', saklar: SAKLAR_ALUR_MASUK_V2, berkas: ['lib/alurMasukV2.ts', 'docs/draf-teks-alur-masuk-v2.md'] },
 ];
 
 const BERKAS_TEKS_FOTO = ['lib/portofolio.ts', 'lib/beranda.ts'];
@@ -79,7 +83,7 @@ function bacaPersetujuan(akar) {
 
 function periksaDraf(akar, build) {
   const persetujuan = bacaPersetujuan(akar);
-  const adaSaklar = [SAKLAR_PORTOFOLIO, SAKLAR_HAPUS_AKUN].some((s) => profilMenyala(build, s).length > 0);
+  const adaSaklar = SEMUA_SAKLAR.some((s) => profilMenyala(build, s).length > 0);
   const masalah = [];
   for (const t of TEKS) {
     const dipakai = t.saklar ? profilMenyala(build, t.saklar).length > 0 : adaSaklar;
@@ -169,7 +173,11 @@ function jalankan(argv) {
 
   if (cetakSidik) {
     console.log(`Salin ke ${BERKAS_PERSETUJUAN} bagian "disetujui", untuk teks yang sudah kamu baca dan setujui:`);
-    for (const t of TEKS) console.log(JSON.stringify({ teks: t.id, sidik: sidikTeks(akar, t.id), tanggal: 'YYYY-MM-DD', oleh: 'Khalifa' }));
+    for (const t of TEKS) {
+      // Folder yang tidak memuat berkas teks ini (mis. folder uji) dilewati, bukan galat.
+      if (!t.berkas.every((rel) => fs.existsSync(path.join(akar, rel)))) continue;
+      console.log(JSON.stringify({ teks: t.id, sidik: sidikTeks(akar, t.id), tanggal: 'YYYY-MM-DD', oleh: 'Khalifa' }));
+    }
     return 0;
   }
 
@@ -205,4 +213,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { periksa, sidikTeks, teksDrafLain, TEKS };
+module.exports = { periksa, sidikTeks, teksDrafLain, TEKS, SEMUA_SAKLAR };

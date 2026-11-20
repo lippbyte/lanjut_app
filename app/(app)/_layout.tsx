@@ -7,6 +7,8 @@ import { LayarMemuat } from '../../components/layout/LayarMemuat';
 import { BuatSandiBaruScreen } from '../../components/screens/BuatSandiBaruScreen';
 import { IsiJenisSekolahScreen, IsiKelasScreen } from '../../components/screens/IsiKelasScreen';
 import { PromptKebijakan } from '../../components/screens/TerimaKebijakan';
+import { GerbangArahV2 } from '../../components/screens/v2/KecenderunganV2';
+import { useTanyaArahV2 } from '../../hooks/useArahV2';
 import { belumIsiJenisSekolah } from '../../lib/jenjang';
 import { perluBuatSandiBaru } from '../../lib/sandiBaru';
 import { useSesi } from '../../providers/AuthProvider';
@@ -35,6 +37,9 @@ const TERBUKA_TANPA_KELAS = '/akun';
 export default function AppLayout() {
   const { status, pengguna } = useSesi();
   const pathname = usePathname();
+  // LANJUT_030 (alur masuk v2): pertanyaan kecenderungan arah sesudah gerbang v1. Saklar mati →
+  // selalu 'tidak' (tanpa membaca penyimpanan atau memanggil API), jadi semua di bawah sama dengan v1.
+  const arah = useTanyaArahV2(status === 'masuk' ? pengguna : null);
   if (status === 'memuat') return <LayarMemuat />;
   if (status === 'keluar') return <Redirect href="/masuk" />;
 
@@ -42,7 +47,7 @@ export default function AppLayout() {
   const tanpaKelas = !!pengguna && !pengguna.kelas;
   const tanpaJenis = !!pengguna && belumIsiJenisSekolah(pengguna.kelas, pengguna.jenis_sekolah);
   const tertahan = perluSandi || ((tanpaKelas || tanpaJenis) && pathname !== TERBUKA_TANPA_KELAS);
-  const bolehPromptKebijakan = !!pengguna && !perluSandi && !tanpaKelas && !tanpaJenis && pathname !== '/terima-kebijakan';
+  const bolehPromptKebijakan = !!pengguna && !perluSandi && !tanpaKelas && !tanpaJenis && pathname !== '/terima-kebijakan' && arah.keadaan === 'tidak';
   return (
     // key: riwayat obrolan (hanya di memori) tidak terbawa ke akun lain dan
     // hilang saat keluar — layout ini tidak dirender lagi saat status 'keluar'.
@@ -51,12 +56,13 @@ export default function AppLayout() {
           navigator expo-router kehilangan state (tab dari /akun tidak bisa
           pindah halaman lagi). display:none menyembunyikannya dari layar,
           fokus, dan pembaca layar. */}
-      <View style={tertahan ? s.tersembunyi : s.penuh}>
+      <View style={tertahan || arah.keadaan !== 'tidak' ? s.tersembunyi : s.penuh}>
         <AppShell>
           <Slot />
         </AppShell>
       </View>
       {perluSandi ? <BuatSandiBaruScreen /> : tertahan ? tanpaKelas ? <IsiKelasScreen /> : <IsiJenisSekolahScreen /> : null}
+      {arah.keadaan === 'tanya' ? <GerbangArahV2 arah={arah} /> : arah.keadaan === 'menunggu' ? <LayarMemuat /> : null}
       {bolehPromptKebijakan ? <PromptKebijakan /> : null}
     </ObrolanProvider>
   );
