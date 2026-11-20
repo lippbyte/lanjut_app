@@ -11,6 +11,7 @@ const autentikasi = require('./middleware/autentikasi');
 const { batasGlobal } = require('./middleware/batasLaju');
 const penangananGalat = require('./middleware/penangananGalat');
 const { sukses } = require('./util/respons');
+const { jalurUntukLog } = require('./util/jalurLog');
 
 const authRute = require('./modul/auth/auth.rute');
 const penggunaRute = require('./modul/pengguna/pengguna.rute');
@@ -78,7 +79,8 @@ app.use((req, res, next) => {
   res.on('finish', () => {
     const durasi = Date.now() - mulai;
     const penggunaId = req.pengguna ? req.pengguna.id : '-';
-    console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${durasi}ms pengguna=${penggunaId}`);
+    // LANJUT_030b: jalur pencarian dicatat tanpa string kueri (util/jalurLog.js).
+    console.log(`${req.method} ${jalurUntukLog(req)} ${res.statusCode} ${durasi}ms pengguna=${penggunaId}`);
   });
   next();
 });
