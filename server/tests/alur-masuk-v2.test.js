@@ -393,6 +393,9 @@ describe('Kecenderungan arah', () => {
     t = pilihan.ubahPilihan(t, pilihan.BELUM_TAHU, 'banyak');
     assert.deepEqual(t, [pilihan.BELUM_TAHU]);
     assert.deepEqual(arah.jalurUntukDikirim(t, arah.opsiArah(JALUR)), []);
+    // Lapis kedua: bila "Belum tahu" ikut terpilih bersama jalur (keadaan yang tidak boleh terjadi),
+    // tidak ada jalur yang dikirim.
+    assert.deepEqual(arah.jalurUntukDikirim(['bekerja', pilihan.BELUM_TAHU], arah.opsiArah(JALUR)), []);
     t = pilihan.ubahPilihan(t, 'bekerja', 'banyak');
     assert.deepEqual(t, ['bekerja']);
     const layar = baca('components/screens/v2/KecenderunganV2.tsx');
