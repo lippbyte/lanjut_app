@@ -1,0 +1,57 @@
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import { ruang, ukuran, warna } from '../../theme/v2';
+import { Ikon } from '../ui/Ikon';
+import { PesanStatus } from './PesanStatus';
+import { PlaceholderMemuat } from './PlaceholderMemuat';
+import { Sentuh } from './Sentuh';
+import { Teks } from './Teks';
+
+/**
+ * Header layar v2 (LANJUT_029): tombol kembali opsional, judul H1, dan paling banyak satu
+ * kalimat ringkasan. Teks panjang tidak ditaruh di sini (aturan teks bertahap).
+ */
+export function HeaderLayar({
+  judul,
+  ringkasan,
+  onKembali,
+  kembaliNonaktif = false,
+  memuat = false,
+  galat,
+}: {
+  judul: string;
+  ringkasan?: string;
+  onKembali?: () => void;
+  kembaliNonaktif?: boolean;
+  memuat?: boolean;
+  galat?: string;
+}) {
+  return (
+    <View style={s.wadah}>
+      {onKembali ? (
+        <Sentuh peran="button" label="Kembali" onPress={onKembali} nonaktif={kembaliNonaktif} gaya={() => s.kembali}>
+          <Ikon nama="kembali" ukuran={ukuran.ikon} warna={kembaliNonaktif ? warna.nonaktifTeks : warna.teks} />
+        </Sentuh>
+      ) : null}
+      {memuat ? (
+        <PlaceholderMemuat baris={2} label="Memuat judul" />
+      ) : (
+        <>
+          <Teks varian="h1">{judul}</Teks>
+          {ringkasan ? (
+            <Teks varian="badan" warna="teksSekunder">
+              {ringkasan}
+            </Teks>
+          ) : null}
+        </>
+      )}
+      {galat ? <PesanStatus jenis="galat">{galat}</PesanStatus> : null}
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  wadah: { gap: ruang.r1, paddingHorizontal: ruang.tepi, paddingTop: ruang.r2, paddingBottom: ruang.r3, backgroundColor: warna.halaman },
+  kembali: { alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' },
+});
