@@ -28,4 +28,14 @@ if (process.env.EXPO_PUBLIC_DISCOVER !== '1') {
   ];
 }
 
+// LANJUT_029: galeri komponen v2 khusus pengembang. Keluar dari bundel kecuali
+// EXPO_PUBLIC_GALERI_KOMPONEN=1 DAN bukan bundel produksi (`expo export` tanpa --dev dan build
+// rilis menyetel NODE_ENV=production sebelum berkas ini dibaca).
+if (process.env.EXPO_PUBLIC_GALERI_KOMPONEN !== '1' || process.env.NODE_ENV === 'production') {
+  config.resolver.blockList = [
+    ...[].concat(config.resolver.blockList || []),
+    /[\\/]app[\\/]galeri-komponen\.tsx$/,
+  ];
+}
+
 module.exports = config;

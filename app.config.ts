@@ -147,6 +147,10 @@ const config: ExpoConfig = {
     // LANJUT_024: Discover MATI kecuali build dibuat dengan EXPO_PUBLIC_DISCOVER=1 (dibaca
     // lib/fiturApp.ts). Rutenya dikeluarkan dari bundel di metro.config.js.
     discover: process.env.EXPO_PUBLIC_DISCOVER === '1',
+    // LANJUT_029: galeri komponen v2, KHUSUS PENGEMBANG. MATI kecuali EXPO_PUBLIC_GALERI_KOMPONEN=1, dan tidak
+    // pernah di profil EAS selain development. Layarnya juga butuh __DEV__ (lib/galeriKomponen.ts), dan
+    // rutenya dikeluarkan dari bundel di metro.config.js.
+    galeriKomponen: process.env.EXPO_PUBLIC_GALERI_KOMPONEN === '1' && !tanpaUrlDev,
     // LANJUT_083: masuk dengan Google (lib/googleMasuk.ts). Client ID OAuth bersifat
     // publik; Client Secret TIDAK pernah diisi di app. Kosong = tombol Google tidak
     // tampil. Android/iOS juga butuh alamat halaman penerus di domain landing
