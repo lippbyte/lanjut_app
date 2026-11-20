@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -21,6 +21,8 @@ export type ArahV2 = {
   galatJaringan: boolean;
   muatUlang: () => void;
   simpanTanda: (t: TandaArah) => Promise<void>;
+  /** Memilih satu jalur lewat rute Jalur & Tujuan yang sudah ada (POST /jalur-minat/saya). */
+  pilihJalur: (jalurMinatId: string) => Promise<void>;
   /** "Lanjut dulu" saat galat: tidak ditanya lagi di sesi ini, tanpa tanda tersimpan. */
   lewatiSesiIni: () => void;
 };
@@ -70,6 +72,19 @@ export function useTanyaArahV2(pengguna: Pengguna | null): ArahV2 {
     retry: false,
   });
 
+  // Sendiri, bukan usePilihJalur dari hooks/useJalurTujuan.ts: hook itu hanya boleh dipakai layar
+  // Jalur & Tujuan (saklar EXPO_PUBLIC_JALUR_TUJUAN, tes jalur-tujuan-app). Di sini permintaan
+  // jalur hanya terjangkau bila saklar alur masuk v2 menyala. Rute dan badannya sama.
+  const queryClient = useQueryClient();
+  const pilihJalur = useCallback(
+    async (jalurMinatId: string) => {
+      if (!ALUR_V2 || !token) return;
+      await apiFetch<PilihanJalur>('/jalur-minat/saya', { method: 'POST', body: { jalur_minat_id: jalurMinatId }, token });
+      await queryClient.invalidateQueries({ queryKey: ['jalur_tujuan'] });
+    },
+    [token, queryClient]
+  );
+
   const simpanTanda = useCallback(
     async (t: TandaArah) => {
       if (id) await AsyncStorage.setItem(kunciTandaArah(id), t).catch(() => {});
@@ -91,6 +106,7 @@ export function useTanyaArahV2(pengguna: Pengguna | null): ArahV2 {
       void pilihan.refetch();
     },
     simpanTanda,
+    pilihJalur,
     lewatiSesiIni: () => setLewati(true),
   };
 }

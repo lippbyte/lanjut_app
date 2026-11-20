@@ -425,7 +425,10 @@ describe('Kecenderungan arah', () => {
     assert.equal(fs.readdirSync(path.join(AKAR_APP, 'server', 'src', 'db', 'migrasi')).length, 33);
     const panggilan = KODE_V2.flatMap((f) => [...baca(f).matchAll(/apiFetch(?:<[^>]+>)?\(\s*'([^']+)'/g)].map((m) => m[1]));
     assert.deepEqual([...new Set(panggilan)].sort(), ['/jalur-minat', '/jalur-minat/saya']);
-    assert.match(baca('components/screens/v2/KecenderunganV2.tsx'), /const pilihJalur = usePilihJalur\(\);/);
+    // Tidak memakai hooks/useJalurTujuan.ts (khusus layar Jalur & Tujuan); permintaan hanya di balik saklar v2.
+    assert.match(baca('components/screens/v2/KecenderunganV2.tsx'), /await arah\.pilihJalur\(id\);/);
+    assert.doesNotMatch(baca('components/screens/v2/KecenderunganV2.tsx'), /useJalurTujuan/);
+    assert.match(baca('hooks/useArahV2.ts'), /if \(!ALUR_V2 \|\| !token\) return;\n\s+await apiFetch<PilihanJalur>\('\/jalur-minat\/saya', \{ method: 'POST', body: \{ jalur_minat_id: jalurMinatId \}, token \}\);/);
     // Tanda lokal ikut dibuang saat akun dihapus.
     assert.match(baca('api/auth.ts'), /AsyncStorage\.multiRemove\(\[kunciProfilLokal\(penggunaId\), kunciTandaArah\(penggunaId\)\]\)/);
   });

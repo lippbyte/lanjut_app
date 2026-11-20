@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 
 import { ApiError } from '../../../api/client';
 import type { ArahV2 } from '../../../hooks/useArahV2';
-import { usePilihJalur } from '../../../hooks/useJalurTujuan';
 import { TEKS_ARAH } from '../../../lib/alurMasukV2';
 import { jalurUntukDikirim } from '../../../lib/tandaArah';
 import { warna } from '../../../theme/v2';
@@ -18,7 +17,6 @@ import { KerangkaV2 } from './KerangkaV2';
  *   - "Belum tahu" tidak dikirim ke server; hanya tanda lokal (lib/tandaArah.ts).
  */
 export function GerbangArahV2({ arah }: { arah: ArahV2 }) {
-  const pilihJalur = usePilihJalur();
   const [terpilih, setTerpilih] = useState<string[]>([]);
   const [menyimpan, setMenyimpan] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
@@ -29,7 +27,7 @@ export function GerbangArahV2({ arah }: { arah: ArahV2 }) {
     try {
       for (const id of jalurUntukDikirim(terpilih, arah.opsi)) {
         try {
-          await pilihJalur.mutateAsync(id);
+          await arah.pilihJalur(id);
         } catch (e) {
           // Sudah dipilih sebelumnya (mis. coba lagi sesudah sebagian berhasil): bukan galat.
           if (!(e instanceof ApiError && e.kode === 'JALUR_SUDAH_DIPILIH')) throw e;
