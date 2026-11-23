@@ -64,6 +64,16 @@ export function navigasiV2Aktif(extra: unknown): boolean {
   return (extra as { navigasiV2?: unknown }).navigasiV2 === true;
 }
 
+/**
+ * Mode terang dan gelap v2 (LANJUT_031b): kerangka tema dua mode untuk layar v2.
+ * Teksnya masih draf. Bawaan: MATI (tampil terang saja, mengabaikan pengaturan sistem).
+ * Menyala hanya bila build dibuat dengan EXPO_PUBLIC_MODE_GELAP=1 (variabel sesi lokal).
+ */
+export function modeGelapAktif(extra: unknown): boolean {
+  if (!extra || typeof extra !== 'object') return false;
+  return (extra as { modeGelap?: unknown }).modeGelap === true;
+}
+
 export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;

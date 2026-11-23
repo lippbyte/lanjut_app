@@ -14,9 +14,9 @@ import {
 import { discoverAktif, jalurTujuanAktif, kelolaDataAkunAktif, portofolioAktif } from '../../../lib/fiturApp';
 import { ALAT_BELAJAR_V2 } from '../../../lib/navigasiV2';
 import { useSesi } from '../../../providers/AuthProvider';
-import { garis, radius, ruang, ukuran, warna } from '../../../theme/v2';
-import { Ikon } from '../../ui/Ikon';
-import { BarisDaftar, Kartu, KeadaanGalat, PlaceholderMemuat, Sentuh, Teks, Tombol } from '../../v2';
+import { garis, radius, ruang, ukuran } from '../../../theme/v2';
+import { useTemaV2 } from '../../../theme/v2/konteks';
+import { BarisDaftar, Ikon, Kartu, KeadaanGalat, PlaceholderMemuat, Sentuh, Teks, Tombol } from '../../v2';
 import { GerbangArahV2 } from './KecenderunganV2';
 
 const EXTRA = Constants.expoConfig?.extra;
@@ -31,13 +31,14 @@ const PINTU = daftarPintuArahSaya(SAKLAR);
 const AKSI_KOSONG = aksiKosongLangkah(SAKLAR.discover);
 
 /**
- * Layar Arah Saya (Beranda v2, LANJUT_031, saklar EXPO_PUBLIC_NAVIGASI_V2).
+ * Layar Arah Saya (Beranda v2, LANJUT_031, dua mode + Phosphor LANJUT_031b).
  * Menjawab satu pertanyaan: "Aku sedang menuju ke mana, dan apa langkah berikutnya?"
  * - Komponen dan token hanya dari v2 (`components/v2`, `theme/v2`).
  * - Teks tetap maksimal 40 kata per layar, seluruhnya dari `lib/arahSaya.ts`.
  * - Memakai ulang layar kecenderungan `GerbangArahV2` (030) tanpa menulis ulang.
  */
 export function ArahSayaV2() {
+  const { warna } = useTemaV2();
   const router = useRouter();
   const { pengguna } = useSesi();
   const kurangiGerak = useKurangiGerak();
@@ -81,7 +82,13 @@ export function ArahSayaV2() {
                     peran="button"
                     label={c.label}
                     onPress={bukaChipArah}
-                    gaya={({ ditekan }) => [s.chip, ditekan && s.chipTekan]}
+                    gaya={({ ditekan }) => [
+                      s.chip,
+                      {
+                        backgroundColor: ditekan ? warna.brand : warna.permukaanLembut,
+                        borderColor: warna.aksen,
+                      },
+                    ]}
                   >
                     <Teks varian="badanKecil" warna="teks">
                       {c.label}
@@ -91,7 +98,12 @@ export function ArahSayaV2() {
                 ))}
               </View>
             ) : data.arahku.keadaan === 'belum_tahu' ? (
-              <View style={s.barisBelumTahu}>
+              <View
+                style={StyleSheet.flatten([
+                  s.barisBelumTahu,
+                  { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
+                ])}
+              >
                 <Teks varian="badanKecil" warna="teksSekunder" gaya={s.fleks}>
                   {TEKS_ARAH_SAYA.belumTahu}
                 </Teks>
@@ -116,8 +128,17 @@ export function ArahSayaV2() {
                 onPress={() => router.push(data.langkah!.href as any)}
               />
             ) : (
-              <View style={s.kosongKartu}>
-                <View style={s.lingkaranMaskot} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+              <View
+                style={StyleSheet.flatten([
+                  s.kosongKartu,
+                  { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
+                ])}
+              >
+                <View
+                  style={StyleSheet.flatten([s.lingkaranMaskot, { backgroundColor: warna.permukaanLembut }])}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                >
                   <Image
                     source={require('../../../assets/mascot-blue.png')}
                     style={s.maskot}
@@ -143,7 +164,7 @@ export function ArahSayaV2() {
           <View style={s.seksi}>
             {PINTU.map((p) =>
               p.bobot === 'utama' ? (
-                <View key={p.id} style={s.kartuUtamaWadah}>
+                <View key={p.id} style={StyleSheet.flatten([s.kartuUtamaWadah, { borderColor: warna.aksen }])}>
                   <Kartu
                     varian="brand"
                     judul={p.judul}
@@ -169,7 +190,13 @@ export function ArahSayaV2() {
               label={TEKS_ARAH_SAYA.alatBelajarJudul}
               terbuka={alatTerbuka}
               onPress={() => setAlatTerbuka((v) => !v)}
-              gaya={({ ditekan }) => [s.lipatTombol, ditekan && s.chipTekan]}
+              gaya={({ ditekan }) => [
+                s.lipatTombol,
+                {
+                  backgroundColor: ditekan ? warna.brand : warna.permukaan,
+                  borderColor: warna.garisHalus,
+                },
+              ]}
             >
               <Teks varian="judulKecil" gaya={s.fleks}>
                 {TEKS_ARAH_SAYA.alatBelajarJudul}
@@ -177,7 +204,12 @@ export function ArahSayaV2() {
               <Ikon nama={alatTerbuka ? 'kembali' : 'panah'} ukuran={ukuran.ikon} warna={warna.teksSekunder} />
             </Sentuh>
             {alatTerbuka ? (
-              <View style={s.daftarAlat}>
+              <View
+                style={StyleSheet.flatten([
+                  s.daftarAlat,
+                  { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
+                ])}
+              >
                 {ALAT_BELAJAR_V2.map((a) => (
                   <BarisDaftar
                     key={a.id}
@@ -196,8 +228,8 @@ export function ArahSayaV2() {
         animationType={kurangiGerak ? 'none' : 'slide'}
         onRequestClose={tutupArah}
       >
-        <View style={s.modalWadah}>
-          <View style={s.modalBar}>
+        <View style={StyleSheet.flatten([s.modalWadah, { backgroundColor: warna.halaman }])}>
+          <View style={StyleSheet.flatten([s.modalBar, { backgroundColor: warna.halaman }])}>
             <Tombol varian="teks" label={TEKS_ARAH_SAYA.tutupArah} onPress={tutupArah} />
           </View>
           <View style={s.fleks}>
@@ -233,12 +265,7 @@ const s = StyleSheet.create({
     paddingHorizontal: ruang.r2,
     paddingVertical: ruang.r1,
     borderRadius: radius.pil,
-    backgroundColor: warna.permukaanLembut,
     borderWidth: garis.tipis,
-    borderColor: warna.aksen,
-  },
-  chipTekan: {
-    backgroundColor: warna.brand,
   },
   barisBelumTahu: {
     flexDirection: 'row',
@@ -247,24 +274,19 @@ const s = StyleSheet.create({
     paddingHorizontal: ruang.r2,
     paddingVertical: ruang.r1,
     borderRadius: radius.sedang,
-    backgroundColor: warna.permukaan,
     borderWidth: garis.tipis,
-    borderColor: warna.garisHalus,
   },
   kosongKartu: {
     alignItems: 'center',
     gap: ruang.r2,
     padding: ruang.r3,
     borderRadius: radius.sedang,
-    backgroundColor: warna.permukaan,
     borderWidth: garis.tipis,
-    borderColor: warna.garisHalus,
   },
   lingkaranMaskot: {
     width: ukuran.lingkaranIkon,
     height: ukuran.lingkaranIkon,
     borderRadius: radius.pil,
-    backgroundColor: warna.permukaanLembut,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -275,7 +297,6 @@ const s = StyleSheet.create({
   kartuUtamaWadah: {
     borderRadius: radius.sedang,
     borderWidth: garis.fokus,
-    borderColor: warna.aksen,
   },
   lipatTombol: {
     flexDirection: 'row',
@@ -284,26 +305,20 @@ const s = StyleSheet.create({
     paddingHorizontal: ruang.r2,
     paddingVertical: ruang.r1,
     borderRadius: radius.sedang,
-    backgroundColor: warna.permukaan,
     borderWidth: garis.tipis,
-    borderColor: warna.garisHalus,
   },
   daftarAlat: {
     borderRadius: radius.sedang,
-    backgroundColor: warna.permukaan,
     borderWidth: garis.tipis,
-    borderColor: warna.garisHalus,
     paddingHorizontal: ruang.r2,
   },
   modalWadah: {
     flex: 1,
-    backgroundColor: warna.halaman,
   },
   modalBar: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     paddingHorizontal: ruang.tepi,
     paddingTop: ruang.r2,
-    backgroundColor: warna.halaman,
   },
 });

@@ -7,7 +7,8 @@ import { useKurangiGerak } from '../../../hooks/useKurangiGerak';
 import { TEKS_PENGANTAR } from '../../../lib/alurMasukV2';
 import { kelolaDataAkunAktif } from '../../../lib/fiturApp';
 import type { TujuanOnboarding } from '../../../lib/onboarding';
-import { radius, ruang, tataLetak, ukuran, warna } from '../../../theme/v2';
+import { radius, ruang, tataLetak, ukuran } from '../../../theme/v2';
+import { useTemaV2 } from '../../../theme/v2/konteks';
 import { IndikatorLangkah, Teks, Tombol } from '../../v2';
 
 // Kalimat unduh/hapus data hanya ditulis bila fiturnya menyala di build yang sama (LANJUT_030 §4.B).
@@ -21,11 +22,12 @@ export function isiKartuPengantar(kelolaData: boolean) {
 }
 
 /**
- * Pengantar alur masuk v2 (LANJUT_030): tiga kartu geser sebelum masuk. Maskot kelinci dipakai di
- * sini (design.md §5: onboarding). Tujuan sama dengan onboarding v1: 'daftar' (Mulai), 'masuk'
- * (Saya sudah punya akun), 'semula' (Lewati).
+ * Pengantar alur masuk v2 (LANJUT_030, dua mode LANJUT_031b): tiga kartu geser sebelum masuk.
+ * Maskot kelinci dipakai apa adanya (design.md §5: onboarding). Tujuan sama dengan onboarding v1:
+ * 'daftar' (Mulai), 'masuk' (Saya sudah punya akun), 'semula' (Lewati).
  */
 export function PengantarV2({ onPilih }: { onPilih: (tujuan: TujuanOnboarding) => void }) {
+  const { warna } = useTemaV2();
   const { top, bottom } = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const lebar = Math.min(width, tataLetak.lebarMaks);
@@ -40,7 +42,7 @@ export function PengantarV2({ onPilih }: { onPilih: (tujuan: TujuanOnboarding) =
   };
 
   return (
-    <View style={StyleSheet.flatten([s.akar, { paddingTop: top + ruang.r1, paddingBottom: bottom + ruang.r2 }])}>
+    <View style={StyleSheet.flatten([s.akar, { backgroundColor: warna.halaman, paddingTop: top + ruang.r1, paddingBottom: bottom + ruang.r2 }])}>
       <View style={StyleSheet.flatten([s.atas, { width: lebar }])}>
         <Tombol varian="teks" label={TEKS_PENGANTAR.lewati} onPress={() => onPilih('semula')} />
       </View>
@@ -53,9 +55,9 @@ export function PengantarV2({ onPilih }: { onPilih: (tujuan: TujuanOnboarding) =
         onMomentumScrollEnd={(e) => setIndeks(Math.max(0, Math.min(kartu.length - 1, Math.round(e.nativeEvent.contentOffset.x / lebar))))}
         scrollEventThrottle={16}
       >
-        {kartu.map((k, i) => (
+        {kartu.map((k) => (
           <View key={k.judul} style={StyleSheet.flatten([s.kartu, { width: lebar }])} accessible accessibilityLabel={`${k.judul}. ${k.isi}`}>
-            <View style={s.maskotWadah}>
+            <View style={StyleSheet.flatten([s.maskotWadah, { backgroundColor: warna.brand }])}>
               <Image source={require('../../../assets/mascot-blue.png')} style={s.maskot} resizeMode="contain" accessible={false} />
             </View>
             <Teks varian="h1">{k.judul}</Teks>
@@ -78,7 +80,7 @@ export function PengantarV2({ onPilih }: { onPilih: (tujuan: TujuanOnboarding) =
 }
 
 const s = StyleSheet.create({
-  akar: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: warna.halaman, alignItems: 'center' },
+  akar: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center' },
   atas: { alignItems: 'flex-end', paddingHorizontal: ruang.r1 },
   geser: { flexGrow: 1 },
   kartu: { paddingHorizontal: ruang.tepi, paddingTop: ruang.r3, gap: ruang.r2 },
@@ -86,7 +88,6 @@ const s = StyleSheet.create({
     width: ukuran.lingkaranIkon * 2,
     height: ukuran.lingkaranIkon * 2,
     borderRadius: radius.pil,
-    backgroundColor: warna.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },

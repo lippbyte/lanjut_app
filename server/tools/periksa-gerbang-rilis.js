@@ -28,7 +28,9 @@ const SAKLAR_HAPUS_AKUN = 'EXPO_PUBLIC_KELOLA_DATA_AKUN';
 const SAKLAR_ALUR_MASUK_V2 = 'EXPO_PUBLIC_ALUR_MASUK_V2';
 // LANJUT_031: navigasi v2 dan Arah Saya. Teksnya draf; build yang menyalakannya ditahan.
 const SAKLAR_NAVIGASI_V2 = 'EXPO_PUBLIC_NAVIGASI_V2';
-const SEMUA_SAKLAR = [SAKLAR_PORTOFOLIO, SAKLAR_HAPUS_AKUN, SAKLAR_ALUR_MASUK_V2, SAKLAR_NAVIGASI_V2];
+// LANJUT_031b: mode terang dan gelap v2. Teks pilihan modenya draf; build yang menyalakannya ditahan.
+const SAKLAR_MODE_GELAP = 'EXPO_PUBLIC_MODE_GELAP';
+const SEMUA_SAKLAR = [SAKLAR_PORTOFOLIO, SAKLAR_HAPUS_AKUN, SAKLAR_ALUR_MASUK_V2, SAKLAR_NAVIGASI_V2, SAKLAR_MODE_GELAP];
 
 // `saklar` null: tertanam di semua build, jadi berlaku bila ada saklar mana pun yang menyala.
 const TEKS = [
@@ -37,6 +39,7 @@ const TEKS = [
   { id: 'hapus-akun', nama: 'Teks unduh data dan hapus akun', saklar: SAKLAR_HAPUS_AKUN, berkas: ['lib/dataAkun.ts', 'docs/draf-teks-hapus-akun.md'] },
   { id: 'alur-masuk-v2', nama: 'Teks alur masuk v2', saklar: SAKLAR_ALUR_MASUK_V2, berkas: ['lib/alurMasukV2.ts', 'docs/draf-teks-alur-masuk-v2.md'] },
   { id: 'navigasi-v2', nama: 'Teks navigasi v2 dan Arah Saya', saklar: SAKLAR_NAVIGASI_V2, berkas: ['lib/arahSaya.ts', 'lib/navigasiV2.ts', 'docs/draf-teks-navigasi-v2.md'] },
+  { id: 'mode-gelap-v2', nama: 'Teks mode tampilan v2', saklar: SAKLAR_MODE_GELAP, berkas: ['lib/modeTampilan.ts', 'docs/draf-teks-mode-tampilan-v2.md'] },
 ];
 
 const BERKAS_TEKS_FOTO = ['lib/portofolio.ts', 'lib/beranda.ts'];

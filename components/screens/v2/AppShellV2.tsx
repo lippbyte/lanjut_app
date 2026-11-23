@@ -18,9 +18,10 @@ import {
   tujuanKembaliV2,
 } from '../../../lib/navigasiV2';
 import { useSesi } from '../../../providers/AuthProvider';
-import { garis, gerak, radius, ruang, tataLetak, ukuran, warna } from '../../../theme/v2';
-import { Ikon } from '../../ui/Ikon';
-import { Kartu, Sentuh, Teks } from '../../v2';
+import { garis, gerak, radius, ruang, tataLetak, ukuran } from '../../../theme/v2';
+import { useTemaV2 } from '../../../theme/v2/konteks';
+import { Ikon, Kartu, Sentuh, Teks } from '../../v2';
+import { PilihModeTampilanV2 } from './PilihModeTampilanV2';
 import { TabBarV2 } from './TabBarV2';
 
 const EXTRA = Constants.expoConfig?.extra;
@@ -36,13 +37,14 @@ const NATIVE = Platform.OS !== 'web';
 const [x1, y1, x2, y2] = gerak.kurva.standar;
 
 /**
- * Shell navigasi v2 (LANJUT_031, saklar EXPO_PUBLIC_NAVIGASI_V2).
+ * Shell navigasi v2 (LANJUT_031, dua mode + Phosphor LANJUT_031b, saklar EXPO_PUBLIC_NAVIGASI_V2).
  * - Membaca daftar tab dari satu konfigurasi (`lib/navigasiV2.ts`).
  * - Memuat Source Sans 3 lokal untuk tipografi badan v2 bila belum dimuat oleh alur masuk v2.
  * - Transisi singkat antarlayar dan tab yang tunduk pada "Kurangi gerakan".
  * - Menangani tombol kembali Android tanpa perulangan antar-tab.
- * - Menyediakan pintu ke Langkah Saya di Jejak Waktu (/linimasa) dan pintu ke Akun & Privasi
- *   di Profil Saya (/discover-profil) tanpa menyentuh berkas layar v1.
+ * - Menyediakan pintu ke Langkah Saya di Jejak Waktu (/linimasa), pintu ke Akun & Privasi di
+ *   Profil Saya (/discover-profil), dan pilihan mode tampilan di Akun & Privasi (/akun, hanya saat
+ *   EXPO_PUBLIC_MODE_GELAP=1) tanpa menyentuh berkas layar v1.
  */
 export function AppShellV2({ children }: { children: React.ReactNode }) {
   useFonts({
@@ -50,6 +52,7 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
     SourceSans3_600SemiBold: require('../../../assets/fonts/SourceSans3_600SemiBold.ttf'),
   });
 
+  const { mode, warna, saklarAktif: modeGelap } = useTemaV2();
   const pathname = usePathname();
   const router = useRouter();
   const { pengguna } = useSesi();
@@ -59,6 +62,7 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
   const aktif = tabAktifV2(pathname, tabs);
   const judulAnak = judulHalamanAnakV2(pathname, pengguna?.kelas, tabs);
   const pintuTab = PINTU_TAB_V2.find((p) => p.diRute === pathname) ?? null;
+  const tampilPilihMode = modeGelap && pathname === '/akun';
 
   const muncul = useRef(new Animated.Value(1)).current;
   useEffect(() => {
@@ -103,16 +107,24 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
     else if (aksi.aksi === 'ganti') router.replace(aksi.href as any);
   };
 
+  // Di mode gelap wordmark tampil langsung di atas `bg` (warna.halaman); di mode terang di dalam badge biru LANJUT.
+  const latarAppbar = mode === 'gelap' ? warna.halaman : warna.permukaan;
+
   return (
-    <View style={s.akar}>
-      <Header style={StyleSheet.flatten([s.appbar, { paddingTop: top + ruang.r1 }])}>
+    <View style={StyleSheet.flatten([s.akar, { backgroundColor: warna.halaman }])}>
+      <Header
+        style={StyleSheet.flatten([
+          s.appbar,
+          { backgroundColor: latarAppbar, borderBottomColor: warna.garisHalus, paddingTop: top + ruang.r1 },
+        ])}
+      >
         {judulAnak ? (
           <View style={s.barisAnak}>
             <Sentuh
               peran="button"
               label={TEKS_ARAH_SAYA.kembali}
               onPress={kembaliAtas}
-              gaya={({ ditekan }) => [s.tombolKembali, ditekan && s.tombolKembaliTekan]}
+              gaya={({ ditekan }) => [s.tombolKembali, ditekan && { backgroundColor: warna.permukaanLembut }]}
             >
               <Ikon nama="kembali" ukuran={ukuran.ikon} warna={warna.teks} />
             </Sentuh>
@@ -122,12 +134,20 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
           </View>
         ) : (
           <View style={s.barisMerek}>
-            <Image
-              source={require('../../../assets/lanjut-wordmark.png')}
-              style={s.wordmark}
-              resizeMode="contain"
-              accessibilityLabel="LANJUT"
-            />
+            {/* [PERLU DIKONFIRMASI]: penampung sementara wordmark putih di mode terang (#78A4CB, token badgeLogo). */}
+            <View
+              style={StyleSheet.flatten([
+                s.wordmarkBadge,
+                mode === 'terang' ? { backgroundColor: warna.badgeLogo } : null,
+              ])}
+            >
+              <Image
+                source={require('../../../assets/lanjut-wordmark.png')}
+                style={s.wordmark}
+                resizeMode="contain"
+                accessibilityLabel="LANJUT"
+              />
+            </View>
           </View>
         )}
       </Header>
@@ -135,9 +155,9 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
       <Main style={s.main}>
         <Animated.View style={StyleSheet.flatten([s.isiAnimasi, { opacity: muncul }])}>
           {TANPA_GULIR_HALAMAN.has(pathname) ? (
-            <View style={s.kolomPenuh}>{children}</View>
+            <View style={StyleSheet.flatten([s.kolomPenuh, { backgroundColor: warna.permukaan }])}>{children}</View>
           ) : (
-            <ScrollView contentContainerStyle={s.gulir} keyboardShouldPersistTaps="handled">
+            <ScrollView contentContainerStyle={StyleSheet.flatten([s.gulir, { backgroundColor: warna.halaman }])} keyboardShouldPersistTaps="handled">
               <View style={s.kolom}>
                 {pintuTab ? (
                   <View style={s.pintuTabWadah}>
@@ -146,6 +166,11 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
                       judul={pintuTab.label}
                       onPress={() => router.push(pintuTab.keHref as any)}
                     />
+                  </View>
+                ) : null}
+                {tampilPilihMode ? (
+                  <View style={s.pintuTabWadah}>
+                    <PilihModeTampilanV2 />
                   </View>
                 ) : null}
                 {children}
@@ -161,11 +186,9 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
 }
 
 const s = StyleSheet.create({
-  akar: { flex: 1, backgroundColor: warna.halaman },
+  akar: { flex: 1 },
   appbar: {
-    backgroundColor: warna.permukaan,
     borderBottomWidth: garis.tipis,
-    borderBottomColor: warna.garisHalus,
     paddingBottom: ruang.r1,
     paddingHorizontal: ruang.tepi,
   },
@@ -176,6 +199,13 @@ const s = StyleSheet.create({
     width: '100%',
     maxWidth: tataLetak.lebarMaks,
     alignSelf: 'center',
+  },
+  wordmarkBadge: {
+    paddingHorizontal: ruang.r2,
+    paddingVertical: ruang.r1,
+    borderRadius: radius.kecil,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   wordmark: { height: ukuran.ikonBesar, width: ukuran.lingkaranIkon + ukuran.ikonBesar },
   barisAnak: {
@@ -191,14 +221,11 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: radius.pil,
   },
-  tombolKembaliTekan: {
-    backgroundColor: warna.permukaanLembut,
-  },
   judulAnak: { flex: 1 },
   main: { flex: 1 },
   isiAnimasi: { flex: 1 },
-  gulir: { flexGrow: 1, backgroundColor: warna.halaman },
+  gulir: { flexGrow: 1 },
   kolom: { width: '100%', maxWidth: tataLetak.lebarMaks, alignSelf: 'center', flexGrow: 1 },
-  kolomPenuh: { flex: 1, width: '100%', maxWidth: tataLetak.lebarMaks, alignSelf: 'center', backgroundColor: warna.permukaan },
+  kolomPenuh: { flex: 1, width: '100%', maxWidth: tataLetak.lebarMaks, alignSelf: 'center' },
   pintuTabWadah: { paddingHorizontal: ruang.tepi, paddingTop: ruang.r2 },
 });

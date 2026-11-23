@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { elevasi, garis, radius, ruang, ukuran, warna, type PeranWarna } from '../../theme/v2';
-import { Ikon } from '../ui/Ikon';
+import { elevasi, garis, radius, ruang, ukuran, type PeranWarna } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
+import { Ikon } from './IkonV2';
 import { PesanStatus } from './PesanStatus';
 import { PlaceholderMemuat } from './PlaceholderMemuat';
 import { Sentuh } from './Sentuh';
@@ -13,9 +14,10 @@ export type VarianKartu = 'biasa' | 'lembut' | 'brand';
 const LATAR: Record<VarianKartu, PeranWarna> = { biasa: 'permukaan', lembut: 'permukaanLembut', brand: 'brand' };
 
 /**
- * Kartu v2 (LANJUT_029): judul, satu kalimat keterangan, dan isi opsional. Bila onPress ada,
- * seluruh kartu menjadi satu kontrol (peran "button", label = judul) dengan tanda panah.
- * Tepi kartu dekoratif (garisHalus); kartu yang bisa ditekan dikenali dari panahnya.
+ * Kartu v2 (LANJUT_029, dua mode LANJUT_031b): judul, satu kalimat keterangan, dan isi opsional.
+ * Bila onPress ada, seluruh kartu menjadi satu kontrol (peran "button", label = judul) dengan
+ * tanda panah Phosphor. Bayangan tipis hanya di mode terang; teks di atas `brand` (`bagianBiru`)
+ * memakai `teks` agar kontras tetap lolos.
  */
 export function Kartu({
   judul,
@@ -39,6 +41,8 @@ export function Kartu({
   galat?: string;
   children?: React.ReactNode;
 }) {
+  const { mode, warna } = useTemaV2();
+  const warnaKeterangan = nonaktif ? 'nonaktifTeks' : varian === 'brand' ? 'teks' : 'teksSekunder';
   const isi = memuat ? (
     <PlaceholderMemuat baris={2} label={judul ? `Memuat ${judul}` : 'Memuat'} />
   ) : (
@@ -49,7 +53,7 @@ export function Kartu({
         </Teks>
       ) : null}
       {keterangan ? (
-        <Teks varian="badanKecil" warna={nonaktif ? 'nonaktifTeks' : 'teksSekunder'}>
+        <Teks varian="badanKecil" warna={warnaKeterangan}>
           {keterangan}
         </Teks>
       ) : null}
@@ -58,9 +62,14 @@ export function Kartu({
     </View>
   );
   const latar = warna[nonaktif ? 'nonaktifLatar' : LATAR[varian]];
+  const bayangan = mode === 'terang' && !nonaktif ? elevasi.angkat : elevasi.datar;
 
   if (!onPress || memuat) {
-    return <View style={StyleSheet.flatten([s.kartu, { backgroundColor: latar }])}>{isi}</View>;
+    return (
+      <View style={StyleSheet.flatten([s.kartu, bayangan, { borderColor: warna.garisHalus, backgroundColor: latar }])}>
+        {isi}
+      </View>
+    );
   }
   return (
     <Sentuh
@@ -68,10 +77,22 @@ export function Kartu({
       label={labelAksi ?? judul ?? 'Buka'}
       onPress={onPress}
       nonaktif={nonaktif}
-      gaya={({ ditekan }) => [s.kartu, s.baris, { backgroundColor: ditekan && !nonaktif ? warna.permukaanLembut : latar }]}
+      gaya={({ ditekan }) => [
+        s.kartu,
+        s.baris,
+        bayangan,
+        {
+          borderColor: warna.garisHalus,
+          backgroundColor: ditekan && !nonaktif ? warna.permukaanLembut : latar,
+        },
+      ]}
     >
       {isi}
-      <Ikon nama="panah" ukuran={ukuran.ikon} warna={nonaktif ? warna.nonaktifTeks : warna.teksSekunder} />
+      <Ikon
+        nama="panah"
+        ukuran={ukuran.ikon}
+        warna={nonaktif ? warna.nonaktifTeks : varian === 'brand' ? warna.teks : warna.teksSekunder}
+      />
     </Sentuh>
   );
 }
@@ -80,9 +101,7 @@ const s = StyleSheet.create({
   kartu: {
     borderRadius: radius.sedang,
     borderWidth: garis.tipis,
-    borderColor: warna.garisHalus,
     padding: ruang.r2,
-    ...elevasi.datar,
   },
   baris: { flexDirection: 'row', alignItems: 'center', gap: ruang.r2 },
   isi: { flex: 1, minWidth: 0, gap: ruang.r1 },

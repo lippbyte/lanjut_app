@@ -1,7 +1,8 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { garis, radius, ruang, warna, type PeranWarna } from '../../theme/v2';
+import { garis, radius, ruang, type PeranWarna } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
 import { PesanStatus } from './PesanStatus';
 import { Sentuh } from './Sentuh';
 import { Teks, type WarnaTeks } from './Teks';
@@ -11,15 +12,16 @@ export type VarianTombol = 'utama' | 'sekunder' | 'teks';
 type Rupa = { latar: PeranWarna; latarTekan: PeranWarna; garis: PeranWarna; teks: WarnaTeks };
 
 // Pasangan kontrasnya tercatat di theme/v2/warna.ts (PASANGAN).
+// LANJUT_031b §2: tombol sekunder berlatar transparan dengan garis aksen; tautan/tombol teks bergaris bawah.
 const RUPA: Record<VarianTombol, Rupa> = {
   utama: { latar: 'aksen', latarTekan: 'aksenTekan', garis: 'aksen', teks: 'teksPadaAksen' },
-  sekunder: { latar: 'permukaan', latarTekan: 'permukaanLembut', garis: 'aksen', teks: 'aksen' },
+  sekunder: { latar: 'transparan', latarTekan: 'permukaanLembut', garis: 'aksen', teks: 'aksen' },
   teks: { latar: 'transparan', latarTekan: 'permukaanLembut', garis: 'transparan', teks: 'aksen' },
 };
 const RUPA_NONAKTIF: Rupa = { latar: 'nonaktifLatar', latarTekan: 'nonaktifLatar', garis: 'nonaktifLatar', teks: 'nonaktifTeks' };
 
 /**
- * Tombol v2 (LANJUT_029). Aturan: satu tombol "utama" per layar (docs/desain-token-v2.md).
+ * Tombol v2 (LANJUT_029, dua mode LANJUT_031b). Aturan: satu tombol "utama" per layar.
  * Keadaan memuat menampilkan putaran dan tetap menulis labelnya (bukan hanya putaran), nonaktif
  * berlatar abu-abu tanpa garis, galat menulis pesan dengan ikon di bawah tombol.
  */
@@ -43,6 +45,7 @@ export function Tombol({
   penuh?: boolean;
   petunjuk?: string;
 }) {
+  const { warna } = useTemaV2();
   const rupa = nonaktif ? RUPA_NONAKTIF : RUPA[varian];
   return (
     <View style={penuh ? s.penuh : s.pas}>
@@ -57,11 +60,11 @@ export function Tombol({
           s.tombol,
           varian === 'teks' && s.tombolTeks,
           { backgroundColor: warna[ditekan ? rupa.latarTekan : rupa.latar], borderColor: warna[rupa.garis] },
-          !!galat && !nonaktif && varian !== 'teks' && s.garisGalat,
+          !!galat && !nonaktif && varian !== 'teks' && { borderColor: warna.galat, borderWidth: garis.fokus },
         ]}
       >
         {memuat ? <ActivityIndicator color={warna[rupa.teks]} /> : null}
-        <Teks varian="tombol" warna={rupa.teks} rata="center">
+        <Teks varian="tombol" warna={rupa.teks} rata="center" garisBawah={varian === 'teks'}>
           {label}
         </Teks>
       </Sentuh>
@@ -84,5 +87,4 @@ const s = StyleSheet.create({
     borderWidth: garis.tipis,
   },
   tombolTeks: { paddingHorizontal: ruang.r2 },
-  garisGalat: { borderColor: warna.galat, borderWidth: garis.fokus },
 });

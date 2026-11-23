@@ -214,3 +214,36 @@ Navigasi ini **mati bawaan**. Langkah di bawah belum dijalankan di HP; belum ada
    - dari `Arah Saya`, tekan Kembali → keluar aplikasi seperti biasa.
 6. Uji **Aksesibilitas** (belum terverifikasi sampai dicoba di HP): nyalakan Hapus animasi, perbesar ukuran huruf, dan uji dengan TalkBack/VoiceOver pada bilah tab dan kartu Arah Saya.
 
+## 12. Mode terang dan gelap v2 (LANJUT_031b)
+
+Fitur ini **mati bawaan**. Langkah di bawah belum pernah dijalankan di HP; belum ada klaim hasil uji di HP, pembaca layar, atau skala huruf besar.
+
+> **Penting — selalu gunakan `--clear`:** setiap kali menyalakan atau mematikan `EXPO_PUBLIC_MODE_GELAP` (atau saklar `EXPO_PUBLIC_*` lain), selalu jalankan Expo dengan `--clear` (`npx expo start --go --lan --clear` atau `npx expo start --web --clear`) supaya cache Metro tidak membawa konfigurasi saklar lama.
+
+1. Ikuti langkah 2 sampai 4 (database `lanjut_dev` + server dev lokal).
+2. Di PowerShell kedua, nyalakan saklar hanya untuk sesi lokal ini (ganti `192.168.x.x` dengan IP Wi-Fi komputer):
+   ```powershell
+   cd "D:\DATA ALIF\Project - Profesional\EDILAKSO Group\LANJUT - Project\EDILAKSO-LANJUT-repo\LANJUT_App"
+   $env:EXPO_PUBLIC_API_URL = "http://192.168.x.x:4000/api/v1"
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2 = "1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_MODE_GELAP = "1"
+   $env:EXPO_PUBLIC_DISCOVER = "1"
+   $env:EXPO_PUBLIC_JALUR_TUJUAN = "1"
+   $env:EXPO_PUBLIC_PORTOFOLIO = "1"
+   npx expo start --go --lan --clear
+   ```
+3. **Uji "Ikuti sistem" (bawaan saat saklar menyala):**
+   - Ubah setelan tampilan HP antara Terang dan Gelap (Android: Setelan > Tampilan > Tema gelap; iPhone: Settings > Display & Brightness).
+   - Pastikan layar v2 (Pengantar, Masuk, Daftar, Kecenderungan, Arah Saya, bilah tab) ikut berganti tanpa menutup aplikasi, serta bilah status HP dan papan ketik tetap terbaca.
+4. **Uji tombol ganti mode:**
+   - Masuk dengan akun dummy (mis. `demo_kelas12_dc`), buka tab **Profil Saya** → ketuk **Akun & Privasi** (atau langsung tab **Profil Saya** saat `EXPO_PUBLIC_DISCOVER` mati).
+   - Di bagian **Tampilan**, coba ganti ke **Gelap**, lalu **Terang**, lalu **Ikuti sistem**. Pastikan tampilan berganti seketika tanpa kedip atau memulai ulang aplikasi.
+   - Pilih **Gelap**, tutup Expo Go sepenuhnya, lalu buka lagi: pastikan mode **Gelap** tetap bertahan.
+   - Periksa jendela server dev (PowerShell pertama): pergantian mode **tidak** boleh memicu permintaan jaringan apa pun ke server.
+5. **Uji tampilan visual di mode gelap:**
+   - Periksa wordmark LANJUT di bilah atas (langsung di atas navy saat gelap; di dalam badge biru saat terang), maskot kelinci di Pengantar & Arah Saya, garis bawah pada tautan, dan ikon Phosphor di bilah tab.
+   - Buka layar v1 (mis. **Jejak Waktu** `/linimasa`): layar v1 memang sengaja tetap terang di dalam kerangka v2 gelap sampai tahap reskin layar v1.
+6. **Uji saklar mati:** hentikan Expo, kosongkan `$env:EXPO_PUBLIC_MODE_GELAP = ""`, jalankan lagi dengan `--clear`. Pastikan tampilan selalu terang meski tema gelap HP menyala, dan kartu **Tampilan** tidak ada di **Akun & Privasi**.
+
+

@@ -8,9 +8,9 @@ import { Sentuh } from './Sentuh';
 import { Teks } from './Teks';
 
 /**
- * Teks bertahap v2 (LANJUT_029): satu kalimat ringkasan selalu tampil; uraian lengkap baru
- * tampil setelah "Selengkapnya" ditekan. Tombolnya membacakan keadaan terbuka/tertutup.
- * Tanpa animasi buka-tutup, jadi tidak ada gerak yang perlu dimatikan.
+ * Teks bertahap v2 (LANJUT_029, dua mode LANJUT_031b): satu kalimat ringkasan selalu tampil;
+ * uraian lengkap baru tampil setelah "Selengkapnya" ditekan. Tautan diberi garis bawah di kedua
+ * mode. Tanpa animasi buka-tutup.
  */
 export function RingkasanSelengkapnya({
   ringkasan,
@@ -48,7 +48,7 @@ export function RingkasanSelengkapnya({
           onPress={() => setTerbuka((t) => !t)}
           gaya={() => s.tombol}
         >
-          <Teks varian="tombol" warna={nonaktif ? 'nonaktifTeks' : 'aksen'}>
+          <Teks varian="tombol" warna={nonaktif ? 'nonaktifTeks' : 'aksen'} garisBawah>
             {terbuka ? labelTutup : labelBuka}
           </Teks>
         </Sentuh>

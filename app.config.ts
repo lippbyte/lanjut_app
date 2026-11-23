@@ -68,6 +68,8 @@ if (profilEas !== undefined && !PROFIL_UJI.includes(profilEas) && IZINKAN_HTTP) 
 
 // LANJUT_011: portofolio MATI kecuali build dibuat dengan EXPO_PUBLIC_PORTOFOLIO=1.
 const PORTOFOLIO_AKTIF = process.env.EXPO_PUBLIC_PORTOFOLIO === '1';
+// LANJUT_031b: mode terang/gelap v2 MATI kecuali build dibuat dengan EXPO_PUBLIC_MODE_GELAP=1.
+const MODE_GELAP_AKTIF = process.env.EXPO_PUBLIC_MODE_GELAP === '1';
 
 const config: ExpoConfig = {
   name: 'LANJUT',
@@ -79,7 +81,7 @@ const config: ExpoConfig = {
   version: '2.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
-  userInterfaceStyle: 'light',
+  userInterfaceStyle: MODE_GELAP_AKTIF ? 'automatic' : 'light',
   // Ikon status bar gelap sejak aplikasi dibuka (sebelum JS jalan); di
   // runtime dijaga <StatusBar style="dark"> di app/_layout.tsx.
   androidStatusBar: { barStyle: 'dark-content' },
@@ -157,6 +159,9 @@ const config: ExpoConfig = {
     // LANJUT_031: navigasi v2 dan Arah Saya MATI kecuali build dibuat dengan EXPO_PUBLIC_NAVIGASI_V2=1
     // (dibaca lib/fiturApp.ts). Rute /arah-saya dikeluarkan dari bundel di metro.config.js.
     navigasiV2: process.env.EXPO_PUBLIC_NAVIGASI_V2 === '1',
+    // LANJUT_031b: mode terang/gelap v2 MATI kecuali build dibuat dengan EXPO_PUBLIC_MODE_GELAP=1
+    // (dibaca lib/fiturApp.ts). Teksnya draf; periksa-gerbang-rilis menahan build yang menyalakannya.
+    modeGelap: MODE_GELAP_AKTIF,
     // LANJUT_083: masuk dengan Google (lib/googleMasuk.ts). Client ID OAuth bersifat
     // publik; Client Secret TIDAK pernah diisi di app. Kosong = tombol Google tidak
     // tampil. Android/iOS juga butuh alamat halaman penerus di domain landing

@@ -2,8 +2,9 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { BELUM_TAHU, teksStatusPilihan, ubahPilihan, type ModePilihan } from '../../lib/pilihan';
-import { garis, radius, ruang, ukuran, warna } from '../../theme/v2';
-import { Ikon } from '../ui/Ikon';
+import { garis, radius, ruang, ukuran } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
+import { Ikon } from './IkonV2';
 import { PesanStatus } from './PesanStatus';
 import { PlaceholderMemuat } from './PlaceholderMemuat';
 import { Sentuh } from './Sentuh';
@@ -12,10 +13,9 @@ import { Teks } from './Teks';
 export type OpsiPilihan = { nilai: string; label: string; keterangan?: string };
 
 /**
- * Pilihan v2 (LANJUT_029): satu (radio) atau banyak (kotak centang), dengan opsi "Belum tahu"
- * yang berdiri sendiri (lib/pilihan.ts). Disiapkan untuk kecenderungan arah, belum terhubung
- * ke data. Terpilih ditandai tiga cara: tanda centang di kotak (bentuk), garis lebih tebal,
- * dan status yang dibacakan (accessibilityState) serta ditulis ("2 dipilih").
+ * Pilihan v2 (LANJUT_029, dua mode + Phosphor LANJUT_031b): satu (radio) atau banyak (kotak
+ * centang), dengan opsi "Belum tahu" yang berdiri sendiri (lib/pilihan.ts). Terpilih ditandai tiga
+ * cara: tanda centang di kotak (bentuk), garis lebih tebal, dan status yang dibacakan serta ditulis.
  */
 export function Pilihan({
   judul,
@@ -43,6 +43,7 @@ export function Pilihan({
   nonaktif?: boolean;
   galat?: string;
 }) {
+  const { warna } = useTemaV2();
   const semua = belumTahu ? [...opsi, { nilai: BELUM_TAHU, label: belumTahu }] : opsi;
   return (
     <View style={s.wadah} accessibilityRole={mode === 'satu' ? 'radiogroup' : undefined} accessibilityLabel={judul}>
@@ -67,12 +68,26 @@ export function Pilihan({
               onPress={() => onUbah(ubahPilihan(terpilih, o.nilai, mode))}
               gaya={({ ditekan }) => [
                 s.opsi,
+                { borderColor: warna.garisKontrol, backgroundColor: warna.permukaan },
                 o.nilai === BELUM_TAHU && s.opsiBelumTahu,
-                nonaktif ? s.opsiNonaktif : pilih ? s.opsiTerpilih : ditekan ? s.opsiDitekan : null,
-                !!galat && !nonaktif && !pilih && s.opsiGalat,
+                nonaktif
+                  ? { backgroundColor: warna.nonaktifLatar, borderColor: warna.nonaktifLatar }
+                  : pilih
+                    ? { backgroundColor: warna.permukaanLembut, borderColor: warna.aksen, borderWidth: garis.fokus }
+                    : ditekan
+                      ? { backgroundColor: warna.permukaanLembut }
+                      : null,
+                !!galat && !nonaktif && !pilih && { borderColor: warna.galat },
               ]}
             >
-              <View style={StyleSheet.flatten([mode === 'satu' ? s.bulat : s.kotak, pilih && !nonaktif && s.tandaTerisi, nonaktif && s.tandaNonaktif])}>
+              <View
+                style={StyleSheet.flatten([
+                  mode === 'satu' ? s.bulat : s.kotak,
+                  { borderColor: warna.garisKontrol },
+                  pilih && !nonaktif && { backgroundColor: warna.aksen, borderColor: warna.aksen },
+                  nonaktif && { borderColor: warna.nonaktifTeks },
+                ])}
+              >
                 {pilih ? <Ikon nama="centang" ukuran={ukuran.ikon} warna={nonaktif ? warna.nonaktifTeks : warna.teksPadaAksen} /> : null}
               </View>
               <View style={s.isi}>
@@ -106,21 +121,14 @@ const s = StyleSheet.create({
     paddingHorizontal: ruang.r2,
     borderRadius: radius.kecil,
     borderWidth: garis.tipis,
-    borderColor: warna.garisKontrol,
-    backgroundColor: warna.permukaan,
   },
   // "Belum tahu" sedikit terpisah dari opsi isi supaya terbaca sebagai jawaban tersendiri.
   opsiBelumTahu: { marginTop: ruang.r1 },
-  opsiDitekan: { backgroundColor: warna.permukaanLembut },
-  opsiTerpilih: { backgroundColor: warna.permukaanLembut, borderColor: warna.aksen, borderWidth: garis.fokus },
-  opsiNonaktif: { backgroundColor: warna.nonaktifLatar, borderColor: warna.nonaktifLatar },
-  opsiGalat: { borderColor: warna.galat },
   kotak: {
     width: TANDA,
     height: TANDA,
     borderRadius: radius.kecil,
     borderWidth: garis.fokus,
-    borderColor: warna.garisKontrol,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -129,11 +137,8 @@ const s = StyleSheet.create({
     height: TANDA,
     borderRadius: radius.pil,
     borderWidth: garis.fokus,
-    borderColor: warna.garisKontrol,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tandaTerisi: { backgroundColor: warna.aksen, borderColor: warna.aksen },
-  tandaNonaktif: { borderColor: warna.nonaktifTeks },
   isi: { flex: 1, minWidth: 0 },
 });

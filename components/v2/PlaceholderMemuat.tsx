@@ -3,17 +3,18 @@ import { Animated, Easing, Platform, StyleSheet, View } from 'react-native';
 
 import { useKurangiGerak } from '../../hooks/useKurangiGerak';
 import { gerakBoleh } from '../../lib/kurangiGerak';
-import { gerak, radius, ruang, ukuran, warna } from '../../theme/v2';
+import { gerak, radius, ruang, ukuran } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
 
 const NATIVE = Platform.OS !== 'web';
 const [x1, y1, x2, y2] = gerak.kurva.standar;
 
 /**
- * Placeholder memuat (LANJUT_029): balok abu-abu seukuran baris teks. Pembaca layar mendengar
- * "Memuat", bukan balok kosong. Denyut pelan adalah gerak non-esensial: mati bila "Kurangi
- * gerakan" menyala.
+ * Placeholder memuat (LANJUT_029, dua mode LANJUT_031b): balok seukuran baris teks. Pembaca layar
+ * mendengar "Memuat", bukan balok kosong. Denyut pelan mati bila "Kurangi gerakan" menyala.
  */
 export function PlaceholderMemuat({ baris = 3, label = 'Memuat' }: { baris?: number; label?: string }) {
+  const { warna } = useTemaV2();
   const kurangiGerak = useKurangiGerak();
   const denyut = useRef(new Animated.Value(1)).current;
 
@@ -36,7 +37,10 @@ export function PlaceholderMemuat({ baris = 3, label = 'Memuat' }: { baris?: num
   return (
     <View accessible accessibilityRole="progressbar" accessibilityLabel={label} accessibilityState={{ busy: true }} style={s.wadah}>
       {Array.from({ length: baris }, (_, i) => (
-        <Animated.View key={i} style={StyleSheet.flatten([s.balok, i === baris - 1 && baris > 1 && s.balokPendek, { opacity: denyut }])} />
+        <Animated.View
+          key={i}
+          style={StyleSheet.flatten([s.balok, { backgroundColor: warna.kerangka }, i === baris - 1 && baris > 1 && s.balokPendek, { opacity: denyut }])}
+        />
       ))}
     </View>
   );
@@ -44,6 +48,6 @@ export function PlaceholderMemuat({ baris = 3, label = 'Memuat' }: { baris?: num
 
 const s = StyleSheet.create({
   wadah: { gap: ruang.r1 },
-  balok: { height: ukuran.kerangkaBaris, borderRadius: radius.kecil, backgroundColor: warna.kerangka },
+  balok: { height: ukuran.kerangkaBaris, borderRadius: radius.kecil },
   balokPendek: { width: ukuran.kerangkaPendek },
 });

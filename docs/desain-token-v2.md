@@ -1,105 +1,73 @@
-# Token desain v2 (LANJUT_029)
+# Token desain v2 — Dua Mode (LANJUT_029, diperbarui LANJUT_031b)
 
-> **Status: usulan.** Warna biru tua, sukses, dan galat **menunggu keputusan Khalifa**. Kode memakai opsi pertama dengan komentar `// MENUNGGU KEPUTUSAN` (`theme/v2/warna.ts`).
-> **Dasar:** `docs/design.md` v3.1 di repo induk. Warna inti (`#B4E1EB`, `#95BDD7`, `#78A4CB`, `#FFFFFF`, `#1A1A1A`) dan dua font (Poppins, Source Sans 3) **tidak diubah**. Dokumen ini mengisi kekosongan `design.md` §2.2, §3, dan §4.
-> **Kode:** `theme/v2/` (token), `components/v2/` (komponen dasar). Belum dipakai layar mana pun; layar v1 tetap memakai `theme/tokens.ts`.
-> **Bukti angka kontras:** `node tools/kontras-token.js` (dari `server/`). Keluarannya ditempel di lampiran. Tes `server/tests/fondasi-desain-v2.test.js` memeriksa ulang angka yang sama.
+> **Status:** sumber kebenaran token layar v2. Warna biru tua terang, sukses terang, galat terang, dan tipografi Poppins + Source Sans 3 adalah **keputusan 20 Nov 2026**; kerangka dua mode (terang dominan putih & gelap Midnight Navy) adalah **keputusan 23 Nov 2026**. Beberapa warna pendukung mode gelap masih bertanda **usulan** (terukur kontrasnya, satu berkas di `theme/v2/warna.ts`, mudah diubah).
+> **Dasar:** `docs/design.md` v3.1 di repo induk. Warna inti (`#B4E1EB`, `#95BDD7`, `#78A4CB`, `#FFFFFF`, `#1A1A1A`), maskot kelinci wisudawan, dan dua font (Poppins, Source Sans 3) **tidak diubah**. **Ungu EDILAKSO tidak pernah dipakai di LANJUT.**
+> **Kode:** `theme/v2/` (token murni & `konteks.tsx` untuk `useTemaV2()`), `components/v2/` (komponen dasar + Phosphor Icons), `components/screens/v2/TemaV2Provider.tsx` (di balik saklar `EXPO_PUBLIC_MODE_GELAP`, mati bawaan). Layar v1 tetap memakai `theme/tokens.ts`.
+> **Bukti angka kontras:** `node tools/kontras-token.js` (dari `server/`). Keluarannya ditempel di lampiran. Tes `server/tests/fondasi-desain-v2.test.js` dan `server/tests/mode-gelap-v2.test.js` memeriksa ulang angka yang sama.
 
 ## Prinsip
 
-Empat prinsip Apple HIG, dipakai sebagai prinsip saja, tanpa aset atau merek Apple:
+Empat prinsip antarmuka mobile (padanan RN untuk Apple HIG, tanpa aset atau merek Apple):
 
-- **Kejelasan.** Satu tujuan per layar, teks pendek, ukuran yang terbaca.
-- **Deference.** Isi lebih menonjol daripada hiasan: latar tenang, satu warna aksen, bayangan minimal.
-- **Kedalaman.** Urutan dibuat lewat ukuran dan jarak, bukan efek; yang rinci dibuka bertahap.
-- **Kontrol pengguna.** Target sentuh besar, skala font sistem dihormati, "Kurangi gerakan" dipatuhi, dan pengguna boleh menjawab "belum tahu".
+- **Kejelasan.** Satu tujuan per layar, teks pendek, ukuran yang terbaca, tautan bergaris bawah di kedua mode.
+- **Deference.** Isi lebih menonjol daripada hiasan: latar tenang (terang dominan putih 70/20/10, gelap Midnight Navy 60/30/10), satu warna aksen, bayangan tipis hanya di mode terang.
+- **Kedalaman.** Urutan dibuat lewat ukuran, permukaan, dan jarak, bukan efek; yang rinci dibuka bertahap.
+- **Kontrol pengguna.** Target sentuh minimal 44 pt, skala font sistem dihormati, "Kurangi gerakan" dipatuhi, pilihan mode lokal saja (`Ikuti sistem`, `Terang`, `Gelap`), dan pengguna boleh menjawab "belum tahu".
 
 Nada tetap mengikuti `salinan-teks-lanjut.md` §0: menenangkan, isi serius. Tenggat ditampilkan, bukan ditekankan; warna galat tidak pernah dipakai untuk tenggat (`design.md` §8).
 
-## 1. Warna
+## 1. Warna dua mode (`theme/v2/warna.ts`)
 
-### 1.1 Peran warna (`theme/v2/warna.ts`)
+Semua layar dan komponen v2 membaca warna lewat `useTemaV2()` dengan nama peran token, tidak pernah menulis kode HEX langsung. Saat saklar `EXPO_PUBLIC_MODE_GELAP` mati (bawaan), `TemaV2Provider` selalu mengembalikan set **terang** dan mengabaikan setelan sistem.
 
-| Peran | Nilai | Asal |
-|---|---|---|
-| `halaman` | `#F5F7F9` | netral v1 (`ink050`) |
-| `permukaan` | `#FFFFFF` | inti |
-| `permukaanLembut` | `#E4F3F7` | turunan biru muda v1 (`blue100`) |
-| `brand` | `#B4E1EB` | inti, biru muda |
-| `teks` | `#1A1A1A` | inti |
-| `teksSekunder` | `#3D4450` | netral v1 (`ink700`) |
-| `teksPadaAksen` | `#FFFFFF` | inti |
-| `aksen`, `fokus` | **biru tua: menunggu keputusan** (sementara opsi A `#456A8C`) | bagian 1.3 |
-| `aksenTekan` | `#3D4450` | netral v1 |
-| `garisKontrol` | `#6B7480` | netral v1 (`ink500`) |
-| `garisHalus`, `kerangka`, `nonaktifLatar` | `#E6E9ED` | netral v1 (`ink100`) |
-| `nonaktifTeks` | `#3D4450` | netral v1 |
-| `sukses`, `suksesLatar` | **menunggu keputusan** (sementara opsi A) | bagian 1.4 |
-| `galat`, `galatLatar` | **menunggu keputusan** (sementara opsi A) | bagian 1.4 |
+### 1.1 Token semantik utama (`PETA_TOKEN_SEMANTIK`)
 
-**Teks putih di atas biru brand tidak lolos.** Putih di atas `#78A4CB` hanya 2,63:1, dan di atas `#B4E1EB` hanya 1,40:1; ambang AA adalah 4,5:1. Karena itu:
-
-- di atas biru brand selalu memakai teks gelap: `#1A1A1A` di biru muda 12,35:1;
-- tombol utama dan tautan memakai biru tua (bagian 1.3).
-
-### 1.2 Pasangan yang dipakai komponen
-
-Semua 29 pasangan lolos dengan opsi pertama. Tabel lengkap ada di lampiran.
-
-Tes juga memeriksa **27 kombinasi opsi** (3 biru tua × 3 sukses × 3 galat), dan semuanya lolos. Jadi opsi mana pun yang dipilih tidak merusak komponen.
-
-Ada tiga warna yang sengaja dicatat sebagai dekoratif (`WARNA_DEKORATIF`) dan tidak wajib 3:1:
-- `garisHalus`: tepi Kartu, yang dikenali dari isinya;
-- `kerangka`: balok placeholder, yang dibacakan "Memuat";
-- `transparan`.
-
-Tes melarang ketiganya dipakai untuk teks.
-
-### 1.3 Pilihan biru tua (tombol utama, tautan, cincin fokus): **usulan, menunggu Khalifa**
-
-| Opsi | HEX | Putih di atasnya | Sebagai teks di putih | di `#F5F7F9` | di `#E4F3F7` | di biru muda `#B4E1EB` |
-|---|---|---|---|---|---|---|
-| A. Biru baja tua (sudah dipakai v1) | `#456A8C` | 5,68 | 5,68 | 5,29 | 4,99 | 4,03 (di bawah 4,5) |
-| B. Biru laut | `#3B5F80` | 6,69 | 6,69 | 6,23 | 5,88 | 4,75 |
-| C. Biru malam | `#2F5273` | 8,15 | 8,15 | 7,59 | 7,16 | 5,78 |
-
-Contoh pasangan:
-- Tombol utama: teks putih di atas biru tua.
-- Tautan "Selengkapnya": biru tua di putih.
-- Cincin fokus: garis 2 pt biru tua.
-
-Pertimbangan:
-- **A** paling dekat dengan wajah v1. Tetapi tidak boleh dipakai sebagai teks di atas biru muda: 4,03:1, sehingga di sana hanya untuk ikon.
-- **B** lolos di semua latar terang.
-- **C** paling tegas (AAA untuk teks biasa) dan paling jauh dari kesan lembut.
-
-### 1.4 Pilihan sukses dan galat: **usulan, menunggu Khalifa**
-
-**Sukses**
-
-| Opsi | HEX / latar | Teks di putih | Teks di latarnya | `#1A1A1A` di latarnya |
+| Token semantik | Nama peran di kode | Mode terang | Mode gelap | Status |
 |---|---|---|---|---|
-| A. Hijau toska (v1 `statusOkFg`) | `#2F6B5C` / `#E6F2EF` | 6,21 | 5,42 | 15,17 |
-| B. Hijau daun | `#276749` / `#E7F3EC` | 6,72 | 5,90 | 15,27 |
-| C. Hijau zaitun | `#4A6B2A` / `#EEF3E6` | 6,12 | 5,42 | 15,41 |
+| `bg` (latar halaman) | `halaman` | `#FFFFFF` | `#0C1B33` | keputusan 23 Nov |
+| `surface` (kartu, panel, bilah) | `permukaan` | `#F4F7FB` | `#16294A` | keputusan 23 Nov |
+| `border` (garis kartu, pemisah; dekoratif) | `garisHalus` | `#D9E1EC` | `#2B4268` | terang: keputusan 23 Nov · gelap: **usulan** |
+| `borderKontrol` (batas kolom isian & kontrol; wajib ≥ 3:1) | `garisKontrol` | `#5B6B82` | `#8793A8` | keputusan 23 Nov |
+| `text` | `teks` | `#0C1B33` | `#EEF1F6` | keputusan 23 Nov |
+| `muted` (hanya teks pendukung, bukan info penting / di atas `bagianBiru`) | `teksSekunder` | `#5B6B82` | `#8793A8` | keputusan 23 Nov |
+| `accent` (tombol utama, tautan, ikon aktif) | `aksen`, `fokus` | `#3B5F80` | `#95BDD7` | terang: keputusan 20 Nov · gelap: keputusan 23 Nov (biru kedua LANJUT) |
+| `onAccent` (teks di atas tombol aksen) | `teksPadaAksen` | `#FFFFFF` | `#0C1B33` | keputusan 23 Nov |
+| `bagianBiru` (latar bagian berwarna, sekitar 20% di terang) | `brand` | `#B4E1EB` | `#16294A` (= `surface`) | keputusan 23 Nov |
+| `sukses` | `sukses` | `#276749` | `#6FCF97` | terang: keputusan 20 Nov · gelap: **usulan** |
+| `galat` | `galat` | `#A33A3A` | `#F28B82` | terang: keputusan 20 Nov · gelap: **usulan** |
 
-**Galat** (hanya untuk kegagalan murni, misalnya gagal menyimpan atau gagal memuat; tidak untuk tenggat)
+### 1.2 Peran warna pendukung
 
-| Opsi | HEX / latar | Teks di putih | Teks di latarnya | `#1A1A1A` di latarnya |
-|---|---|---|---|---|
-| A. Merah bata redup | `#A33A3A` / `#FBEDED` | 6,51 | 5,71 | 15,28 |
-| B. Merah anggur | `#8C2F45` / `#F8EBEF` | 8,05 | 6,94 | 15,01 |
-| C. Plum (bukan merah) | `#7B3F6E` / `#F5ECF3` | 7,55 | 6,54 | 15,06 |
+| Nama peran | Mode terang | Mode gelap | Status & catatan |
+|---|---|---|---|
+| `permukaanLembut` | `#E4F3F7` | `#172B4D` | terang: turunan biru muda v1 · gelap: **usulan** (kontras `teksSekunder` 4,54:1 ≥ 4,5) |
+| `aksenTekan` | `#2F5273` | `#B4E1EB` | terang: opsi biru malam (8,15:1) · gelap: biru muda inti (12,21:1) |
+| `nonaktifLatar` | `#E6E9ED` | `#1F3150` | terang: netral v1 · gelap: **usulan** |
+| `nonaktifTeks` | `#3D4450` | `#A6B3C6` | terang: netral v1 (8,05:1) · gelap: **usulan** (6,12:1) |
+| `kerangka` (dekoratif) | `#E6E9ED` | `#1F3150` | balok `PlaceholderMemuat`, dibacakan "Memuat" |
+| `suksesLatar` | `#E7F3EC` | `#133326` | terang: keputusan 20 Nov · gelap: **usulan** (`sukses` 7,22:1, `teks` 12,12:1) |
+| `galatLatar` | `#FBEDED` | `#3B1D24` | terang: keputusan 20 Nov · gelap: **usulan** (`galat` 6,33:1, `teks` 13,37:1) |
+| `badgeLogo` (dekoratif) | `#78A4CB` | `transparent` | **`[PERLU DIKONFIRMASI]`**: penampung sementara wordmark putih di mode terang; transparan di mode gelap |
+| `transparan` (dekoratif) | `transparent` | `transparent` | latar tombol sekunder, tombol teks, dan `badgeLogo` gelap |
 
-Contoh pasangan:
-- Pesan galat: ikon waspada dan kalimat galat di putih, atau kalimat `#1A1A1A` di atas latar galat.
-- Pesan sukses: ikon centang dan kalimat sukses di putih.
+### 1.3 Aturan kontras dan tampilan
 
-Tidak ada merah atau oranye terang. Tes membatasi kanal merah galat paling tinggi `0xB0`. Opsi C paling tenang, tetapi kurang dikenali sebagai galat; bila dipilih, galat harus selalu disertai ikon dan kalimat. Aturan ini sudah berlaku untuk semua opsi.
+- **Teks putih di atas biru brand tidak dipakai.** Putih di atas `#78A4CB` hanya 2,63:1, dan di atas `#B4E1EB` hanya 1,40:1.
+- **Teks di atas `bagianBiru` (`brand`)** selalu memakai `teks` (`#0C1B33` di `#B4E1EB` = 12,21:1; `#EEF1F6` di `#16294A` = 12,79:1), bukan `teksSekunder`.
+- **Tombol utama:** latar `aksen`, teks `teksPadaAksen` (putih di terang 6,69:1; navy `#0C1B33` di gelap 8,63:1), sudut pil, tinggi minimal 44 pt.
+- **Tombol sekunder:** latar `transparan` dengan garis `aksen` dan teks `aksen`.
+- **Tautan / tombol teks:** warna `aksen` **ditambah garis bawah** di kedua mode (`Tombol varian="teks"` dan `RingkasanSelengkapnya`).
+- **Kartu:** latar `permukaan` (`surface`); bayangan tipis (`elevasi.angkat`) **hanya di mode terang**, datar di mode gelap.
+- **Status tidak pernah hanya warna:** galat memakai ikon `waspada` + kalimat, sukses memakai ikon `centang` + kalimat, pilihan aktif dan tab aktif memakai bentuk ikon (`fill` / centang) + tebal huruf + label.
+- **Komposisi terang:** sekitar 70% putih (`#FFFFFF`), 20% biru (`#B4E1EB`), 10% aksen; **tidak ada latar navy penuh di mode terang**. **Komposisi gelap:** sekitar 60% `bg` (`#0C1B33`), 30% `surface` (`#16294A`), 10% aksen (`#95BDD7`).
+- **Warna dekoratif (`WARNA_DEKORATIF`):** `garisHalus`, `kerangka`, `badgeLogo`, `transparan`. Tes melarang keempatnya dipakai sebagai warna teks.
+- Semua **28 pasangan** lolos di mode terang DAN mode gelap (0 gagal), serta seluruh **27 kombinasi opsi terang** (3 biru tua × 3 sukses × 3 galat) tetap lolos.
 
-**Status tidak pernah hanya warna:**
-- Galat memakai ikon `waspada`, sukses memakai ikon `centang`, dan keduanya selalu disertai kalimat.
-- Pilihan yang terpilih diberi tanda centang di dalam kotak, garis lebih tebal, dan tulisan "2 dipilih".
+### 1.4 Pilihan warna terang yang sudah diputuskan (20 Nov 2026)
+
+- **Biru tua (`aksen` terang):** opsi B — Biru laut `#3B5F80` (keputusan 20 Nov, dapat diubah di satu tempat di `theme/v2/warna.ts`).
+- **Sukses terang:** opsi B — Hijau daun `#276749` / latar `#E7F3EC` (keputusan 20 Nov).
+- **Galat terang:** opsi A — Merah bata redup `#A33A3A` / latar `#FBEDED` (keputusan 20 Nov; hanya untuk kegagalan murni, bukan tenggat; kanal merah ≤ `0xB0`).
 
 ## 2. Tipografi (`theme/v2/token.ts`)
 
@@ -108,164 +76,127 @@ Tidak ada merah atau oranye terang. Tes membatasi kanal merah galat paling tingg
 | H1 (judul layar) | Poppins | 28 / 36 | SemiBold 600 |
 | H2 (subjudul, judul seksi) | Poppins | 20 / 28 | Medium 500 |
 | Judul kecil (judul kartu, pertanyaan) | Poppins | 17 / 24 | SemiBold 600 |
-| Badan | Source Sans 3 (sementara Poppins) | 17 / 26 | Regular 400 |
-| Badan kecil | Source Sans 3 (sementara Poppins) | 15 / 22 | Regular 400 |
-| Keterangan | Source Sans 3 (sementara Poppins) | 14 / 20 | Regular 400 |
+| Badan | Source Sans 3 | 17 / 26 | Regular 400 |
+| Badan kecil | Source Sans 3 | 15 / 22 | Regular 400 |
+| Keterangan | Source Sans 3 | 14 / 20 | Regular 400 |
 | Tombol | Poppins | 16 / 22 | SemiBold 600 |
 
-- **Teks terkecil 14.** v1 memakai 11–13 untuk label tab dan lencana.
-- **Skala font sistem dihormati.** Komponen v2 tidak memakai `allowFontScaling={false}`, `maxFontSizeMultiplier`, atau tinggi tetap pada wadah teks; tes memeriksanya. Apakah tata letak tetap rapi pada skala 200% di HP belum diuji.
-- **Source Sans 3 belum ada di aplikasi** (`docs/audit-ui-v1.md` bagian 3). Memasangnya menambah dependensi, jadi butuh persetujuan. Sampai saat itu, badan memakai Poppins dengan komentar `// MENUNGGU KEPUTUSAN`. Usulan pemasangannya ada di bagian 7.
+- **Font terkunci (keputusan 20 Nov):** Poppins untuk judul dan tombol; Source Sans 3 lokal berlisensi SIL OFL (`assets/fonts/`) untuk isi. Tidak diubah pada LANJUT_031b.
+- **Skala font sistem dihormati.** Komponen v2 tidak memakai `allowFontScaling={false}`, `maxFontSizeMultiplier`, atau tinggi tetap pada wadah teks.
 
-## 3. Jarak, radius, garis, elevasi
+## 3. Ikon dan logo (LANJUT_031b)
+
+- **Ikon v2 (`components/v2/IkonV2.tsx`):** memakai **Phosphor Icons** (`phosphor-react-native` v3.0.6, bergantung pada `react-native-svg` yang sudah ada). Ukuran baku `ukuran.ikon` (20) dan `ukuran.ikonBesar` (32), bobot konsisten (`regular` bawaan, `bold` untuk centang, `fill` untuk ikon tab/radio terpilih).
+- **Wordmark (`assets/lanjut-wordmark.png`, huruf putih):**
+  - Mode gelap: tampil langsung di atas `bg` (`#0C1B33`) tanpa badge.
+  - Mode terang: dibungkus badge persegi membulat berwarna biru LANJUT (`#78A4CB`, token `badgeLogo`) sebagai penampung sementara — **`[PERLU DIKONFIRMASI]`** (logo dikecualikan dari batas kontras teks; menunggu keputusan Khalifa atau aset varian tinta gelap).
+- **Maskot (`assets/mascot-blue.png`):** dipakai apa adanya tanpa menggambar ulang.
+
+## 4. Jarak, radius, garis, elevasi, dan gerak (`theme/v2/token.ts`)
 
 | Token | Nilai |
 |---|---|
-| Jarak (`ruang`) | 8, 16, 24, 32, 40, 48, 64, semuanya kelipatan 8. Tepi layar 16, sehingga kolom isi 328 pt di layar 360 |
-| Radius | kecil 8 (pilihan, pesan), sedang 16 (kartu), besar 24, pil 999 (tombol) |
+| Jarak (`ruang`) | 8, 16, 24, 32, 40, 48, 64 (kelipatan 8). Tepi layar 16 |
+| Radius | kecil 8, sedang 16, besar 24, pil 999 |
 | Garis | tipis 1, fokus 2 |
-| Elevasi | `datar`: tanpa bayangan, hanya garis tipis (bawaan). `angkat`: satu bayangan `0 1px 3px` tinta 8% (untuk lapisan di atas isi). Tanpa blur besar dan tanpa efek kaca |
+| Elevasi | `datar`: tanpa bayangan (selalu di mode gelap). `angkat`: bayangan tipis `0 1px 3px` tinta 8% (hanya di mode terang) |
 | Ukuran | target sentuh min 44 × 44; ikon 20 dan besar 32; lingkaran ikon 64 |
-| Lebar kolom maksimal | 420 (sama dengan v1) |
+| Lebar kolom maksimal | 420 |
+| Gerak | `cepat` 120 ms, `standar` 200 ms, `lambat` 300 ms; mati saat "Kurangi gerakan". Pergantian mode langsung tanpa kedip dan tanpa memuat ulang aplikasi |
 
-## 4. Gerak
+## 5. Pemilihan mode dan saklar `EXPO_PUBLIC_MODE_GELAP`
 
-| Token | Nilai | Pakai untuk |
-|---|---|---|
-| `cepat` | 120 ms | umpan balik tekan |
-| `standar` | 200 ms | muncul dan hilang kecil |
-| `lambat` | 300 ms | perpindahan bagian; denyut placeholder 2 × 300 ms |
-| Kurva `standar` | bezier(0,2; 0; 0; 1) | masuk |
-| Kurva `keluar` | bezier(0,4; 0; 1; 1) | keluar |
-
-- **Kurangi gerakan.**
-  - `hooks/useKurangiGerak.ts` mengikuti setelan perangkat, termasuk bila diubah saat app terbuka (berbeda dengan v1).
-  - Gerak non-esensial (denyut placeholder, hiasan, transisi) menjadi 0 lewat `durasiGerak()` dan `gerakBoleh()` di `lib/kurangiGerak.ts`.
-  - Gerak yang membawa arti boleh tetap, dengan tanda `esensial`.
-- **Tanpa gerak tekan berskala.** Umpan balik tekan memakai perubahan latar, bukan `scale`.
-- **"Selengkapnya" tanpa animasi** buka-tutup.
-
-## 5. Aturan layar
-
-### 5.1 Satu aksi utama per layar
-- Setiap layar punya **paling banyak satu** `Tombol` varian `utama` (biru tua penuh).
-- Aksi lain memakai `sekunder` (bergaris) atau `teks`.
-- Aksi yang merusak (hapus) tidak pernah menjadi tombol utama berwarna galat; ia memakai `sekunder` dengan konfirmasi.
-- Bila layar terasa butuh dua tombol utama, itu tanda layarnya perlu dipecah.
-
-### 5.2 Teks panjang disajikan bertahap
-- **Satu kalimat ringkasan** selalu tampil (paling banyak sekitar 20 kata), lalu tombol **"Selengkapnya"** (`RingkasanSelengkapnya`) untuk uraian.
-- Header layar hanya judul dan paling banyak satu kalimat.
-- Kartu hanya judul dan satu kalimat keterangan.
-- Daftar panjang dipecah per seksi dengan judul H2.
-- Teks yang bermakna hukum atau privasi tidak boleh diringkas sampai mengubah arti. Ringkasannya harus disetujui seperti teks lain (gerbang rilis).
-
-### 5.3 Jawaban "belum tahu"
-- Pertanyaan tentang arah dan minat menyediakan **"Belum tahu"** sebagai jawaban sah (`Pilihan` dengan `belumTahu`).
-- Di pilihan banyak, "belum tahu" berdiri sendiri (`lib/pilihan.ts`).
-
-## 6. Komponen dasar dan keadaannya
-
-Semua komponen bisa dilihat di galeri komponen dev (`docs/galeri-komponen-029/`).
-
-| Komponen | Memuat | Nonaktif | Galat | Fokus |
-|---|---|---|---|---|
-| `Teks` (7 varian) | — (teks statis) | warna `nonaktifTeks` | warna `galat` | — (bukan kontrol) |
-| `Tombol` (utama, sekunder, teks) | putaran dan label tetap; `aria-busy` | latar abu-abu; `aria-disabled` | pesan dan ikon di bawah, garis galat | cincin 2 pt |
-| `Kartu` (biasa, lembut, brand; bisa ditekan) | placeholder | latar abu-abu, panah redup | pesan berlatar | cincin (bila bisa ditekan) |
-| `BarisDaftar` | placeholder satu baris | teks redup | pesan di bawah | cincin |
-| `Pilihan` (satu atau banyak, dan "belum tahu") | placeholder | semua opsi abu-abu | pesan, garis galat pada opsi | cincin per opsi |
-| `HeaderLayar` | placeholder judul | tombol kembali nonaktif | pesan di bawah judul | cincin pada kembali |
-| `KeadaanKosong` | lewat aksinya (`Tombol memuat`) | lewat aksinya | — (keadaan kosong bukan galat; pakai `KeadaanGalat`) | lewat aksinya |
-| `KeadaanGalat` | "mencoba lagi" (`Tombol memuat`) | — | inti komponen ini | lewat tombol coba lagi |
-| `PlaceholderMemuat` | inti komponen ini; dibacakan "Memuat" | — | — | — (bukan kontrol) |
-| `RingkasanSelengkapnya` | placeholder | tombol nonaktif | pesan menggantikan tombol | cincin; `aria-expanded` |
-| `PesanStatus` (galat, sukses) | — | — | inti komponen ini; dibacakan segera | — |
-
-**Aksesibilitas bawaan:**
-- `Sentuh` adalah satu-satunya pembungkus `Pressable` di `components/v2`.
-- Ia mewajibkan peran dan label.
-- Ia memasang target minimal 44 × 44 **sesudah** gaya komponen, jadi tidak bisa ditimpa.
-- Ia mengirim keadaan lewat `accessibilityState` (dibaca HP) **dan** `aria-*` (dibaca react-native-web 0.21, yang mengabaikan `accessibilityState`).
-- Ia menampilkan cincin fokus saat dijangkau papan ketik.
-- Di web, cincin fokus juga muncul sesudah klik mouse, karena kontrol yang diklik menjadi fokus. Di HP, fokus hanya dari papan ketik atau pembaca layar.
-
-## 7. Dependensi: **usulan, belum dipasang**
-
-| Paket | Untuk | Ukuran | Usulan |
-|---|---|---|---|
-| `@expo-google-fonts/source-sans-3` 0.4.2 | huruf badan sesuai `design.md` §3 | tarball npm 6,6 MB (semua berat). Yang masuk APK/web hanya berat yang dimuat: 400Regular 381 KB, 600SemiBold 381 KB, total ±762 KB. Sebagai pembanding, Poppins 400 = 158 KB | **Perlu persetujuan.** Alternatif tanpa paket: salin dua berkas TTF (lisensi SIL OFL) ke `assets/fonts/`; ukurannya sama |
-| `react-native-reanimated` 4.8.0 | animasi di thread UI | paket npm 5,6 MB; ukuran di bundel tidak diukur | **Belum perlu.** `Animated` bawaan cukup untuk gerak tenang yang diusulkan |
-| `react-native-gesture-handler` 3.5.0 | geser dan seret | paket npm 3,3 MB; tidak diukur | **Belum perlu.** Belum ada layar v2 yang butuh gestur |
-| `expo-haptics` | getar halus saat memilih | paket npm 96 KB (versi 58.0.8; versi untuk SDK 57 belum diperiksa) | **Opsional.** Bila dipasang, harus mati saat "Kurangi gerakan" dan tidak boleh menjadi satu-satunya tanda |
+- **Saklar:** `EXPO_PUBLIC_MODE_GELAP` (mati bawaan di `app.config.ts` dan `lib/fiturApp.ts`).
+- **Saat mati:** `userInterfaceStyle: 'light'`, aplikasi selalu terang, mengabaikan pengaturan sistem, dan tombol ganti mode tidak tampil.
+- **Saat menyala:** `userInterfaceStyle: 'automatic'`, pilihan (`sistem` bawaan, `terang`, `gelap`) disimpan **hanya di perangkat** (`AsyncStorage` kunci `lanjut.modeTampilan.v2`, bukan penyimpanan aman dan tidak pernah dikirim ke server). Tombol ganti mode tampil di layar **Akun & Privasi** (`/akun`) lewat `AppShellV2`.
+- **Bilah status & papan ketik:** `StatusBarV2` mengubah ikon bilah status (`light` di gelap, `dark` di terang) beserta warna latar, dan `Isian` meneruskan `keyboardAppearance` sesuai mode aktif.
 
 ## Lampiran: keluaran `node tools/kontras-token.js`
 
-### Pasangan yang dipakai komponen v2 (opsi pertama)
+### Ringkasan pasangan dua mode (LANJUT_031b)
+
+| Pasangan (ambang) | Terang (HEX & rasio) | Gelap (HEX & rasio) | Hasil |
+|---|---|---|---|
+| `text` / `bg` (4,50:1) | #0C1B33 / #FFFFFF — **17,21:1** | #EEF1F6 / #0C1B33 — **15,20:1** | lolos |
+| `text` / `surface` (4,50:1) | #0C1B33 / #F4F7FB — **16,01:1** | #EEF1F6 / #16294A — **12,79:1** | lolos |
+| `text` / `bagianBiru` (4,50:1) | #0C1B33 / #B4E1EB — **12,21:1** | #EEF1F6 / #16294A — **12,79:1** | lolos |
+| `muted` / `bg` (4,50:1) | #5B6B82 / #FFFFFF — **5,42:1** | #8793A8 / #0C1B33 — **5,54:1** | lolos |
+| `muted` / `surface` (4,50:1) | #5B6B82 / #F4F7FB — **5,04:1** | #8793A8 / #16294A — **4,66:1** | lolos |
+| `accent` / `bg` (4,50:1) | #3B5F80 / #FFFFFF — **6,69:1** | #95BDD7 / #0C1B33 — **8,63:1** | lolos |
+| `accent` / `surface` (4,50:1) | #3B5F80 / #F4F7FB — **6,23:1** | #95BDD7 / #16294A — **7,26:1** | lolos |
+| `onAccent` / `accent` (4,50:1) | #FFFFFF / #3B5F80 — **6,69:1** | #0C1B33 / #95BDD7 — **8,63:1** | lolos |
+| `sukses` / `bg` (4,50:1) | #276749 / #FFFFFF — **6,72:1** | #6FCF97 / #0C1B33 — **9,05:1** | lolos |
+| `sukses` / `surface` (4,50:1) | #276749 / #F4F7FB — **6,25:1** | #6FCF97 / #16294A — **7,61:1** | lolos |
+| `galat` / `bg` (4,50:1) | #A33A3A / #FFFFFF — **6,51:1** | #F28B82 / #0C1B33 — **7,20:1** | lolos |
+| `galat` / `surface` (4,50:1) | #A33A3A / #F4F7FB — **6,06:1** | #F28B82 / #16294A — **6,06:1** | lolos |
+| `borderKontrol` / `bg` (3,00:1) | #5B6B82 / #FFFFFF — **5,42:1** | #8793A8 / #0C1B33 — **5,54:1** | lolos |
+| `borderKontrol` / `surface` (3,00:1) | #5B6B82 / #F4F7FB — **5,04:1** | #8793A8 / #16294A — **4,66:1** | lolos |
+
+### Pasangan komponen v2 — Mode terang
 
 | Depan | Latar | Jenis (ambang) | Rasio | Hasil | Dipakai di |
 |---|---|---|---|---|---|
-| `teks` #1A1A1A | `permukaan` #FFFFFF | teks (4,50) | 17,40:1 | lolos | Teks, Kartu, BarisDaftar, Pilihan |
-| `teks` #1A1A1A | `halaman` #F5F7F9 | teks (4,50) | 16,20:1 | lolos | HeaderLayar, KeadaanKosong, KeadaanGalat |
-| `teks` #1A1A1A | `permukaanLembut` #E4F3F7 | teks (4,50) | 15,30:1 | lolos | Pilihan terpilih |
-| `teks` #1A1A1A | `brand` #B4E1EB | teks (4,50) | 12,35:1 | lolos | Kartu varian brand |
-| `teks` #1A1A1A | `suksesLatar` #E6F2EF | teks (4,50) | 15,17:1 | lolos | Pesan sukses |
-| `teks` #1A1A1A | `galatLatar` #FBEDED | teks (4,50) | 15,28:1 | lolos | Pesan galat |
-| `teksSekunder` #3D4450 | `permukaan` #FFFFFF | teks (4,50) | 9,80:1 | lolos | keterangan di Kartu, BarisDaftar, Pilihan |
-| `teksSekunder` #3D4450 | `halaman` #F5F7F9 | teks (4,50) | 9,13:1 | lolos | ringkasan HeaderLayar, KeadaanKosong |
-| `teksSekunder` #3D4450 | `permukaanLembut` #E4F3F7 | teks (4,50) | 8,62:1 | lolos | keterangan Pilihan terpilih |
-| `teksSekunder` #3D4450 | `brand` #B4E1EB | teks (4,50) | 6,96:1 | lolos | keterangan Kartu brand |
-| `teksPadaAksen` #FFFFFF | `aksen` #456A8C | teks (4,50) | 5,68:1 | lolos | Tombol utama |
-| `teksPadaAksen` #FFFFFF | `aksenTekan` #3D4450 | teks (4,50) | 9,80:1 | lolos | Tombol utama ditekan |
-| `aksen` #456A8C | `permukaan` #FFFFFF | teks (4,50) | 5,68:1 | lolos | Tombol sekunder dan teks, tautan Selengkapnya |
-| `aksen` #456A8C | `halaman` #F5F7F9 | teks (4,50) | 5,29:1 | lolos | Tombol teks di atas halaman |
-| `aksen` #456A8C | `permukaanLembut` #E4F3F7 | teks (4,50) | 4,99:1 | lolos | Tombol sekunder/teks ditekan |
+| `teks` #0C1B33 | `permukaan` #F4F7FB | teks (4,50) | 16,01:1 | lolos | Teks, Kartu, BarisDaftar, Pilihan |
+| `teks` #0C1B33 | `halaman` #FFFFFF | teks (4,50) | 17,21:1 | lolos | HeaderLayar, KeadaanKosong, KeadaanGalat |
+| `teks` #0C1B33 | `permukaanLembut` #E4F3F7 | teks (4,50) | 15,13:1 | lolos | Pilihan terpilih |
+| `teks` #0C1B33 | `brand` #B4E1EB | teks (4,50) | 12,21:1 | lolos | Kartu varian brand (judul dan keterangan) |
+| `teks` #0C1B33 | `suksesLatar` #E7F3EC | teks (4,50) | 15,10:1 | lolos | Pesan sukses |
+| `teks` #0C1B33 | `galatLatar` #FBEDED | teks (4,50) | 15,11:1 | lolos | Pesan galat |
+| `teksSekunder` #5B6B82 | `permukaan` #F4F7FB | teks (4,50) | 5,04:1 | lolos | keterangan di Kartu, BarisDaftar, Pilihan |
+| `teksSekunder` #5B6B82 | `halaman` #FFFFFF | teks (4,50) | 5,42:1 | lolos | ringkasan HeaderLayar, KeadaanKosong |
+| `teksSekunder` #5B6B82 | `permukaanLembut` #E4F3F7 | teks (4,50) | 4,77:1 | lolos | keterangan Pilihan terpilih |
+| `teksPadaAksen` #FFFFFF | `aksen` #3B5F80 | teks (4,50) | 6,69:1 | lolos | Tombol utama |
+| `teksPadaAksen` #FFFFFF | `aksenTekan` #2F5273 | teks (4,50) | 8,15:1 | lolos | Tombol utama ditekan |
+| `aksen` #3B5F80 | `permukaan` #F4F7FB | teks (4,50) | 6,23:1 | lolos | Tombol sekunder dan teks, tautan Selengkapnya |
+| `aksen` #3B5F80 | `halaman` #FFFFFF | teks (4,50) | 6,69:1 | lolos | Tombol teks di atas halaman |
+| `aksen` #3B5F80 | `permukaanLembut` #E4F3F7 | teks (4,50) | 5,88:1 | lolos | Tombol sekunder/teks ditekan |
 | `nonaktifTeks` #3D4450 | `nonaktifLatar` #E6E9ED | teks (4,50) | 8,05:1 | lolos | semua kontrol nonaktif |
-| `sukses` #2F6B5C | `permukaan` #FFFFFF | teks (4,50) | 6,21:1 | lolos | label sukses |
-| `sukses` #2F6B5C | `halaman` #F5F7F9 | teks (4,50) | 5,78:1 | lolos | pesan sukses di atas halaman |
-| `sukses` #2F6B5C | `suksesLatar` #E6F2EF | teks (4,50) | 5,42:1 | lolos | label dan ikon pesan sukses |
-| `galat` #A33A3A | `permukaan` #FFFFFF | teks (4,50) | 6,51:1 | lolos | pesan galat di bawah kontrol |
-| `galat` #A33A3A | `halaman` #F5F7F9 | teks (4,50) | 6,06:1 | lolos | pesan galat di atas halaman |
+| `sukses` #276749 | `permukaan` #F4F7FB | teks (4,50) | 6,25:1 | lolos | label sukses |
+| `sukses` #276749 | `halaman` #FFFFFF | teks (4,50) | 6,72:1 | lolos | pesan sukses di atas halaman |
+| `sukses` #276749 | `suksesLatar` #E7F3EC | teks (4,50) | 5,90:1 | lolos | label dan ikon pesan sukses |
+| `galat` #A33A3A | `permukaan` #F4F7FB | teks (4,50) | 6,06:1 | lolos | pesan galat di bawah kontrol |
+| `galat` #A33A3A | `halaman` #FFFFFF | teks (4,50) | 6,51:1 | lolos | pesan galat di atas halaman |
 | `galat` #A33A3A | `galatLatar` #FBEDED | teks (4,50) | 5,71:1 | lolos | judul dan ikon KeadaanGalat |
-| `garisKontrol` #6B7480 | `permukaan` #FFFFFF | kontrol (3,00) | 4,73:1 | lolos | batas Pilihan, kotak centang |
-| `garisKontrol` #6B7480 | `halaman` #F5F7F9 | kontrol (3,00) | 4,40:1 | lolos | batas Pilihan di atas halaman |
-| `aksen` #456A8C | `brand` #B4E1EB | kontrol (3,00) | 4,03:1 | lolos | ikon di lingkaran KeadaanKosong |
-| `fokus` #456A8C | `permukaan` #FFFFFF | kontrol (3,00) | 5,68:1 | lolos | cincin fokus |
-| `fokus` #456A8C | `halaman` #F5F7F9 | kontrol (3,00) | 5,29:1 | lolos | cincin fokus |
-| `fokus` #456A8C | `permukaanLembut` #E4F3F7 | kontrol (3,00) | 4,99:1 | lolos | cincin fokus, batas Pilihan terpilih |
-| `galat` #A33A3A | `permukaan` #FFFFFF | kontrol (3,00) | 6,51:1 | lolos | batas kontrol bergalat |
+| `garisKontrol` #5B6B82 | `permukaan` #F4F7FB | kontrol (3,00) | 5,04:1 | lolos | batas Pilihan, kotak centang, kolom isian |
+| `garisKontrol` #5B6B82 | `halaman` #FFFFFF | kontrol (3,00) | 5,42:1 | lolos | batas Pilihan di atas halaman |
+| `aksen` #3B5F80 | `brand` #B4E1EB | kontrol (3,00) | 4,75:1 | lolos | ikon di lingkaran KeadaanKosong |
+| `fokus` #3B5F80 | `permukaan` #F4F7FB | kontrol (3,00) | 6,23:1 | lolos | cincin fokus |
+| `fokus` #3B5F80 | `halaman` #FFFFFF | kontrol (3,00) | 6,69:1 | lolos | cincin fokus |
+| `fokus` #3B5F80 | `permukaanLembut` #E4F3F7 | kontrol (3,00) | 5,88:1 | lolos | cincin fokus, batas Pilihan terpilih |
+| `galat` #A33A3A | `permukaan` #F4F7FB | kontrol (3,00) | 6,06:1 | lolos | batas kontrol bergalat |
 
-### Palet inti dan netral
+### Pasangan komponen v2 — Mode gelap
 
-| Teks \ Latar | putih #FFFFFF | tinta050 #F5F7F9 | biru100 #E4F3F7 | biruMuda #B4E1EB | biruSedang #95BDD7 | biruBaja #78A4CB |
-|---|---|---|---|---|---|---|
-| putih #FFFFFF | – | 1,07 | 1,13 | 1,40 | 1,99 | 2,63 |
-| tinta #1A1A1A | 17,40 | 16,20 | 15,30 | 12,35 | 8,73 | 6,60 |
-| tinta700 #3D4450 | 9,80 | 9,13 | 8,62 | 6,96 | 4,92 | 3,72 |
-| tinta500 #6B7480 | 4,73 | 4,40 | 4,16 | 3,36 | 2,37 | 1,79 |
-
-### Opsi biru tua
-
-| Opsi | HEX | Teks putih di atasnya (tombol) | Sebagai teks di putih | di halaman #F5F7F9 | di biru100 #E4F3F7 | di biru muda #B4E1EB |
-|---|---|---|---|---|---|---|
-| A. Biru baja tua (sudah dipakai v1 sebagai blue600) | #456A8C | 5,68 | 5,68 | 5,29 | 4,99 | 4,03 (di bawah 4,5) |
-| B. Biru laut | #3B5F80 | 6,69 | 6,69 | 6,23 | 5,88 | 4,75 |
-| C. Biru malam | #2F5273 | 8,15 | 8,15 | 7,59 | 7,16 | 5,78 |
-
-### Opsi sukses
-
-| Opsi | HEX / latar | Teks di putih | Teks di latarnya sendiri | Teks #1A1A1A di latarnya | Teks putih di atasnya |
+| Depan | Latar | Jenis (ambang) | Rasio | Hasil | Dipakai di |
 |---|---|---|---|---|---|
-| A. Hijau toska (sudah dipakai v1 sebagai statusOkFg) | #2F6B5C / #E6F2EF | 6,21 | 5,42 | 15,17 | 6,21 |
-| B. Hijau daun | #276749 / #E7F3EC | 6,72 | 5,90 | 15,27 | 6,72 |
-| C. Hijau zaitun | #4A6B2A / #EEF3E6 | 6,12 | 5,42 | 15,41 | 6,12 |
+| `teks` #EEF1F6 | `permukaan` #16294A | teks (4,50) | 12,79:1 | lolos | Teks, Kartu, BarisDaftar, Pilihan |
+| `teks` #EEF1F6 | `halaman` #0C1B33 | teks (4,50) | 15,20:1 | lolos | HeaderLayar, KeadaanKosong, KeadaanGalat |
+| `teks` #EEF1F6 | `permukaanLembut` #172B4D | teks (4,50) | 12,45:1 | lolos | Pilihan terpilih |
+| `teks` #EEF1F6 | `brand` #16294A | teks (4,50) | 12,79:1 | lolos | Kartu varian brand (judul dan keterangan) |
+| `teks` #EEF1F6 | `suksesLatar` #133326 | teks (4,50) | 12,12:1 | lolos | Pesan sukses |
+| `teks` #EEF1F6 | `galatLatar` #3B1D24 | teks (4,50) | 13,37:1 | lolos | Pesan galat |
+| `teksSekunder` #8793A8 | `permukaan` #16294A | teks (4,50) | 4,66:1 | lolos | keterangan di Kartu, BarisDaftar, Pilihan |
+| `teksSekunder` #8793A8 | `halaman` #0C1B33 | teks (4,50) | 5,54:1 | lolos | ringkasan HeaderLayar, KeadaanKosong |
+| `teksSekunder` #8793A8 | `permukaanLembut` #172B4D | teks (4,50) | 4,54:1 | lolos | keterangan Pilihan terpilih |
+| `teksPadaAksen` #0C1B33 | `aksen` #95BDD7 | teks (4,50) | 8,63:1 | lolos | Tombol utama |
+| `teksPadaAksen` #0C1B33 | `aksenTekan` #B4E1EB | teks (4,50) | 12,21:1 | lolos | Tombol utama ditekan |
+| `aksen` #95BDD7 | `permukaan` #16294A | teks (4,50) | 7,26:1 | lolos | Tombol sekunder dan teks, tautan Selengkapnya |
+| `aksen` #95BDD7 | `halaman` #0C1B33 | teks (4,50) | 8,63:1 | lolos | Tombol teks di atas halaman |
+| `aksen` #95BDD7 | `permukaanLembut` #172B4D | teks (4,50) | 7,07:1 | lolos | Tombol sekunder/teks ditekan |
+| `nonaktifTeks` #A6B3C6 | `nonaktifLatar` #1F3150 | teks (4,50) | 6,12:1 | lolos | semua kontrol nonaktif |
+| `sukses` #6FCF97 | `permukaan` #16294A | teks (4,50) | 7,61:1 | lolos | label sukses |
+| `sukses` #6FCF97 | `halaman` #0C1B33 | teks (4,50) | 9,05:1 | lolos | pesan sukses di atas halaman |
+| `sukses` #6FCF97 | `suksesLatar` #133326 | teks (4,50) | 7,22:1 | lolos | label dan ikon pesan sukses |
+| `galat` #F28B82 | `permukaan` #16294A | teks (4,50) | 6,06:1 | lolos | pesan galat di bawah kontrol |
+| `galat` #F28B82 | `halaman` #0C1B33 | teks (4,50) | 7,20:1 | lolos | pesan galat di atas halaman |
+| `galat` #F28B82 | `galatLatar` #3B1D24 | teks (4,50) | 6,33:1 | lolos | judul dan ikon KeadaanGalat |
+| `garisKontrol` #8793A8 | `permukaan` #16294A | kontrol (3,00) | 4,66:1 | lolos | batas Pilihan, kotak centang, kolom isian |
+| `garisKontrol` #8793A8 | `halaman` #0C1B33 | kontrol (3,00) | 5,54:1 | lolos | batas Pilihan di atas halaman |
+| `aksen` #95BDD7 | `brand` #16294A | kontrol (3,00) | 7,26:1 | lolos | ikon di lingkaran KeadaanKosong |
+| `fokus` #95BDD7 | `permukaan` #16294A | kontrol (3,00) | 7,26:1 | lolos | cincin fokus |
+| `fokus` #95BDD7 | `halaman` #0C1B33 | kontrol (3,00) | 8,63:1 | lolos | cincin fokus |
+| `fokus` #95BDD7 | `permukaanLembut` #172B4D | kontrol (3,00) | 7,07:1 | lolos | cincin fokus, batas Pilihan terpilih |
+| `galat` #F28B82 | `permukaan` #16294A | kontrol (3,00) | 6,06:1 | lolos | batas kontrol bergalat |
 
-### Opsi galat
-
-| Opsi | HEX / latar | Teks di putih | Teks di latarnya sendiri | Teks #1A1A1A di latarnya | Teks putih di atasnya |
-|---|---|---|---|---|---|
-| A. Merah bata redup | #A33A3A / #FBEDED | 6,51 | 5,71 | 15,28 | 6,51 |
-| B. Merah anggur | #8C2F45 / #F8EBEF | 8,05 | 6,94 | 15,01 | 8,05 |
-| C. Plum (bukan merah; wajib selalu dengan ikon dan teks) | #7B3F6E / #F5ECF3 | 7,55 | 6,54 | 15,06 | 7,55 |
-
-29 pasangan, 0 gagal.
+Mode terang: 28 pasangan, 0 gagal.
+Mode gelap: 28 pasangan, 0 gagal.
