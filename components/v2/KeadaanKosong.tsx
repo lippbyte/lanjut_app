@@ -1,14 +1,15 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { radius, ruang, ukuran, warna } from '../../theme/v2';
-import { Ikon, type NamaIkon } from '../ui/Ikon';
+import { radius, ruang, ukuran } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
+import { Ikon, type NamaIkonV2 } from './IkonV2';
 import { Teks } from './Teks';
 import { Tombol } from './Tombol';
 
 /**
- * Keadaan kosong v2 (LANJUT_029): ikon dalam lingkaran biru muda, judul, satu kalimat, dan
- * paling banyak satu aksi. Ikon hiasan disembunyikan dari pembaca layar.
+ * Keadaan kosong v2 (LANJUT_029, dua mode + Phosphor LANJUT_031b): ikon dalam lingkaran brand,
+ * judul, satu kalimat, dan paling banyak satu aksi. Ikon hiasan disembunyikan dari pembaca layar.
  */
 export function KeadaanKosong({
   judul,
@@ -18,12 +19,17 @@ export function KeadaanKosong({
 }: {
   judul: string;
   teks?: string;
-  ikon?: NamaIkon;
+  ikon?: NamaIkonV2;
   aksi?: { label: string; onPress: () => void; memuat?: boolean; nonaktif?: boolean; galat?: string };
 }) {
+  const { warna } = useTemaV2();
   return (
-    <View style={s.wadah}>
-      <View style={s.lingkaran} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+    <View style={StyleSheet.flatten([s.wadah, { backgroundColor: warna.halaman }])}>
+      <View
+        style={StyleSheet.flatten([s.lingkaran, { backgroundColor: warna.brand }])}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
         <Ikon nama={ikon} ukuran={ukuran.ikonBesar} warna={warna.aksen} />
       </View>
       <Teks varian="h2" rata="center">
@@ -40,12 +46,11 @@ export function KeadaanKosong({
 }
 
 const s = StyleSheet.create({
-  wadah: { alignItems: 'center', gap: ruang.r2, paddingVertical: ruang.r5, paddingHorizontal: ruang.r3, backgroundColor: warna.halaman },
+  wadah: { alignItems: 'center', gap: ruang.r2, paddingVertical: ruang.r5, paddingHorizontal: ruang.r3 },
   lingkaran: {
     width: ukuran.lingkaranIkon,
     height: ukuran.lingkaranIkon,
     borderRadius: radius.pil,
-    backgroundColor: warna.brand,
     alignItems: 'center',
     justifyContent: 'center',
   },

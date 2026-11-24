@@ -5,18 +5,17 @@ import { ApiError } from '../../../api/client';
 import type { ArahV2 } from '../../../hooks/useArahV2';
 import { TEKS_ARAH } from '../../../lib/alurMasukV2';
 import { jalurUntukDikirim } from '../../../lib/tandaArah';
-import { warna } from '../../../theme/v2';
+import { useTemaV2 } from '../../../theme/v2/konteks';
 import { HeaderLayar, KeadaanGalat, KeadaanKosong, Pilihan, PesanStatus, Tombol } from '../../v2';
 import { KerangkaV2 } from './KerangkaV2';
 
 /**
- * Kecenderungan arah (LANJUT_030), langkah terakhir alur masuk v2, sebagai gerbang di atas app
- * (app/(app)/_layout.tsx). Tidak pernah memblokir: daftar kosong atau galat tetap bisa dilewati.
- *   - Banyak pilihan boleh; "Belum tahu" berdiri sendiri (lib/pilihan.ts).
- *   - Jalur dikirim lewat rute Jalur & Tujuan yang sudah ada; hanya jalur disetujui (K37).
- *   - "Belum tahu" tidak dikirim ke server; hanya tanda lokal (lib/tandaArah.ts).
+ * Kecenderungan arah (LANJUT_030, dua mode LANJUT_031b), langkah terakhir alur masuk v2, sebagai
+ * gerbang di atas app (app/(app)/_layout.tsx). Tidak pernah memblokir: daftar kosong atau galat
+ * tetap bisa dilewati.
  */
 export function GerbangArahV2({ arah }: { arah: ArahV2 }) {
+  const { warna } = useTemaV2();
   const [terpilih, setTerpilih] = useState<string[]>([]);
   const [menyimpan, setMenyimpan] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
@@ -74,7 +73,7 @@ export function GerbangArahV2({ arah }: { arah: ArahV2 }) {
   }
 
   return (
-    <View style={s.lapis}>
+    <View style={StyleSheet.flatten([s.lapis, { backgroundColor: warna.halaman }])}>
       <KerangkaV2 kunciLangkah={arah.galatJaringan ? 'galat' : arah.opsi.length ? 'pilih' : 'kosong'} aksi={aksi}>
         {isi}
       </KerangkaV2>
@@ -83,5 +82,5 @@ export function GerbangArahV2({ arah }: { arah: ArahV2 }) {
 }
 
 const s = StyleSheet.create({
-  lapis: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: warna.halaman },
+  lapis: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
 });

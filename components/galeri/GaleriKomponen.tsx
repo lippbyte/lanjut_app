@@ -5,7 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useKurangiGerak } from '../../hooks/useKurangiGerak';
 import { BELUM_TAHU } from '../../lib/pilihan';
-import { garis, ruang, tataLetak, warna } from '../../theme/v2';
+import { garis, ruang, tataLetak } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
 import {
   BarisDaftar,
   HeaderLayar,
@@ -21,9 +22,9 @@ import {
 } from '../v2';
 
 /**
- * Galeri komponen v2 — KHUSUS PENGEMBANG (LANJUT_029). Hanya terdaftar bila __DEV__ dan
- * EXPO_PUBLIC_GALERI_KOMPONEN=1 (lib/galeriKomponen.ts). Semua teks di sini contoh, bukan teks
- * layar, dan tidak ada data akun atau permintaan jaringan.
+ * Galeri komponen v2 — KHUSUS PENGEMBANG (LANJUT_029, dua mode LANJUT_031b). Hanya terdaftar bila
+ * __DEV__ dan EXPO_PUBLIC_GALERI_KOMPONEN=1 (lib/galeriKomponen.ts). Semua teks di sini contoh,
+ * bukan teks layar, dan tidak ada data akun atau permintaan jaringan.
  */
 const ARAH_CONTOH = [
   { nilai: 'melanjutkan', label: 'Contoh: Melanjutkan' },
@@ -34,8 +35,9 @@ const ARAH_CONTOH = [
 const tidakApaApa = () => {};
 
 function Bagian({ judul, children }: { judul: string; children: React.ReactNode }) {
+  const { warna } = useTemaV2();
   return (
-    <View style={s.bagian}>
+    <View style={StyleSheet.flatten([s.bagian, { borderTopColor: warna.garisHalus }])}>
       <Teks varian="h2">{judul}</Teks>
       {children}
     </View>
@@ -48,6 +50,7 @@ export function GaleriKomponen() {
     SourceSans3_400Regular: require('../../assets/fonts/SourceSans3_400Regular.ttf'),
     SourceSans3_600SemiBold: require('../../assets/fonts/SourceSans3_600SemiBold.ttf'),
   });
+  const { warna } = useTemaV2();
   const { top, bottom } = useSafeAreaInsets();
   const kurangiGerak = useKurangiGerak();
   const [satu, setSatu] = useState<string[]>(['melanjutkan']);
@@ -55,9 +58,12 @@ export function GaleriKomponen() {
   const [memuatTombol, setMemuatTombol] = useState(false);
 
   return (
-    <ScrollView style={s.akar} contentContainerStyle={StyleSheet.flatten([s.gulir, { paddingTop: top, paddingBottom: bottom + ruang.r6 }])}>
+    <ScrollView
+      style={StyleSheet.flatten([s.akar, { backgroundColor: warna.halaman }])}
+      contentContainerStyle={StyleSheet.flatten([s.gulir, { paddingTop: top, paddingBottom: bottom + ruang.r6 }])}
+    >
       <View style={s.kolom}>
-        <View style={s.pita} accessibilityRole="text">
+        <View style={StyleSheet.flatten([s.pita, { backgroundColor: warna.aksen }])} accessibilityRole="text">
           <Teks varian="judulKecil" warna="teksPadaAksen">
             DEV · Galeri komponen v2 (LANJUT_029)
           </Teks>
@@ -101,14 +107,14 @@ export function GaleriKomponen() {
         <Bagian judul="Kartu">
           <Kartu judul="Contoh kartu" keterangan="Contoh keterangan satu kalimat." />
           <Kartu judul="Contoh kartu lembut" keterangan="Contoh: bisa ditekan, membuka layar lain." varian="lembut" onPress={tidakApaApa} />
-          <Kartu judul="Contoh kartu brand" keterangan="Contoh: latar biru muda, teks gelap." varian="brand" />
+          <Kartu judul="Contoh kartu brand" keterangan="Contoh: latar bagian biru, teks utama." varian="brand" />
           <Kartu judul="Contoh kartu memuat" memuat />
           <Kartu judul="Contoh kartu nonaktif" keterangan="Contoh: belum bisa dibuka." nonaktif onPress={tidakApaApa} />
           <Kartu judul="Contoh kartu galat" keterangan="Contoh isi." galat="Contoh: gagal memuat bagian ini." />
         </Bagian>
 
         <Bagian judul="Baris daftar">
-          <View style={s.daftar}>
+          <View style={{ backgroundColor: warna.permukaan }}>
             <BarisDaftar judul="Contoh baris" onPress={tidakApaApa} />
             <BarisDaftar judul="Contoh dengan nilai" nilai="Contoh nilai" keterangan="Contoh keterangan." onPress={tidakApaApa} />
             <BarisDaftar judul="Contoh baris memuat" memuat onPress={tidakApaApa} />
@@ -168,10 +174,9 @@ export function GaleriKomponen() {
 }
 
 const s = StyleSheet.create({
-  akar: { flex: 1, backgroundColor: warna.halaman },
+  akar: { flex: 1 },
   gulir: { flexGrow: 1 },
   kolom: { width: '100%', maxWidth: tataLetak.lebarMaks, alignSelf: 'center' },
-  pita: { backgroundColor: warna.aksen, paddingHorizontal: ruang.tepi, paddingVertical: ruang.r1 },
-  bagian: { gap: ruang.r2, paddingHorizontal: ruang.tepi, paddingVertical: ruang.r3, borderTopWidth: garis.tipis, borderTopColor: warna.garisHalus },
-  daftar: { backgroundColor: warna.permukaan },
+  pita: { paddingHorizontal: ruang.tepi, paddingVertical: ruang.r1 },
+  bagian: { gap: ruang.r2, paddingHorizontal: ruang.tepi, paddingVertical: ruang.r3, borderTopWidth: garis.tipis },
 });

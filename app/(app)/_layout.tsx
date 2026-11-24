@@ -1,18 +1,25 @@
 import React from 'react';
+import Constants from 'expo-constants';
 import { Redirect, Slot, usePathname } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { AppShell } from '../../components/layout/AppShell';
+import { AppShellV2 } from '../../components/screens/v2/AppShellV2';
 import { LayarMemuat } from '../../components/layout/LayarMemuat';
 import { BuatSandiBaruScreen } from '../../components/screens/BuatSandiBaruScreen';
 import { IsiJenisSekolahScreen, IsiKelasScreen } from '../../components/screens/IsiKelasScreen';
 import { PromptKebijakan } from '../../components/screens/TerimaKebijakan';
 import { GerbangArahV2 } from '../../components/screens/v2/KecenderunganV2';
 import { useTanyaArahV2 } from '../../hooks/useArahV2';
+import { navigasiV2Aktif } from '../../lib/fiturApp';
 import { belumIsiJenisSekolah } from '../../lib/jenjang';
 import { perluBuatSandiBaru } from '../../lib/sandiBaru';
 import { useSesi } from '../../providers/AuthProvider';
 import { ObrolanProvider } from '../../providers/ObrolanProvider';
+
+// LANJUT_031: navigasi v2 (saklar EXPO_PUBLIC_NAVIGASI_V2, mati bawaan). Saat mati, AppShell v1
+// berjalan persis seperti sebelumnya.
+const Shell = navigasiV2Aktif(Constants.expoConfig?.extra) ? AppShellV2 : AppShell;
 
 // Satu-satunya layar yang tetap terbuka selama gerbang isi kelas / jenis
 // sekolah: Data Akun (tempat mengisi keduanya, juga tombol Keluar).
@@ -57,9 +64,9 @@ export default function AppLayout() {
           pindah halaman lagi). display:none menyembunyikannya dari layar,
           fokus, dan pembaca layar. */}
       <View style={tertahan || arah.keadaan !== 'tidak' ? s.tersembunyi : s.penuh}>
-        <AppShell>
+        <Shell>
           <Slot />
-        </AppShell>
+        </Shell>
       </View>
       {perluSandi ? <BuatSandiBaruScreen /> : tertahan ? tanpaKelas ? <IsiKelasScreen /> : <IsiJenisSekolahScreen /> : null}
       {arah.keadaan === 'tanya' ? <GerbangArahV2 arah={arah} /> : arah.keadaan === 'menunggu' ? <LayarMemuat /> : null}

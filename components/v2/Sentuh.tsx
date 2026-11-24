@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, type AccessibilityRole, type StyleProp, type ViewStyle } from 'react-native';
 
-import { garis, ukuran, warna } from '../../theme/v2';
+import { garis, ukuran } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
 
 /**
- * Dasar semua kontrol yang bisa ditekan di komponen v2 (LANJUT_029). Satu-satunya pemakai
- * Pressable di folder ini, supaya aturan berikut tidak bisa terlewat:
+ * Dasar semua kontrol yang bisa ditekan di komponen v2 (LANJUT_029, dua mode LANJUT_031b).
+ * Satu-satunya pemakai Pressable di folder ini, supaya aturan berikut tidak bisa terlewat:
  *   - target sentuh minimal ukuran.sentuhMin (44) ke dua arah;
  *   - peran (accessibilityRole) dan label wajib;
  *   - keadaan nonaktif, sibuk, terpilih, dan terbuka dibacakan lewat accessibilityState;
@@ -41,8 +42,19 @@ export function Sentuh({
   gaya?: (k: KeadaanSentuh) => StyleProp<ViewStyle>;
   children: React.ReactNode | ((k: KeadaanSentuh) => React.ReactNode);
 }) {
+  const { warna } = useTemaV2();
   const [fokus, setFokus] = useState(false);
   const mati = nonaktif || sibuk;
+  const s = useMemo(
+    () =>
+      StyleSheet.create({
+        dasar: { minHeight: ukuran.sentuhMin, minWidth: ukuran.sentuhMin },
+        // Outline mengikuti radius kontrolnya sendiri, jadi radius tidak ditimpa di sini.
+        fokus: { outlineColor: warna.fokus, outlineWidth: garis.fokus, outlineStyle: 'solid', outlineOffset: garis.fokus },
+      }),
+    [warna]
+  );
+
   return (
     <Pressable
       onPress={mati ? undefined : onPress}
@@ -66,9 +78,3 @@ export function Sentuh({
     </Pressable>
   );
 }
-
-const s = StyleSheet.create({
-  dasar: { minHeight: ukuran.sentuhMin, minWidth: ukuran.sentuhMin },
-  // Outline mengikuti radius kontrolnya sendiri, jadi radius tidak ditimpa di sini.
-  fokus: { outlineColor: warna.fokus, outlineWidth: garis.fokus, outlineStyle: 'solid', outlineOffset: garis.fokus },
-});

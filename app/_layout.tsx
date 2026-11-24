@@ -7,11 +7,11 @@ import {
 } from '@expo-google-fonts/poppins';
 import Constants from 'expo-constants';
 import { Slot } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LayarMemuat } from '../components/layout/LayarMemuat';
+import { StatusBarV2, TemaV2Provider } from '../components/screens/v2/TemaV2Provider';
 import { alurMasukV2Aktif } from '../lib/fiturApp';
 import { aturMinTampil, minTampilMs } from '../lib/pembuka';
 import { PembukaKelinci, TandaSesiSiap } from '../components/layout/PembukaKelinci';
@@ -53,22 +53,24 @@ export default function RootLayout() {
   // dipasang ulang saat huruf selesai dimuat. Ikon status bar gelap sejak render
   // pertama, supaya jam & baterai terbaca di atas app bar yang berwarna terang.
   return (
-    <View style={s.akar}>
-      <StatusBar style="dark" />
-      {hurufBeres ? (
-        <SafeAreaProvider>
-          <QueryProvider>
-            <AuthProvider>
-              <Slot />
-              <TandaSesiSiap onSiap={setSesiSiap} />
-            </AuthProvider>
-          </QueryProvider>
-        </SafeAreaProvider>
-      ) : (
-        <LayarMemuat />
-      )}
-      <PembukaKelinci siap={hurufBeres && sesiSiap} />
-    </View>
+    <TemaV2Provider>
+      <View style={s.akar}>
+        <StatusBarV2 />
+        {hurufBeres ? (
+          <SafeAreaProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <Slot />
+                <TandaSesiSiap onSiap={setSesiSiap} />
+              </AuthProvider>
+            </QueryProvider>
+          </SafeAreaProvider>
+        ) : (
+          <LayarMemuat />
+        )}
+        <PembukaKelinci siap={hurufBeres && sesiSiap} />
+      </View>
+    </TemaV2Provider>
   );
 }
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
-import { garis, radius, ruang, tipografi, ukuran, warna } from '../../theme/v2';
+import { garis, radius, ruang, tipografi, ukuran } from '../../theme/v2';
+import { useTemaV2 } from '../../theme/v2/konteks';
 import { PesanStatus } from './PesanStatus';
 import { Teks } from './Teks';
 
@@ -17,10 +18,9 @@ const PERILAKU: Record<JenisIsian, TextInputProps> = {
 };
 
 /**
- * Kolom isian v2 (LANJUT_030). Label tertulis di atas kolom DAN menjadi accessibilityLabel, jadi
- * pembaca layar menyebut nama kolom (temuan audit 029: 14 dari 32 isian v1 tanpa nama). Tanpa
- * placeholder: petunjuk ditulis sebagai teks biasa yang kontrasnya cukup. Galat memakai ikon dan
- * kalimat, juga garis galat. Skala font sistem dihormati (tanpa tinggi tetap).
+ * Kolom isian v2 (LANJUT_030, dua mode LANJUT_031b). Label tertulis di atas kolom DAN menjadi
+ * accessibilityLabel. Tanpa placeholder: petunjuk ditulis sebagai teks biasa yang kontrasnya
+ * cukup. Galat memakai ikon dan kalimat, juga garis galat. Papan ketik mengikuti mode aktif.
  */
 export function Isian({
   label,
@@ -47,6 +47,7 @@ export function Isian({
   kunciKirim?: 'next' | 'go' | 'done' | 'send';
   maksPanjang?: number;
 }) {
+  const { mode, warna } = useTemaV2();
   const [fokus, setFokus] = useState(false);
   return (
     <View style={s.wadah}>
@@ -74,8 +75,15 @@ export function Isian({
         accessibilityState={{ disabled: nonaktif }}
         aria-disabled={nonaktif}
         aria-invalid={!!galat}
+        keyboardAppearance={mode === 'gelap' ? 'dark' : 'light'}
         selectionColor={warna.aksen}
-        style={StyleSheet.flatten([s.kolom, nonaktif && s.kolomNonaktif, galat ? s.kolomGalat : null, fokus && s.kolomFokus])}
+        style={StyleSheet.flatten([
+          s.kolom,
+          { color: warna.teks, borderColor: warna.garisKontrol, backgroundColor: warna.permukaan },
+          nonaktif && { backgroundColor: warna.nonaktifLatar, borderColor: warna.nonaktifLatar, color: warna.nonaktifTeks },
+          galat ? { borderColor: warna.galat, borderWidth: garis.fokus } : null,
+          fokus && { borderColor: warna.fokus, borderWidth: garis.fokus },
+        ])}
       />
       {galat ? <PesanStatus jenis="galat">{galat}</PesanStatus> : null}
     </View>
@@ -86,16 +94,10 @@ const s = StyleSheet.create({
   wadah: { gap: ruang.r1 },
   kolom: {
     ...tipografi.badan,
-    color: warna.teks,
     minHeight: ukuran.sentuhMin,
     paddingVertical: ruang.r1,
     paddingHorizontal: ruang.r2,
     borderRadius: radius.kecil,
     borderWidth: garis.tipis,
-    borderColor: warna.garisKontrol,
-    backgroundColor: warna.permukaan,
   },
-  kolomNonaktif: { backgroundColor: warna.nonaktifLatar, borderColor: warna.nonaktifLatar, color: warna.nonaktifTeks },
-  kolomGalat: { borderColor: warna.galat, borderWidth: garis.fokus },
-  kolomFokus: { borderColor: warna.fokus, borderWidth: garis.fokus },
 });

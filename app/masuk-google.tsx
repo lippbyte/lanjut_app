@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, Platform, View } from 'react-native';
 
 import { AuthLayout, Keterangan, PesanGalat, TombolUtama, authStyles } from '../components/screens/auth/AuthUI';
 import { useAuth } from '../hooks/useAuth';
 import { KUNCI_NONCE_GOOGLE, hasilDariFragmen, hasilDariParam, hasilSah } from '../lib/googleMasuk';
+import { ruteAwalApp } from '../lib/navigasiV2';
 import { useSesi } from '../providers/AuthProvider';
 import { color } from '../theme/tokens';
 
@@ -48,7 +50,7 @@ export default function MasukGoogle() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (status === 'masuk') return <Redirect href="/linimasa" />;
+  if (status === 'masuk') return <Redirect href={ruteAwalApp(Constants.expoConfig?.extra)} />;
 
   const pesan = galat ?? error;
   return (

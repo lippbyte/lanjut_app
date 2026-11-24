@@ -25,7 +25,8 @@ import {
 } from '../../../lib/alurMasukV2';
 import { JENIS_SEKOLAH_MENENGAH, LABEL_JENIS_SEKOLAH, type JenisSekolahMenengah, type Kelas } from '../../../lib/jenjang';
 import { RINGKASAN_KEBIJAKAN, VERSI_KEBIJAKAN } from '../../../lib/kebijakanPrivasi';
-import { ruang, tataLetak, warna } from '../../../theme/v2';
+import { ruang, tataLetak } from '../../../theme/v2';
+import { useTemaV2 } from '../../../theme/v2/konteks';
 import { Centang, HeaderLayar, IndikatorLangkah, Isian, Kartu, PesanStatus, Pilihan, Teks, Tombol } from '../../v2';
 import { IsiKebijakan } from '../KebijakanPrivasiScreen';
 import { KerangkaV2 } from './KerangkaV2';
@@ -379,11 +380,12 @@ function LangkahProdi({ isian, ubah, galat, onKembali }: { isian: IsianDaftar; u
 
 /** Teks kebijakan lengkap, IsiKebijakan v1 (lib/kebijakan-privasi.json) tanpa perubahan. */
 function ModalKebijakanV2({ buka, onTutup }: { buka: boolean; onTutup: () => void }) {
+  const { warna } = useTemaV2();
   const { top, bottom } = useSafeAreaInsets();
   const kurangiGerak = useKurangiGerak();
   return (
     <Modal visible={buka} animationType={kurangiGerak ? 'none' : 'slide'} onRequestClose={onTutup}>
-      <View style={StyleSheet.flatten([s.modal, { paddingTop: top, paddingBottom: bottom }])}>
+      <View style={StyleSheet.flatten([s.modal, { backgroundColor: warna.halaman, paddingTop: top, paddingBottom: bottom }])}>
         <ScrollView contentContainerStyle={s.modalIsi}>
           <Teks varian="h1">{TEKS_DAFTAR.persetujuan.judulLengkap}</Teks>
           <IsiKebijakan />
@@ -395,7 +397,7 @@ function ModalKebijakanV2({ buka, onTutup }: { buka: boolean; onTutup: () => voi
 }
 
 const s = StyleSheet.create({
-  modal: { flex: 1, backgroundColor: warna.halaman },
+  modal: { flex: 1 },
   barisRingkas: { gap: ruang.r1 },
   modalIsi: { padding: ruang.tepi, gap: ruang.r2, width: '100%', maxWidth: tataLetak.lebarMaks, alignSelf: 'center' },
 });
