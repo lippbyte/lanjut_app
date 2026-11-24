@@ -571,8 +571,11 @@ describe('Gerbang rilis dan dokumen draf', () => {
       tulis('lib/navigasiV2.ts', '// TEKS DRAF\n');
       tulis('lib/jejakWaktuV2.ts', '// TEKS DRAF\n');
       tulis('lib/langkahSayaV2.ts', '// TEKS DRAF\n');
+      tulis('lib/jalurSayaV2.ts', '// TEKS DRAF\n');
+      tulis('components/screens/v2/JalurSayaV2.tsx', '// komponen v2\n');
       tulis('docs/draf-teks-navigasi-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-jejak-waktu-v2.md', 'DRAF\n');
+      tulis('docs/draf-teks-jalur-saya-v2.md', 'DRAF\n');
 
       // Keduanya menyala → keduanya tertahan
       tulis('eas.json', {

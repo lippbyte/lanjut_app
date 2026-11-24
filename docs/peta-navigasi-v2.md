@@ -1,6 +1,6 @@
-# Peta Navigasi v2 (LANJUT_031, diperbarui LANJUT_032)
+# Peta Navigasi v2 (LANJUT_031, diperbarui LANJUT_032 & LANJUT_033)
 
-> **Status:** inventaris terverifikasi terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`. Diperbarui pada `LANJUT_032` untuk layar sungguhan `/jejak-waktu` dan `/langkah-saya`.
+> **Status:** inventaris terverifikasi terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`. Diperbarui pada `LANJUT_032` (`/jejak-waktu`, `/langkah-saya`) dan `LANJUT_033` (reskin `/jalur-tujuan` & `/jalur-tujuan-tulis` menjadi Jalur Saya v2).
 > **Saklar v2:** `EXPO_PUBLIC_NAVIGASI_V2` (mati bawaan). Saat mati, navigasi v1 berjalan persis seperti sebelumnya tanpa perubahan rute maupun perilaku.
 > **Aturan nama:** nama rute, kunci API, tabel, dan saklar yang sudah ada **tidak diubah**. Hanya label tampilan yang disesuaikan (K47: Arah Saya, Jelajah, Jalur Saya, Jejak Waktu, Langkah Saya, Rekam Jejak, Profil Saya, Akun & Privasi).
 
@@ -52,8 +52,8 @@ Diperiksa langsung dari seluruh berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+ht
 | Hapus akun & unduh data | `/hapus-akun` | `EXPO_PUBLIC_KELOLA_DATA_AKUN=1` | **Pintu dari layar lain:** bagian Data saya di Akun & Privasi (`/akun`) | Hapus Akun |
 | Terima Kebijakan Privasi | `/terima-kebijakan` | selalu aktif | **Pintu dari layar lain:** Akun & Privasi (`/akun`), `PromptKebijakan`, dan `/ngobrol` | Kebijakan Privasi |
 | Daftar Periksa | `/daftar-periksa` | selalu aktif di v1 | **Digantikan oleh Langkah Saya (`/langkah-saya`).** Alasan: daftar periksa di-reskin menjadi `/langkah-saya` memakai token dua mode v2 dengan perilaku data identik (`kemajuan_pengguna`, `butir_pribadi`, dan `event_sekolah` SMP). Rute `/daftar-periksa` tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati. | Langkah Saya |
-| Jalur & Tujuan | `/jalur-tujuan` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Kartu pintu besar** Jalur Saya di Arah Saya; **Chip Arahku** di Arah Saya | Jalur Saya |
-| Tulis Tujuan | `/jalur-tujuan-tulis` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Pintu dari layar lain:** layar Jalur Saya (`/jalur-tujuan`) | Tulis Tujuan |
+| Jalur & Tujuan | `/jalur-tujuan` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Kartu pintu besar** Jalur Saya di Arah Saya; **Chip Arahku** di Arah Saya. Merender komponen v2 (`JalurSayaV2`, LANJUT_033) saat `EXPO_PUBLIC_NAVIGASI_V2=1`, dan tetap merender v1 (`JalurTujuanScreen`) saat mati. | Jalur Saya |
+| Tulis Tujuan | `/jalur-tujuan-tulis` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Pintu dari layar lain / URL langsung:** layar Jalur Saya (`/jalur-tujuan`, formulir utama dibuka lewat modal di `/jalur-tujuan`; rute `/jalur-tujuan-tulis` merender `TujuanTulisV2` saat `EXPO_PUBLIC_NAVIGASI_V2=1`). | Tulis Tujuan |
 | Portofolio | `/portofolio` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Kartu pintu besar** Rekam Jejak (bobot visual terbesar) di Arah Saya | Rekam Jejak |
 | Tulis Catatan Portofolio | `/portofolio-tulis` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Pintu dari layar lain:** layar Rekam Jejak (`/portofolio`) | Tulis Catatan |
 | Detail Catatan Portofolio | `/portofolio-butir` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Pintu dari layar lain:** layar Rekam Jejak (`/portofolio`) | Catatan |
@@ -87,4 +87,4 @@ Diperiksa langsung dari seluruh berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+ht
 
 - **Rute v1 yang sengaja digantikan di v2 (`RUTE_V1_DIGANTIKAN_V2`):** **2 rute** (`/linimasa` → `/arah-saya` + `/jejak-waktu`; `/daftar-periksa` → `/langkah-saya`), masing-masing terdokumentasi eksplisit beserta alasannya dan diuji otomatis di `server/tests/navigasi-v2.test.js`. Kedua rute v1 tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati.
 - **Rute v1 lainnya (28 rute dalam sesi + 5 luar sesi):** seluruhnya tetap terjangkau langsung di graf navigasi v2.
-- **Catatan layar yang belum di-reskin (task 033–035):** layar v1 lain (`/discover`, `/discover-profil`, `/jalur-tujuan`, `/portofolio`, `/akun`, dan layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2.
+- **Catatan layar yang belum di-reskin (task 034–035):** layar v1 lain (`/discover`, `/discover-profil`, `/portofolio`, `/akun`, dan layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2. (`/jalur-tujuan` dan `/jalur-tujuan-tulis` sudah memakai tampilan Jalur Saya v2 sejak `LANJUT_033` saat `EXPO_PUBLIC_NAVIGASI_V2=1`.)

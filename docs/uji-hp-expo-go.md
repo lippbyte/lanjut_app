@@ -272,5 +272,41 @@ Kedua layar ini berada di balik saklar `EXPO_PUBLIC_NAVIGASI_V2` (**mati bawaan*
    - Uji mode **Gelap** (lewat **Profil Saya** → **Akun & Privasi** → **Gelap**): pastikan semua keadaan kosong di Arah Saya, Jejak Waktu, dan Langkah Saya menampilkan maskot kelinci di atas lingkaran `#B4E1EB` sehingga garis maskot tetap jelas.
 5. **Uji saklar mati:** hentikan Expo, kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""`, lalu jalankan ulang dengan `--clear`. Pastikan aplikasi kembali membuka Beranda v1 (`/linimasa`) dan Daftar Periksa v1 (`/daftar-periksa`) seperti semula.
 
+## 14. Jalur Saya v2 (LANJUT_033)
+
+Layar **Jalur Saya** v2 mereskin `/jalur-tujuan` dan `/jalur-tujuan-tulis` di balik kombinasi saklar `EXPO_PUBLIC_JALUR_TUJUAN` (**mati bawaan**) dan `EXPO_PUBLIC_NAVIGASI_V2` (**mati bawaan**). Langkah di bawah belum pernah dijalankan di HP fisik; belum ada klaim hasil uji di HP, pembaca layar (TalkBack/VoiceOver), atau ukuran huruf besar sistem.
+
+> **Penting — selalu gunakan `--clear`:** setiap kali menyalakan atau mematikan `EXPO_PUBLIC_JALUR_TUJUAN`, `EXPO_PUBLIC_NAVIGASI_V2`, atau `EXPO_PUBLIC_MODE_GELAP`, jalankan Expo dengan `--clear` (`npx expo start --go --lan --clear` atau `npx expo start --web --clear`) supaya cache Metro tidak membawa konfigurasi saklar lama.
+
+1. Pastikan database `lanjut_dev` (port `3309`) dan server dev lokal menyala dengan `JALUR_TUJUAN_AKTIF=1` di `LANJUT_App\server\.env` (langkah 2–4).
+2. Di PowerShell kedua, nyalakan saklar untuk sesi lokal (ganti `192.168.x.x` dengan IP Wi-Fi komputer):
+   ```powershell
+   cd "D:\DATA ALIF\Project - Profesional\EDILAKSO Group\LANJUT - Project\EDILAKSO-LANJUT-repo\LANJUT_App"
+   $env:EXPO_PUBLIC_API_URL = "http://192.168.x.x:4000/api/v1"
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2 = "1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_MODE_GELAP = "1"
+   $env:EXPO_PUBLIC_JALUR_TUJUAN = "1"
+   $env:EXPO_PUBLIC_DISCOVER = "1"
+   npx expo start --go --lan --clear
+   ```
+3. **Uji saat jalur masih draf (bawaan database dev):**
+   - Masuk dengan `uji_belum_memilih`, lalu dari **Arah Saya** ketuk kartu **Jalur Saya**: pastikan tampil keadaan kosong **"Pilihan jalur sedang disiapkan"** dengan maskot kelinci di dalam lingkaran `#B4E1EB` (terang maupun gelap), kartu **"Tujuanmu"** kosong, dan tombol **Tulis tujuan** berfungsi tanpa tertutup papan ketik.
+   - Masuk dengan `demo_kelas12_p26`: pastikan pilihan jalur yang dulu dipilih lalu kembali draf tampil sebagai kartu netral **"Jalur belum tersedia"** dengan satu tombol **Jeda**, tanpa id mentah (`melanjutkan`) dan tanpa teks draf, serta tujuan yang terkait jalur draf ikut menampilkan **"Jalur belum tersedia"**.
+4. **Uji saat ada jalur dummy disetujui:**
+   - Di PowerShell folder `LANJUT_App\server`, jalankan:
+     ```powershell
+     npm run benih-persetujuan-dummy
+     ```
+   - Masuk dengan `demo_kelas12_dc`, buka **Jalur Saya**:
+     - Pastikan jalur `[DUMMY] Melanjutkan` tampil sebagai kartu besar interaktif dengan penanda tertulis **Dipilih** (bukan hanya warna), bisa diketuk untuk menjeda dan memilih kembali.
+     - Di kartu **Tujuanmu**, ketuk **Lihat perubahan** untuk memeriksa versi lama bernomor & berjam (`Versi ke-1 (...)`), lalu ketuk **Ubah** untuk membuat versi baru dan periksa umpan balik satu kalimat hangat.
+   - **Wajib sesudah selesai melihat:** cabut kembali persetujuan dummy di `LANJUT_App\server`:
+     ```powershell
+     npm run benih-persetujuan-dummy -- --cabut
+     ```
+5. **Uji saklar v2 mati:** hentikan Expo, kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` (biarkan `$env:EXPO_PUBLIC_JALUR_TUJUAN = "1"`), lalu jalankan ulang dengan `--clear`. Pastikan `/jalur-tujuan` kembali menampilkan layar v1 **Jalur & Tujuan** persis seperti semula.
+
+
 
 

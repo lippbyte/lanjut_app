@@ -9,6 +9,7 @@
  */
 import type { ButirDaftarPeriksa, ButirPribadi, EventSekolah, JalurMinat, Kemajuan, PilihanJalur, TahapanLinimasa } from '../api/types';
 import { eventTerdekat, labelJenis, selisihHari, teksHitungMundur, untukPersiapanEvent } from './eventSekolah';
+import { jalurDisetujuiSaja, labelJalur } from './jalurSayaV2';
 import { untukKelas12, type Kelas } from './jenjang';
 import { formatTanggal, hariIniWib, tanggalMomen, turunkanLinimasa } from './linimasa';
 import type { SaklarNavigasiV2 } from './navigasiV2';
@@ -96,22 +97,19 @@ export function keadaanArahku(p: {
 }): HasilArahku {
   const aktif = (p.pilihan ?? []).filter((x) => x.status === 'aktif');
   if (aktif.length > 0) {
-    const disetujui = new Map<string, string>();
-    for (const j of p.daftarJalur ?? []) {
-      if (j.status_teks === 'disetujui') disetujui.set(j.id, j.nama);
-    }
+    const idDisetujui = new Set(jalurDisetujuiSaja(p.daftarJalur).map((j) => j.id));
     let adaIdDrafTerbuang = false;
     const chip: ChipArah[] = aktif.map((b) => {
+      const label = labelJalur(b, p.daftarJalur) ?? TEKS_ARAH_SAYA.jalurBelumTersedia;
       if (b.jalur_belum_tersedia || !b.jalur_minat_id) {
-        return { id: b.id, label: TEKS_ARAH_SAYA.jalurBelumTersedia, tersembunyi: true };
+        return { id: b.id, label, tersembunyi: true };
       }
-      const nama = disetujui.get(b.jalur_minat_id);
-      if (!nama) {
+      if (!idDisetujui.has(b.jalur_minat_id)) {
         // Penjaga lapis kedua: bila id draf sempat muncul di data, jangan pernah ditampilkan.
         adaIdDrafTerbuang = true;
-        return { id: b.id, label: TEKS_ARAH_SAYA.jalurBelumTersedia, tersembunyi: true };
+        return { id: b.id, label, tersembunyi: true };
       }
-      return { id: b.id, label: nama, tersembunyi: false };
+      return { id: b.id, label, tersembunyi: false };
     });
     return { keadaan: 'ada_jalur', chip, adaIdDrafTerbuang };
   }
