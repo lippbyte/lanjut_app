@@ -500,7 +500,10 @@ describe('Keadaan kosong (maskot #B4E1EB dua mode), memuat, galat, aksesibilitas
       tulis('docs/draf-teks-navigasi-v2.md', 'Teks.\n');
       tulis('lib/jejakWaktuV2.ts', '// TEKS DRAF\n');
       tulis('lib/langkahSayaV2.ts', '// TEKS DRAF\n');
+      tulis('lib/jalurSayaV2.ts', 'export const C = 1;\n');
+      tulis('components/screens/v2/JalurSayaV2.tsx', 'export const D = 1;\n');
       tulis('docs/draf-teks-jejak-waktu-v2.md', 'DRAF\n');
+      tulis('docs/draf-teks-jalur-saya-v2.md', 'Teks.\n');
       tulis('eas.json', { build: { coba: { env: { EXPO_PUBLIC_NAVIGASI_V2: '1' } } } });
       const pesan = gerbang.periksa(akar).map((m) => m.pesan);
       assert.ok(pesan.includes('Teks navigasi v2 dan Arah Saya: masih draf dan belum disetujui.'), pesan.join(' | '));

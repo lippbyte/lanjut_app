@@ -39,10 +39,12 @@ describe('Nama "Profil Saya" (K15)', () => {
   test('"Jalur Saya" tidak ada di teks yang tampil', () => {
     const berkas = ['app', 'components', 'lib', 'hooks', 'providers', 'api'].flatMap((d) => berkasDi(d, ['.ts', '.tsx', '.json']));
     // Dua kalimat kebijakan menunggu penyelarasan JSON dengan draf kebijakan di repo induk (LANJUT_012).
-    // LANJUT_031 (K47): label "Jalur Saya" dipakai khusus di balik saklar mati EXPO_PUBLIC_NAVIGASI_V2
-    // (lib/arahSaya.ts, lib/navigasiV2.ts); seluruh berkas v1 dan build pilot tetap diperiksa.
+    // LANJUT_031 & LANJUT_033 (K47): label "Jalur Saya" dipakai khusus di balik saklar mati
+    // EXPO_PUBLIC_NAVIGASI_V2 (lib/arahSaya.ts, lib/navigasiV2.ts, lib/jalurSayaV2.ts); seluruh berkas v1 dan build pilot tetap diperiksa.
     const diperiksa = berkas.filter(
-      (b) => !b.endsWith('kebijakan-privasi.json') && !['lib/arahSaya.ts', 'lib/navigasiV2.ts'].includes(b.replace(/\\/g, '/'))
+      (b) =>
+        !b.endsWith('kebijakan-privasi.json') &&
+        !['lib/arahSaya.ts', 'lib/navigasiV2.ts', 'lib/jalurSayaV2.ts'].includes(b.replace(/\\/g, '/'))
     );
     assert.ok(diperiksa.length > 50, `terlalu sedikit berkas: ${diperiksa.length}`);
     const temuan = diperiksa.filter((b) => /Jalur Saya/.test(tanpaKomentar(baca(b))));
