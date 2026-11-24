@@ -38,7 +38,19 @@ const TEKS = [
   { id: 'portofolio', nama: 'Teks Portofolio', saklar: SAKLAR_PORTOFOLIO, berkas: ['lib/portofolio.ts', 'docs/draf-teks-portofolio.md'] },
   { id: 'hapus-akun', nama: 'Teks unduh data dan hapus akun', saklar: SAKLAR_HAPUS_AKUN, berkas: ['lib/dataAkun.ts', 'docs/draf-teks-hapus-akun.md'] },
   { id: 'alur-masuk-v2', nama: 'Teks alur masuk v2', saklar: SAKLAR_ALUR_MASUK_V2, berkas: ['lib/alurMasukV2.ts', 'docs/draf-teks-alur-masuk-v2.md'] },
-  { id: 'navigasi-v2', nama: 'Teks navigasi v2 dan Arah Saya', saklar: SAKLAR_NAVIGASI_V2, berkas: ['lib/arahSaya.ts', 'lib/navigasiV2.ts', 'docs/draf-teks-navigasi-v2.md'] },
+  {
+    id: 'navigasi-v2',
+    nama: 'Teks navigasi v2 dan Arah Saya',
+    saklar: SAKLAR_NAVIGASI_V2,
+    berkas: [
+      'lib/arahSaya.ts',
+      'lib/navigasiV2.ts',
+      'lib/jejakWaktuV2.ts',
+      'lib/langkahSayaV2.ts',
+      'docs/draf-teks-navigasi-v2.md',
+      'docs/draf-teks-jejak-waktu-v2.md',
+    ],
+  },
   { id: 'mode-gelap-v2', nama: 'Teks mode tampilan v2', saklar: SAKLAR_MODE_GELAP, berkas: ['lib/modeTampilan.ts', 'docs/draf-teks-mode-tampilan-v2.md'] },
 ];
 

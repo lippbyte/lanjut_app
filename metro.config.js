@@ -38,11 +38,11 @@ if (process.env.EXPO_PUBLIC_GALERI_KOMPONEN !== '1' || process.env.NODE_ENV === 
   ];
 }
 
-// LANJUT_031: rute Arah Saya keluar dari bundel saat EXPO_PUBLIC_NAVIGASI_V2 bukan '1'.
+// LANJUT_031 & LANJUT_032: rute layar v2 keluar dari bundel saat EXPO_PUBLIC_NAVIGASI_V2 bukan '1'.
 if (process.env.EXPO_PUBLIC_NAVIGASI_V2 !== '1') {
   config.resolver.blockList = [
     ...[].concat(config.resolver.blockList || []),
-    /[\\/]app[\\/]\(app\)[\\/]arah-saya\.tsx$/,
+    /[\\/]app[\\/]\(app\)[\\/](arah-saya|jejak-waktu|langkah-saya)\.tsx$/,
   ];
 }
 

@@ -48,6 +48,7 @@ Semua layar dan komponen v2 membaca warna lewat `useTemaV2()` dengan nama peran 
 | `suksesLatar` | `#E7F3EC` | `#133326` | terang: keputusan 20 Nov · gelap: **usulan** (`sukses` 7,22:1, `teks` 12,12:1) |
 | `galatLatar` | `#FBEDED` | `#3B1D24` | terang: keputusan 20 Nov · gelap: **usulan** (`galat` 6,33:1, `teks` 13,37:1) |
 | `badgeLogo` (dekoratif) | `#78A4CB` | `transparent` | **`[PERLU DIKONFIRMASI]`**: penampung sementara wordmark putih di mode terang; transparan di mode gelap |
+| `latarMaskot` (dekoratif) | `#B4E1EB` | `#B4E1EB` | **keputusan 24 Nov 2026**: lingkaran latar maskot kelinci pada keadaan kosong di kedua mode agar garis maskot tidak redup di mode gelap |
 | `transparan` (dekoratif) | `transparent` | `transparent` | latar tombol sekunder, tombol teks, dan `badgeLogo` gelap |
 
 ### 1.3 Aturan kontras dan tampilan
@@ -60,7 +61,7 @@ Semua layar dan komponen v2 membaca warna lewat `useTemaV2()` dengan nama peran 
 - **Kartu:** latar `permukaan` (`surface`); bayangan tipis (`elevasi.angkat`) **hanya di mode terang**, datar di mode gelap.
 - **Status tidak pernah hanya warna:** galat memakai ikon `waspada` + kalimat, sukses memakai ikon `centang` + kalimat, pilihan aktif dan tab aktif memakai bentuk ikon (`fill` / centang) + tebal huruf + label.
 - **Komposisi terang:** sekitar 70% putih (`#FFFFFF`), 20% biru (`#B4E1EB`), 10% aksen; **tidak ada latar navy penuh di mode terang**. **Komposisi gelap:** sekitar 60% `bg` (`#0C1B33`), 30% `surface` (`#16294A`), 10% aksen (`#95BDD7`).
-- **Warna dekoratif (`WARNA_DEKORATIF`):** `garisHalus`, `kerangka`, `badgeLogo`, `transparan`. Tes melarang keempatnya dipakai sebagai warna teks.
+- **Warna dekoratif (`WARNA_DEKORATIF`):** `garisHalus`, `kerangka`, `badgeLogo`, `latarMaskot`, `transparan`. Tes melarang kelimanya dipakai sebagai warna teks.
 - Semua **28 pasangan** lolos di mode terang DAN mode gelap (0 gagal), serta seluruh **27 kombinasi opsi terang** (3 biru tua × 3 sukses × 3 galat) tetap lolos.
 
 ### 1.4 Pilihan warna terang yang sudah diputuskan (20 Nov 2026)
@@ -90,7 +91,7 @@ Semua layar dan komponen v2 membaca warna lewat `useTemaV2()` dengan nama peran 
 - **Wordmark (`assets/lanjut-wordmark.png`, huruf putih):**
   - Mode gelap: tampil langsung di atas `bg` (`#0C1B33`) tanpa badge.
   - Mode terang: dibungkus badge persegi membulat berwarna biru LANJUT (`#78A4CB`, token `badgeLogo`) sebagai penampung sementara — **`[PERLU DIKONFIRMASI]`** (logo dikecualikan dari batas kontras teks; menunggu keputusan Khalifa atau aset varian tinta gelap).
-- **Maskot (`assets/mascot-blue.png`):** dipakai apa adanya tanpa menggambar ulang.
+- **Maskot (`assets/mascot-blue.png`):** dipakai apa adanya tanpa menggambar ulang. Pada keadaan kosong layar v2 (Arah Saya, Jejak Waktu, Langkah Saya), maskot ditempatkan di dalam lingkaran `latarMaskot` (`#B4E1EB` di mode terang maupun gelap, keputusan 24 Nov 2026) supaya garis maskot tetap jelas di mode gelap.
 
 ## 4. Jarak, radius, garis, elevasi, dan gerak (`theme/v2/token.ts`)
 

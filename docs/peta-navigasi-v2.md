@@ -1,10 +1,10 @@
-# Peta Navigasi v2 (LANJUT_031)
+# Peta Navigasi v2 (LANJUT_031, diperbarui LANJUT_032)
 
-> **Status:** inventaris pra-implementasi, diperiksa langsung terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`.
+> **Status:** inventaris terverifikasi terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`. Diperbarui pada `LANJUT_032` untuk layar sungguhan `/jejak-waktu` dan `/langkah-saya`.
 > **Saklar v2:** `EXPO_PUBLIC_NAVIGASI_V2` (mati bawaan). Saat mati, navigasi v1 berjalan persis seperti sebelumnya tanpa perubahan rute maupun perilaku.
 > **Aturan nama:** nama rute, kunci API, tabel, dan saklar yang sudah ada **tidak diubah**. Hanya label tampilan yang disesuaikan (K47: Arah Saya, Jelajah, Jalur Saya, Jejak Waktu, Langkah Saya, Rekam Jejak, Profil Saya, Akun & Privasi).
 
-## 1. Susunan tab bawah v2 (nilai awal)
+## 1. Susunan tab bawah v2
 
 Dibaca dari satu berkas konfigurasi (`lib/navigasiV2.ts`, `KONFIGURASI_TAB_V2`):
 
@@ -12,14 +12,14 @@ Dibaca dari satu berkas konfigurasi (`lib/navigasiV2.ts`, `KONFIGURASI_TAB_V2`):
 |---|---|---|---|---|
 | 1 | Arah Saya | `/arah-saya` | — | selalu (wajib) |
 | 2 | Jelajah | `/discover` | — | `EXPO_PUBLIC_DISCOVER=1` |
-| 3 | Jejak Waktu | `/linimasa` | — | selalu (wajib) |
+| 3 | Jejak Waktu | `/jejak-waktu` | — | selalu (wajib) |
 | 4 | Profil Saya | `/discover-profil` | `/akun` (saat `EXPO_PUBLIC_DISCOVER` mati) | selalu (wajib) |
 
-Saat `EXPO_PUBLIC_DISCOVER` mati, hanya tiga tab yang tampil (`Arah Saya`, `Jejak Waktu`, `Profil Saya`), merata penuh tanpa celah, dan tab `Profil Saya` langsung membuka `/akun`. Saat `EXPO_PUBLIC_DISCOVER=1`, tab `Profil Saya` membuka `/discover-profil` (layar profil 026) disertai pintu langsung ke **Akun & Privasi** (`/akun`).
+Saat `EXPO_PUBLIC_DISCOVER` mati, hanya tiga tab yang tampil (`Arah Saya`, `Jejak Waktu`, `Profil Saya`), merata penuh tanpa celah, dan tab `Profil Saya` langsung membuka `/akun`. Saat `EXPO_PUBLIC_DISCOVER=1`, tab `Profil Saya` membuka `/discover-profil` (layar profil 026) disertai pintu langsung ke **Akun & Privasi** (`/akun`). Di tab **Jejak Waktu** (`/jejak-waktu`) tersedia pintu langsung ke **Langkah Saya** (`/langkah-saya`).
 
 ## 2. Inventaris seluruh layar dan rute v1 → tempatnya di v2
 
-Diperiksa langsung dari 40 berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+html.tsx`, 35 rute v1, dan 1 rute galeri dev dari 029) serta 3 lapisan non-rute. **Tidak ada rute v1 yang hilang di v2.**
+Diperiksa langsung dari seluruh berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+html.tsx`, 35 rute v1, 3 rute khusus v2, dan 1 rute galeri dev dari 029) serta 3 lapisan non-rute. **Tidak ada kemampuan atau rute v1 yang hilang tanpa alasan eksplisit.**
 
 ### 2.1 Lapisan non-rute (tetap berlaku di v1 dan v2)
 
@@ -29,7 +29,7 @@ Diperiksa langsung dari 40 berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+html.ts
 | Onboarding | (lapisan di `app/(auth)/_layout.tsx`) | aktif tanpa sesi (`EXPO_PUBLIC_ALUR_MASUK_V2` memakai `PengantarV2`) | otomatis saat belum masuk | — |
 | Gerbang pasca-masuk | (lapisan di `app/(app)/_layout.tsx`: buat sandi baru, isi kelas, isi jenis sekolah, prompt kebijakan, gerbang kecenderungan arah 030) | aktif berurutan (`GerbangArahV2` hanya bila `EXPO_PUBLIC_ALUR_MASUK_V2=1`; layar yang sama dibuka ulang dari kartu Arahku di Arah Saya) | otomatis di atas shell v2 sebelum tab bisa dipakai | — |
 
-### 2.2 Rute luar sesi dan pengalihan akar (6 rute v1 + 1 rute dev)
+### 2.2 Rute luar sesi dan pengalihan akar (5 rute v1 + 1 rute dev)
 
 | Nama v1 | Rute | Saklar | Dijangkau di v2 | Label tampilan v2 |
 |---|---|---|---|---|
@@ -42,16 +42,16 @@ Diperiksa langsung dari 40 berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+html.ts
 
 ### 2.3 Rute dalam sesi (`app/(app)/*` — semua 30 rute v1)
 
-| Nama v1 | Rute | Saklar | Dijangkau di v2 | Label tampilan v2 |
+| Nama v1 | Rute | Saklar | Dijangkau / status di v2 | Label tampilan v2 |
 |---|---|---|---|---|
-| Beranda / Linimasa | `/linimasa` | selalu aktif | **Tab:** Jejak Waktu | Jejak Waktu |
-| Discover | `/discover` | `EXPO_PUBLIC_DISCOVER=1` | **Tab:** Jelajah; **Kartu pintu besar** di Arah Saya; **Tombol keadaan kosong** Arah Saya | Jelajah |
+| Beranda / Linimasa | `/linimasa` | selalu aktif di v1 | **Digantikan oleh Arah Saya (`/arah-saya`) dan Jejak Waktu (`/jejak-waktu`).** Alasan: `/linimasa` sebenarnya Beranda v1 sehingga sebelumnya menduplikasi beranda saat tab Jejak Waktu membukanya; di v2 peran beranda diambil `/arah-saya` dan jadwal waktu dibuka di `/jejak-waktu`. Rute `/linimasa` tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati. | Arah Saya / Jejak Waktu |
+| Discover | `/discover` | `EXPO_PUBLIC_DISCOVER=1` | **Tab:** Jelajah; **Kartu pintu besar** di Arah Saya; **Tombol keadaan kosong** Arah Saya & Jejak Waktu | Jelajah |
 | Tulis Refleksi | `/discover-refleksi` | `EXPO_PUBLIC_DISCOVER=1` | **Pintu dari layar lain:** layar Jelajah (`/discover`) | Tulis Refleksi |
 | Profil Eksplorasi (026) | `/discover-profil` | `EXPO_PUBLIC_DISCOVER=1` | **Tab:** Profil Saya (saat Discover menyala); **Pintu dari layar lain:** `/discover` | Profil Saya |
 | Data Akun | `/akun` | selalu aktif | **Pintu dari layar lain:** pintu Akun & Privasi di tab Profil Saya (`/discover-profil`), atau langsung di **Tab:** Profil Saya saat Discover mati | Akun & Privasi |
 | Hapus akun & unduh data | `/hapus-akun` | `EXPO_PUBLIC_KELOLA_DATA_AKUN=1` | **Pintu dari layar lain:** bagian Data saya di Akun & Privasi (`/akun`) | Hapus Akun |
 | Terima Kebijakan Privasi | `/terima-kebijakan` | selalu aktif | **Pintu dari layar lain:** Akun & Privasi (`/akun`), `PromptKebijakan`, dan `/ngobrol` | Kebijakan Privasi |
-| Daftar Periksa | `/daftar-periksa` | selalu aktif | **Kartu pintu besar** Langkah Saya di Arah Saya; **Kartu Langkah berikutnya** di Arah Saya; **Pintu dari layar lain:** pintu Langkah Saya di Jejak Waktu (`/linimasa`) | Langkah Saya |
+| Daftar Periksa | `/daftar-periksa` | selalu aktif di v1 | **Digantikan oleh Langkah Saya (`/langkah-saya`).** Alasan: daftar periksa di-reskin menjadi `/langkah-saya` memakai token dua mode v2 dengan perilaku data identik (`kemajuan_pengguna`, `butir_pribadi`, dan `event_sekolah` SMP). Rute `/daftar-periksa` tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati. | Langkah Saya |
 | Jalur & Tujuan | `/jalur-tujuan` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Kartu pintu besar** Jalur Saya di Arah Saya; **Chip Arahku** di Arah Saya | Jalur Saya |
 | Tulis Tujuan | `/jalur-tujuan-tulis` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Pintu dari layar lain:** layar Jalur Saya (`/jalur-tujuan`) | Tulis Tujuan |
 | Portofolio | `/portofolio` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Kartu pintu besar** Rekam Jejak (bobot visual terbesar) di Arah Saya | Rekam Jejak |
@@ -59,7 +59,7 @@ Diperiksa langsung dari 40 berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+html.ts
 | Detail Catatan Portofolio | `/portofolio-butir` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Pintu dari layar lain:** layar Rekam Jejak (`/portofolio`) | Catatan |
 | Arsip Belajar | `/arsip` | selalu aktif | **Alat belajar** (lipat) di Arah Saya | Arsip Belajar |
 | Tulis Kartu | `/arsip-tulis` | selalu aktif | **Pintu dari layar lain:** Arsip Belajar (`/arsip`) | Tulis Kartu |
-| Kartu | `/arsip-kartu` | selalu aktif | **Pintu dari layar lain:** Arsip Belajar (`/arsip`) | Kartu |
+| Kartu | `/arsip-kartu` | selalu aktif | **Pintu dari layar lain:** Arsip Belajar (`/arsip`) dan Langkah Saya (`/langkah-saya`, materi event SMP) | Kartu |
 | Modul | `/arsip-modul` | selalu aktif | **Pintu dari layar lain:** Arsip Belajar (`/arsip`) | Modul |
 | Unggah Modul | `/arsip-modul-unggah` | selalu aktif | **Pintu dari layar lain:** Arsip Belajar (`/arsip`) | Unggah Modul |
 | Latihan | `/latihan` | selalu aktif | **Alat belajar** (lipat) di Arah Saya; **Pintu dari layar lain:** Arsip Belajar (`/arsip`) dan Level-In (`/level-in`) | Latihan |
@@ -69,19 +69,22 @@ Diperiksa langsung dari 40 berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+html.ts
 | Persetujuan Orang Tua/Wali | `/persetujuan-ortu` | selalu aktif | **Pintu dari layar lain:** Ngobrol Bareng LANJUT (`/ngobrol`) | Persetujuan Orang Tua/Wali |
 | Jenjang Saya | `/jenjang-saya` | selalu aktif | **Alat belajar** (lipat) di Arah Saya | Jenjang Saya |
 | Khusus SMK (alias lama) | `/khusus-smk` | selalu aktif | pengalihan otomatis ke `/jenjang-saya` (alias dipertahankan utuh) | Jenjang Saya |
-| Pilih Mapel | `/pilih-mapel` | selalu aktif | **Alat belajar** (lipat) di Arah Saya; **Pintu dari layar lain:** Jenjang Saya (`/jenjang-saya`) | Pilih Mapel |
-| Eksplorasi Kampus / Tujuan | `/eksplorasi-tujuan` | selalu aktif | **Alat belajar** (lipat) di Arah Saya; **Pintu dari layar lain:** Pilih Mapel (`/pilih-mapel`) dan Jenjang Saya (`/jenjang-saya`) | Eksplorasi Kampus |
+| Pilih Mapel | `/pilih-mapel` | selalu aktif | **Alat belajar** (lipat) di Arah Saya; **Pintu dari layar lain:** Jenjang Saya (`/jenjang-saya`) dan Langkah Saya (`/langkah-saya`) | Pilih Mapel |
+| Eksplorasi Kampus / Tujuan | `/eksplorasi-tujuan` | selalu aktif | **Alat belajar** (lipat) di Arah Saya; **Pintu dari layar lain:** Pilih Mapel (`/pilih-mapel`), Jenjang Saya (`/jenjang-saya`), dan Langkah Saya (`/langkah-saya`) | Eksplorasi Kampus |
 | Cek Posisi (v1: Profil Saya) | `/cek-posisi` | selalu aktif (khusus kelas 12; jenjang lain menampilkan placeholder) | **Alat belajar** (lipat) di Arah Saya; **Pintu dari layar lain:** Akun & Privasi (`/akun`) | Cek Posisi |
 | Gaya Belajar | `/gaya-belajar` | selalu aktif | **Alat belajar** (lipat) di Arah Saya; **Pintu dari layar lain:** Jenjang Saya (`/jenjang-saya`) | Gaya Belajar |
 | Cerita Alumni | `/cerita-alumni` | selalu aktif | **Alat belajar** (lipat) di Arah Saya | Cerita Alumni |
 
-### 2.4 Rute baru khusus v2 (1 rute, di balik saklar mati bawaan)
+### 2.4 Rute baru khusus v2 (3 rute, di balik saklar mati bawaan)
 
 | Nama v2 | Rute | Saklar | Dijangkau di v2 | Label tampilan v2 |
 |---|---|---|---|---|
-| Arah Saya (Beranda v2) | `/arah-saya` | `EXPO_PUBLIC_NAVIGASI_V2=1` (keluar dari bundel di `metro.config.js` bila mati) | **Tab:** Arah Saya (tab pertama dan halaman awal sesudah masuk) | Arah Saya |
+| Arah Saya (Beranda v2, 031) | `/arah-saya` | `EXPO_PUBLIC_NAVIGASI_V2=1` (keluar dari bundel di `metro.config.js` bila mati) | **Tab:** Arah Saya (tab pertama dan halaman awal sesudah masuk) | Arah Saya |
+| Jejak Waktu (032) | `/jejak-waktu` | `EXPO_PUBLIC_NAVIGASI_V2=1` (keluar dari bundel di `metro.config.js` bila mati) | **Tab:** Jejak Waktu; **Kartu Langkah berikutnya** di Arah Saya (untuk tahapan linimasa) | Jejak Waktu |
+| Langkah Saya (032) | `/langkah-saya` | `EXPO_PUBLIC_NAVIGASI_V2=1` (keluar dari bundel di `metro.config.js` bila mati) | **Kartu pintu besar** Langkah Saya di Arah Saya; **Kartu Langkah berikutnya** di Arah Saya; **Pintu** di tab Jejak Waktu (`/jejak-waktu`) | Langkah Saya |
 
 ## 3. Ringkasan cakupan
 
-- **Rute v1 tanpa tempat di v2:** **0.** Seluruh 35 rute v1 punya jalur jangkauan jelas dan diuji otomatis oleh `server/tests/navigasi-v2.test.js`.
-- **Catatan layar yang belum di-reskin (task 032–035):** seluruh layar v1 (termasuk `/linimasa`, `/daftar-periksa`, `/discover`, `/discover-profil`, `/jalur-tujuan`, `/portofolio`, `/akun`, dan semua layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2.
+- **Rute v1 yang sengaja digantikan di v2 (`RUTE_V1_DIGANTIKAN_V2`):** **2 rute** (`/linimasa` → `/arah-saya` + `/jejak-waktu`; `/daftar-periksa` → `/langkah-saya`), masing-masing terdokumentasi eksplisit beserta alasannya dan diuji otomatis di `server/tests/navigasi-v2.test.js`. Kedua rute v1 tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati.
+- **Rute v1 lainnya (28 rute dalam sesi + 5 luar sesi):** seluruhnya tetap terjangkau langsung di graf navigasi v2.
+- **Catatan layar yang belum di-reskin (task 033–035):** layar v1 lain (`/discover`, `/discover-profil`, `/jalur-tujuan`, `/portofolio`, `/akun`, dan layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2.
