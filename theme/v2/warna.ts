@@ -82,6 +82,8 @@ export const warnaTerang = {
   galatLatar: GALAT.latar as string,
   // [PERLU DIKONFIRMASI]: penampung sementara wordmark putih di mode terang (#78A4CB).
   badgeLogo: palet.biruBaja,
+  // Keputusan 24 Nov 2026: lingkaran latar maskot kelinci #B4E1EB di kedua mode agar garis maskot tidak redup di gelap.
+  latarMaskot: palet.biruMuda,
   transparan: 'transparent',
 } as const;
 
@@ -113,6 +115,7 @@ export const warnaGelap: SetWarnaV2 = {
   galat: '#F28B82', // usulan
   galatLatar: '#3B1D24', // usulan
   badgeLogo: 'transparent', // wordmark putih tampil langsung di atas bg/surface gelap
+  latarMaskot: palet.biruMuda, // keputusan 24 Nov 2026: tetap #B4E1EB di mode gelap agar garis maskot jelas
   transparan: 'transparent',
 } as const;
 
@@ -187,5 +190,6 @@ export const WARNA_DEKORATIF: Readonly<Partial<Record<PeranWarna, string>>> = {
   garisHalus: 'pemisah dan tepi Kartu; Kartu dikenali dari isinya, bukan garisnya',
   kerangka: 'balok Placeholder memuat; statusnya dibacakan lewat label "Memuat"',
   badgeLogo: '[PERLU DIKONFIRMASI] penampung sementara wordmark putih di mode terang (logo dikecualikan dari ambang teks)',
+  latarMaskot: 'lingkaran latar maskot kelinci (#B4E1EB di kedua mode, keputusan 24 Nov 2026)',
   transparan: 'latar tombol sekunder, tombol teks, dan badgeLogo mode gelap',
 };

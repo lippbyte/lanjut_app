@@ -243,7 +243,34 @@ Fitur ini **mati bawaan**. Langkah di bawah belum pernah dijalankan di HP; belum
    - Periksa jendela server dev (PowerShell pertama): pergantian mode **tidak** boleh memicu permintaan jaringan apa pun ke server.
 5. **Uji tampilan visual di mode gelap:**
    - Periksa wordmark LANJUT di bilah atas (langsung di atas navy saat gelap; di dalam badge biru saat terang), maskot kelinci di Pengantar & Arah Saya, garis bawah pada tautan, dan ikon Phosphor di bilah tab.
-   - Buka layar v1 (mis. **Jejak Waktu** `/linimasa`): layar v1 memang sengaja tetap terang di dalam kerangka v2 gelap sampai tahap reskin layar v1.
+   - Buka layar v1 (mis. **Jelajah** `/discover` atau **Alat belajar**): layar v1 yang belum di-reskin memang sengaja tetap terang di dalam kerangka v2 gelap sampai tahap reskin berikutnya.
 6. **Uji saklar mati:** hentikan Expo, kosongkan `$env:EXPO_PUBLIC_MODE_GELAP = ""`, jalankan lagi dengan `--clear`. Pastikan tampilan selalu terang meski tema gelap HP menyala, dan kartu **Tampilan** tidak ada di **Akun & Privasi**.
+
+## 13. Jejak Waktu dan Langkah Saya v2 (LANJUT_032)
+
+Kedua layar ini berada di balik saklar `EXPO_PUBLIC_NAVIGASI_V2` (**mati bawaan**). Langkah di bawah belum pernah dijalankan di HP fisik; tidak ada klaim hasil uji di HP, pembaca layar (TalkBack/VoiceOver), atau ukuran huruf besar sistem.
+
+> **Penting — selalu gunakan `--clear`:** setiap kali menyalakan atau mematikan `EXPO_PUBLIC_NAVIGASI_V2` atau `EXPO_PUBLIC_MODE_GELAP`, jalankan Expo dengan `--clear` (`npx expo start --go --lan --clear` atau `npx expo start --web --clear`) agar bundel Metro tidak memakai cache rute lama.
+
+1. Pastikan server dev lokal dan MySQL `lanjut_dev` berjalan (langkah 2–4), serta 3 tahapan resmi TKA di `lanjut_dev` sudah ditandai terverifikasi untuk mencoba Jejak Waktu berisi data.
+2. Di PowerShell kedua, nyalakan saklar untuk sesi lokal (ganti `192.168.x.x` dengan IP Wi-Fi komputer):
+   ```powershell
+   cd "D:\DATA ALIF\Project - Profesional\EDILAKSO Group\LANJUT - Project\EDILAKSO-LANJUT-repo\LANJUT_App"
+   $env:EXPO_PUBLIC_API_URL = "http://192.168.x.x:4000/api/v1"
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2 = "1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_MODE_GELAP = "1"
+   $env:EXPO_PUBLIC_DISCOVER = "1"
+   npx expo start --go --lan --clear
+   ```
+3. **Uji Jejak Waktu (`/jejak-waktu` lewat tab Jejak Waktu):**
+   - Masuk dengan `demo_kelas12_dc` (kelas 12): pastikan tab **Jejak Waktu** membuka `/jejak-waktu` (bukan lagi Beranda v1), menampilkan kelompok **Segera** dengan penanda teks `Segera` (tanpa warna merah/oranye dan tanpa hitungan mundur berdetak) serta bagian lipat **Sudah lewat**. Ketuk salah satu butir untuk melihat rincian sumber & tanggal pemeriksaan.
+   - Masuk dengan `uji_belum_memilih` (kelas 11) dan `uji_smp_dc` / `uji_smp` (SMP): pastikan tampil keadaan kosong yang tenang dengan maskot kelinci di dalam lingkaran `#B4E1EB` pada mode terang maupun gelap, beserta satu tombol aksi.
+4. **Uji Langkah Saya (`/langkah-saya` dari pintu Arah Saya atau pintu di atas Jejak Waktu):**
+   - Masuk dengan `demo_kelas12_dc`: pilih jalur seleksi (`TKA` / `SNBP` / `SNBT`), lalu centang dan batal-centang beberapa butir. Pastikan ringkasan progres di atas (`X dari Y selesai` + batang progres) berubah sesuai keadaan (`0`, sebagian, dan kalimat hangat singkat saat semua selesai), serta centang bertahan sesudah layar dimuat ulang.
+   - Buka `Pilih Mapel` atau `Eksplorasi Kampus`, simpan satu butir pribadi, lalu kembali ke **Langkah Saya**: pastikan butir pribadi muncul, bisa dicentang/dibatal-centang, dan bisa dihapus.
+   - Uji mode **Gelap** (lewat **Profil Saya** → **Akun & Privasi** → **Gelap**): pastikan semua keadaan kosong di Arah Saya, Jejak Waktu, dan Langkah Saya menampilkan maskot kelinci di atas lingkaran `#B4E1EB` sehingga garis maskot tetap jelas.
+5. **Uji saklar mati:** hentikan Expo, kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""`, lalu jalankan ulang dengan `--clear`. Pastikan aplikasi kembali membuka Beranda v1 (`/linimasa`) dan Daftar Periksa v1 (`/daftar-periksa`) seperti semula.
+
 
 

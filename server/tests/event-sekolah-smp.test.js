@@ -116,6 +116,7 @@ async function panggil(metode, jalur, token, body) {
   return { status: res.status, json: await res.json() };
 }
 
+const akunUjiIds = [];
 async function akun(kelas, { setuju = true } = {}) {
   const r = await daftarPenggunaBaru(baseUrl, {
     kelas,
@@ -123,6 +124,7 @@ async function akun(kelas, { setuju = true } = {}) {
     ...(setuju ? { versi_kebijakan: versiKebijakan } : {}),
   });
   assert.equal(r.status, 201, JSON.stringify(r.json));
+  akunUjiIds.push(r.json.data.pengguna.id);
   return { token: r.json.data.token, id: r.json.data.pengguna.id };
 }
 
@@ -233,9 +235,12 @@ describe('LANJUT_076b §C: jenis event SMP', () => {
       (await pool.query(
         `SELECT COUNT(*) AS n, BIT_XOR(CRC32(CONCAT_WS('|', id, pengguna_id, jenis, tanggal, IFNULL(mapel_id,'-'),
                 IFNULL(materi_teks,'-'), IFNULL(kartu_id,'-'), dibuat_pada, diubah_pada))) AS s
-           FROM event_sekolah`
+           FROM event_sekolah
+          WHERE pengguna_id IN (?)`,
+        [akunUjiIds]
       ))[0][0];
     const sebelum = await sidik();
+    assert.ok(Number(sebelum.n) >= 6, 'baris uji seluruh jenis ENUM sudah ada sebelum migrasi ulang');
     const [catat] = await pool.query("SELECT nama FROM _migrasi WHERE nama IN ('020_event_sekolah.sql', '021_event_sekolah_jenis_smp.sql')");
     assert.equal(catat.length, 2, 'migrasi 020 & 021 tercatat');
     const koneksi = await pool.getConnection();

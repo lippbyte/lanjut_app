@@ -126,7 +126,7 @@ export type SumberLangkah = 'butir_pribadi' | 'butir_daftar_periksa' | 'event_se
 export type LangkahBerikutnya = {
   judul: string;
   keterangan?: string;
-  href: '/daftar-periksa' | '/linimasa';
+  href: '/langkah-saya' | '/jejak-waktu';
   sumber: SumberLangkah;
 };
 
@@ -153,7 +153,7 @@ export function pilihLangkahBerikutnya(p: {
   if (pribadiBelum) {
     return {
       judul: pribadiBelum.judul,
-      href: '/daftar-periksa',
+      href: '/langkah-saya',
       sumber: 'butir_pribadi',
     };
   }
@@ -167,7 +167,7 @@ export function pilihLangkahBerikutnya(p: {
     if (umumBelum) {
       return {
         judul: umumBelum.judul,
-        href: '/daftar-periksa',
+        href: '/langkah-saya',
         sumber: 'butir_daftar_periksa',
       };
     }
@@ -185,7 +185,7 @@ export function pilihLangkahBerikutnya(p: {
       return {
         judul,
         keterangan: teksHitungMundur(sisa),
-        href: '/daftar-periksa',
+        href: '/langkah-saya',
         sumber: 'event_sekolah',
       };
     }
@@ -197,7 +197,7 @@ export function pilihLangkahBerikutnya(p: {
       return {
         judul: terdekat.judul,
         keterangan: formatTanggal(tanggalMomen(terdekat, momen)),
-        href: '/linimasa',
+        href: '/jejak-waktu',
         sumber: 'tahapan_linimasa',
       };
     }
@@ -210,7 +210,7 @@ export type PintuArahSaya = {
   id: 'rekam_jejak' | 'jelajah' | 'jalur_saya' | 'langkah_saya';
   judul: string;
   keterangan: string;
-  href: '/portofolio' | '/discover' | '/jalur-tujuan' | '/daftar-periksa';
+  href: '/portofolio' | '/discover' | '/jalur-tujuan' | '/langkah-saya';
   /** Rekam Jejak diberi bobot visual terbesar (`utama`) bila saklarnya menyala. */
   bobot: 'utama' | 'biasa';
 };
@@ -255,17 +255,17 @@ export function daftarPintuArahSaya(saklar: SaklarNavigasiV2): PintuArahSaya[] {
     id: 'langkah_saya',
     judul: TEKS_ARAH_SAYA.pintuLangkahSayaJudul,
     keterangan: TEKS_ARAH_SAYA.pintuLangkahSayaKeterangan,
-    href: '/daftar-periksa',
+    href: '/langkah-saya',
     bobot: 'biasa',
   });
   return daftar;
 }
 
 /** Tujuan tombol pada keadaan kosong "Langkah berikutnya": Jelajah bila menyala, else Langkah Saya. */
-export function aksiKosongLangkah(discoverAktif: boolean): { label: string; href: '/discover' | '/daftar-periksa' } {
+export function aksiKosongLangkah(discoverAktif: boolean): { label: string; href: '/discover' | '/langkah-saya' } {
   return discoverAktif
     ? { label: TEKS_ARAH_SAYA.kosongTombolJelajah, href: '/discover' }
-    : { label: TEKS_ARAH_SAYA.kosongTombolLangkah, href: '/daftar-periksa' };
+    : { label: TEKS_ARAH_SAYA.kosongTombolLangkah, href: '/langkah-saya' };
 }
 
 /**

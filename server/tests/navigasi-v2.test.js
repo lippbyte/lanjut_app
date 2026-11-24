@@ -99,18 +99,31 @@ describe('Saklar mati: navigasi v1 tidak berubah', () => {
     }
   });
 
-  test('Saat mati, /arah-saya keluar dari bundel Metro dan punya penjaga lapis kedua', () => {
+  test('Saat mati, /arah-saya, /jejak-waktu, dan /langkah-saya keluar dari bundel Metro dan punya penjaga lapis kedua', () => {
     for (const nilai of [undefined, '0', 'true']) {
       const aturan = aturanBlokir(nilai);
-      assert.ok(terblokir(aturan, 'C:\\repo\\app\\(app)\\arah-saya.tsx'), `${nilai} (Windows)`);
-      assert.ok(terblokir(aturan, '/repo/app/(app)/arah-saya.tsx'), `${nilai} (Linux)`);
+      for (const nama of ['arah-saya.tsx', 'jejak-waktu.tsx', 'langkah-saya.tsx']) {
+        assert.ok(terblokir(aturan, `C:\\repo\\app\\(app)\\${nama}`), `${nilai} ${nama} (Windows)`);
+        assert.ok(terblokir(aturan, `/repo/app/(app)/${nama}`), `${nilai} ${nama} (Linux)`);
+      }
       assert.ok(!terblokir(aturan, '/repo/app/(app)/linimasa.tsx'));
+      assert.ok(!terblokir(aturan, '/repo/app/(app)/daftar-periksa.tsx'));
     }
     const aktif = aturanBlokir('1');
-    assert.ok(!terblokir(aktif, '/repo/app/(app)/arah-saya.tsx'));
+    for (const nama of ['arah-saya.tsx', 'jejak-waktu.tsx', 'langkah-saya.tsx']) {
+      assert.ok(!terblokir(aktif, `/repo/app/(app)/${nama}`), nama);
+    }
     assert.match(
       baca('app/(app)/arah-saya.tsx'),
       /if \(!navigasiV2Aktif\(Constants\.expoConfig\?\.extra\)\) return <Redirect href="\/linimasa" \/>;/
+    );
+    assert.match(
+      baca('app/(app)/jejak-waktu.tsx'),
+      /if \(!navigasiV2Aktif\(Constants\.expoConfig\?\.extra\)\) return <Redirect href="\/linimasa" \/>;/
+    );
+    assert.match(
+      baca('app/(app)/langkah-saya.tsx'),
+      /if \(!navigasiV2Aktif\(Constants\.expoConfig\?\.extra\)\) return <Redirect href="\/daftar-periksa" \/>;/
     );
   });
 
@@ -141,7 +154,7 @@ describe('Konfigurasi tab dari satu berkas', () => {
       [
         { id: 'arah_saya', label: 'Arah Saya', href: '/arah-saya' },
         { id: 'jelajah', label: 'Jelajah', href: '/discover' },
-        { id: 'jejak_waktu', label: 'Jejak Waktu', href: '/linimasa' },
+        { id: 'jejak_waktu', label: 'Jejak Waktu', href: '/jejak-waktu' },
         { id: 'profil_saya', label: 'Profil Saya', href: '/discover-profil' },
       ]
     );
@@ -150,7 +163,7 @@ describe('Konfigurasi tab dari satu berkas', () => {
       tanpaJelajah.map((t) => ({ id: t.id, label: t.label, href: t.href })),
       [
         { id: 'arah_saya', label: 'Arah Saya', href: '/arah-saya' },
-        { id: 'jejak_waktu', label: 'Jejak Waktu', href: '/linimasa' },
+        { id: 'jejak_waktu', label: 'Jejak Waktu', href: '/jejak-waktu' },
         { id: 'profil_saya', label: 'Profil Saya', href: '/akun' },
       ]
     );
@@ -181,9 +194,10 @@ describe('Konfigurasi tab dari satu berkas', () => {
 
 // ---------------------------------------------------------------------------------------------
 describe('Inventaris dan keterjangkauan seluruh rute v1 di v2', () => {
+  const RUTE_KHUSUS_V2 = new Set(['arah-saya.tsx', 'jejak-waktu.tsx', 'langkah-saya.tsx']);
   const RUTE_APP_DI_DISK = fs
     .readdirSync(path.join(AKAR_APP, 'app', '(app)'))
-    .filter((n) => n.endsWith('.tsx') && n !== '_layout.tsx' && n !== 'arah-saya.tsx')
+    .filter((n) => n.endsWith('.tsx') && n !== '_layout.tsx' && !RUTE_KHUSUS_V2.has(n))
     .map((n) => `/${n.replace(/\.tsx$/, '')}`)
     .sort();
 
@@ -230,18 +244,32 @@ describe('Inventaris dan keterjangkauan seluruh rute v1 di v2', () => {
     }
   });
 
-  test('docs/peta-navigasi-v2.md memuat setiap rute v1 di kode', () => {
+  test('docs/peta-navigasi-v2.md memuat setiap rute v1 dan v2 di kode', () => {
     const peta = baca('docs/peta-navigasi-v2.md');
-    for (const r of [...RUTE_LUAR_SESI, ...RUTE_APP_DI_DISK, '/arah-saya', '/galeri-komponen']) {
+    for (const r of [...RUTE_LUAR_SESI, ...RUTE_APP_DI_DISK, '/arah-saya', '/jejak-waktu', '/langkah-saya', '/galeri-komponen']) {
       assert.ok(peta.includes(`\`${r}\``), `rute ${r} belum tercatat di docs/peta-navigasi-v2.md`);
     }
   });
 
-  test('Setiap rute dalam sesi v1 dapat dijangkau di graf navigasi v2', () => {
+  test('Setiap rute dalam sesi v1 dapat dijangkau di graf navigasi v2 atau tercatat eksplisit digantikan beserta alasan', () => {
     const penuh = { discover: true, jalurTujuan: true, portofolio: true, kelolaDataAkun: true };
     const terjangkau = navV2.ruteTerjangkauV2(penuh, arahSaya.daftarPintuArahSaya(penuh));
-    const hilang = RUTE_APP_DI_DISK.filter((r) => !terjangkau.has(r));
-    assert.deepEqual(hilang, [], `rute v1 tak terjangkau di v2: ${hilang.join(', ')}`);
+    const digantikan = navV2.RUTE_V1_DIGANTIKAN_V2;
+    assert.deepEqual(Object.keys(digantikan).sort(), ['/daftar-periksa', '/linimasa']);
+
+    const peta = baca('docs/peta-navigasi-v2.md');
+    for (const [ruteLama, info] of Object.entries(digantikan)) {
+      assert.ok(info.alasan && info.alasan.trim().length >= 20, `alasan penggantian kosong: ${ruteLama}`);
+      assert.ok(Array.isArray(info.digantikanOleh) && info.digantikanOleh.length > 0, ruteLama);
+      for (const pengganti of info.digantikanOleh) {
+        assert.ok(terjangkau.has(pengganti), `rute pengganti ${pengganti} untuk ${ruteLama} tidak terjangkau`);
+        assert.ok(peta.includes(`\`${pengganti}\``), `pengganti ${pengganti} tidak tercatat di peta-navigasi-v2.md`);
+      }
+      assert.ok(!terjangkau.has(ruteLama), `rute v1 yang sudah digantikan (${ruteLama}) masih dibuka dari navigasi v2`);
+    }
+
+    const hilang = RUTE_APP_DI_DISK.filter((r) => !(r in digantikan) && !terjangkau.has(r));
+    assert.deepEqual(hilang, [], `rute v1 tak terjangkau tanpa alasan penggantian: ${hilang.join(', ')}`);
 
     // Saat saklar fitur mati, rute fitur bersaklar tidak terjangkau; semua rute inti tetap terjangkau.
     const inti = { discover: false, jalurTujuan: false, portofolio: false, kelolaDataAkun: false };
@@ -250,11 +278,14 @@ describe('Inventaris dan keterjangkauan seluruh rute v1 di v2', () => {
       assert.ok(!terjangkauInti.has(r), `rute bersaklar mati malah terjangkau: ${r}`);
     }
     const ruteInti = RUTE_APP_DI_DISK.filter(
-      (r) => !/^\/(portofolio|discover|jalur-tujuan|hapus-akun)/.test(r)
+      (r) => !(r in digantikan) && !/^\/(portofolio|discover|jalur-tujuan|hapus-akun)/.test(r)
     );
     for (const r of ruteInti) {
       assert.ok(terjangkauInti.has(r), `rute inti tak terjangkau saat saklar lain mati: ${r}`);
     }
+    assert.ok(terjangkauInti.has('/arah-saya'));
+    assert.ok(terjangkauInti.has('/jejak-waktu'));
+    assert.ok(terjangkauInti.has('/langkah-saya'));
   });
 });
 
@@ -367,7 +398,7 @@ describe('Arah Saya: pintu besar, tiga keadaan Arahku, jalur draf, langkah berik
       ],
       hariIniMs: hariIni,
     });
-    assert.deepEqual(dariPribadi, { judul: 'Riset kampus tujuan', href: '/daftar-periksa', sumber: 'butir_pribadi' });
+    assert.deepEqual(dariPribadi, { judul: 'Riset kampus tujuan', href: '/langkah-saya', sumber: 'butir_pribadi' });
 
     // 2. Butir daftar periksa umum (kelas 12) yang belum dicentang
     const dariUmum = arahSaya.pilihLangkahBerikutnya({
@@ -380,7 +411,7 @@ describe('Arah Saya: pintu besar, tiga keadaan Arahku, jalur draf, langkah berik
       kemajuan: [{ butir_id: 'b1', selesai_pada: '2026-10-01T00:00:00Z' }],
       hariIniMs: hariIni,
     });
-    assert.deepEqual(dariUmum, { judul: 'Siapkan rapor semester 1-5', href: '/daftar-periksa', sumber: 'butir_daftar_periksa' });
+    assert.deepEqual(dariUmum, { judul: 'Siapkan rapor semester 1-5', href: '/langkah-saya', sumber: 'butir_daftar_periksa' });
 
     // 3. Tahapan linimasa yang belum terverifikasi TIDAK dipakai; yang terverifikasi dipakai
     const belumVerif = arahSaya.pilihLangkahBerikutnya({
@@ -420,7 +451,7 @@ describe('Arah Saya: pintu besar, tiga keadaan Arahku, jalur draf, langkah berik
       hariIniMs: hariIni,
     });
     assert.equal(terverif.judul, 'Pendaftaran TKA');
-    assert.equal(terverif.href, '/linimasa');
+    assert.equal(terverif.href, '/jejak-waktu');
     assert.equal(terverif.sumber, 'tahapan_linimasa');
 
     // Keadaan kosong, memuat, galat + tombol Coba lagi di layar ArahSayaV2
@@ -429,7 +460,7 @@ describe('Arah Saya: pintu besar, tiga keadaan Arahku, jalur draf, langkah berik
     assert.match(layar, /<KeadaanGalat[\s\S]*onCobaLagi=\{data\.muatUlang\}/);
     assert.match(layar, /require\('\.\.\/\.\.\/\.\.\/assets\/mascot-blue\.png'\)/);
     assert.equal(arahSaya.aksiKosongLangkah(true).href, '/discover');
-    assert.equal(arahSaya.aksiKosongLangkah(false).href, '/daftar-periksa');
+    assert.equal(arahSaya.aksiKosongLangkah(false).href, '/langkah-saya');
   });
 
   test('Sapaan memakai nama profil; tanpa nama tetap sopan tanpa koma', () => {
@@ -497,7 +528,7 @@ describe('Teks, aksesibilitas, reduce motion, dan tombol kembali', () => {
     // Tab pertama → keluar aplikasi seperti biasa
     assert.deepEqual(navV2.tujuanKembaliV2({ pathname: '/arah-saya', canGoBack: true, tabs }), { aksi: 'keluar' });
     // Tab lain → kembali sekali ke tab pertama (tanpa bolak-balik antar-tab)
-    for (const href of ['/discover', '/linimasa', '/discover-profil']) {
+    for (const href of ['/discover', '/jejak-waktu', '/discover-profil']) {
       assert.deepEqual(navV2.tujuanKembaliV2({ pathname: href, canGoBack: true, tabs }), { aksi: 'ganti', href: '/arah-saya' }, href);
     }
     // Layar anak dengan riwayat → kembali ke asalnya
@@ -538,7 +569,10 @@ describe('Gerbang rilis dan dokumen draf', () => {
       tulis('docs/draf-teks-alur-masuk-v2.md', 'DRAF\n');
       tulis('lib/arahSaya.ts', '// TEKS DRAF\n');
       tulis('lib/navigasiV2.ts', '// TEKS DRAF\n');
+      tulis('lib/jejakWaktuV2.ts', '// TEKS DRAF\n');
+      tulis('lib/langkahSayaV2.ts', '// TEKS DRAF\n');
       tulis('docs/draf-teks-navigasi-v2.md', 'DRAF\n');
+      tulis('docs/draf-teks-jejak-waktu-v2.md', 'DRAF\n');
 
       // Keduanya menyala → keduanya tertahan
       tulis('eas.json', {

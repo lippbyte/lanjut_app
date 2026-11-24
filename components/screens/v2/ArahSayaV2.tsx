@@ -135,7 +135,7 @@ export function ArahSayaV2() {
                 ])}
               >
                 <View
-                  style={StyleSheet.flatten([s.lingkaranMaskot, { backgroundColor: warna.permukaanLembut }])}
+                  style={StyleSheet.flatten([s.lingkaranMaskot, { backgroundColor: warna.latarMaskot }])}
                   accessibilityElementsHidden
                   importantForAccessibility="no-hide-descendants"
                 >

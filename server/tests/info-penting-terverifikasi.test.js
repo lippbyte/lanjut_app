@@ -22,7 +22,7 @@ const { kelompokJenjang } = require('../src/util/beranda');
 let server;
 let baseUrl;
 
-const ID_SIMULASI = ['uji-066-terverifikasi', 'uji-066-belum-dicek'];
+const ID_SIMULASI = ['uji-066-terverifikasi', 'uji-066-belum-dicek', 'uji-066-isolasi-terverifikasi'];
 
 // LANJUT_072b: Info Penting kini menyaring tahapan yang tanggal selesainya sudah
 // lewat. Tes 066 di bawah menguji verifikasi, urutan, dan batas tiga kartu — bukan
@@ -155,7 +155,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
         diperiksa_pada: null,
       },
     ];
-    const hasil = infoPentingLinimasa(dataKosong, '12');
+    const hasil = infoPentingLinimasa(dataKosong, '12', HARI_UJI);
     assert.deepEqual(hasil, []);
   });
 
@@ -198,7 +198,7 @@ describe('LANJUT_066 §B: Uji Mutasi Filter Verifikasi', () => {
       { id: 'sah', status_verifikasi: 'terverifikasi', diperiksa_pada: '2026-09-01', tanggal_mulai: '2026-09-10' },
       { id: 'bocor', status_verifikasi: 'belum_diverifikasi', diperiksa_pada: null, tanggal_mulai: '2026-09-05' },
     ];
-    const hasil = infoPentingLinimasa(dataCampuran, '12');
+    const hasil = infoPentingLinimasa(dataCampuran, '12', HARI_UJI);
     assert.doesNotThrow(() => pastikanSemuaTerverifikasi(hasil));
     assert.equal(hasil.length, 1);
     assert.equal(hasil[0].id, 'sah');
@@ -249,8 +249,8 @@ describe('LANJUT_066 §B & §C: Integrasi Database dengan Data Simulasi & Pember
     const json = await res.json();
     assert.ok(json.ok);
 
-    // 3. Olah dengan infoPentingLinimasa untuk kelas 12
-    const infoPenting = infoPentingLinimasa(json.data, '12');
+    // 3. Olah dengan infoPentingLinimasa untuk kelas 12 (jam tetap HARI_UJI)
+    const infoPenting = infoPentingLinimasa(json.data, '12', HARI_UJI);
 
     // Data belum terverifikasi TIDAK BOLEH ada di hasil info penting
     const adaBelum = infoPenting.some((t) => t.id === 'uji-066-belum-dicek');
@@ -267,59 +267,71 @@ describe('LANJUT_066 §B & §C: Integrasi Database dengan Data Simulasi & Pember
 
 describe('LANJUT_066 §C: Tes Isolasi Lintas Akun', () => {
   test('Endpoint linimasa tidak membocorkan data akun lain, dan respon linimasa identik lintas akun', async () => {
-    const akunA = await daftarPenggunaBaru(baseUrl, { kelas: '12', nama: 'Siswa Kelas 12' });
-    const akunB = await daftarPenggunaBaru(baseUrl, { kelas: '10', nama: 'Siswa Kelas 10' });
+    await pool.query(
+      `INSERT INTO tahapan_linimasa
+         (id, judul, tanggal_mulai, tanggal_selesai, jalur_seleksi, pemilik,
+          status_verifikasi, asal, url_sumber, diperiksa_pada)
+       VALUES
+         ('uji-066-isolasi-terverifikasi', 'Simulasi Isolasi Terverifikasi', '2026-08-01', '2026-08-15', 'TKA', 'tim',
+          'terverifikasi', 'uji', 'https://snpmb.bppp.kemdikbud.go.id/', '2026-07-20')`
+    );
+    try {
+      const akunA = await daftarPenggunaBaru(baseUrl, { kelas: '12', nama: 'Siswa Kelas 12' });
+      const akunB = await daftarPenggunaBaru(baseUrl, { kelas: '10', nama: 'Siswa Kelas 10' });
 
-    const tokenA = akunA.json.data.token;
-    const tokenB = akunB.json.data.token;
+      const tokenA = akunA.json.data.token;
+      const tokenB = akunB.json.data.token;
 
-    // Panggil endpoint /konten/linimasa dengan token Akun A
-    const resA = await fetch(`${baseUrl}/api/v1/konten/linimasa`, {
-      headers: { Authorization: `Bearer ${tokenA}` },
-    });
-    const jsonA = await resA.json();
+      // Panggil endpoint /konten/linimasa dengan token Akun A
+      const resA = await fetch(`${baseUrl}/api/v1/konten/linimasa`, {
+        headers: { Authorization: `Bearer ${tokenA}` },
+      });
+      const jsonA = await resA.json();
 
-    // Panggil endpoint /konten/linimasa dengan token Akun B
-    const resB = await fetch(`${baseUrl}/api/v1/konten/linimasa`, {
-      headers: { Authorization: `Bearer ${tokenB}` },
-    });
-    const jsonB = await resB.json();
+      // Panggil endpoint /konten/linimasa dengan token Akun B
+      const resB = await fetch(`${baseUrl}/api/v1/konten/linimasa`, {
+        headers: { Authorization: `Bearer ${tokenB}` },
+      });
+      const jsonB = await resB.json();
 
-    // Panggil tanpa token (publik)
-    const resPublik = await fetch(`${baseUrl}/api/v1/konten/linimasa`);
-    const jsonPublik = await resPublik.json();
+      // Panggil tanpa token (publik)
+      const resPublik = await fetch(`${baseUrl}/api/v1/konten/linimasa`);
+      const jsonPublik = await resPublik.json();
 
-    // Respons harus konsisten dan identik
-    assert.deepEqual(jsonA.data, jsonB.data);
-    assert.deepEqual(jsonA.data, jsonPublik.data);
+      // Respons harus konsisten dan identik
+      assert.deepEqual(jsonA.data, jsonB.data);
+      assert.deepEqual(jsonA.data, jsonPublik.data);
 
-    // Respons tidak mengandung informasi akun pengguna mana pun
-    for (const item of jsonA.data) {
-      assert.equal(item.pengguna_id, undefined);
-      assert.equal(item.email, undefined);
-      assert.equal(item.nama, undefined);
+      // Respons tidak mengandung informasi akun pengguna mana pun
+      for (const item of jsonA.data) {
+        assert.equal(item.pengguna_id, undefined);
+        assert.equal(item.email, undefined);
+        assert.equal(item.nama, undefined);
+      }
+
+      // Pastikan Akun A dan B tetap terisolasi
+      const resProfilA = await fetch(`${baseUrl}/api/v1/auth/saya`, {
+        headers: { Authorization: `Bearer ${tokenA}` },
+      });
+      const jsonProfilA = await resProfilA.json();
+      assert.equal(jsonProfilA.data.kelas, '12');
+
+      const resProfilB = await fetch(`${baseUrl}/api/v1/auth/saya`, {
+        headers: { Authorization: `Bearer ${tokenB}` },
+      });
+      const jsonProfilB = await resProfilB.json();
+      assert.equal(jsonProfilB.data.kelas, '10');
+
+      // Olah di sisi klien berdasarkan kelas akun masing-masing (jam tetap HARI_UJI):
+      // Akun A (kelas 12) memperoleh Info Penting terverifikasi
+      const infoA = infoPentingLinimasa(jsonA.data, jsonProfilA.data.kelas, HARI_UJI);
+      assert.ok(infoA.length > 0);
+
+      // Akun B (kelas 10) tidak memperoleh Info Penting linimasa
+      const infoB = infoPentingLinimasa(jsonB.data, jsonProfilB.data.kelas, HARI_UJI);
+      assert.deepEqual(infoB, []);
+    } finally {
+      await hapusSimulasi();
     }
-
-    // Pastikan Akun A dan B tetap terisolasi
-    const resProfilA = await fetch(`${baseUrl}/api/v1/auth/saya`, {
-      headers: { Authorization: `Bearer ${tokenA}` },
-    });
-    const jsonProfilA = await resProfilA.json();
-    assert.equal(jsonProfilA.data.kelas, '12');
-
-    const resProfilB = await fetch(`${baseUrl}/api/v1/auth/saya`, {
-      headers: { Authorization: `Bearer ${tokenB}` },
-    });
-    const jsonProfilB = await resProfilB.json();
-    assert.equal(jsonProfilB.data.kelas, '10');
-
-    // Olah di sisi klien berdasarkan kelas akun masing-masing:
-    // Akun A (kelas 12) memperoleh Info Penting terverifikasi
-    const infoA = infoPentingLinimasa(jsonA.data, jsonProfilA.data.kelas, HARI_UJI);
-    assert.ok(infoA.length > 0);
-
-    // Akun B (kelas 10) tidak memperoleh Info Penting linimasa
-    const infoB = infoPentingLinimasa(jsonB.data, jsonProfilB.data.kelas, HARI_UJI);
-    assert.deepEqual(infoB, []);
   });
 });

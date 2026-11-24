@@ -59,7 +59,7 @@ export type TabV2Aktif = {
 export const KONFIGURASI_TAB_V2: readonly DefinisiTabV2[] = [
   { id: 'arah_saya', href: '/arah-saya', label: 'Arah Saya', ikon: 'arah', wajib: true },
   { id: 'jelajah', href: '/discover', label: 'Jelajah', ikon: 'jelajah', saklar: 'discover' },
-  { id: 'jejak_waktu', href: '/linimasa', label: 'Jejak Waktu', ikon: 'waktu', wajib: true },
+  { id: 'jejak_waktu', href: '/jejak-waktu', label: 'Jejak Waktu', ikon: 'waktu', wajib: true },
   {
     id: 'profil_saya',
     href: '/discover-profil',
@@ -123,9 +123,9 @@ export type PintuTabV2 = {
   label: string;
 };
 
-/** Pintu tambahan yang disediakan shell v2 pada layar tab v1 tanpa mengubah layar v1. */
+/** Pintu tambahan yang disediakan shell v2 pada layar tab tanpa mengubah layar v1. */
 export const PINTU_TAB_V2: readonly PintuTabV2[] = [
-  { diRute: '/linimasa', keHref: '/daftar-periksa', label: 'Langkah Saya' },
+  { diRute: '/jejak-waktu', keHref: '/langkah-saya', label: 'Langkah Saya' },
   { diRute: '/discover-profil', keHref: '/akun', label: 'Akun & Privasi' },
 ];
 
@@ -134,6 +134,7 @@ export const PINTU_TAB_V2: readonly PintuTabV2[] = [
  * nama yang sudah ada). Layar yang sedang menjadi tab aktif tidak mendapat bilah kembali.
  */
 export const JUDUL_ANAK_V2: Readonly<Record<string, string>> = {
+  '/langkah-saya': 'Langkah Saya',
   '/daftar-periksa': 'Langkah Saya',
   '/jalur-tujuan': 'Jalur Saya',
   '/jalur-tujuan-tulis': 'Tulis Tujuan',
@@ -169,6 +170,8 @@ const TAB_INDUK_V2: Readonly<Record<string, IdTabV2>> = {
   '/arah-saya': 'arah_saya',
   '/discover': 'jelajah',
   '/discover-refleksi': 'jelajah',
+  '/jejak-waktu': 'jejak_waktu',
+  '/langkah-saya': 'jejak_waktu',
   '/linimasa': 'jejak_waktu',
   '/discover-profil': 'profil_saya',
   '/akun': 'profil_saya',
@@ -265,6 +268,32 @@ export const RUTE_ANAK_DARI_LAYAR: Readonly<Record<string, readonly { href: stri
     { href: '/khusus-smk' },
   ],
   '/pilih-mapel': [{ href: '/eksplorasi-tujuan' }],
+  '/jejak-waktu': [{ href: '/langkah-saya' }],
+  '/langkah-saya': [
+    { href: '/pilih-mapel' },
+    { href: '/eksplorasi-tujuan' },
+    { href: '/arsip-kartu' },
+  ],
+};
+
+/**
+ * Daftar eksplisit rute v1 yang sengaja digantikan oleh layar v2 baru saat `EXPO_PUBLIC_NAVIGASI_V2=1`
+ * (LANJUT_032 §4 & §5). Tidak pernah disembunyikan diam-diam: setiap rute punya pengganti v2 dan alasan,
+ * serta tetap utuh saat saklar v2 mati.
+ */
+export const RUTE_V1_DIGANTIKAN_V2: Readonly<
+  Record<string, { digantikanOleh: readonly string[]; alasan: string }>
+> = {
+  '/linimasa': {
+    digantikanOleh: ['/arah-saya', '/jejak-waktu'],
+    alasan:
+      'Di v1 /linimasa adalah Beranda v1; di v2 peran beranda digantikan oleh /arah-saya dan tab Jejak Waktu membuka layar khusus /jejak-waktu. Rute /linimasa tetap utuh untuk v1 saat saklar mati.',
+  },
+  '/daftar-periksa': {
+    digantikanOleh: ['/langkah-saya'],
+    alasan:
+      'Di v2 daftar periksa di-reskin menjadi layar Langkah Saya (/langkah-saya) dengan perilaku data identik (kemajuan_pengguna, butir_pribadi, event_sekolah SMP). Rute /daftar-periksa tetap utuh untuk v1 saat saklar mati.',
+  },
 };
 
 /**
