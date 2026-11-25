@@ -34,6 +34,7 @@ export function Isian({
   onKirim,
   kunciKirim = 'next',
   maksPanjang,
+  barisGanda = false,
 }: {
   label: string;
   nilai: string;
@@ -46,6 +47,7 @@ export function Isian({
   onKirim?: () => void;
   kunciKirim?: 'next' | 'go' | 'done' | 'send';
   maksPanjang?: number;
+  barisGanda?: boolean;
 }) {
   const { mode, warna } = useTemaV2();
   const [fokus, setFokus] = useState(false);
@@ -65,8 +67,10 @@ export function Isian({
         onChangeText={onUbah}
         editable={!nonaktif}
         autoFocus={fokusAwal}
+        multiline={barisGanda}
+        textAlignVertical={barisGanda ? 'top' : 'center'}
         returnKeyType={kunciKirim}
-        onSubmitEditing={onKirim}
+        onSubmitEditing={barisGanda ? undefined : onKirim}
         maxLength={maksPanjang ?? PERILAKU[jenis].maxLength}
         onFocus={() => setFokus(true)}
         onBlur={() => setFokus(false)}
@@ -79,6 +83,7 @@ export function Isian({
         selectionColor={warna.aksen}
         style={StyleSheet.flatten([
           s.kolom,
+          barisGanda && s.kolomGanda,
           { color: warna.teks, borderColor: warna.garisKontrol, backgroundColor: warna.permukaan },
           nonaktif && { backgroundColor: warna.nonaktifLatar, borderColor: warna.nonaktifLatar, color: warna.nonaktifTeks },
           galat ? { borderColor: warna.galat, borderWidth: garis.fokus } : null,
@@ -99,5 +104,8 @@ const s = StyleSheet.create({
     paddingHorizontal: ruang.r2,
     borderRadius: radius.kecil,
     borderWidth: garis.tipis,
+  },
+  kolomGanda: {
+    minHeight: ukuran.sentuhMin + ukuran.lingkaranIkon,
   },
 });

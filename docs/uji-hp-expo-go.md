@@ -307,6 +307,48 @@ Layar **Jalur Saya** v2 mereskin `/jalur-tujuan` dan `/jalur-tujuan-tulis` di ba
      ```
 5. **Uji saklar v2 mati:** hentikan Expo, kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` (biarkan `$env:EXPO_PUBLIC_JALUR_TUJUAN = "1"`), lalu jalankan ulang dengan `--clear`. Pastikan `/jalur-tujuan` kembali menampilkan layar v1 **Jalur & Tujuan** persis seperti semula.
 
+## 15. Jelajah dan Profil Eksplorasi v2 (LANJUT_034)
+
+Layar **Jelajah** (`/discover`, `/discover-refleksi`) dan **Profil Eksplorasi** (`/discover-profil`, dibuka lewat tab **Profil Saya**) berada di balik kombinasi saklar `EXPO_PUBLIC_DISCOVER` (**mati bawaan**) dan `EXPO_PUBLIC_NAVIGASI_V2` (**mati bawaan**). Langkah di bawah belum pernah dijalankan di HP fisik; belum ada klaim hasil uji di HP, pembaca layar (TalkBack/VoiceOver), atau ukuran huruf besar sistem.
+
+> **Penting — selalu gunakan `--clear`:** setiap kali menyalakan atau mematikan `EXPO_PUBLIC_DISCOVER`, `EXPO_PUBLIC_NAVIGASI_V2`, atau `EXPO_PUBLIC_MODE_GELAP`, jalankan Expo dengan `--clear` (`npx expo start --go --lan --clear` atau `npx expo start --web --clear`) supaya cache Metro tidak membawa konfigurasi saklar lama.
+
+1. Pastikan database `lanjut_dev` (port `3309`) dan server dev lokal menyala dengan `DISCOVER_AKTIF=1` (dan `JALUR_TUJUAN_AKTIF=1` bila ingin ikut memeriksa Jalur Saya) di `LANJUT_App\server\.env` (langkah 2–4).
+2. Di PowerShell kedua, nyalakan saklar untuk sesi lokal (ganti `192.168.x.x` dengan IP Wi-Fi komputer):
+   ```powershell
+   cd "D:\DATA ALIF\Project - Profesional\EDILAKSO Group\LANJUT - Project\EDILAKSO-LANJUT-repo\LANJUT_App"
+   $env:EXPO_PUBLIC_API_URL = "http://192.168.x.x:4000/api/v1"
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2 = "1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_MODE_GELAP = "1"
+   $env:EXPO_PUBLIC_DISCOVER = "1"
+   $env:EXPO_PUBLIC_JALUR_TUJUAN = "1"
+   npx expo start --go --lan --clear
+   ```
+3. **Uji saat seluruh kartu masih draf (bawaan database dev):**
+   - Masuk dengan `uji_belum_memilih`, buka tab **Jelajah**: pastikan tampil keadaan kosong **"Kartu sedang disiapkan"** dengan maskot kelinci di lingkaran `#B4E1EB` (terang maupun gelap), tanpa satu pun kartu draf.
+   - Buka tab **Profil Saya**: pastikan tampil kartu pintu **Akun & Privasi**, keadaan kosong **"Profil belum disusun"** dengan maskot di lingkaran `#B4E1EB`, dan tombol **Susun profil**.
+4. **Uji saat satu kartu dummy disetujui:**
+   - Di PowerShell folder `LANJUT_App\server`, jalankan:
+     ```powershell
+     npm run benih-persetujuan-dummy
+     ```
+   - Masuk dengan `demo_kelas12_dc`, buka tab **Jelajah**:
+     - Pastikan kartu **`[DUMMY] Kesehatan`** tampil besar dengan penanda tertulis **Sudah ditulis** (bukan hanya warna).
+     - Ketuk kartu untuk membuka **Rincian** (judul, isi dari server apa adanya, penanda sumber dummy, tanpa bagian "Cara belajar"), lalu ketuk **Ubah refleksi**.
+     - Di layar refleksi, uji penghitung sisa karakter (`280`), coba isi melebihi `280` karakter untuk memastikan pesan galat muncul dan pengiriman ditolak, lalu uji simpan serta **Hapus tulisan** (mengosongkan teks lewat API v1).
+   - Buka tab **Profil Saya** (`/discover-profil`):
+     - Periksa kartu pintu **Akun & Privasi** tetap ada di atas.
+     - Periksa seluruh isian siswa tampil apa adanya tanpa tafsiran, ketuk **Lihat perubahan** untuk memeriksa versi lama bernomor & berjam (`Versi ke-1 · ...`), dan ketuk **Ubah** untuk mencoba kolom catatan pribadi (batas `500` karakter + penghitung sisa karakter).
+   - **Wajib sesudah selesai melihat:** cabut kembali persetujuan dummy di `LANJUT_App\server`:
+     ```powershell
+     npm run benih-persetujuan-dummy -- --cabut
+     ```
+5. **Uji saklar mati:**
+   - Hentikan Expo, kosongkan `$env:EXPO_PUBLIC_DISCOVER = ""` (biarkan `EXPO_PUBLIC_NAVIGASI_V2 = "1"`), jalankan ulang dengan `--clear`: pastikan tab **Jelajah** tidak tampil (3 tab merata) dan tab **Profil Saya** membuka `/akun`.
+   - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` dan nyalakan `$env:EXPO_PUBLIC_DISCOVER = "1"` dengan `--clear`: pastikan `/discover`, `/discover-refleksi`, dan `/discover-profil` kembali menampilkan layar v1 **Discover** persis seperti semula.
+
+
 
 
 

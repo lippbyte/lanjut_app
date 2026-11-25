@@ -16,7 +16,7 @@ import { useKurangiGerak } from '../../../hooks/useKurangiGerak';
 import {
   BATAS_TUJUAN,
   GALAT_ISIAN_TUJUAN,
-  LABEL_STATUS_TUJUAN,
+  LABEL_STATUS_TUJUAN_V2,
   TEKS_JALUR_SAYA_V2 as T,
   badanTujuan,
   galatMedanServerTujuan,
@@ -529,7 +529,7 @@ function KartuSatuTujuanV2({
           ])}
         >
           <Teks varian="keterangan" warna="teksSekunder">
-            {LABEL_STATUS_TUJUAN[tujuan.status]}
+            {LABEL_STATUS_TUJUAN_V2[tujuan.status]}
           </Teks>
         </View>
       </View>

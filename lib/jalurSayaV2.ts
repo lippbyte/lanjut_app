@@ -10,7 +10,7 @@
  * - Id jalur mentah (mis. `melanjutkan`, `bekerja`, `wirausaha`) TIDAK PERNAH tampil di layar,
  *   label aksesibilitas, judul, atau pesan galat.
  */
-import type { JalurMinat, PeristiwaPerjalanan, PilihanJalur, Tujuan, VersiTujuan } from '../api/types';
+import type { JalurMinat, PeristiwaPerjalanan, PilihanJalur, StatusTujuan, Tujuan, VersiTujuan } from '../api/types';
 import {
   BATAS_TUJUAN,
   GALAT_ISIAN_TUJUAN,
@@ -35,6 +35,12 @@ export const BATAS_KATA_JALUR_SAYA = 40;
 
 /** Satu-satunya label netral untuk jalur yang belum disetujui / kembali draf / nonaktif. */
 export const LABEL_JALUR_NETRAL = 'Jalur belum tersedia';
+
+// TEKS DRAF — LANJUT_034 perbaikan kecil 033: khusus v2 status tujuan aktif berlabel "Aktif" (v1 tetap "Sedang dikejar").
+export const LABEL_STATUS_TUJUAN_V2: Readonly<Record<StatusTujuan, string>> = {
+  ...LABEL_STATUS_TUJUAN,
+  aktif: 'Aktif',
+};
 
 // TEKS DRAF — belum disetujui Khalifa (docs/draf-teks-jalur-saya-v2.md).
 export const TEKS_JALUR_SAYA_V2 = {
@@ -302,7 +308,7 @@ export function teksTetapJalurSayaV2(
     TEKS_JALUR_SAYA_V2.jeda,
     TEKS_JALUR_SAYA_V2.tujuanJudul,
     TEKS_JALUR_SAYA_V2.prodiKeterangan,
-    LABEL_STATUS_TUJUAN.aktif,
+    LABEL_STATUS_TUJUAN_V2.aktif,
     TEKS_JALUR_SAYA_V2.targetAwalan,
     TEKS_JALUR_SAYA_V2.ubahTujuan,
     TEKS_JALUR_SAYA_V2.tandaiTercapai,
