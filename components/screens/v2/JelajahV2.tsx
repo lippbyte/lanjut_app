@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import type { Ketertarikan, RefleksiDiscover } from '../../../api/types';
-import { useDataJelajahV2, useSimpanRefleksiV2 } from '../../../hooks/useJelajahV2';
+import { useDataJelajahV2, useHapusRefleksiV2, useSimpanRefleksiV2 } from '../../../hooks/useJelajahV2';
 import { useKurangiGerak } from '../../../hooks/useKurangiGerak';
 import {
   BATAS_DISCOVER,
@@ -11,7 +11,6 @@ import {
   PILIHAN_KETERTARIKAN,
   TEKS_JELAJAH_V2 as T,
   TEKS_PRIVASI_JELAJAH,
-  badanKosongkanTulisanRefleksi,
   badanRefleksi,
   caraBelajarKartu,
   hitungBatasKarakter,
@@ -176,10 +175,9 @@ export function JelajahV2() {
 }
 
 /**
- * Layar refleksi kartu (`/discover-refleksi?kartu=<id>`, LANJUT_034).
- * Memakai endpoint v1 `PUT /discover/refleksi/:kartuId` dengan batas 280 karakter per kolom,
- * penghitung sisa karakter langsung, kalimat privasi jujur sama persis dengan v1, serta aksi
- * mengosongkan tulisan refleksi.
+ * Layar refleksi kartu (`/discover-refleksi?kartu=<id>`, LANJUT_034, diperbarui LANJUT_035).
+ * Memakai `PUT /discover/refleksi/:kartuId` untuk menyimpan (batas 280 karakter per kolom) dan
+ * `DELETE /discover/refleksi/:kartuId` untuk menghapus seluruh refleksi secara sungguhan.
  */
 export function RefleksiJelajahV2() {
   const router = useRouter();
@@ -501,6 +499,7 @@ function RincianKartuModalV2({
 function FormRefleksiV2({ kartu, awal }: { kartu: KartuDiscoverKandidat; awal?: RefleksiDiscover }) {
   const { warna } = useTemaV2();
   const simpan = useSimpanRefleksiV2();
+  const hapus = useHapusRefleksiV2();
   const [ketertarikan, setKetertarikan] = useState<Ketertarikan | null>(awal?.ketertarikan ?? null);
   const [menarik, setMenarik] = useState(awal?.yang_menarik ?? '');
   const [kurang, setKurang] = useState(awal?.yang_kurang_menarik ?? '');
@@ -509,9 +508,7 @@ function FormRefleksiV2({ kartu, awal }: { kartu: KartuDiscoverKandidat; awal?: 
 
   const infoMenarik = hitungBatasKarakter(menarik, BATAS_DISCOVER.refleksi);
   const infoKurang = hitungBatasKarakter(kurang, BATAS_DISCOVER.refleksi);
-  const adaTulisanTersimpan = Boolean(
-    awal && ((awal.yang_menarik && awal.yang_menarik.trim()) || (awal.yang_kurang_menarik && awal.yang_kurang_menarik.trim()))
-  );
+  const adaRefleksiTersimpan = Boolean(awal);
 
   const galatMenarik = galat.yang_menarik ?? (infoMenarik.melewati ? periksaIsianRefleksi({ ketertarikan: 'tertarik', menarik, kurang: '' }).yang_menarik : undefined);
   const galatKurang = galat.yang_kurang_menarik ?? (infoKurang.melewati ? periksaIsianRefleksi({ ketertarikan: 'tertarik', menarik: '', kurang }).yang_kurang_menarik : undefined);
@@ -530,22 +527,20 @@ function FormRefleksiV2({ kartu, awal }: { kartu: KartuDiscoverKandidat; awal?: 
     );
   };
 
-  const hapusTulisan = () => {
+  const hapusRefleksi = () => {
     setPesanSukses(null);
-    const pilihanAktif = ketertarikan ?? awal?.ketertarikan ?? null;
-    if (!pilihanAktif) return;
-    simpan.mutate(
-      { kartuId: kartu.id, badan: badanKosongkanTulisanRefleksi(pilihanAktif) },
-      {
-        onSuccess: () => {
-          setMenarik('');
-          setKurang('');
-          setGalat({});
-          setPesanSukses(T.berhasilHapusTulisan);
-        },
-      }
-    );
+    hapus.mutate(kartu.id, {
+      onSuccess: () => {
+        setKetertarikan(null);
+        setMenarik('');
+        setKurang('');
+        setGalat({});
+        setPesanSukses(T.berhasilHapusRefleksi);
+      },
+    });
   };
+
+  const galatMutasi = simpan.error ?? hapus.error;
 
   return (
     <View style={s.formWadah}>
@@ -650,16 +645,22 @@ function FormRefleksiV2({ kartu, awal }: { kartu: KartuDiscoverKandidat; awal?: 
         {TEKS_PRIVASI_JELAJAH}
       </Teks>
 
-      {simpan.isError ? (
+      {galatMutasi ? (
         <PesanStatus jenis="galat" berlatar>
-          {pesanGalatDiscover(simpan.error.kode)}
+          {pesanGalatDiscover(galatMutasi.kode)}
         </PesanStatus>
       ) : null}
 
       <View style={s.barisAksiForm}>
-        <Tombol varian="utama" label={T.simpan} memuat={simpan.isPending} onPress={kirim} />
-        {adaTulisanTersimpan ? (
-          <Tombol varian="teks" label={T.hapusTulisan} nonaktif={simpan.isPending} onPress={hapusTulisan} />
+        <Tombol varian="utama" label={T.simpan} memuat={simpan.isPending} nonaktif={hapus.isPending} onPress={kirim} />
+        {adaRefleksiTersimpan ? (
+          <Tombol
+            varian="teks"
+            label={T.hapusRefleksi}
+            memuat={hapus.isPending}
+            nonaktif={simpan.isPending}
+            onPress={hapusRefleksi}
+          />
         ) : null}
       </View>
     </View>

@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import type { ProfilEksplorasi } from '../../../api/types';
-import { usePerbaruiProfilV2, useProfilEksplorasiV2, useRiwayatProfilV2 } from '../../../hooks/useJelajahV2';
+import {
+  useHapusCatatanProfilV2,
+  usePerbaruiProfilV2,
+  useProfilEksplorasiV2,
+  useRiwayatProfilV2,
+} from '../../../hooks/useJelajahV2';
 import { useKurangiGerak } from '../../../hooks/useKurangiGerak';
 import {
   BATAS_DISCOVER,
@@ -144,6 +149,7 @@ export function ProfilEksplorasiV2() {
               <FormProfilV2
                 key={terkini?.id ?? 'baru'}
                 awal={terkini}
+                jumlahVersi={jumlahVersi}
                 onSelesai={(pesan) => {
                   setModalTerbuka(false);
                   setPesanSukses(pesan);
@@ -260,18 +266,22 @@ function DaftarRiwayatProfilV2() {
 
 function FormProfilV2({
   awal,
+  jumlahVersi,
   onSelesai,
 }: {
   awal: ProfilEksplorasi | null;
+  jumlahVersi: number;
   onSelesai: (pesan: string) => void;
 }) {
   const { warna } = useTemaV2();
   const perbarui = usePerbaruiProfilV2();
+  const hapusCatatanMut = useHapusCatatanProfilV2();
   const [catatan, setCatatan] = useState(awal?.catatan ?? '');
   const [galat, setGalat] = useState<string | null>(null);
 
   const infoCatatan = hitungBatasKarakter(catatan, BATAS_DISCOVER.catatan);
   const galatAktif = galat ?? periksaCatatanProfilV2(catatan);
+  const bisaHapusCatatan = Boolean(awal?.catatan || jumlahVersi > 1);
 
   const kirim = () => {
     const salah = periksaCatatanProfilV2(catatan);
@@ -296,13 +306,10 @@ function FormProfilV2({
 
   const hapusCatatan = () => {
     setGalat(null);
-    perbarui.mutate(
-      { catatan: null },
-      {
-        onSuccess: () => onSelesai(T.berhasilHapusCatatan),
-        onError: (err) => setGalat(pesanGalatDiscover(err.kode)),
-      }
-    );
+    hapusCatatanMut.mutate(undefined, {
+      onSuccess: () => onSelesai(T.berhasilHapusCatatan),
+      onError: (err) => setGalat(pesanGalatDiscover(err.kode)),
+    });
   };
 
   return (
@@ -338,11 +345,18 @@ function FormProfilV2({
       </Teks>
 
       <View style={StyleSheet.flatten([s.barisSimpanForm, { borderTopColor: warna.garisHalus }])}>
-        <Tombol varian="utama" label={T.simpan} memuat={perbarui.isPending} onPress={kirim} />
-        {awal?.catatan ? (
+        <Tombol
+          varian="utama"
+          label={T.simpan}
+          memuat={perbarui.isPending}
+          nonaktif={hapusCatatanMut.isPending}
+          onPress={kirim}
+        />
+        {bisaHapusCatatan ? (
           <Tombol
             varian="teks"
             label={T.hapusCatatan}
+            memuat={hapusCatatanMut.isPending}
             nonaktif={perbarui.isPending}
             onPress={hapusCatatan}
           />

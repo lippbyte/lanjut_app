@@ -71,9 +71,9 @@ export const TEKS_JELAJAH_V2 = {
   labelMenarik: 'Yang menarik',
   labelKurangMenarik: 'Kurang menarik',
   simpan: 'Simpan',
-  hapusTulisan: 'Hapus tulisan',
+  hapusRefleksi: 'Hapus refleksi',
   berhasilSimpanRefleksi: 'Refleksi tersimpan.',
-  berhasilHapusTulisan: 'Tulisan refleksi dihapus.',
+  berhasilHapusRefleksi: 'Refleksi dihapus.',
   sisaAwalan: 'Sisa',
   melebihiAwalan: 'Melebihi',
   satuanKarakter: 'karakter',
@@ -282,15 +282,6 @@ export function periksaCatatanProfilV2(catatan: string): string | null {
   return catatan.trim().length > BATAS_DISCOVER.catatan ? GALAT_ISIAN_DISCOVER.catatanPanjang : null;
 }
 
-/**
- * Mengosongkan kedua kolom tulisan refleksi memakai endpoint v1 yang sama (`PUT /discover/refleksi/:kartuId`).
- * Server tidak memiliki endpoint `DELETE /discover/refleksi/:kartuId`; penghapusan penuh refleksi
- * dilakukan saat akun dihapus (`DELETE /pengguna/saya`).
- */
-export function badanKosongkanTulisanRefleksi(ketertarikan: Ketertarikan): BadanRefleksi {
-  return badanRefleksi({ ketertarikan, menarik: '', kurang: '' });
-}
-
 export type StatusKartuJelajahV2 = 'sudah_ditulis' | 'sudah_dibaca' | 'belum';
 
 export function statusKartuJelajahV2(p: {
@@ -362,7 +353,7 @@ export function teksTetapJelajahV2(
       `${TEKS_JELAJAH_V2.sisaAwalan} ${BATAS_DISCOVER.refleksi}`,
       TEKS_PRIVASI_JELAJAH,
       TEKS_JELAJAH_V2.simpan,
-      TEKS_JELAJAH_V2.hapusTulisan,
+      TEKS_JELAJAH_V2.hapusRefleksi,
     ];
   }
   if (keadaan === 'profil_kosong') {

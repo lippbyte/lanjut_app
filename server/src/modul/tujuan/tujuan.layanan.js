@@ -22,10 +22,10 @@ const bukanTerkini = () =>
 
 const tanggal = (nilai) => (nilai instanceof Date ? nilai.toISOString().slice(0, 10) : nilai ?? null);
 
-function bentukTujuan(t) {
+function bentukTujuan(t, tersedia) {
   return {
     id: t.id,
-    jalur_minat_id: t.jalur_minat_id,
+    ...samarkanJalur(t.jalur_minat_id, tersedia),
     judul: t.judul,
     uraian: t.uraian,
     target_pada: tanggal(t.target_pada),
@@ -64,11 +64,15 @@ async function prodiImpian(penggunaId) {
 
 /** Tujuan terkini (semua kecuali versi lama), dan prodi impian dari Data Akun. */
 async function daftar(penggunaId) {
-  const semua = await tujuanRepo.daftarMilikSendiri(penggunaId);
+  const [semua, tersedia, prodi] = await Promise.all([
+    tujuanRepo.daftarMilikSendiri(penggunaId),
+    idJalurTersedia(),
+    prodiImpian(penggunaId),
+  ]);
   const tujuan = semua
     .filter((t) => t.status !== 'diubah')
-    .map((t) => ({ ...bentukTujuan(t), jumlah_versi: rantaiVersi(semua, t.id).length }));
-  return { tujuan, prodi_impian: await prodiImpian(penggunaId) };
+    .map((t) => ({ ...bentukTujuan(t, tersedia), jumlah_versi: rantaiVersi(semua, t.id).length }));
+  return { tujuan, prodi_impian: prodi };
 }
 
 async function buat(penggunaId, data) {
@@ -83,7 +87,7 @@ async function buat(penggunaId, data) {
     targetPada: data.target_pada ?? null,
     waktu: sekarangUntukDb(),
   });
-  return bentukTujuan(await tujuanRepo.ambilMilikSendiri(penggunaId, id));
+  return bentukTujuan(await tujuanRepo.ambilMilikSendiri(penggunaId, id), await idJalurTersedia());
 }
 
 /** Versi baru dari tujuan terkini. Medan yang tidak dikirim disalin dari versi sebelumnya. */
@@ -111,13 +115,13 @@ async function perbarui(penggunaId, id, data) {
   const hasil = await tujuanRepo.buatVersiMilikSendiri(penggunaId, id, { id: idBaru, ...baru, waktu: sekarangUntukDb() });
   if (hasil === 'tidak_ada') throw tujuanTidakAda();
   if (hasil === 'bukan_terkini') throw bukanTerkini();
-  return bentukTujuan(await tujuanRepo.ambilMilikSendiri(penggunaId, idBaru));
+  return bentukTujuan(await tujuanRepo.ambilMilikSendiri(penggunaId, idBaru), await idJalurTersedia());
 }
 
 async function akhiri(penggunaId, id, { status }) {
   if (!(await tujuanRepo.ambilMilikSendiri(penggunaId, id))) throw tujuanTidakAda();
   if (!(await tujuanRepo.akhiriMilikSendiri(penggunaId, id, status, sekarangUntukDb()))) throw bukanTerkini();
-  return bentukTujuan(await tujuanRepo.ambilMilikSendiri(penggunaId, id));
+  return bentukTujuan(await tujuanRepo.ambilMilikSendiri(penggunaId, id), await idJalurTersedia());
 }
 
 /**
@@ -126,9 +130,9 @@ async function akhiri(penggunaId, id, { status }) {
  * nomornya tidak berubah antarpanggilan. Tidak ada kolom baru.
  */
 async function riwayat(penggunaId, id) {
-  const semua = await tujuanRepo.daftarMilikSendiri(penggunaId);
+  const [semua, tersedia] = await Promise.all([tujuanRepo.daftarMilikSendiri(penggunaId), idJalurTersedia()]);
   if (!semua.some((t) => t.id === id)) throw tujuanTidakAda();
-  return rantaiVersi(semua, id).map((t, i) => ({ ...bentukTujuan(t), versi_ke: i + 1 }));
+  return rantaiVersi(semua, id).map((t, i) => ({ ...bentukTujuan(t, tersedia), versi_ke: i + 1 }));
 }
 
 /** Menautkan butir bukti milik sendiri ke jalur dan/atau tujuan milik sendiri. */

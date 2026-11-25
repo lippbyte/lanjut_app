@@ -264,7 +264,7 @@ describe('Penyamaran id mentah & pelarangan teks draf (K37 dan K44)', () => {
 
     // Menyaring daftar jalur lewat jalurDisetujuiSaja dan memakai labelJalur untuk tujuan & pil
     assert.match(layar, /const daftarJalurSah = jalurDisetujuiSaja\(jalur\.data\);/);
-    assert.match(layar, /const labelJalurTerkait = labelJalur\(tujuan\.jalur_minat_id, daftarJalur\);/);
+    assert.match(layar, /const labelJalurTerkait = labelJalur\(tujuan, daftarJalur\);/);
 
     // Tidak boleh merender idJalur atau jalur_minat_id langsung ke <Teks> atau atribut label/judul
     assert.doesNotMatch(layar, /<Teks[^>]*>\s*\{[^}]*\b(idJalur|jalur_minat_id)\b/);
@@ -283,7 +283,7 @@ describe('Penyamaran id mentah & pelarangan teks draf (K37 dan K44)', () => {
     assert.doesNotMatch(blokDraf[0], /pilihJalur\.mutate/, 'jalur draf tidak boleh bisa dipilih ulang');
 
     // Formulir tujuan saat tujuan lama terkait jalur draf menampilkan pil netral T.jalurBelumTersedia, bukan id mentah
-    assert.match(layar, /awalJalurDraf && awal\?\.jalur_minat_id[\s\S]*?label=\{T\.jalurBelumTersedia\}/);
+    assert.match(layar, /awalJalurDraf && nilaiDrafAwal[\s\S]*?label=\{T\.jalurBelumTersedia\}/);
 
     // Teks draf dari server/data-konten/jalur-minat.json tidak disalin ke modul/dokumen v2
     const konten = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data-konten', 'jalur-minat.json'), 'utf8'));
@@ -371,7 +371,7 @@ describe('Multi-pilihan jalur, penanda tertulis "Dipilih", tujuan berversi, dan 
     const layar = baca('components/screens/v2/JalurSayaV2.tsx');
     const fnForm = /function FormTujuanV2\([\s\S]*?\n\}\n/.exec(layar)[0];
     assert.match(fnForm, /const periksa = periksaIsianTujuan\(isian\);/);
-    assert.match(fnForm, /const badan = badanTujuan\(isian, awal\);/);
+    assert.match(fnForm, /const badan = badanTujuanV2\(isian, awal\);/);
     assert.match(fnForm, /maksPanjang=\{BATAS_TUJUAN\.judul\}/, 'Isian judul wajib dibatasi BATAS_TUJUAN.judul');
     assert.match(fnForm, /maksPanjang=\{BATAS_TUJUAN\.uraian\}/, 'Isian uraian wajib dibatasi BATAS_TUJUAN.uraian');
     assert.match(fnForm, /maksPanjang=\{10\}/, 'Isian target wajib dibatasi 10 karakter tanggal');

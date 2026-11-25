@@ -48,11 +48,27 @@ export const useSimpanRefleksiV2 = () =>
     })
   );
 
+export const useHapusRefleksiV2 = () =>
+  useUbahV2<string, { dihapus: true }>((kartuId, token) =>
+    apiFetch(`/discover/refleksi/${encodeURIComponent(kartuId)}`, {
+      method: 'DELETE',
+      token,
+    })
+  );
+
 export const usePerbaruiProfilV2 = () =>
   useUbahV2<{ catatan?: string | null }, ProfilEksplorasi>((badan, token) =>
     apiFetch('/discover/profil', {
       method: 'POST',
       body: badan,
+      token,
+    })
+  );
+
+export const useHapusCatatanProfilV2 = () =>
+  useUbahV2<void, { dihapus: true }>((_, token) =>
+    apiFetch('/discover/profil/catatan', {
+      method: 'DELETE',
       token,
     })
   );

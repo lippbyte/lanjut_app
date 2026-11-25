@@ -296,10 +296,10 @@ describe('Refleksi (280), catatan profil (500), penghitung karakter, kontrak API
     assert.ok(jelajah.periksaIsianRefleksi({ ...valid280, menarik: 'a'.repeat(281) }).yang_menarik);
     assert.ok(jelajah.periksaIsianRefleksi({ ...valid280, kurang: 'b'.repeat(281) }).yang_kurang_menarik);
 
-    // Kosongkan tulisan refleksi tetap sah di skema server
-    const kosongTulisan = jelajah.badanKosongkanTulisanRefleksi('belum_yakin');
-    assert.deepEqual(kosongTulisan, { ketertarikan: 'belum_yakin', yang_menarik: null, yang_kurang_menarik: null });
-    assert.ok(refleksiSkema.safeParse(kosongTulisan).success);
+    // Jalan memutar kosongkan tulisan lewat PUT sudah diganti DELETE sungguhan di LANJUT_035
+    assert.equal(jelajah.badanKosongkanTulisanRefleksi, undefined);
+    assert.equal(jelajah.TEKS_JELAJAH_V2.hapusRefleksi, 'Hapus refleksi');
+    assert.equal(jelajah.TEKS_JELAJAH_V2.hapusCatatan, 'Hapus catatan');
 
     // Penghitung & validasi 500 cocok dengan profilSkema server
     assert.equal(jelajah.periksaCatatanProfilV2('c'.repeat(500)), null);
@@ -323,10 +323,9 @@ describe('Refleksi (280), catatan profil (500), penghitung karakter, kontrak API
     assert.match(fnProfil, /if \(salah\) \{\n\s+setGalat\(salah\);\n\s+return;\n\s+\}/);
   });
 
-  test('Simpan, ubah, kosongkan tulisan refleksi, dan profil berversi memanggil API yang sama persis dengan v1', () => {
+  test('Simpan, ubah, hapus sungguhan refleksi/catatan (LANJUT_035), dan profil berversi memanggil endpoint yang tepat', () => {
     const hookV2 = baca('hooks/useJelajahV2.ts');
     assert.ok(hookV2.includes("const KUNCI = ['discover'] as const;"));
-    assert.doesNotMatch(hookV2, /method:\s*'DELETE'/i, 'server tidak memiliki DELETE di /discover');
 
     assert.match(hookV2, /useAmbilV2<KartuDiscover\[\]>\('kartu',\s*'\/discover\/kartu'\)/);
     assert.match(hookV2, /useAmbilV2<RefleksiDiscover\[\]>\('refleksi',\s*'\/discover\/refleksi'\)/);
@@ -338,7 +337,15 @@ describe('Refleksi (280), catatan profil (500), penghitung karakter, kontrak API
     );
     assert.match(
       hookV2,
+      /apiFetch\(`\/discover\/refleksi\/\$\{encodeURIComponent\(kartuId\)\}`,\s*\{\s*method:\s*'DELETE',\s*token,?\s*\}\)/
+    );
+    assert.match(
+      hookV2,
       /apiFetch\('\/discover\/profil',\s*\{\s*method:\s*'POST',\s*body:\s*badan,\s*token,?\s*\}\)/
+    );
+    assert.match(
+      hookV2,
+      /apiFetch\('\/discover\/profil\/catatan',\s*\{\s*method:\s*'DELETE',\s*token,?\s*\}\)/
     );
 
     // Riwayat profil terlipat secara bawaan dan bernomor + berjam seperti 026

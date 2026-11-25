@@ -39,8 +39,10 @@ test('Saklar mati: semua rute Discover menjawab sama persis dengan jalur yang ti
       ['GET', '/discover/kartu'],
       ['GET', '/discover/refleksi'],
       ['PUT', '/discover/refleksi/bidang-kesehatan'],
+      ['DELETE', '/discover/refleksi/bidang-kesehatan'],
       ['GET', '/discover/profil'],
       ['POST', '/discover/profil'],
+      ['DELETE', '/discover/profil/catatan'],
       ['GET', '/discover/profil/riwayat'],
     ]) {
       assert.equal(await jawaban(m, j, t), pembanding, `${m} ${j}`);

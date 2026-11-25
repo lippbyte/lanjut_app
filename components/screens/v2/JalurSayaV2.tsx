@@ -18,15 +18,17 @@ import {
   GALAT_ISIAN_TUJUAN,
   LABEL_STATUS_TUJUAN_V2,
   TEKS_JALUR_SAYA_V2 as T,
-  badanTujuan,
+  badanTujuanV2,
   galatMedanServerTujuan,
   jalurDisetujuiSaja,
   labelJalur,
+  nilaiJalurAwalFormV2,
   periksaIsianTujuan,
   pesanGalatJalurTujuan,
   susunKartuJalurV2,
   teksPeristiwaAmanV2,
   teksVersiTujuan,
+  tujuanPunyaJalurDraf,
   type GalatIsianTujuan,
   type KartuJalurDisetujuiV2,
   type KeadaanData,
@@ -504,7 +506,7 @@ function KartuSatuTujuanV2({
   const tercapai = useTandaiTercapaiV2();
   const [bukaRiwayat, setBukaRiwayat] = useState(false);
 
-  const labelJalurTerkait = labelJalur(tujuan.jalur_minat_id, daftarJalur);
+  const labelJalurTerkait = labelJalur(tujuan, daftarJalur);
   const labelTarget = tujuan.target_pada ? `${T.targetAwalan} ${formatTanggal(tujuan.target_pada)}` : null;
   const meta = [labelJalurTerkait, labelTarget].filter(Boolean).join(' · ');
   const bayangan = mode === 'terang' ? elevasi.angkat : elevasi.datar;
@@ -666,16 +668,15 @@ function FormTujuanV2({
   const [judul, setJudul] = useState(awal?.judul ?? '');
   const [uraian, setUraian] = useState(awal?.uraian ?? '');
   const [target, setTarget] = useState(awal?.target_pada ?? '');
-  const [jalurId, setJalurId] = useState<string | null>(awal?.jalur_minat_id ?? null);
+  const awalJalurDraf = tujuanPunyaJalurDraf(awal, daftarJalur);
+  const nilaiDrafAwal = awalJalurDraf ? nilaiJalurAwalFormV2(awal, daftarJalur) : null;
+  const [jalurId, setJalurId] = useState<string | null>(() => nilaiJalurAwalFormV2(awal, daftarJalur));
   const [galat, setGalat] = useState<GalatIsianTujuan>({});
-
-  const idSah = new Set(daftarJalur.map((j) => j.id));
-  const awalJalurDraf = Boolean(awal?.jalur_minat_id && !idSah.has(awal.jalur_minat_id));
 
   const kirim = () => {
     const isian = { judul, uraian, target, jalur: jalurId };
     const periksa = periksaIsianTujuan(isian);
-    const badan = badanTujuan(isian, awal);
+    const badan = badanTujuanV2(isian, awal);
     if (!badan && !Object.keys(periksa).length) periksa._ = GALAT_ISIAN_TUJUAN.tidakBerubah;
     setGalat(periksa);
     if (Object.keys(periksa).length || !badan) return;
@@ -722,12 +723,12 @@ function FormTujuanV2({
               setGalat((g) => ({ ...g, _: undefined }));
             }}
           />
-          {awalJalurDraf && awal?.jalur_minat_id ? (
+          {awalJalurDraf && nilaiDrafAwal ? (
             <PilihanRadioKecilV2
               label={T.jalurBelumTersedia}
-              aktif={jalurId === awal.jalur_minat_id}
+              aktif={jalurId === nilaiDrafAwal}
               onPilih={() => {
-                setJalurId(awal.jalur_minat_id);
+                setJalurId(nilaiDrafAwal);
                 setGalat((g) => ({ ...g, _: undefined }));
               }}
             />

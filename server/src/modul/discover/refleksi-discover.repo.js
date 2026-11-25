@@ -50,6 +50,18 @@ async function simpanMilikSendiri({ id, penggunaId, kartuId, ketertarikan, yangM
 }
 
 /**
+ * DELETE sungguhan (LANJUT_035): menghapus seluruh baris refleksi milik siswa untuk satu kartu
+ * (termasuk pilihan ketertarikan). Aman dipanggil ulang (idempoten).
+ */
+async function hapusMilikSendiri(penggunaId, kartuId) {
+  const [hasil] = await pool.execute(
+    'DELETE FROM refleksi_discover WHERE pengguna_id = ? AND kartu_discover_id = ?',
+    [penggunaId, kartuId]
+  );
+  return hasil.affectedRows > 0;
+}
+
+/**
  * Hanya untuk benih-dummy dan tes: menulis refleksi tanpa memeriksa status kartu. Rute tidak
  * pernah memanggilnya.
  */
@@ -62,4 +74,4 @@ async function buatTanpaPeriksaKartu({ id, penggunaId, kartuId, ketertarikan, ya
   );
 }
 
-module.exports = { daftarMilikSendiri, ambilMilikSendiri, simpanMilikSendiri, buatTanpaPeriksaKartu };
+module.exports = { daftarMilikSendiri, ambilMilikSendiri, simpanMilikSendiri, hapusMilikSendiri, buatTanpaPeriksaKartu };
