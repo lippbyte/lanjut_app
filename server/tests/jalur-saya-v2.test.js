@@ -379,6 +379,10 @@ describe('Multi-pilihan jalur, penanda tertulis "Dipilih", tujuan berversi, dan 
     // Riwayat versi terlipat secara bawaan ("Lihat perubahan") dan bernomor + berjam seperti 026
     assert.match(layar, /const \[bukaRiwayat, setBukaRiwayat\] = useState\(false\);/);
     assert.match(layar, /\{teksVersiTujuan\(v\)\}/);
+    // Perbaikan kecil LANJUT_034: status tujuan aktif di Jalur Saya v2 berlabel "Aktif", sedangkan v1 tetap "Sedang dikejar"
+    assert.equal(jalurSaya.LABEL_STATUS_TUJUAN_V2.aktif, 'Aktif');
+    assert.equal(jalurV1.LABEL_STATUS_TUJUAN.aktif, 'Sedang dikejar');
+    assert.match(layar, /\{LABEL_STATUS_TUJUAN_V2\[tujuan\.status\]\}/);
     const contohVersi = jalurSaya.teksVersiTujuan({
       versi_ke: 2,
       dibuat_pada: '2026-11-24T03:15:00Z',

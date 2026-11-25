@@ -71,7 +71,7 @@
 | `tidakDitemukanTeks` | `Mungkin sudah diperbarui ke versi baru.` | Keterangan tenang saat id tujuan lama dibuka langsung |
 | `kembaliKeJalur` | `Kembali` | Tombol kembali ke `/jalur-tujuan` |
 
-> **Catatan teks bersama v1 (`lib/jalurTujuan.ts`):** label status tujuan (`Aktif`, `Tercapai`, `Ditinggalkan`), format riwayat versi (`Versi ke-<nomor> (<tanggal> pukul <jam>): <judul>`), kalimat peristiwa perjalanan, serta pesan validasi dan kode galat server (`GALAT_ISIAN_TUJUAN`, `pesanGalatJalurTujuan`) memakai ulang fungsi yang sudah tercatat DRAF di `docs/draf-teks-jalur-tujuan.md`.
+> **Catatan label status tujuan v2 (perbaikan kecil di LANJUT_034):** khusus di Jalur Saya v2 (`LABEL_STATUS_TUJUAN_V2`), status tujuan aktif memakai label **`Aktif`** (sementara v1 di `lib/jalurTujuan.ts` tetap **`Sedang dikejar`** tanpa diubah). Label status lain (`Tercapai`, `Sudah diperbarui`, `Ditinggalkan`), format riwayat versi (`Versi ke-<nomor> (<tanggal> pukul <jam>): <judul>`), kalimat peristiwa perjalanan, serta pesan validasi dan kode galat server (`GALAT_ISIAN_TUJUAN`, `pesanGalatJalurTujuan`) memakai ulang fungsi yang sudah tercatat DRAF di `docs/draf-teks-jalur-tujuan.md`.
 
 ---
 

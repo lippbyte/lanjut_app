@@ -1,6 +1,6 @@
-# Peta Navigasi v2 (LANJUT_031, diperbarui LANJUT_032 & LANJUT_033)
+# Peta Navigasi v2 (LANJUT_031, diperbarui LANJUT_032–034)
 
-> **Status:** inventaris terverifikasi terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`. Diperbarui pada `LANJUT_032` (`/jejak-waktu`, `/langkah-saya`) dan `LANJUT_033` (reskin `/jalur-tujuan` & `/jalur-tujuan-tulis` menjadi Jalur Saya v2).
+> **Status:** inventaris terverifikasi terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`. Diperbarui pada `LANJUT_032` (`/jejak-waktu`, `/langkah-saya`), `LANJUT_033` (`/jalur-tujuan`, `/jalur-tujuan-tulis`), dan `LANJUT_034` (reskin `/discover`, `/discover-refleksi`, `/discover-profil`).
 > **Saklar v2:** `EXPO_PUBLIC_NAVIGASI_V2` (mati bawaan). Saat mati, navigasi v1 berjalan persis seperti sebelumnya tanpa perubahan rute maupun perilaku.
 > **Aturan nama:** nama rute, kunci API, tabel, dan saklar yang sudah ada **tidak diubah**. Hanya label tampilan yang disesuaikan (K47: Arah Saya, Jelajah, Jalur Saya, Jejak Waktu, Langkah Saya, Rekam Jejak, Profil Saya, Akun & Privasi).
 
@@ -45,9 +45,9 @@ Diperiksa langsung dari seluruh berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+ht
 | Nama v1 | Rute | Saklar | Dijangkau / status di v2 | Label tampilan v2 |
 |---|---|---|---|---|
 | Beranda / Linimasa | `/linimasa` | selalu aktif di v1 | **Digantikan oleh Arah Saya (`/arah-saya`) dan Jejak Waktu (`/jejak-waktu`).** Alasan: `/linimasa` sebenarnya Beranda v1 sehingga sebelumnya menduplikasi beranda saat tab Jejak Waktu membukanya; di v2 peran beranda diambil `/arah-saya` dan jadwal waktu dibuka di `/jejak-waktu`. Rute `/linimasa` tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati. | Arah Saya / Jejak Waktu |
-| Discover | `/discover` | `EXPO_PUBLIC_DISCOVER=1` | **Tab:** Jelajah; **Kartu pintu besar** di Arah Saya; **Tombol keadaan kosong** Arah Saya & Jejak Waktu | Jelajah |
-| Tulis Refleksi | `/discover-refleksi` | `EXPO_PUBLIC_DISCOVER=1` | **Pintu dari layar lain:** layar Jelajah (`/discover`) | Tulis Refleksi |
-| Profil Eksplorasi (026) | `/discover-profil` | `EXPO_PUBLIC_DISCOVER=1` | **Tab:** Profil Saya (saat Discover menyala); **Pintu dari layar lain:** `/discover` | Profil Saya |
+| Discover | `/discover` | `EXPO_PUBLIC_DISCOVER=1` | **Tab:** Jelajah; **Kartu pintu besar** di Arah Saya; **Tombol keadaan kosong** Arah Saya & Jejak Waktu. Merender `JelajahV2` (`LANJUT_034`) saat `EXPO_PUBLIC_NAVIGASI_V2=1`, dan tetap `DiscoverScreen` v1 saat mati. | Jelajah |
+| Tulis Refleksi | `/discover-refleksi` | `EXPO_PUBLIC_DISCOVER=1` | **Pintu dari layar lain:** rincian kartu di Jelajah (`/discover`). Merender `RefleksiJelajahV2` (`LANJUT_034`) saat `EXPO_PUBLIC_NAVIGASI_V2=1`. | Tulis Refleksi |
+| Profil Eksplorasi (026) | `/discover-profil` | `EXPO_PUBLIC_DISCOVER=1` | **Tab:** Profil Saya (saat Discover menyala; bila mati tab membuka `/akun`). Merender `ProfilEksplorasiV2` (`LANJUT_034`) saat `EXPO_PUBLIC_NAVIGASI_V2=1` dengan kartu pintu `Akun & Privasi` dari `AppShellV2`. | Profil Saya |
 | Data Akun | `/akun` | selalu aktif | **Pintu dari layar lain:** pintu Akun & Privasi di tab Profil Saya (`/discover-profil`), atau langsung di **Tab:** Profil Saya saat Discover mati | Akun & Privasi |
 | Hapus akun & unduh data | `/hapus-akun` | `EXPO_PUBLIC_KELOLA_DATA_AKUN=1` | **Pintu dari layar lain:** bagian Data saya di Akun & Privasi (`/akun`) | Hapus Akun |
 | Terima Kebijakan Privasi | `/terima-kebijakan` | selalu aktif | **Pintu dari layar lain:** Akun & Privasi (`/akun`), `PromptKebijakan`, dan `/ngobrol` | Kebijakan Privasi |
@@ -87,4 +87,4 @@ Diperiksa langsung dari seluruh berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+ht
 
 - **Rute v1 yang sengaja digantikan di v2 (`RUTE_V1_DIGANTIKAN_V2`):** **2 rute** (`/linimasa` → `/arah-saya` + `/jejak-waktu`; `/daftar-periksa` → `/langkah-saya`), masing-masing terdokumentasi eksplisit beserta alasannya dan diuji otomatis di `server/tests/navigasi-v2.test.js`. Kedua rute v1 tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati.
 - **Rute v1 lainnya (28 rute dalam sesi + 5 luar sesi):** seluruhnya tetap terjangkau langsung di graf navigasi v2.
-- **Catatan layar yang belum di-reskin (task 034–035):** layar v1 lain (`/discover`, `/discover-profil`, `/portofolio`, `/akun`, dan layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2. (`/jalur-tujuan` dan `/jalur-tujuan-tulis` sudah memakai tampilan Jalur Saya v2 sejak `LANJUT_033` saat `EXPO_PUBLIC_NAVIGASI_V2=1`.)
+- **Catatan layar yang belum di-reskin (task 035):** layar v1 lain (`/portofolio`, `/akun`, dan layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2. (`/jalur-tujuan`, `/jalur-tujuan-tulis`, `/discover`, `/discover-refleksi`, dan `/discover-profil` sudah memakai tampilan v2 saat `EXPO_PUBLIC_NAVIGASI_V2=1`.)
