@@ -1,16 +1,21 @@
 import React from 'react';
 import {
   CalendarBlank,
+  Camera,
   CaretDown,
   CaretLeft,
   CaretRight,
   Check,
   Compass,
   DeviceMobile,
+  ImageSquare,
   Info,
+  LinkSimple,
   MagnifyingGlass,
   Moon,
+  Plus,
   Sun,
+  Trash,
   User,
   Warning,
   type Icon,
@@ -34,6 +39,11 @@ const IKON_V2 = {
   sistem: DeviceMobile,
   terang: Sun,
   gelap: Moon,
+  tambah: Plus,
+  foto: ImageSquare,
+  kamera: Camera,
+  tautan: LinkSimple,
+  hapus: Trash,
 } as const satisfies Record<string, Icon>;
 
 export type NamaIkonV2 = keyof typeof IKON_V2;
