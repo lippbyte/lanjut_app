@@ -574,16 +574,20 @@ describe('Gerbang rilis dan dokumen draf', () => {
       tulis('lib/jalurSayaV2.ts', '// TEKS DRAF\n');
       tulis('lib/jelajahV2.ts', '// TEKS DRAF\n');
       tulis('lib/rekamJejakV2.ts', '// TEKS DRAF\n');
+      tulis('lib/akunPrivasiV2.ts', '// TEKS DRAF\n');
       tulis('components/screens/v2/JalurSayaV2.tsx', '// komponen v2\n');
       tulis('components/screens/v2/JelajahV2.tsx', '// komponen v2\n');
       tulis('components/screens/v2/ProfilEksplorasiV2.tsx', '// komponen v2\n');
       tulis('components/screens/v2/RekamJejakV2.tsx', '// komponen v2\n');
       tulis('components/screens/v2/RekamJejakFotoV2.tsx', '// komponen v2\n');
+      tulis('components/screens/v2/AkunPrivasiV2.tsx', '// komponen v2\n');
+      tulis('components/screens/v2/HapusAkunV2.tsx', '// komponen v2\n');
       tulis('docs/draf-teks-navigasi-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-jejak-waktu-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-jalur-saya-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-jelajah-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-rekam-jejak-v2.md', 'DRAF\n');
+      tulis('docs/draf-teks-akun-privasi-v2.md', 'DRAF\n');
 
       // Keduanya menyala → keduanya tertahan
       tulis('eas.json', {

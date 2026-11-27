@@ -381,6 +381,46 @@ Layar **Jelajah** (`/discover`, `/discover-refleksi`) dan **Profil Eksplorasi** 
    - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` (biarkan `$env:EXPO_PUBLIC_PORTOFOLIO = "1"`), jalankan ulang `npx expo start --clear`: pastikan `/portofolio`, `/portofolio-tulis`, dan `/portofolio-butir` kembali menampilkan layar v1 **Portofolio** persis seperti semula.
    - Kosongkan `$env:EXPO_PUBLIC_PORTOFOLIO = ""` (dengan `$env:EXPO_PUBLIC_NAVIGASI_V2 = "1"`), jalankan ulang `npx expo start --clear`: pastikan kartu **Rekam Jejak** di Arah Saya tidak tampil dan rute `/portofolio*` mengembalikan ke awal.
 
+---
+
+## 17. Akun & Privasi v2 (LANJUT_037)
+
+> **Catatan:** Daftar periksa di bawah ini disusun untuk pengujian manual oleh manusia di perangkat fisik (Expo Go). Hingga selesai LANJUT_037, pengujian di HP fisik, pembaca layar (TalkBack/VoiceOver), serta skala ukuran huruf besar perangkat **belum dijalankan**; verifikasi otomatis LANJUT_037 hanya dilakukan lewat uji kode dan peramban komputer (DEV).
+
+1. **Jalankan server pengembangan (`LANJUT_App\server`) pada `lanjut_dev`:**
+   ```powershell
+   npm run benih-dummy
+   npm run dev
+   ```
+2. **Nyalakan saklar aplikasi di `LANJUT_App` lalu jalankan Expo dengan `--clear`:**
+   ```powershell
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_KELOLA_DATA_AKUN = "1"
+   $env:EXPO_PUBLIC_MODE_GELAP = "1"
+   $env:EXPO_PUBLIC_DISCOVER = "1"
+   npx expo start --clear
+   ```
+   *(Menjalankan `--clear` wajib setiap kali saklar `EXPO_PUBLIC_*` diubah agar nilai saklar terbaca ulang oleh Metro.)*
+3. **Periksa dua jalan menuju Akun & Privasi (`/akun`):**
+   - Dengan `EXPO_PUBLIC_DISCOVER = "1"`, buka tab **Profil Saya** (`/discover-profil`) lalu ketuk kartu pintu **Akun & Privasi** di bagian atas → pastikan layar **Akun & Privasi v2** terbuka.
+   - Uji juga dengan `$env:EXPO_PUBLIC_DISCOVER = ""` dan `npx expo start --clear`: pastikan tab **Profil Saya** langsung membuka **Akun & Privasi v2** (`/akun`) dengan 3 tab bawah merata.
+4. **Uji kartu Akunku, Tampilan, Unduh data, dan Keluar (memakai akun dummy, JANGAN hapus akun dummy bersama):**
+   - Periksa kartu **Akunku**: pastikan nama, `@nama_pengguna`, dan alamat email panjang tampil **utuh penuh** (pindah baris secara alami, tidak terpotong `…`). Ketuk tautan **Kebijakan privasi** untuk memastikan halaman kebijakan terbuka.
+   - Periksa kartu **Tampilan**: coba ketiga pilihan (`Ikuti sistem`, `Terang`, `Gelap`). Pastikan pilihan aktif selalu punya penanda tertulis **`Aktif`** + ikon centang (bukan hanya warna), dan pilihan tetap tersimpan di HP setelah aplikasi ditutup dan dibuka ulang.
+   - Periksa kartu **Datamu**: ketuk **Unduh data saya**. Pastikan muncul tanda memuat (`Menyiapkan data…`), lembar berbagi sistem HP terbuka dengan berkas JSON, lalu status `Berkas disiapkan.` tampil (dan bila server dimatikan sementara, muncul pesan galat + tombol **Coba lagi**).
+   - Ketuk **Keluar** di bawah: pastikan kembali ke layar masuk dan data akun sebelumnya tidak terbawa bila masuk dengan akun lain.
+5. **Uji alur Hapus akun (WAJIB pakai akun uji baru milik sendiri, BUKAN akun dummy bersama):**
+   - Daftarkan satu akun uji sementara baru (mis. `uji_hapus_hp_01`) lewat layar Daftar lalu masuk.
+   - Buka **Akun & Privasi**, gulir ke kartu **Hapus akun** yang terpisah di bagian bawah (penanda tertulis `Tindakan permanen`), ketuk **Hapus akun saya** (`/hapus-akun`).
+   - Pastikan **Batal** mengembalikan ke `/akun` tanpa menghapus apa pun.
+   - Coba ketuk **Hapus akun permanen** tanpa mencentang kotak atau tanpa mengisi kata sandi → pastikan permintaan ditolak di layar dengan pesan `Centang dan isi konfirmasi dulu.`.
+   - Centang kotak lalu masukkan kata sandi yang salah → pastikan muncul pesan sopan `Kata sandi tidak cocok.` dan akun tidak terhapus.
+   - Masukkan kata sandi yang benar lalu ketuk **Hapus akun permanen** → pastikan akun terhapus, sesi dibersihkan, dan aplikasi langsung kembali ke layar awal masuk.
+6. **Uji saklar mati:**
+   - Kosongkan `$env:EXPO_PUBLIC_KELOLA_DATA_AKUN = ""` (biarkan `EXPO_PUBLIC_NAVIGASI_V2 = "1"`), jalankan ulang `npx expo start --clear`: pastikan tidak ada tombol unduh data atau hapus akun di `/akun` dan membuka `/hapus-akun` mengembalikan ke `/akun`.
+   - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` (biarkan `EXPO_PUBLIC_KELOLA_DATA_AKUN = "1"`), jalankan ulang `npx expo start --clear`: pastikan `/akun` dan `/hapus-akun` kembali menampilkan layar v1 persis seperti semula.
+
+
 
 
 

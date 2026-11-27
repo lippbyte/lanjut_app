@@ -168,7 +168,7 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
                     />
                   </View>
                 ) : null}
-                {tampilPilihMode ? (
+                {tampilPilihMode && !SAKLAR.kelolaDataAkun ? (
                   <View style={s.pintuTabWadah}>
                     <PilihModeTampilanV2 />
                   </View>
