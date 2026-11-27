@@ -111,16 +111,19 @@ export function labelHapusButirPribadi(judul: string): string {
 
 export type AksiKosongLangkahSaya =
   | { jenis: 'tambah_jadwal'; label: string }
-  | { jenis: 'rute'; label: string; href: '/pilih-mapel' };
+  | { jenis: 'rute'; label: string; href: '/pilih-mapel' }
+  | null;
 
-/** Aksi tunggal pada keadaan kosong Langkah Saya sesuai jenjang & ketersediaan event SMP. */
+/** Aksi tunggal pada keadaan kosong Langkah Saya sesuai jenjang, event SMP, dan saklar Alat belajar. */
 export function aksiKosongLangkahSaya(p: {
   kelas: Kelas | null | undefined;
   bisaEventSmp: boolean;
+  alatBelajar?: boolean;
 }): AksiKosongLangkahSaya {
   if (untukPersiapanEvent(p.kelas) && p.bisaEventSmp) {
     return { jenis: 'tambah_jadwal', label: TEKS_LANGKAH_SAYA.kosongTombolTambahJadwal };
   }
+  if (!p.alatBelajar) return null;
   return { jenis: 'rute', label: TEKS_LANGKAH_SAYA.kosongTombolMapel, href: '/pilih-mapel' };
 }
 
@@ -138,6 +141,7 @@ export function teksTetapLangkahSaya(p: {
   adaCatatanSnpmb?: boolean;
   bisaEventSmp?: boolean;
   kelas?: Kelas | null;
+  alatBelajar?: boolean;
 }): string[] {
   const daftar: string[] = [TEKS_LANGKAH_SAYA.ringkasan];
   if (p.keadaan === 'galat') {
@@ -145,8 +149,13 @@ export function teksTetapLangkahSaya(p: {
     return daftar;
   }
   if (p.keadaan === 'kosong') {
-    const aksi = aksiKosongLangkahSaya({ kelas: p.kelas, bisaEventSmp: Boolean(p.bisaEventSmp) });
-    daftar.push(TEKS_LANGKAH_SAYA.kosongJudul, TEKS_LANGKAH_SAYA.kosongTeks, aksi.label);
+    const aksi = aksiKosongLangkahSaya({
+      kelas: p.kelas,
+      bisaEventSmp: Boolean(p.bisaEventSmp),
+      alatBelajar: p.alatBelajar,
+    });
+    daftar.push(TEKS_LANGKAH_SAYA.kosongJudul, TEKS_LANGKAH_SAYA.kosongTeks);
+    if (aksi) daftar.push(aksi.label);
     return daftar;
   }
   if (p.keadaan === 'kelas12_pilih_jalur') {
@@ -164,9 +173,11 @@ export function teksTetapLangkahSaya(p: {
   daftar.push(
     TEKS_LANGKAH_SAYA.progresDari,
     TEKS_LANGKAH_SAYA.progresSelesai,
-    kalimatProgresLangkah(p.statusProgres ?? 'berjalan'),
-    TEKS_LANGKAH_SAYA.pintuTambahPribadi
+    kalimatProgresLangkah(p.statusProgres ?? 'berjalan')
   );
+  if (p.alatBelajar) {
+    daftar.push(TEKS_LANGKAH_SAYA.pintuTambahPribadi);
+  }
   if (p.adaCatatanSnpmb) {
     daftar.push(TEKS_LANGKAH_SAYA.catatanSnpmbRingkas);
   }

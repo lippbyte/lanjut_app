@@ -8,13 +8,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useKurangiGerak } from '../../../hooks/useKurangiGerak';
 import { TEKS_ARAH_SAYA } from '../../../lib/arahSaya';
-import { discoverAktif, jalurTujuanAktif, kelolaDataAkunAktif, portofolioAktif } from '../../../lib/fiturApp';
+import { alatBelajarAktif, discoverAktif, jalurTujuanAktif, kelolaDataAkunAktif, portofolioAktif } from '../../../lib/fiturApp';
 import { gerakBoleh } from '../../../lib/kurangiGerak';
 import {
   PINTU_TAB_V2,
   butuhWadahTerangV1,
   daftarTabV2,
   judulHalamanAnakV2,
+  ruteAlatBelajarTertutup,
   tabAktifV2,
   tujuanKembaliV2,
 } from '../../../lib/navigasiV2';
@@ -31,6 +32,7 @@ const SAKLAR = {
   jalurTujuan: jalurTujuanAktif(EXTRA),
   portofolio: portofolioAktif(EXTRA),
   kelolaDataAkun: kelolaDataAkunAktif(EXTRA),
+  alatBelajar: alatBelajarAktif(EXTRA),
 };
 
 const TANPA_GULIR_HALAMAN = new Set(['/ngobrol']);
@@ -108,6 +110,13 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
     else if (aksi.aksi === 'ganti') router.replace(aksi.href as any);
   };
 
+  const ruteTertutup = ruteAlatBelajarTertutup(pathname, SAKLAR.alatBelajar);
+  useEffect(() => {
+    if (ruteTertutup) {
+      router.replace('/arah-saya' as any);
+    }
+  }, [ruteTertutup, router]);
+
   // Di mode gelap wordmark tampil langsung di atas `bg` (warna.halaman); di mode terang di dalam badge biru LANJUT.
   const latarAppbar = mode === 'gelap' ? warna.halaman : warna.permukaan;
   // LANJUT_039: rute anak v1 di dalam shell gelap dibungkus permukaan terang (`warnaTerang.halaman`)
@@ -118,7 +127,13 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
 
   return (
     <View style={StyleSheet.flatten([s.akar, { backgroundColor: warna.halaman }])}>
-      <Header
+      {ruteTertutup ? (
+        // Pertahankan <Slot /> (children) tetap terpasang agar navigator expo-router tidak kehilangan state
+        // selama router.replace('/arah-saya') berlangsung (sama dengan pola app/(app)/_layout.tsx).
+        <View style={s.tersembunyi}>{children}</View>
+      ) : (
+        <>
+          <Header
         style={StyleSheet.flatten([
           s.appbar,
           { backgroundColor: latarAppbar, borderBottomColor: warna.garisHalus, paddingTop: top + ruang.r1 },
@@ -191,12 +206,15 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
       </Main>
 
       <TabBarV2 tabs={tabs} aktif={aktif} onPilih={pilihTab} />
+        </>
+      )}
     </View>
   );
 }
 
 const s = StyleSheet.create({
   akar: { flex: 1 },
+  tersembunyi: { display: 'none' },
   appbar: {
     borderBottomWidth: garis.tipis,
     paddingBottom: ruang.r1,

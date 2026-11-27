@@ -452,6 +452,40 @@ Layar **Jelajah** (`/discover`, `/discover-refleksi`) dan **Profil Eksplorasi** 
 5. **Uji saklar mati:**
    - Kosongkan seluruh `$env:EXPO_PUBLIC_*` v2 dan jalankan ulang `npx expo start --go --lan --clear`: pastikan `/kebijakan-privasi`, `/terima-kebijakan`, dan seluruh layar v1 kembali tampil persis seperti v1 tanpa perubahan.
 
+---
+
+## 19. Sembunyikan "Alat belajar" di v2 (LANJUT_040)
+
+> Belum dicoba di HP fisik oleh agen — daftar langkah manual untuk dicoba di Expo Go / peramban dev.
+
+1. **Uji keadaan penguji (`EXPO_PUBLIC_ALAT_BELAJAR` mati / bawaan):**
+   ```powershell
+   cd LANJUT_App
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2="1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2="1"
+   $env:EXPO_PUBLIC_MODE_GELAP="1"
+   $env:EXPO_PUBLIC_PORTOFOLIO="1"
+   $env:EXPO_PUBLIC_JALUR_TUJUAN="1"
+   $env:EXPO_PUBLIC_DISCOVER="1"
+   $env:EXPO_PUBLIC_KELOLA_DATA_AKUN="1"
+   Remove-Item Env:EXPO_PUBLIC_ALAT_BELAJAR -ErrorAction SilentlyContinue
+   npx expo start --go --lan --clear
+   ```
+   - Masuk dengan akun dummy (mis. `demo_kelas12_dc`).
+   - Di **Arah Saya** (`/arah-saya`), pastikan bagian lipat **"Alat belajar"** **tidak muncul** di mode terang maupun gelap.
+   - Buka **Langkah Saya** (`/langkah-saya`): pastikan tombol bawah *"Tambah dari Pilih Mapel"* dan *"Eksplorasi Kampus"* tidak muncul (dan tidak ada tombol menuju rute v1 Alat belajar).
+   - Di peramban (atau tautan dalam), coba buka langsung `/arsip`, `/level-in`, `/pilih-mapel`, atau `/arsip-kartu`: pastikan langsung dialihkan dengan ramah ke **Arah Saya** (`/arah-saya`), bukan layar kosong atau galat.
+   - Pastikan `/terima-kebijakan` dan `/kebijakan-privasi` tetap dapat dibuka normal.
+2. **Uji saat `EXPO_PUBLIC_ALAT_BELAJAR=1` menyala:**
+   ```powershell
+   $env:EXPO_PUBLIC_ALAT_BELAJAR="1"
+   npx expo start --go --lan --clear
+   ```
+   - Pastikan bagian lipat **"Alat belajar"** kembali tampil di **Arah Saya** dengan 10 tombol v1 seperti LANJUT_031.
+3. **Uji saat `EXPO_PUBLIC_NAVIGASI_V2` mati (v1 utuh):**
+   - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2` (dan `$env:EXPO_PUBLIC_ALAT_BELAJAR`), jalankan `npx expo start --go --lan --clear`: pastikan seluruh 5 tab v1 (termasuk Jenjang Saya, Ngobrol, Pilih Mapel) dan seluruh layar v1 bekerja persis seperti sebelumnya.
+
+
 
 
 

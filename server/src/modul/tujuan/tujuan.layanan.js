@@ -147,8 +147,8 @@ async function tautkanBukti(penggunaId, butirId, data) {
     waktu: sekarangUntukDb(),
   });
   if (!berhasil) throw galatTujuan();
-  const b = await butirRepo.ambilMilikSendiri(penggunaId, butirId);
-  return { id: b.id, jalur_minat_id: b.jalur_minat_id, tujuan_id: b.tujuan_id };
+  const [b, tersedia] = await Promise.all([butirRepo.ambilMilikSendiri(penggunaId, butirId), idJalurTersedia()]);
+  return { id: b.id, ...samarkanJalur(b.jalur_minat_id, tersedia), tujuan_id: b.tujuan_id };
 }
 
 /**

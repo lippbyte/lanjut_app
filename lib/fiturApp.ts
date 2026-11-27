@@ -78,3 +78,28 @@ export function mikrofonNgobrolAktif(extra: unknown): boolean {
   if (!extra || typeof extra !== 'object') return false;
   return (extra as { mikrofonNgobrol?: unknown }).mikrofonNgobrol === true;
 }
+
+/**
+ * Alat belajar v1 di antarmuka v2 (LANJUT_040): 10 fitur v1 lama (Arsip, Latihan, Level-In,
+ * Ngobrol, Jenjang Saya, Pilih Mapel, Eksplorasi Kampus, Cek Posisi, Gaya Belajar, Cerita Alumni)
+ * beserta rute anaknya disembunyikan di APK penguji v2 sampai direskin.
+ * Bawaan: MATI. Hanya berpengaruh saat `EXPO_PUBLIC_NAVIGASI_V2=1`.
+ * Menyala bila `extra.alatBelajar === true` atau `process.env.EXPO_PUBLIC_ALAT_BELAJAR === '1'`.
+ */
+export function alatBelajarAktif(
+  extra?: unknown,
+  env?: Record<string, string | undefined>
+): boolean {
+  if (extra && typeof extra === 'object' && 'alatBelajar' in extra) {
+    return (extra as { alatBelajar?: unknown }).alatBelajar === true;
+  }
+  if (env) return env.EXPO_PUBLIC_ALAT_BELAJAR === '1';
+  // Jangan memagari dengan `typeof process !== 'undefined'`: di bundel web/native,
+  // `babel-preset-expo` mengganti langsung ekspresi `process.env.EXPO_PUBLIC_ALAT_BELAJAR`
+  // dengan literal ("1" / undefined) walau global `process` tidak tersedia di peramban.
+  try {
+    return process.env.EXPO_PUBLIC_ALAT_BELAJAR === '1';
+  } catch {
+    return false;
+  }
+}

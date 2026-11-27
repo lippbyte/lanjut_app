@@ -252,7 +252,8 @@ describe('Inventaris dan keterjangkauan seluruh rute v1 di v2', () => {
   });
 
   test('Setiap rute dalam sesi v1 dapat dijangkau di graf navigasi v2 atau tercatat eksplisit digantikan beserta alasan', () => {
-    const penuh = { discover: true, jalurTujuan: true, portofolio: true, kelolaDataAkun: true };
+    // Saat semua saklar termasuk alatBelajar menyala, seluruh rute v1 (selain yang digantikan) terjangkau.
+    const penuh = { discover: true, jalurTujuan: true, portofolio: true, kelolaDataAkun: true, alatBelajar: true };
     const terjangkau = navV2.ruteTerjangkauV2(penuh, arahSaya.daftarPintuArahSaya(penuh));
     const digantikan = navV2.RUTE_V1_DIGANTIKAN_V2;
     assert.deepEqual(Object.keys(digantikan).sort(), ['/daftar-periksa', '/linimasa']);
@@ -271,17 +272,35 @@ describe('Inventaris dan keterjangkauan seluruh rute v1 di v2', () => {
     const hilang = RUTE_APP_DI_DISK.filter((r) => !(r in digantikan) && !terjangkau.has(r));
     assert.deepEqual(hilang, [], `rute v1 tak terjangkau tanpa alasan penggantian: ${hilang.join(', ')}`);
 
-    // Saat saklar fitur mati, rute fitur bersaklar tidak terjangkau; semua rute inti tetap terjangkau.
-    const inti = { discover: false, jalurTujuan: false, portofolio: false, kelolaDataAkun: false };
+    // LANJUT_040: saat saklar Alat belajar mati (bawaan penguji), 17 rute v1 Alat belajar tidak terjangkau,
+    // sementara seluruh rute v2 dan /terima-kebijakan tetap terjangkau.
+    const penguji = { discover: true, jalurTujuan: true, portofolio: true, kelolaDataAkun: true, alatBelajar: false };
+    const terjangkauPenguji = navV2.ruteTerjangkauV2(penguji, arahSaya.daftarPintuArahSaya(penguji));
+    for (const r of navV2.RUTE_ALAT_BELAJAR_TERTUTUP) {
+      assert.ok(!terjangkauPenguji.has(r), `rute Alat belajar v1 masih terjangkau saat saklar mati: ${r}`);
+    }
+    for (const r of ['/arah-saya', '/jejak-waktu', '/langkah-saya', '/akun', '/hapus-akun', '/terima-kebijakan', '/portofolio', '/discover', '/jalur-tujuan']) {
+      assert.ok(terjangkauPenguji.has(r), `rute v2/kebijakan hilang saat Alat belajar mati: ${r}`);
+    }
+
+    // Saat semua saklar fitur mati (termasuk Alat belajar), rute bersaklar tidak terjangkau; rute inti tetap terjangkau.
+    const inti = { discover: false, jalurTujuan: false, portofolio: false, kelolaDataAkun: false, alatBelajar: false };
     const terjangkauInti = navV2.ruteTerjangkauV2(inti, arahSaya.daftarPintuArahSaya(inti));
-    for (const r of ['/portofolio', '/portofolio-tulis', '/portofolio-butir', '/discover', '/discover-refleksi', '/discover-profil', '/jalur-tujuan', '/jalur-tujuan-tulis', '/hapus-akun']) {
+    const setAlat = new Set(navV2.RUTE_ALAT_BELAJAR_TERTUTUP);
+    for (const r of ['/portofolio', '/portofolio-tulis', '/portofolio-butir', '/discover', '/discover-refleksi', '/discover-profil', '/jalur-tujuan', '/jalur-tujuan-tulis', '/hapus-akun', ...navV2.RUTE_ALAT_BELAJAR_TERTUTUP]) {
       assert.ok(!terjangkauInti.has(r), `rute bersaklar mati malah terjangkau: ${r}`);
     }
     const ruteInti = RUTE_APP_DI_DISK.filter(
-      (r) => !(r in digantikan) && !/^\/(portofolio|discover|jalur-tujuan|hapus-akun)/.test(r)
+      (r) => !(r in digantikan) && !/^\/(portofolio|discover|jalur-tujuan|hapus-akun)/.test(r) && !setAlat.has(r)
     );
     for (const r of ruteInti) {
       assert.ok(terjangkauInti.has(r), `rute inti tak terjangkau saat saklar lain mati: ${r}`);
+    }
+    // Dan saat hanya alatBelajar menyala, seluruh 17 rute Alat belajar kembali terjangkau.
+    const intiAlat = { ...inti, alatBelajar: true };
+    const terjangkauIntiAlat = navV2.ruteTerjangkauV2(intiAlat, arahSaya.daftarPintuArahSaya(intiAlat));
+    for (const r of navV2.RUTE_ALAT_BELAJAR_TERTUTUP) {
+      assert.ok(terjangkauIntiAlat.has(r), `rute Alat belajar tak terjangkau saat saklar menyala: ${r}`);
     }
     assert.ok(terjangkauInti.has('/arah-saya'));
     assert.ok(terjangkauInti.has('/jejak-waktu'));

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { Image, StyleSheet, View } from 'react-native';
 
@@ -22,6 +23,7 @@ import {
   tampilanMateri,
   teksHitungMundur,
 } from '../../../lib/eventSekolah';
+import { alatBelajarAktif } from '../../../lib/fiturApp';
 import {
   OPSI_JALUR_SELEKSI_LANGKAH,
   OPSI_KELAS_LANGKAH,
@@ -49,6 +51,7 @@ import {
 } from '../../v2';
 
 const UKURAN_KOTAK_CENTANG = ukuran.ikon + garis.fokus * 2;
+const ALAT_BELAJAR = alatBelajarAktif(Constants.expoConfig?.extra);
 
 /**
  * Layar Langkah Saya v2 (`/langkah-saya`, LANJUT_032, saklar EXPO_PUBLIC_NAVIGASI_V2).
@@ -69,9 +72,11 @@ export function LangkahSayaV2() {
   const aksiKosong = aksiKosongLangkahSaya({
     kelas: pengguna?.kelas,
     bisaEventSmp: data.smp.bisaEvent,
+    alatBelajar: ALAT_BELAJAR,
   });
 
   const jalankanAksiKosong = () => {
+    if (!aksiKosong) return;
     if (aksiKosong.jenis === 'tambah_jadwal') {
       setFormEventSmp({});
     } else {
@@ -129,8 +134,8 @@ export function LangkahSayaV2() {
         <KartuKosongMaskot
           judul={TEKS_LANGKAH_SAYA.kosongJudul}
           teks={TEKS_LANGKAH_SAYA.kosongTeks}
-          labelTombol={aksiKosong.label}
-          onTekan={jalankanAksiKosong}
+          labelTombol={aksiKosong?.label}
+          onTekan={aksiKosong ? jalankanAksiKosong : undefined}
         />
       ) : (
         <>
@@ -175,18 +180,20 @@ export function LangkahSayaV2() {
                 </Teks>
               ) : null}
 
-              <View style={s.barisPintuBawah}>
-                <Tombol
-                  varian="teks"
-                  label={TEKS_LANGKAH_SAYA.pintuTambahPribadi}
-                  onPress={() => router.push('/pilih-mapel' as any)}
-                />
-                <Tombol
-                  varian="teks"
-                  label={TEKS_LANGKAH_SAYA.pintuEksplorasi}
-                  onPress={() => router.push('/eksplorasi-tujuan' as any)}
-                />
-              </View>
+              {ALAT_BELAJAR ? (
+                <View style={s.barisPintuBawah}>
+                  <Tombol
+                    varian="teks"
+                    label={TEKS_LANGKAH_SAYA.pintuTambahPribadi}
+                    onPress={() => router.push('/pilih-mapel' as any)}
+                  />
+                  <Tombol
+                    varian="teks"
+                    label={TEKS_LANGKAH_SAYA.pintuEksplorasi}
+                    onPress={() => router.push('/eksplorasi-tujuan' as any)}
+                  />
+                </View>
+              ) : null}
             </>
           ) : null}
 
@@ -652,7 +659,7 @@ function KartuJadwalSmpV2({
         </View>
       ) : (
         <View style={s.konfirmasiTombol}>
-          {materi.buka === 'arsip' ? (
+          {ALAT_BELAJAR && materi.buka === 'arsip' ? (
             <Tombol
               varian="teks"
               label={TEKS_EVENT.bukaMateri}

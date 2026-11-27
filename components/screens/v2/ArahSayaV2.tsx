@@ -11,7 +11,7 @@ import {
   daftarPintuArahSaya,
   teksSapaanV2,
 } from '../../../lib/arahSaya';
-import { discoverAktif, jalurTujuanAktif, kelolaDataAkunAktif, portofolioAktif } from '../../../lib/fiturApp';
+import { alatBelajarAktif, discoverAktif, jalurTujuanAktif, kelolaDataAkunAktif, portofolioAktif } from '../../../lib/fiturApp';
 import { ALAT_BELAJAR_V2 } from '../../../lib/navigasiV2';
 import { useSesi } from '../../../providers/AuthProvider';
 import { garis, radius, ruang, ukuran } from '../../../theme/v2';
@@ -25,6 +25,7 @@ const SAKLAR = {
   jalurTujuan: jalurTujuanAktif(EXTRA),
   portofolio: portofolioAktif(EXTRA),
   kelolaDataAkun: kelolaDataAkunAktif(EXTRA),
+  alatBelajar: alatBelajarAktif(EXTRA),
 };
 
 const PINTU = daftarPintuArahSaya(SAKLAR);
@@ -184,42 +185,44 @@ export function ArahSayaV2() {
             )}
           </View>
 
-          <View style={s.seksi}>
-            <Sentuh
-              peran="button"
-              label={TEKS_ARAH_SAYA.alatBelajarJudul}
-              terbuka={alatTerbuka}
-              onPress={() => setAlatTerbuka((v) => !v)}
-              gaya={({ ditekan }) => [
-                s.lipatTombol,
-                {
-                  backgroundColor: ditekan ? warna.brand : warna.permukaan,
-                  borderColor: warna.garisHalus,
-                },
-              ]}
-            >
-              <Teks varian="judulKecil" gaya={s.fleks}>
-                {TEKS_ARAH_SAYA.alatBelajarJudul}
-              </Teks>
-              <Ikon nama={alatTerbuka ? 'kembali' : 'panah'} ukuran={ukuran.ikon} warna={warna.teksSekunder} />
-            </Sentuh>
-            {alatTerbuka ? (
-              <View
-                style={StyleSheet.flatten([
-                  s.daftarAlat,
-                  { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
-                ])}
+          {SAKLAR.alatBelajar ? (
+            <View style={s.seksi}>
+              <Sentuh
+                peran="button"
+                label={TEKS_ARAH_SAYA.alatBelajarJudul}
+                terbuka={alatTerbuka}
+                onPress={() => setAlatTerbuka((v) => !v)}
+                gaya={({ ditekan }) => [
+                  s.lipatTombol,
+                  {
+                    backgroundColor: ditekan ? warna.brand : warna.permukaan,
+                    borderColor: warna.garisHalus,
+                  },
+                ]}
               >
-                {ALAT_BELAJAR_V2.map((a) => (
-                  <BarisDaftar
-                    key={a.id}
-                    judul={a.label}
-                    onPress={() => router.push(a.href as any)}
-                  />
-                ))}
-              </View>
-            ) : null}
-          </View>
+                <Teks varian="judulKecil" gaya={s.fleks}>
+                  {TEKS_ARAH_SAYA.alatBelajarJudul}
+                </Teks>
+                <Ikon nama={alatTerbuka ? 'kembali' : 'panah'} ukuran={ukuran.ikon} warna={warna.teksSekunder} />
+              </Sentuh>
+              {alatTerbuka ? (
+                <View
+                  style={StyleSheet.flatten([
+                    s.daftarAlat,
+                    { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
+                  ])}
+                >
+                  {ALAT_BELAJAR_V2.map((a) => (
+                    <BarisDaftar
+                      key={a.id}
+                      judul={a.label}
+                      onPress={() => router.push(a.href as any)}
+                    />
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          ) : null}
         </>
       )}
 

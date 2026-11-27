@@ -292,6 +292,48 @@ function auditRute() {
   });
 }
 
+// 4b. KETERJANGKAUAN ALAT BELAJAR V1 DI V2 (LANJUT_040)
+function auditAlatBelajar() {
+  const navV2 = muatModulApp('lib/navigasiV2');
+  const arahSaya = muatModulApp('lib/arahSaya');
+  const dasar = { discover: true, jalurTujuan: true, portofolio: true, kelolaDataAkun: true };
+  const saatMati = navV2.ruteTerjangkauV2({ ...dasar, alatBelajar: false }, arahSaya.daftarPintuArahSaya(dasar));
+  const saatMenyala = navV2.ruteTerjangkauV2({ ...dasar, alatBelajar: true }, arahSaya.daftarPintuArahSaya(dasar));
+  const daftarAlat = navV2.RUTE_ALAT_BELAJAR_TERTUTUP ?? [];
+  const ruteSiswaV2 = [
+    '/arah-saya',
+    '/jejak-waktu',
+    '/langkah-saya',
+    '/jalur-tujuan',
+    '/jalur-tujuan-tulis',
+    '/discover',
+    '/discover-refleksi',
+    '/discover-profil',
+    '/portofolio',
+    '/portofolio-tulis',
+    '/portofolio-butir',
+    '/akun',
+    '/hapus-akun',
+    '/terima-kebijakan',
+    '/kebijakan-privasi',
+  ];
+  const ruteV1TerjangkauSaatMati = daftarAlat.filter((r) => saatMati.has(r));
+  const ruteV1TerjangkauSaatMenyala = daftarAlat.filter((r) => saatMenyala.has(r));
+  const pengecualianTerbuka = ['/terima-kebijakan', '/kebijakan-privasi', '/linimasa', '/daftar-periksa'].every(
+    (r) => !navV2.ruteAlatBelajarTertutup(r, false)
+  );
+  const semuaAlatDialihkan = daftarAlat.every((r) => navV2.ruteAlatBelajarTertutup(r, false));
+  return {
+    totalRuteAlatBelajarV1: daftarAlat.length,
+    ruteV1TerjangkauSaatMati: ruteV1TerjangkauSaatMati.length,
+    ruteV1TerjangkauSaatMenyala: ruteV1TerjangkauSaatMenyala.length,
+    ruteSiswaV2TerjangkauSaatMati: ruteSiswaV2.filter((r) => saatMati.has(r)).length,
+    totalRuteSiswaV2: ruteSiswaV2.length,
+    semuaAlatDialihkanSaatMati: semuaAlatDialihkan,
+    pengecualianTetapTerbuka: pengecualianTerbuka,
+  };
+}
+
 // 5. GERBANG RILIS & DOKUMEN DRAF
 function auditGerbangRilis() {
   const masalah = gerbang.periksa(AKAR_APP);
@@ -384,6 +426,7 @@ async function main() {
     gerak: auditGerak(),
     bahasaDanTeks: auditBahasaDanTeks(),
     rute: auditRute(),
+    alatBelajar: auditAlatBelajar(),
     gerbangRilis: auditGerbangRilis(),
     kontenDb: tanpaDb ? null : await auditKontenDb(),
   };
@@ -397,4 +440,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { auditKontras, auditGerak, auditBahasaDanTeks, auditRute, auditGerbangRilis, auditKontenDb };
+module.exports = { auditKontras, auditGerak, auditBahasaDanTeks, auditRute, auditAlatBelajar, auditGerbangRilis, auditKontenDb };
