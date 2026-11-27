@@ -17,13 +17,14 @@ import type { Kelas } from './jenjang';
 
 export type IdTabV2 = 'arah_saya' | 'jelajah' | 'jejak_waktu' | 'profil_saya';
 export type NamaIkonTabV2 = 'arah' | 'jelajah' | 'waktu' | 'profil';
-export type KunciSaklarV2 = 'discover' | 'jalurTujuan' | 'portofolio' | 'kelolaDataAkun';
+export type KunciSaklarV2 = 'discover' | 'jalurTujuan' | 'portofolio' | 'kelolaDataAkun' | 'alatBelajar';
 
 export type SaklarNavigasiV2 = {
   discover: boolean;
   jalurTujuan: boolean;
   portofolio: boolean;
   kelolaDataAkun?: boolean;
+  alatBelajar?: boolean;
 };
 
 export type DefinisiTabV2 = {
@@ -248,7 +249,7 @@ export const RUTE_ANAK_DARI_LAYAR: Readonly<Record<string, readonly { href: stri
     { href: '/hapus-akun', saklar: 'kelolaDataAkun' },
     { href: '/terima-kebijakan' },
     { href: '/kebijakan-privasi' },
-    { href: '/cek-posisi' },
+    { href: '/cek-posisi', saklar: 'alatBelajar' },
   ],
   '/arsip': [
     { href: '/arsip-tulis' },
@@ -270,11 +271,50 @@ export const RUTE_ANAK_DARI_LAYAR: Readonly<Record<string, readonly { href: stri
   '/pilih-mapel': [{ href: '/eksplorasi-tujuan' }],
   '/jejak-waktu': [{ href: '/langkah-saya' }],
   '/langkah-saya': [
-    { href: '/pilih-mapel' },
-    { href: '/eksplorasi-tujuan' },
-    { href: '/arsip-kartu' },
+    { href: '/pilih-mapel', saklar: 'alatBelajar' },
+    { href: '/eksplorasi-tujuan', saklar: 'alatBelajar' },
+    { href: '/arsip-kartu', saklar: 'alatBelajar' },
   ],
 };
+
+/**
+ * Daftar 17 rute v1 "Alat belajar" (10 rute utama di `ALAT_BELAJAR_V2` + 7 rute anak/alias)
+ * yang disembunyikan dari antarmuka v2 saat `EXPO_PUBLIC_ALAT_BELAJAR` mati (LANJUT_040).
+ * Rute pengecualian (`/terima-kebijakan`, `/kebijakan-privasi`, `/linimasa`, `/daftar-periksa`,
+ * serta seluruh rute v2) TIDAK masuk daftar ini sehingga tetap bisa dibuka langsung.
+ */
+export const RUTE_ALAT_BELAJAR_TERTUTUP: readonly string[] = [
+  '/arsip',
+  '/arsip-tulis',
+  '/arsip-kartu',
+  '/arsip-modul',
+  '/arsip-modul-unggah',
+  '/latihan',
+  '/latihan-riwayat',
+  '/level-in',
+  '/ngobrol',
+  '/persetujuan-ortu',
+  '/jenjang-saya',
+  '/khusus-smk',
+  '/pilih-mapel',
+  '/eksplorasi-tujuan',
+  '/cek-posisi',
+  '/gaya-belajar',
+  '/cerita-alumni',
+];
+
+const SET_ALAT_BELAJAR_TERTUTUP = new Set<string>(RUTE_ALAT_BELAJAR_TERTUTUP);
+
+/**
+ * Menentukan apakah `pathname` di dalam `AppShellV2` (hanya saat `EXPO_PUBLIC_NAVIGASI_V2=1`)
+ * termasuk rute Alat belajar v1 yang sedang disembunyikan karena `EXPO_PUBLIC_ALAT_BELAJAR` mati.
+ * Bila `true`, `AppShellV2` mengalihkan siswa dengan ramah ke `/arah-saya`.
+ */
+export function ruteAlatBelajarTertutup(pathname: string, alatBelajar: boolean | undefined): boolean {
+  if (alatBelajar) return false;
+  const bersih = pathname.split('?')[0].replace(/\/+$/, '') || '/';
+  return SET_ALAT_BELAJAR_TERTUTUP.has(bersih);
+}
 
 /**
  * Daftar 18 rute v1 aktif yang tetap dapat dijangkau di dalam `AppShellV2` (audit LANJUT_038).
@@ -364,7 +404,9 @@ export function ruteTerjangkauV2(saklar: SaklarNavigasiV2, pintuArahSaya: readon
   for (const t of daftarTabV2(saklar)) tambah(t.href);
   if (terlihat.has('/arah-saya')) {
     for (const p of pintuArahSaya) tambah(p.href);
-    for (const a of ALAT_BELAJAR_V2) tambah(a.href);
+    if (saklar.alatBelajar) {
+      for (const a of ALAT_BELAJAR_V2) tambah(a.href);
+    }
   }
 
   while (antre.length > 0) {

@@ -319,9 +319,9 @@ test('Menautkan butir bukti ke jalur dan tujuan milik sendiri', async () => {
   await siapkanJalurUji();
   const res = await panggil('PATCH', `/tujuan/bukti/${butirId}`, a.token, { jalur_minat_id: JALUR_UJI.wirausaha, tujuan_id: t.id });
   assert.equal(res.status, 200, JSON.stringify(res.json));
-  assert.deepEqual(res.json.data, { id: butirId, jalur_minat_id: JALUR_UJI.wirausaha, tujuan_id: t.id });
+  assert.deepEqual(res.json.data, { id: butirId, jalur_minat_id: JALUR_UJI.wirausaha, jalur_belum_tersedia: false, tujuan_id: t.id });
   const lepas = await panggil('PATCH', `/tujuan/bukti/${butirId}`, a.token, { tujuan_id: null });
-  assert.deepEqual(lepas.json.data, { id: butirId, jalur_minat_id: JALUR_UJI.wirausaha, tujuan_id: null });
+  assert.deepEqual(lepas.json.data, { id: butirId, jalur_minat_id: JALUR_UJI.wirausaha, jalur_belum_tersedia: false, tujuan_id: null });
 });
 
 test('K37, penutupan celah: tujuan dan butir bukti hanya bisa ditautkan ke jalur yang disetujui', async () => {

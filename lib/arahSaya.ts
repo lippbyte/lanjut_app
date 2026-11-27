@@ -287,6 +287,8 @@ export function teksTetapArahSaya(p: {
   for (const pintu of daftarPintuArahSaya(p.saklar)) {
     hasil.push(pintu.judul, pintu.keterangan);
   }
-  hasil.push(TEKS_ARAH_SAYA.alatBelajarJudul);
+  if (p.saklar.alatBelajar) {
+    hasil.push(TEKS_ARAH_SAYA.alatBelajarJudul);
+  }
   return hasil;
 }
