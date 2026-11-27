@@ -10,7 +10,7 @@
  * - Id jalur mentah (mis. `melanjutkan`, `bekerja`, `wirausaha`) TIDAK PERNAH tampil di layar,
  *   label aksesibilitas, judul, atau pesan galat.
  */
-import type { JalurMinat, PeristiwaPerjalanan, PilihanJalur, StatusTujuan, Tujuan, VersiTujuan } from '../api/types';
+import type { ButirBukti, JalurMinat, PeristiwaPerjalanan, PilihanJalur, StatusTujuan, Tujuan, VersiTujuan } from '../api/types';
 import {
   BATAS_TUJUAN,
   GALAT_ISIAN_TUJUAN,
@@ -129,15 +129,19 @@ export function jalurDisetujuiSaja(daftar: readonly JalurMinat[] | null | undefi
 export type MasukanLabelJalur =
   | JalurMinat
   | Pick<PilihanJalur, 'jalur_minat_id' | 'jalur_belum_tersedia'>
+  | Pick<Tujuan, 'jalur_minat_id' | 'jalur_belum_tersedia'>
+  | Pick<ButirBukti, 'jalur_minat_id' | 'jalur_belum_tersedia'>
   | string
   | null
   | undefined;
 
 /**
- * Satu-satunya pembantu penamaan jalur untuk tampilan dan label aksesibilitas (LANJUT_033 §3):
- * - Menerima objek `JalurMinat`, objek `PilihanJalur`, atau string `jalur_minat_id` (mis. dari `Tujuan`).
+ * Satu-satunya pembantu penamaan jalur untuk tampilan dan label aksesibilitas (LANJUT_033 §3,
+ * diperluas LANJUT_035 untuk `Tujuan` dan `ButirBukti` yang kini membawa `jalur_belum_tersedia`):
+ * - Menerima objek `JalurMinat`, `PilihanJalur`, `Tujuan`, `ButirBukti`, atau string `jalur_minat_id`.
  * - Mengembalikan `nama` jalur HANYA bila jalur tersebut berstatus `status_teks === 'disetujui'`.
- * - Mengembalikan `null` hanya bila masukannya `null` / `undefined` / `''` (tujuan memang tidak dikaitkan ke jalur).
+ * - Mengembalikan `null` hanya bila memang tidak dikaitkan ke jalur (`null`/`undefined`/`''`, atau
+ *   objek dengan `jalur_minat_id: null` dan `jalur_belum_tersedia` tidak bernilai true).
  * - Untuk jalur draf, nonaktif, `jalur_belum_tersedia: true`, atau id yang tidak dikenal di daftar disetujui,
  *   SELALU mengembalikan `LABEL_JALUR_NETRAL` (`'Jalur belum tersedia'`) — TIDAK PERNAH id mentah.
  */
@@ -163,10 +167,56 @@ export function labelJalur(
     return LABEL_JALUR_NETRAL;
   }
 
-  if (masukan.jalur_belum_tersedia || !masukan.jalur_minat_id) {
+  if (masukan.jalur_belum_tersedia) {
     return LABEL_JALUR_NETRAL;
   }
+  if (!masukan.jalur_minat_id) {
+    return null;
+  }
   return petaDisetujui.get(masukan.jalur_minat_id) ?? LABEL_JALUR_NETRAL;
+}
+
+/** Penanda lokal formulir tujuan v2 agar jalur draf tersamar dari server tetap utuh saat hanya judul/uraian diubah. */
+export const NILAI_JALUR_DRAF_TETAP = '__jalur_draf_tetap__';
+
+export function tujuanPunyaJalurDraf(
+  awal: Pick<Tujuan, 'jalur_minat_id' | 'jalur_belum_tersedia'> | undefined,
+  daftarJalur: readonly JalurMinat[]
+): boolean {
+  if (!awal) return false;
+  if (awal.jalur_belum_tersedia) return true;
+  if (!awal.jalur_minat_id) return false;
+  const idSah = new Set(jalurDisetujuiSaja(daftarJalur).map((j) => j.id));
+  return !idSah.has(awal.jalur_minat_id);
+}
+
+export function nilaiJalurAwalFormV2(
+  awal: Pick<Tujuan, 'jalur_minat_id' | 'jalur_belum_tersedia'> | undefined,
+  daftarJalur: readonly JalurMinat[]
+): string | null {
+  if (!awal) return null;
+  if (tujuanPunyaJalurDraf(awal, daftarJalur)) {
+    return awal.jalur_minat_id ?? NILAI_JALUR_DRAF_TETAP;
+  }
+  return awal.jalur_minat_id;
+}
+
+/**
+ * Menyusun payload `POST /tujuan` atau `POST /tujuan/:id/versi` dengan menghormati penyamaran
+ * jalur draf dari server (`jalur_minat_id: null, jalur_belum_tersedia: true`):
+ * - Bila pilihan jalur dibiarkan di `NILAI_JALUR_DRAF_TETAP`, `jalur_minat_id` tidak dikirim agar
+ *   logika `perbarui` di server tetap menyalin `lama.jalur_minat_id` tanpa kehilangan data.
+ * - Bila siswa memilih "Belum terkait jalur" (`null`) atau jalur disetujui baru, perubahan dikirim.
+ */
+export function badanTujuanV2(isi: IsianTujuan, awal?: Tujuan): BadanTujuan | null {
+  if (!awal?.jalur_belum_tersedia) {
+    return badanTujuan(isi, awal);
+  }
+  const tanpaJalur = badanTujuan({ ...isi, jalur: awal.jalur_minat_id }, awal);
+  if (isi.jalur === NILAI_JALUR_DRAF_TETAP) {
+    return tanpaJalur;
+  }
+  return { ...(tanpaJalur ?? {}), jalur_minat_id: isi.jalur };
 }
 
 export type KartuJalurDisetujuiV2 = {

@@ -396,7 +396,10 @@ export type PilihanJalur = {
 export type StatusTujuan = 'aktif' | 'tercapai' | 'diubah' | 'ditinggalkan';
 export type Tujuan = {
   id: string;
+  /** null bila belum terkait jalur atau bila jalurnya kini draf/nonaktif (LANJUT_035, K37). */
   jalur_minat_id: string | null;
+  /** true bila jalurnya kini draf/nonaktif dan disamarkan server (LANJUT_035). */
+  jalur_belum_tersedia?: boolean;
   judul: string;
   uraian: string | null;
   target_pada: string | null;
@@ -470,7 +473,10 @@ export type ProfilEksplorasiSaya = { profil: ProfilEksplorasi | null; jumlah_ver
 export type FotoButir = { id: string; jenis_berkas: string; ukuran_byte: number; nama_asli: string; dibuat_pada: string };
 export type ButirBukti = {
   id: string;
+  /** null bila belum terkait jalur atau bila jalurnya kini draf/nonaktif (LANJUT_035, K37). */
   jalur_minat_id: string | null;
+  /** true bila jalurnya kini draf/nonaktif dan disamarkan server (LANJUT_035). */
+  jalur_belum_tersedia?: boolean;
   tujuan_id: string | null;
   judul: string;
   uraian: string | null;

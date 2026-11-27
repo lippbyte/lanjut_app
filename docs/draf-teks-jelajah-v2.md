@@ -39,9 +39,9 @@ Menggunakan kalimat yang **sama persis** dengan `TEKS_DISCOVER.privasi` di `docs
 | `labelMenarik` | `Yang menarik` | Label kolom refleksi pertama (maks 280 karakter) |
 | `labelKurangMenarik` | `Kurang menarik` | Label kolom refleksi kedua (maks 280 karakter) |
 | `simpan` | `Simpan` | Tombol simpan refleksi / profil |
-| `hapusTulisan` | `Hapus tulisan` | Tombol mengosongkan kedua teks refleksi lewat `PUT /discover/refleksi/:kartuId` |
+| `hapusRefleksi` | `Hapus refleksi` | Tombol menghapus seluruh refleksi (termasuk pilihan ketertarikan) lewat `DELETE /discover/refleksi/:kartuId` (LANJUT_035) |
 | `berhasilSimpanRefleksi` | `Refleksi tersimpan.` | Umpan balik 1 kalimat hangat setelah menyimpan refleksi |
-| `berhasilHapusTulisan` | `Tulisan refleksi dihapus.` | Umpan balik 1 kalimat hangat setelah mengosongkan tulisan refleksi |
+| `berhasilHapusRefleksi` | `Refleksi dihapus.` | Umpan balik 1 kalimat hangat setelah menghapus refleksi secara penuh |
 | `sisaAwalan` | `Sisa` | Awalan penghitung sisa karakter, mis. `Sisa 280` / `Sisa 500` |
 | `melebihiAwalan` | `Melebihi` | Awalan penghitung saat teks melewati batas, mis. `Melebihi 5` |
 | `satuanKarakter` | `karakter` | Satuan aksesibilitas penghitung karakter |
@@ -64,10 +64,10 @@ Menggunakan kalimat yang **sama persis** dengan `TEKS_DISCOVER.privasi` di `docs
 | `formProfilJudulUbah` | `Ubah Profil` | Judul modal saat memperbarui profil |
 | `formProfilCatatanVersi` | `Versi lama tetap tersimpan.` | Catatan singkat bahwa versi lama tidak tertimpa |
 | `labelCatatan` | `Catatan pribadi` | Label kolom catatan profil (maks 500 karakter) |
-| `hapusCatatan` | `Hapus catatan` | Tombol mengosongkan catatan lewat `POST /discover/profil` (`catatan: null`) |
+| `hapusCatatan` | `Hapus catatan` | Tombol mengosongkan catatan pada semua versi profil (termasuk riwayat) lewat `DELETE /discover/profil/catatan` tanpa membuat versi baru (LANJUT_035) |
 | `batal` | `Batal` | Tombol menutup modal tanpa menyimpan |
 | `berhasilSimpanProfil` | `Profil tersimpan.` | Umpan balik 1 kalimat hangat setelah menyimpan profil |
-| `berhasilHapusCatatan` | `Catatan dihapus.` | Umpan balik 1 kalimat hangat setelah mengosongkan catatan |
+| `berhasilHapusCatatan` | `Catatan dihapus.` | Umpan balik 1 kalimat hangat setelah menghapus catatan dari semua versi profil |
 | `memuatJelajah` | `Memuat Jelajah` | Label pembaca layar kerangka memuat Jelajah |
 | `memuatProfil` | `Memuat Profil Saya` | Label pembaca layar kerangka memuat Profil Eksplorasi |
 | `fiturMatiJudul` | `Fitur ini belum tersedia` | Judul saat server mengembalikan 404 (`DISCOVER_AKTIF` mati) |

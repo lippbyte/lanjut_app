@@ -66,4 +66,16 @@ async function buatVersiMilikSendiri(penggunaId, { id, indukId, isi, catatan, wa
   }
 }
 
-module.exports = { ambilTerkiniMilikSendiri, daftarMilikSendiri, buatVersiMilikSendiri };
+/**
+ * Mengosongkan `catatan` pada semua versi profil milik siswa (termasuk riwayat), tanpa menghapus
+ * baris, tanpa mengubah `isi`, dan tanpa membuat versi baru (LANJUT_035). Idempoten.
+ */
+async function kosongkanCatatanMilikSendiri(penggunaId) {
+  const [hasil] = await pool.execute(
+    'UPDATE profil_eksplorasi SET catatan = NULL WHERE pengguna_id = ? AND catatan IS NOT NULL',
+    [penggunaId]
+  );
+  return hasil.affectedRows;
+}
+
+module.exports = { ambilTerkiniMilikSendiri, daftarMilikSendiri, buatVersiMilikSendiri, kosongkanCatatanMilikSendiri };

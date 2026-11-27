@@ -70,6 +70,26 @@ async function simpanRefleksi(penggunaId, kartuId, data) {
   return bentukRefleksi(baris);
 }
 
+/**
+ * Menghapus seluruh baris refleksi milik siswa untuk satu kartu (LANJUT_035).
+ * Idempoten dan tidak membocorkan keberadaan kartu draf maupun data milik siswa lain.
+ */
+async function hapusRefleksi(penggunaId, kartuId) {
+  if (POLA_ID_KARTU.test(kartuId)) {
+    await refleksiRepo.hapusMilikSendiri(penggunaId, kartuId);
+  }
+  return { dihapus: true };
+}
+
+/**
+ * Mengosongkan `catatan` di seluruh versi profil milik siswa (termasuk di riwayat) tanpa mengubah
+ * isian lain dan tanpa membuat versi baru (LANJUT_035). Idempoten.
+ */
+async function hapusCatatanProfil(penggunaId) {
+  await profilRepo.kosongkanCatatanMilikSendiri(penggunaId);
+  return { dihapus: true };
+}
+
 // --- Profil Eksplorasi ----------------------------------------------------------------------
 
 /**
@@ -212,9 +232,11 @@ module.exports = {
   daftarKartu,
   daftarRefleksi,
   simpanRefleksi,
+  hapusRefleksi,
   ambilProfil,
   riwayatProfil,
   perbaruiProfil,
+  hapusCatatanProfil,
   susunIsiProfil,
   bentukProfil,
   dataSiswaSaatIni,

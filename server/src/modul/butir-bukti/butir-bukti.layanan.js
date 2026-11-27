@@ -31,10 +31,10 @@ function bentukFoto(f) {
   return { id: f.id, jenis_berkas: f.jenis_berkas, ukuran_byte: f.ukuran_byte, nama_asli: f.nama_asli, dibuat_pada: keIso(f.dibuat_pada) };
 }
 
-function bentukButir(b, foto) {
+function bentukButir(b, foto, tersedia) {
   return {
     id: b.id,
-    jalur_minat_id: b.jalur_minat_id,
+    ...samarkanJalur(b.jalur_minat_id, tersedia),
     tujuan_id: b.tujuan_id,
     judul: b.judul,
     uraian: b.uraian,
@@ -48,21 +48,29 @@ function bentukButir(b, foto) {
   };
 }
 
-// K37 (LANJUT_023): butir hanya bisa ditautkan ke jalur aktif yang teksnya disetujui. Aturannya satu,
-// di jalur-minat.layanan.js, sama dengan rute Jalur & Tujuan.
-const { pastikanJalurTersedia: pastikanJalurAktif } = require('../jalur-minat/jalur-minat.layanan');
+// K37 (LANJUT_023, LANJUT_035): butir hanya bisa ditautkan ke jalur aktif yang teksnya disetujui,
+// dan jalur yang kembali draf disamarkan di respons memakai samarkanJalur dari jalur-minat.layanan.js.
+const { pastikanJalurTersedia: pastikanJalurAktif, idJalurTersedia, samarkanJalur } = require('../jalur-minat/jalur-minat.layanan');
 
 const galatTujuan = () => new GalatApi('VALIDASI_GAGAL', 'Tujuan tidak ditemukan.', { tujuan_id: 'tidak ditemukan' });
 
 async function daftar(penggunaId) {
-  const [butir, foto] = await Promise.all([butirRepo.daftarMilikSendiri(penggunaId), lampiranRepo.daftarSemuaMilikSendiri(penggunaId)]);
-  return butir.map((b) => bentukButir(b, foto.filter((f) => f.butir_bukti_id === b.id)));
+  const [butir, foto, tersedia] = await Promise.all([
+    butirRepo.daftarMilikSendiri(penggunaId),
+    lampiranRepo.daftarSemuaMilikSendiri(penggunaId),
+    idJalurTersedia(),
+  ]);
+  return butir.map((b) => bentukButir(b, foto.filter((f) => f.butir_bukti_id === b.id), tersedia));
 }
 
 async function ambil(penggunaId, id) {
   const b = await butirRepo.ambilMilikSendiri(penggunaId, id);
   if (!b) throw butirTidakAda();
-  return bentukButir(b, await lampiranRepo.daftarUntukButirMilikSendiri(penggunaId, id));
+  const [foto, tersedia] = await Promise.all([
+    lampiranRepo.daftarUntukButirMilikSendiri(penggunaId, id),
+    idJalurTersedia(),
+  ]);
+  return bentukButir(b, foto, tersedia);
 }
 
 async function buat(penggunaId, data) {

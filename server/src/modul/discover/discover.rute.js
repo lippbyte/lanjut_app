@@ -5,8 +5,10 @@
 //   GET    /kartu               kartu aktif yang teksnya disetujui; draf tidak pernah terkirim
 //   GET    /refleksi            refleksi milik sendiri
 //   PUT    /refleksi/:kartuId   simpan atau perbarui refleksi untuk satu kartu yang disetujui
+//   DELETE /refleksi/:kartuId   hapus seluruh baris refleksi milik sendiri untuk kartu itu (LANJUT_035)
 //   GET    /profil              versi profil eksplorasi terkini, dan jumlah versinya
 //   POST   /profil              versi baru dari jawaban saat ini; versi lama tetap ada
+//   DELETE /profil/catatan      kosongkan catatan di semua versi profil milik sendiri (LANJUT_035)
 //   GET    /profil/riwayat      semua versi, lama ke baru
 //
 // Tidak ada pemanggilan AI, OpenRouter, atau mesin pencari di modul ini.
@@ -41,8 +43,10 @@ const tangani = (fn) => async (req, res, next) => {
 router.get('/kartu', tangani(async (req, res) => sukses(res, await layanan.daftarKartu())));
 router.get('/refleksi', tangani(async (req, res) => sukses(res, await layanan.daftarRefleksi(req.pengguna.id))));
 router.put('/refleksi/:kartuId', validasiBody(refleksiSkema), tangani(async (req, res) => sukses(res, await layanan.simpanRefleksi(req.pengguna.id, req.params.kartuId, req.body))));
+router.delete('/refleksi/:kartuId', tangani(async (req, res) => sukses(res, await layanan.hapusRefleksi(req.pengguna.id, req.params.kartuId))));
 router.get('/profil', tangani(async (req, res) => sukses(res, await layanan.ambilProfil(req.pengguna.id))));
 router.post('/profil', validasiBody(profilSkema), tangani(async (req, res) => sukses(res, await layanan.perbaruiProfil(req.pengguna.id, req.body), undefined, 201)));
+router.delete('/profil/catatan', tangani(async (req, res) => sukses(res, await layanan.hapusCatatanProfil(req.pengguna.id))));
 router.get('/profil/riwayat', tangani(async (req, res) => sukses(res, await layanan.riwayatProfil(req.pengguna.id))));
 
 module.exports = router;
