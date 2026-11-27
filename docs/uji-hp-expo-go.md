@@ -348,6 +348,40 @@ Layar **Jelajah** (`/discover`, `/discover-refleksi`) dan **Profil Eksplorasi** 
    - Hentikan Expo, kosongkan `$env:EXPO_PUBLIC_DISCOVER = ""` (biarkan `EXPO_PUBLIC_NAVIGASI_V2 = "1"`), jalankan ulang dengan `--clear`: pastikan tab **Jelajah** tidak tampil (3 tab merata) dan tab **Profil Saya** membuka `/akun`.
    - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` dan nyalakan `$env:EXPO_PUBLIC_DISCOVER = "1"` dengan `--clear`: pastikan `/discover`, `/discover-refleksi`, dan `/discover-profil` kembali menampilkan layar v1 **Discover** persis seperti semula.
 
+---
+
+## 16. Rekam Jejak v2 (LANJUT_036)
+
+> **Catatan:** Daftar periksa di bawah ini disusun untuk pengujian manual oleh manusia di perangkat fisik (Expo Go). Hingga selesai LANJUT_036, langkah kamera, galeri, berkas HEIC, dan ukuran huruf besar **belum dijalankan di HP sungguhan**; verifikasi otomatis LANJUT_036 hanya dilakukan lewat uji kode dan peramban komputer (DEV).
+
+1. **Nyalakan saklar di server pengembangan (`LANJUT_App\server`):**
+   - Pastikan server lokal berjalan dengan `PORTOFOLIO_AKTIF=1` (dan opsional `JALUR_TUJUAN_AKTIF=1` bila ingin melihat nama jalur tersimpan pada catatan yang sudah pernah dikaitkan).
+2. **Nyalakan kedua saklar di sisi aplikasi (`LANJUT_App`) lalu jalankan Expo dengan `--clear`:**
+   ```powershell
+   $env:EXPO_PUBLIC_PORTOFOLIO = "1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_MODE_GELAP = "1"
+   npx expo start --clear
+   ```
+   *(Menjalankan `--clear` wajib setiap kali saklar `EXPO_PUBLIC_*` diubah agar nilai saklar terbaca ulang oleh Metro.)*
+3. **Buka Rekam Jejak dari layar Arah Saya:**
+   - Dari tab **Arah Saya**, ketuk kartu besar **Rekam Jejak** (`/portofolio`).
+   - Pada akun tanpa catatan, pastikan keadaan kosong tampil dengan maskot kelinci di dalam lingkaran berlatar `#B4E1EB` (pada mode terang maupun mode gelap) dan tombol **Tambah catatan**.
+   - Ketuk **Tambah catatan** (`/portofolio-tulis`), pastikan seluruh isian (judul, jenis bawaan `Karya`, catatan opsional, tautan opsional) ada dalam **satu layar** dengan satu tombol **Simpan**. Simpan 1 catatan (total **3 ketukan** dari Arah Saya sampai catatan pertama tersimpan).
+4. **Uji foto (kamera, galeri, dan HEIC di iOS bila ada):**
+   - Buka catatan yang baru dibuat (`/portofolio-butir?id=...`) lalu periksa peringatan singkat di bagian foto tentang akses pengelola dan larangan mengunggah dokumen pribadi / wajah orang lain tanpa izin.
+   - Ketuk **Pilih galeri**: pastikan foto berhasil diperkecil dan diunggah, kemajuan unggah tampil, lalu foto muncul dari memori aplikasi.
+   - Ketuk **Ambil foto**: pastikan izin kamera diminta saat dipakai, kamera terbuka, foto hasil jepretan berhasil diunggah dan tampil; uji pula penolakan izin kamera untuk memastikan jalan keluar **Buka Pengaturan** tampil.
+   - *(Khusus iPhone/iOS)* Uji memilih foto berformat **HEIC** dari galeri: pastikan berhasil diubah menjadi JPEG dan diunggah, atau bila gagal muncul pesan galat singkat yang jelas tanpa membuat aplikasi macet.
+   - Unggah hingga **3 foto** pada satu catatan: pastikan tombol tambah foto menghilang dan pesan batas (`3/3 foto` + `Sudah 3 foto di sini. Hapus satu untuk mengganti.`) tampil.
+   - Uji **Hapus foto** dengan konfirmasi, lalu uji **Ubah** dan **Hapus** catatan (konfirmasi menyebut semua foto ikut terhapus).
+   - Uji daftar terisi pada mode terang dan gelap: bila ada catatan yang dulu dikaitkan ke jalur yang kini berstatus draf, pastikan hanya tampil tulisan netral **`Jalur belum tersedia`** (tanpa ID mentah).
+5. **Uji saklar mati dan 404 server:**
+   - Matikan `PORTOFOLIO_AKTIF` di server (sementara kedua saklar aplikasi masih nyala): buka **Rekam Jejak** dan pastikan tampil keadaan ramah **`Fitur belum tersedia`** (bukan layar kosong atau galat mentah).
+   - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` (biarkan `$env:EXPO_PUBLIC_PORTOFOLIO = "1"`), jalankan ulang `npx expo start --clear`: pastikan `/portofolio`, `/portofolio-tulis`, dan `/portofolio-butir` kembali menampilkan layar v1 **Portofolio** persis seperti semula.
+   - Kosongkan `$env:EXPO_PUBLIC_PORTOFOLIO = ""` (dengan `$env:EXPO_PUBLIC_NAVIGASI_V2 = "1"`), jalankan ulang `npx expo start --clear`: pastikan kartu **Rekam Jejak** di Arah Saya tidak tampil dan rute `/portofolio*` mengembalikan ke awal.
+
+
 
 
 

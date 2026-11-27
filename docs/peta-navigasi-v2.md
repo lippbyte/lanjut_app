@@ -1,6 +1,6 @@
-# Peta Navigasi v2 (LANJUT_031, diperbarui LANJUT_032–034)
+# Peta Navigasi v2 (LANJUT_031, diperbarui LANJUT_032–036)
 
-> **Status:** inventaris terverifikasi terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`. Diperbarui pada `LANJUT_032` (`/jejak-waktu`, `/langkah-saya`), `LANJUT_033` (`/jalur-tujuan`, `/jalur-tujuan-tulis`), dan `LANJUT_034` (reskin `/discover`, `/discover-refleksi`, `/discover-profil`).
+> **Status:** inventaris terverifikasi terhadap seluruh berkas di `app/` dan `docs/audit-ui-v1.md`. Diperbarui pada `LANJUT_032` (`/jejak-waktu`, `/langkah-saya`), `LANJUT_033` (`/jalur-tujuan`, `/jalur-tujuan-tulis`), `LANJUT_034` (reskin `/discover`, `/discover-refleksi`, `/discover-profil`), dan `LANJUT_036` (reskin Rekam Jejak `/portofolio`, `/portofolio-tulis`, `/portofolio-butir`).
 > **Saklar v2:** `EXPO_PUBLIC_NAVIGASI_V2` (mati bawaan). Saat mati, navigasi v1 berjalan persis seperti sebelumnya tanpa perubahan rute maupun perilaku.
 > **Aturan nama:** nama rute, kunci API, tabel, dan saklar yang sudah ada **tidak diubah**. Hanya label tampilan yang disesuaikan (K47: Arah Saya, Jelajah, Jalur Saya, Jejak Waktu, Langkah Saya, Rekam Jejak, Profil Saya, Akun & Privasi).
 
@@ -54,9 +54,9 @@ Diperiksa langsung dari seluruh berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+ht
 | Daftar Periksa | `/daftar-periksa` | selalu aktif di v1 | **Digantikan oleh Langkah Saya (`/langkah-saya`).** Alasan: daftar periksa di-reskin menjadi `/langkah-saya` memakai token dua mode v2 dengan perilaku data identik (`kemajuan_pengguna`, `butir_pribadi`, dan `event_sekolah` SMP). Rute `/daftar-periksa` tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati. | Langkah Saya |
 | Jalur & Tujuan | `/jalur-tujuan` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Kartu pintu besar** Jalur Saya di Arah Saya; **Chip Arahku** di Arah Saya. Merender komponen v2 (`JalurSayaV2`, LANJUT_033) saat `EXPO_PUBLIC_NAVIGASI_V2=1`, dan tetap merender v1 (`JalurTujuanScreen`) saat mati. | Jalur Saya |
 | Tulis Tujuan | `/jalur-tujuan-tulis` | `EXPO_PUBLIC_JALUR_TUJUAN=1` | **Pintu dari layar lain / URL langsung:** layar Jalur Saya (`/jalur-tujuan`, formulir utama dibuka lewat modal di `/jalur-tujuan`; rute `/jalur-tujuan-tulis` merender `TujuanTulisV2` saat `EXPO_PUBLIC_NAVIGASI_V2=1`). | Tulis Tujuan |
-| Portofolio | `/portofolio` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Kartu pintu besar** Rekam Jejak (bobot visual terbesar) di Arah Saya | Rekam Jejak |
-| Tulis Catatan Portofolio | `/portofolio-tulis` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Pintu dari layar lain:** layar Rekam Jejak (`/portofolio`) | Tulis Catatan |
-| Detail Catatan Portofolio | `/portofolio-butir` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Pintu dari layar lain:** layar Rekam Jejak (`/portofolio`) | Catatan |
+| Portofolio | `/portofolio` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Kartu pintu besar** Rekam Jejak (bobot visual terbesar) di Arah Saya. Merender `RekamJejakDaftarV2` (`LANJUT_036`) saat `EXPO_PUBLIC_NAVIGASI_V2=1`, dan tetap `PortofolioDaftarScreen` v1 saat mati. | Rekam Jejak |
+| Tulis Catatan Portofolio | `/portofolio-tulis` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Pintu dari layar lain:** layar Rekam Jejak (`/portofolio`). Merender `RekamJejakTulisV2` (`LANJUT_036`) saat `EXPO_PUBLIC_NAVIGASI_V2=1`. | Tulis Catatan |
+| Detail Catatan Portofolio | `/portofolio-butir` | `EXPO_PUBLIC_PORTOFOLIO=1` | **Pintu dari layar lain:** layar Rekam Jejak (`/portofolio`). Merender `RekamJejakDetailV2` (`LANJUT_036`) saat `EXPO_PUBLIC_NAVIGASI_V2=1`. | Catatan |
 | Arsip Belajar | `/arsip` | selalu aktif | **Alat belajar** (lipat) di Arah Saya | Arsip Belajar |
 | Tulis Kartu | `/arsip-tulis` | selalu aktif | **Pintu dari layar lain:** Arsip Belajar (`/arsip`) | Tulis Kartu |
 | Kartu | `/arsip-kartu` | selalu aktif | **Pintu dari layar lain:** Arsip Belajar (`/arsip`) dan Langkah Saya (`/langkah-saya`, materi event SMP) | Kartu |
@@ -87,4 +87,4 @@ Diperiksa langsung dari seluruh berkas `.tsx` di `app/` (3 `_layout.tsx`, 1 `+ht
 
 - **Rute v1 yang sengaja digantikan di v2 (`RUTE_V1_DIGANTIKAN_V2`):** **2 rute** (`/linimasa` → `/arah-saya` + `/jejak-waktu`; `/daftar-periksa` → `/langkah-saya`), masing-masing terdokumentasi eksplisit beserta alasannya dan diuji otomatis di `server/tests/navigasi-v2.test.js`. Kedua rute v1 tetap utuh saat `EXPO_PUBLIC_NAVIGASI_V2` mati.
 - **Rute v1 lainnya (28 rute dalam sesi + 5 luar sesi):** seluruhnya tetap terjangkau langsung di graf navigasi v2.
-- **Catatan layar yang belum di-reskin (task 035):** layar v1 lain (`/portofolio`, `/akun`, dan layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2. (`/jalur-tujuan`, `/jalur-tujuan-tulis`, `/discover`, `/discover-refleksi`, dan `/discover-profil` sudah memakai tampilan v2 saat `EXPO_PUBLIC_NAVIGASI_V2=1`.)
+- **Catatan layar yang belum di-reskin:** layar v1 lain (`/akun` dan layar di Alat belajar) tetap tampil dalam bentuk v1 di dalam shell navigasi v2. (`/jalur-tujuan`, `/jalur-tujuan-tulis`, `/discover`, `/discover-refleksi`, `/discover-profil`, `/portofolio`, `/portofolio-tulis`, dan `/portofolio-butir` sudah memakai tampilan v2 saat `EXPO_PUBLIC_NAVIGASI_V2=1`.)
