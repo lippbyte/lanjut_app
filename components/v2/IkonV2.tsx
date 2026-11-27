@@ -8,12 +8,14 @@ import {
   Check,
   Compass,
   DeviceMobile,
+  DownloadSimple,
   ImageSquare,
   Info,
   LinkSimple,
   MagnifyingGlass,
   Moon,
   Plus,
+  SignOut,
   Sun,
   Trash,
   User,
@@ -44,6 +46,8 @@ const IKON_V2 = {
   kamera: Camera,
   tautan: LinkSimple,
   hapus: Trash,
+  unduh: DownloadSimple,
+  keluar: SignOut,
 } as const satisfies Record<string, Icon>;
 
 export type NamaIkonV2 = keyof typeof IKON_V2;

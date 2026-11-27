@@ -171,7 +171,7 @@ export function RekamJejakDaftarV2() {
           <Teks varian="badanKecil" warna="teksSekunder" rata="center">
             {T.kosongTeks}
           </Teks>
-          <Tombol varian="utama" label={T.tambah} onPress={tulis} />
+          <Tombol varian="utama" label={T.tambah} penuh onPress={tulis} />
         </View>
       ) : (
         <>
