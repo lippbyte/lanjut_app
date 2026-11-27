@@ -69,7 +69,7 @@ export const TEKS_JALUR_SAYA_V2 = {
   tutupRiwayat: 'Tutup perubahan',
   targetAwalan: 'Target',
 
-  prodiKeterangan: 'Prodi impian · Data Akun',
+  prodiKeterangan: 'Prodi impian · Akun & Privasi',
   prodiBelumTersedia: 'Prodi pilihan',
 
   perjalananJudul: 'Perjalananmu',

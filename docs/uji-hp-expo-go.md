@@ -420,6 +420,38 @@ Layar **Jelajah** (`/discover`, `/discover-refleksi`) dan **Profil Eksplorasi** 
    - Kosongkan `$env:EXPO_PUBLIC_KELOLA_DATA_AKUN = ""` (biarkan `EXPO_PUBLIC_NAVIGASI_V2 = "1"`), jalankan ulang `npx expo start --clear`: pastikan tidak ada tombol unduh data atau hapus akun di `/akun` dan membuka `/hapus-akun` mengembalikan ke `/akun`.
    - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2 = ""` (biarkan `EXPO_PUBLIC_KELOLA_DATA_AKUN = "1"`), jalankan ulang `npx expo start --clear`: pastikan `/akun` dan `/hapus-akun` kembali menampilkan layar v1 persis seperti semula.
 
+---
+
+## 18. Perbaikan Mode Gelap & Aksesibilitas Klien v2 (LANJUT_039)
+
+> **Catatan:** Daftar periksa di bawah ini disusun untuk pengujian manual oleh manusia di perangkat fisik (Expo Go). Hingga selesai LANJUT_039, pengujian di HP fisik, pembaca layar (TalkBack/VoiceOver), serta skala ukuran huruf besar sistem perangkat **belum dijalankan**; verifikasi otomatis LANJUT_039 hanya dilakukan lewat uji kode dan peramban komputer (DEV).
+
+1. **Nyalakan saklar v2 di sesi lokal lalu jalankan Expo dengan `--clear`:**
+   ```powershell
+   $env:EXPO_PUBLIC_API_URL = "http://192.168.x.x:4000/api/v1"
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2 = "1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2 = "1"
+   $env:EXPO_PUBLIC_MODE_GELAP = "1"
+   $env:EXPO_PUBLIC_PORTOFOLIO = "1"
+   $env:EXPO_PUBLIC_JALUR_TUJUAN = "1"
+   $env:EXPO_PUBLIC_DISCOVER = "1"
+   $env:EXPO_PUBLIC_KELOLA_DATA_AKUN = "1"
+   npx expo start --go --lan --clear
+   ```
+2. **Uji mode gelap di Pengantar & Modal Kebijakan Daftar:**
+   - Aktifkan tema gelap di Setelan HP (sebelum masuk).
+   - Buka Pengantar: pastikan maskot kelinci berada di lingkaran `#B4E1EB` (garis maskot jelas, tidak redup) dan kartu 3 menyebut `"Akun & Privasi"` (bukan `"Data Akun"`).
+   - Masuk ke **Daftar** sampai langkah Privasi, ketuk **Baca lengkap**: pastikan judul, catatan status, versi, dan seluruh paragraf kebijakan terbaca jelas di latar gelap tanpa teks gelap tenggelam.
+3. **Uji mode gelap di `/kebijakan-privasi`, `/terima-kebijakan`, dan rute v1 Alat belajar:**
+   - Masuk dengan akun dummy (mis. `demo_kelas12_dc`), pilih mode **Gelap** di **Profil Saya → Akun & Privasi**.
+   - Ketuk **Kebijakan privasi** (`/kebijakan-privasi`): pastikan latar gelap serasi (tidak menyilaukan putih) dan tombol Kembali mudah ditekan.
+   - Buka **Arah Saya → Alat belajar**, coba buka **Arsip Belajar** (`/arsip`), **Level-In** (`/level-in`), **Ngobrol Bareng LANJUT** (`/ngobrol`), dan dari Ngobrol buka tautan terima kebijakan (`/terima-kebijakan`): pastikan rute v1 tampil terbaca di atas permukaan terang di dalam bingkai v2 gelap, sementara `/terima-kebijakan` tampil serasi mode gelap.
+4. **Uji ukuran huruf besar sistem OS (belum terverifikasi sampai dicoba di HP):**
+   - Naikkan ukuran font di Setelan HP (Android: Setelan > Tampilan > Ukuran font; iOS: Settings > Accessibility > Larger Text).
+   - Buka tiap tab (`Arah Saya`, `Jelajah`, `Jejak Waktu`, `Profil Saya`): pastikan label bilah tab turun rapi ke dua baris tanpa terpotong `…`, ikon dan label tetap utuh, serta target sentuh nyaman ditekan.
+5. **Uji saklar mati:**
+   - Kosongkan seluruh `$env:EXPO_PUBLIC_*` v2 dan jalankan ulang `npx expo start --go --lan --clear`: pastikan `/kebijakan-privasi`, `/terima-kebijakan`, dan seluruh layar v1 kembali tampil persis seperti v1 tanpa perubahan.
+
 
 
 

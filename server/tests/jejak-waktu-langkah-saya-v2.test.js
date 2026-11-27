@@ -511,6 +511,7 @@ describe('Keadaan kosong (maskot #B4E1EB dua mode), memuat, galat, aksesibilitas
       tulis('components/screens/v2/RekamJejakFotoV2.tsx', 'export const J = 1;\n');
       tulis('components/screens/v2/AkunPrivasiV2.tsx', 'export const L = 1;\n');
       tulis('components/screens/v2/HapusAkunV2.tsx', 'export const M = 1;\n');
+      tulis('components/screens/v2/KebijakanV2.tsx', 'export const N = 1;\n');
       tulis('docs/draf-teks-jejak-waktu-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-jalur-saya-v2.md', 'Teks.\n');
       tulis('docs/draf-teks-jelajah-v2.md', 'Teks.\n');

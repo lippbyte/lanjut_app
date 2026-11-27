@@ -53,7 +53,7 @@ Menggunakan kalimat yang **sama persis** dengan `TEKS_DISCOVER.privasi` di `docs
 | `ubahProfil` | `Ubah` | Tombol membuka formulir pembaruan profil / catatan |
 | `lihatRiwayat` | `Lihat perubahan` | Tombol membuka riwayat versi lama profil (bernomor & berjam seperti 026) |
 | `tutupRiwayat` | `Tutup perubahan` | Tombol menutup riwayat versi lama profil |
-| `bagianDataAkun` | `Data Akun` | Judul bagian ringkasan `minat_rumpun` & `mapel_pilihan` |
+| `bagianDataAkun` | `Akun & Privasi` | Judul bagian ringkasan `minat_rumpun` & `mapel_pilihan` |
 | `labelMinatRumpun` | `Minat` | Awalan bidang minat pada profil |
 | `labelMapelPilihan` | `Mapel` | Awalan mapel pilihan pada profil |
 | `bagianJalurTujuan` | `Jalur & tujuan` | Judul bagian jalur aktif & tujuan aktif pada profil |

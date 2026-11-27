@@ -12,13 +12,14 @@ import { discoverAktif, jalurTujuanAktif, kelolaDataAkunAktif, portofolioAktif }
 import { gerakBoleh } from '../../../lib/kurangiGerak';
 import {
   PINTU_TAB_V2,
+  butuhWadahTerangV1,
   daftarTabV2,
   judulHalamanAnakV2,
   tabAktifV2,
   tujuanKembaliV2,
 } from '../../../lib/navigasiV2';
 import { useSesi } from '../../../providers/AuthProvider';
-import { garis, gerak, radius, ruang, tataLetak, ukuran } from '../../../theme/v2';
+import { garis, gerak, radius, ruang, tataLetak, ukuran, warnaTerang } from '../../../theme/v2';
 import { useTemaV2 } from '../../../theme/v2/konteks';
 import { Ikon, Kartu, Sentuh, Teks } from '../../v2';
 import { PilihModeTampilanV2 } from './PilihModeTampilanV2';
@@ -109,6 +110,11 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
 
   // Di mode gelap wordmark tampil langsung di atas `bg` (warna.halaman); di mode terang di dalam badge biru LANJUT.
   const latarAppbar = mode === 'gelap' ? warna.halaman : warna.permukaan;
+  // LANJUT_039: rute anak v1 di dalam shell gelap dibungkus permukaan terang (`warnaTerang.halaman`)
+  // agar teks v1 tidak kehilangan kontras, sementara bilah atas dan tab bawah tetap serasi v2.
+  const ruteV1Terang = mode === 'gelap' && butuhWadahTerangV1(pathname, SAKLAR);
+  const latarIsi = ruteV1Terang ? warnaTerang.halaman : warna.halaman;
+  const latarPenuh = ruteV1Terang ? warnaTerang.halaman : warna.permukaan;
 
   return (
     <View style={StyleSheet.flatten([s.akar, { backgroundColor: warna.halaman }])}>
@@ -152,12 +158,16 @@ export function AppShellV2({ children }: { children: React.ReactNode }) {
         )}
       </Header>
 
-      <Main style={s.main}>
+      <Main style={StyleSheet.flatten([s.main, { backgroundColor: latarIsi }])}>
         <Animated.View style={StyleSheet.flatten([s.isiAnimasi, { opacity: muncul }])}>
           {TANPA_GULIR_HALAMAN.has(pathname) ? (
-            <View style={StyleSheet.flatten([s.kolomPenuh, { backgroundColor: warna.permukaan }])}>{children}</View>
+            <View style={StyleSheet.flatten([s.kolomPenuh, { backgroundColor: latarPenuh }])}>{children}</View>
           ) : (
-            <ScrollView contentContainerStyle={StyleSheet.flatten([s.gulir, { backgroundColor: warna.halaman }])} keyboardShouldPersistTaps="handled">
+            <ScrollView
+              style={StyleSheet.flatten([s.gulirWadah, { backgroundColor: latarIsi }])}
+              contentContainerStyle={StyleSheet.flatten([s.gulir, { backgroundColor: latarIsi }])}
+              keyboardShouldPersistTaps="handled"
+            >
               <View style={s.kolom}>
                 {pintuTab ? (
                   <View style={s.pintuTabWadah}>
@@ -224,6 +234,7 @@ const s = StyleSheet.create({
   judulAnak: { flex: 1 },
   main: { flex: 1 },
   isiAnimasi: { flex: 1 },
+  gulirWadah: { flex: 1 },
   gulir: { flexGrow: 1 },
   kolom: { width: '100%', maxWidth: tataLetak.lebarMaks, alignSelf: 'center', flexGrow: 1 },
   kolomPenuh: { flex: 1, width: '100%', maxWidth: tataLetak.lebarMaks, alignSelf: 'center' },

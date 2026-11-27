@@ -57,7 +57,7 @@ export function PengantarV2({ onPilih }: { onPilih: (tujuan: TujuanOnboarding) =
       >
         {kartu.map((k) => (
           <View key={k.judul} style={StyleSheet.flatten([s.kartu, { width: lebar }])} accessible accessibilityLabel={`${k.judul}. ${k.isi}`}>
-            <View style={StyleSheet.flatten([s.maskotWadah, { backgroundColor: warna.brand }])}>
+            <View style={StyleSheet.flatten([s.maskotWadah, { backgroundColor: warna.latarMaskot }])}>
               <Image source={require('../../../assets/mascot-blue.png')} style={s.maskot} resizeMode="contain" accessible={false} />
             </View>
             <Teks varian="h1">{k.judul}</Teks>

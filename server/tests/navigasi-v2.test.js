@@ -582,6 +582,7 @@ describe('Gerbang rilis dan dokumen draf', () => {
       tulis('components/screens/v2/RekamJejakFotoV2.tsx', '// komponen v2\n');
       tulis('components/screens/v2/AkunPrivasiV2.tsx', '// komponen v2\n');
       tulis('components/screens/v2/HapusAkunV2.tsx', '// komponen v2\n');
+      tulis('components/screens/v2/KebijakanV2.tsx', '// komponen v2\n');
       tulis('docs/draf-teks-navigasi-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-jejak-waktu-v2.md', 'DRAF\n');
       tulis('docs/draf-teks-jalur-saya-v2.md', 'DRAF\n');

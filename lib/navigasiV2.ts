@@ -277,6 +277,57 @@ export const RUTE_ANAK_DARI_LAYAR: Readonly<Record<string, readonly { href: stri
 };
 
 /**
+ * Daftar 18 rute v1 aktif yang tetap dapat dijangkau di dalam `AppShellV2` (audit LANJUT_038).
+ * Dari daftar ini, `/terima-kebijakan` memiliki tampilan dua mode v2 (`TerimaKebijakanV2`),
+ * sedangkan 17 rute lainnya merender layar v1 di atas wadah permukaan terang saat mode gelap.
+ */
+export const RUTE_V1_DI_SHELL_V2: readonly string[] = [
+  '/arsip',
+  '/arsip-tulis',
+  '/arsip-kartu',
+  '/arsip-modul',
+  '/arsip-modul-unggah',
+  '/latihan',
+  '/latihan-riwayat',
+  '/level-in',
+  '/ngobrol',
+  '/persetujuan-ortu',
+  '/jenjang-saya',
+  '/khusus-smk',
+  '/pilih-mapel',
+  '/eksplorasi-tujuan',
+  '/cek-posisi',
+  '/gaya-belajar',
+  '/cerita-alumni',
+  '/terima-kebijakan',
+];
+
+/**
+ * Menentukan apakah `pathname` di dalam `AppShellV2` sedang merender layar v1 yang membutuhkan
+ * wadah permukaan terang saat mode gelap agar seluruh teks v1 tetap terbaca (kontras >= 4,5:1).
+ * Rute v2 (dan `/terima-kebijakan` yang memakai `TerimaKebijakanV2`) mengembalikan `false`.
+ */
+export function butuhWadahTerangV1(pathname: string, saklar: SaklarNavigasiV2): boolean {
+  if (
+    pathname === '/arah-saya' ||
+    pathname === '/jejak-waktu' ||
+    pathname === '/langkah-saya' ||
+    pathname === '/terima-kebijakan'
+  ) {
+    return false;
+  }
+  if (pathname === '/jalur-tujuan' || pathname === '/jalur-tujuan-tulis') return !saklar.jalurTujuan;
+  if (pathname === '/discover' || pathname === '/discover-refleksi' || pathname === '/discover-profil') {
+    return !saklar.discover;
+  }
+  if (pathname === '/portofolio' || pathname === '/portofolio-tulis' || pathname === '/portofolio-butir') {
+    return !saklar.portofolio;
+  }
+  if (pathname === '/akun' || pathname === '/hapus-akun') return !saklar.kelolaDataAkun;
+  return true;
+}
+
+/**
  * Daftar eksplisit rute v1 yang sengaja digantikan oleh layar v2 baru saat `EXPO_PUBLIC_NAVIGASI_V2=1`
  * (LANJUT_032 §4 & §5). Tidak pernah disembunyikan diam-diam: setiap rute punya pengganti v2 dan alasan,
  * serta tetap utuh saat saklar v2 mati.

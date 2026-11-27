@@ -39,7 +39,7 @@
 | `lihatRiwayat` | `Lihat perubahan` | Tombol membuka daftar versi lama tujuan (bernomor & berjam seperti 026) |
 | `tutupRiwayat` | `Tutup perubahan` | Tombol menutup daftar versi lama tujuan |
 | `targetAwalan` | `Target` | Awalan tanggal target tujuan, mis. `Target 30 Juni 2027` |
-| `prodiKeterangan` | `Prodi impian · Data Akun` | Keterangan kartu baca-saja `prodi_impian` dari Data Akun |
+| `prodiKeterangan` | `Prodi impian · Akun & Privasi` | Keterangan kartu baca-saja `prodi_impian` dari Akun & Privasi |
 | `prodiBelumTersedia` | `Prodi pilihan` | Label cadangan aman bila nama `prodi_impian` kosong |
 | `perjalananJudul` | `Perjalananmu` | Judul seksi terlipat catatan perjalanan pilihan & tujuan |
 | `perjalananKosong` | `Riwayat pilihanmu akan tercatat di sini.` | Teks saat bagian Perjalananmu dibuka tetapi belum ada peristiwa |

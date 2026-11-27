@@ -33,7 +33,7 @@ export const TEKS_PENGANTAR = {
     { judul: 'Pilihanmu', isi: 'Email boleh kosong. Kebijakan privasi bisa dibaca lengkap. Tetap masuk di HP ini, kamu yang memilih.' },
   ],
   // Hanya ditampilkan bila unduh data dan hapus akun menyala (EXPO_PUBLIC_KELOLA_DATA_AKUN).
-  kelolaData: 'Data bisa diunduh atau dihapus di Data Akun.',
+  kelolaData: 'Data bisa diunduh atau dihapus di Akun & Privasi.',
   lewati: 'Lewati',
   berikutnya: 'Berikutnya',
   mulai: 'Mulai',

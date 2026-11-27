@@ -58,6 +58,7 @@ const TEKS = [
       'components/screens/v2/RekamJejakFotoV2.tsx',
       'components/screens/v2/AkunPrivasiV2.tsx',
       'components/screens/v2/HapusAkunV2.tsx',
+      'components/screens/v2/KebijakanV2.tsx',
       'docs/draf-teks-navigasi-v2.md',
       'docs/draf-teks-jejak-waktu-v2.md',
       'docs/draf-teks-jalur-saya-v2.md',
