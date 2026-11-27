@@ -72,6 +72,21 @@ export const TEKS_DAFTAR = {
   kembali: 'Kembali',
   lanjut: 'Lanjut',
   sudahPunya: 'Sudah punya akun? Masuk',
+  // LANJUT_041 (TEKS DRAF — belum disetujui Khalifa, batas 40 kata per keadaan layar).
+  usia: {
+    judul: 'Umurmu sudah 18 tahun atau lebih?',
+    ringkasan: 'Jawaban ini tidak disimpan.',
+    ya: 'Ya',
+    belum: 'Belum',
+    pilihDulu: 'Pilih Ya atau Belum dulu.',
+  },
+  orangTua: {
+    judul: 'Persetujuan orang tua atau wali',
+    ringkasan: 'Minta izin orang tua atau walimu dulu.',
+    setuju: 'Orang tua atau wali saya sudah tahu dan setuju saya memakai LANJUT.',
+    belumCentang: 'Centang kotak di atas dulu.',
+    kembaliMasuk: 'Kembali ke Masuk',
+  },
   akun: {
     judul: 'Buat akun',
     ringkasan: 'Pilih nama pengguna dan kata sandi.',
@@ -132,20 +147,47 @@ export const TEKS_ARAH = {
 export const NAMA_PENGGUNA_REGEX = /^[a-z0-9._]{3,32}$/;
 
 export type Jenjang = 'smp' | 'menengah';
+export type StatusUsia = 'ya' | 'belum';
 export const KELAS_PER_JENJANG: Readonly<Record<Jenjang, readonly Kelas[]>> = { smp: ['7', '8', '9'], menengah: ['10', '11', '12'] };
 
-export type LangkahDaftar = 'akun' | 'email' | 'persetujuan' | 'jenjang' | 'kelas' | 'jenis' | 'prodi' | 'siap';
+export type LangkahDaftar =
+  | 'usia'
+  | 'orang_tua'
+  | 'akun'
+  | 'email'
+  | 'persetujuan'
+  | 'jenjang'
+  | 'kelas'
+  | 'jenis'
+  | 'prodi'
+  | 'siap';
 
 /**
- * Urutan langkah daftar. Persetujuan kebijakan ada SEBELUM akun dibuat, sama dengan v1 (kotak
- * centang di formulir Daftar yang menahan tombol Daftar). Jenis sekolah hanya untuk kelas 10–12.
+ * Urutan langkah daftar (LANJUT_030, diperbarui LANJUT_041):
+ * - Gerbang usia (`usia`, diikuti `orang_tua` bila "Belum") ada PALING AWAL sebelum pertanyaan
+ *   identitas, preferensi, kebijakan, dan pembuatan akun di server.
+ * - Persetujuan kebijakan ada SEBELUM akun dibuat, sama dengan v1.
+ * - Jenis sekolah hanya untuk kelas 10–12.
  */
-export function langkahDaftar(kelas: Kelas | null): LangkahDaftar[] {
-  return ['akun', 'email', 'persetujuan', 'jenjang', 'kelas', ...(tanyaJenisSekolah(kelas) ? (['jenis'] as const) : []), 'prodi', 'siap'];
+export function langkahDaftar(kelas: Kelas | null, usia?: StatusUsia | null): LangkahDaftar[] {
+  return [
+    'usia',
+    ...(usia === 'belum' ? (['orang_tua'] as const) : []),
+    'akun',
+    'email',
+    'persetujuan',
+    'jenjang',
+    'kelas',
+    ...(tanyaJenisSekolah(kelas) ? (['jenis'] as const) : []),
+    'prodi',
+    'siap',
+  ];
 }
 
-/** Galat medan dari server → langkah tempat medan itu diisi. */
+/** Galat medan dari server atau validasi lokal → langkah tempat medan itu diisi. */
 export const LANGKAH_MEDAN: Readonly<Record<string, LangkahDaftar>> = {
+  usia: 'usia',
+  orang_tua: 'orang_tua',
   nama_pengguna: 'akun',
   kata_sandi: 'akun',
   email: 'email',
@@ -156,6 +198,8 @@ export const LANGKAH_MEDAN: Readonly<Record<string, LangkahDaftar>> = {
 };
 
 export type IsianDaftar = {
+  usia: StatusUsia | null;
+  orangTuaSetuju: boolean;
   namaPengguna: string;
   kataSandi: string;
   email: string;
@@ -165,9 +209,40 @@ export type IsianDaftar = {
   prodi: string | null;
 };
 
-/** Galat per medan (kosong = boleh lanjut). Aturannya sama dengan RegisterScreen v1. */
+/**
+ * Gerbang usia dan konfirmasi orang tua/wali di klien (LANJUT_041, opsi a).
+ * Hanya boleh lewat bila siswa menyatakan >= 18 tahun ("ya"), atau menyatakan "belum"
+ * DAN mencentang konfirmasi persetujuan orang tua/wali secara eksplisit.
+ * Nilai ini hanya di memori layar; tidak disimpan ke perangkat atau dikirim ke server.
+ */
+export function gerbangUsiaTerpenuhi(i: Pick<IsianDaftar, 'usia' | 'orangTuaSetuju'>): boolean {
+  if (i.usia === 'ya') return true;
+  if (i.usia === 'belum') return i.orangTuaSetuju === true;
+  return false;
+}
+
+/**
+ * Menjaga indeks langkah agar tidak pernah meloncati gerbang usia atau konfirmasi orang tua/wali
+ * (tidak dapat dilewati lewat tombol kembali, muat ulang, galat medan, atau loncatan indeks).
+ */
+export function indeksLangkahAman(
+  indeksDiminta: number,
+  i: Pick<IsianDaftar, 'kelas' | 'usia' | 'orangTuaSetuju'>
+): number {
+  const daftar = langkahDaftar(i.kelas, i.usia);
+  const terjepit = Math.max(0, Math.min(indeksDiminta, daftar.length - 1));
+  if (!i.usia) return 0;
+  if (i.usia === 'belum' && !i.orangTuaSetuju) return Math.min(terjepit, 1);
+  return terjepit;
+}
+
+/** Galat per medan (kosong = boleh lanjut). Aturannya sama dengan RegisterScreen v1 + gerbang usia 041. */
 export function periksaLangkah(langkah: LangkahDaftar, i: IsianDaftar): Record<string, string> {
   const g: Record<string, string> = {};
+  if ((langkah === 'usia' || langkah === 'siap') && !i.usia) g.usia = TEKS_DAFTAR.usia.pilihDulu;
+  if ((langkah === 'orang_tua' || langkah === 'siap') && i.usia === 'belum' && !i.orangTuaSetuju) {
+    g.orang_tua = TEKS_DAFTAR.orangTua.belumCentang;
+  }
   if (langkah === 'akun' || langkah === 'siap') {
     if (!NAMA_PENGGUNA_REGEX.test(i.namaPengguna.trim().toLowerCase())) g.nama_pengguna = TEKS_DAFTAR.akun.namaSalah;
     if (i.kataSandi.length < 8) g.kata_sandi = TEKS_DAFTAR.akun.sandiSalah;
@@ -184,10 +259,11 @@ export type KirimanDaftar = { jalur: 'langsung'; data: DataDaftar } | { jalur: '
 /**
  * Payload pendaftaran. HARUS sama persis dengan RegisterScreen v1 (kontrak APK 1.0.0); tes kontrak
  * menjalankan potongan kode v1 dan membandingkannya dengan fungsi ini. `versiKebijakan` diisi
- * VERSI_KEBIJAKAN oleh layar (lib/kebijakanPrivasi.ts).
+ * VERSI_KEBIJAKAN oleh layar (lib/kebijakanPrivasi.ts). Usia dan konfirmasi orang tua/wali tidak
+ * pernah dimasukkan ke payload.
  */
 export function bentukKirimanDaftar(i: IsianDaftar, versiKebijakan: number): KirimanDaftar | null {
-  if (!i.sudahBaca || !i.kelas) return null;
+  if (!gerbangUsiaTerpenuhi(i) || !i.sudahBaca || !i.kelas) return null;
   const data: DataDaftar = { nama_pengguna: i.namaPengguna.trim().toLowerCase(), kata_sandi: i.kataSandi, kelas: i.kelas, versi_kebijakan: versiKebijakan };
   if (tanyaJenisSekolah(i.kelas) && i.jenis) data.jenis_sekolah = i.jenis;
   if (i.prodi && i.prodi !== BELUM_PRODI) data.prodi_impian = i.prodi;
@@ -212,7 +288,7 @@ export function teksPerLayar(kelolaData: boolean): Record<string, string[]> {
   const m = TEKS_MASUK;
   const d = TEKS_DAFTAR;
   const a = TEKS_ARAH;
-  const ke = d.langkahKe(8, 8);
+  const ke = d.langkahKe(10, 10);
   const kartu = (i: number) => {
     const k = p.kartu[i];
     const isi = i === p.kartu.length - 1 && kelolaData ? `${k.isi} ${p.kelolaData}` : k.isi;
@@ -225,7 +301,9 @@ export function teksPerLayar(kelolaData: boolean): Record<string, string[]> {
     'masuk-sandi': [m.judul, m.ringkasanSandi, m.namaPengguna, m.kataSandi, m.tetapMasuk, m.tetapMasukKet, m.masuk, m.denganKode, m.belumPunya],
     'masuk-email': [m.judul, m.ringkasanKode, m.email, m.emailKet, m.tetapMasuk, m.tetapMasukKet, m.kirimKode, m.denganSandi, m.belumPunya],
     'masuk-kode': [m.judul, m.ringkasanKode, m.kodeTerkirim('nama@contoh.com'), m.kodeMasuk, m.tetapMasuk, m.tetapMasukKet, m.masuk, m.kirimUlang, m.gantiEmail, m.belumPunya],
-    'daftar-akun': [ke, d.akun.judul, d.akun.ringkasan, d.akun.namaPengguna, d.akun.namaKet, d.akun.kataSandi, d.akun.sandiKet, d.lanjut, d.sudahPunya],
+    'daftar-usia': [ke, d.usia.judul, d.usia.ringkasan, statusPilihan('satu'), d.usia.ya, d.usia.belum, d.lanjut, d.sudahPunya],
+    'daftar-orang-tua': [ke, d.kembali, d.orangTua.judul, d.orangTua.ringkasan, d.orangTua.setuju, d.lanjut, d.orangTua.kembaliMasuk],
+    'daftar-akun': [ke, d.kembali, d.akun.judul, d.akun.ringkasan, d.akun.namaPengguna, d.akun.namaKet, d.akun.kataSandi, d.akun.sandiKet, d.lanjut],
     'daftar-email': [ke, d.kembali, d.email.judul, d.email.ringkasan, d.email.label, TEKS_V1.petunjukEmail, d.lanjut],
     'daftar-persetujuan': [ke, d.kembali, d.persetujuan.judul, d.persetujuan.bacaLengkap, TEKS_V1.dataPribadi, TEKS_V1.sudahBaca, d.lanjut],
     'daftar-jenjang': [ke, d.kembali, d.jenjang.judul, statusPilihan('satu'), d.jenjang.smp, d.jenjang.menengah, d.lanjut],
@@ -241,3 +319,5 @@ export function teksPerLayar(kelolaData: boolean): Record<string, string[]> {
 }
 
 export const BATAS_KATA_LAYAR = 60;
+/** Batas kata khusus layar baru gerbang usia & konfirmasi orang tua/wali (LANJUT_041 §3.5). */
+export const BATAS_KATA_GERBANG_USIA = 40;

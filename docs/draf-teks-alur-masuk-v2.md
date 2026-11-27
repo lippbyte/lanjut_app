@@ -113,7 +113,36 @@ Kata di layar: **47** dari batas 60.
 | Ganti email | DRAF |
 | Belum punya akun? Daftar | DRAF |
 
-### Daftar 1: akun
+### Daftar 1: pernyataan usia (LANJUT_041 — DRAF)
+
+Kata di layar: **27** dari batas 40 (dan batas umum 60). Hanya gerbang di klien; tidak ada usia atau tanggal lahir yang disimpan atau dikirim ke server.
+
+| Teks | Sumber |
+|---|---|
+| Langkah 10 dari 10 | DRAF |
+| Umurmu sudah 18 tahun atau lebih? | DRAF |
+| Jawaban ini tidak disimpan. | DRAF |
+| Pilih satu · Belum ada yang dipilih | DRAF |
+| Ya | DRAF |
+| Belum | DRAF |
+| Lanjut | DRAF |
+| Sudah punya akun? Masuk | DRAF |
+
+### Daftar 2: konfirmasi orang tua atau wali (LANJUT_041 — hanya bila menjawab "Belum" — DRAF)
+
+Kata di layar: **33** dari batas 40 (dan batas umum 60; maksimal **38** kata bila pesan galat tampil). Tombol `Lanjut` nonaktif sampai kotak dicentang secara eksplisit. Tidak disimpan atau dikirim ke server.
+
+| Teks | Sumber |
+|---|---|
+| Langkah 10 dari 10 | DRAF |
+| Kembali | DRAF |
+| Persetujuan orang tua atau wali | DRAF |
+| Minta izin orang tua atau walimu dulu. | DRAF |
+| Orang tua atau wali saya sudah tahu dan setuju saya memakai LANJUT. | DRAF |
+| Lanjut | DRAF |
+| Kembali ke Masuk | DRAF |
+
+### Daftar 3: akun
 
 Kata di layar: **33** dari batas 60.
 
@@ -297,6 +326,8 @@ Kata di layar: **18** dari batas 60.
 | Centang kotak kebijakan privasi di atas dulu supaya bisa mendaftar. | Lanjut tanpa centang kebijakan | v1 |
 | Kode baru sudah dikirim. Kode sebelumnya tidak berlaku lagi. | Sesudah kirim ulang kode daftar | v1 |
 | Daftar dengan email belum bisa dipakai sekarang. Kosongkan email untuk daftar tanpa email. | Pengirim email mati | v1 |
+| Pilih Ya atau Belum dulu. | Lanjut tanpa memilih usia (LANJUT_041) | DRAF |
+| Centang kotak di atas dulu. | Lanjut tanpa mencentang konfirmasi orang tua/wali (LANJUT_041) | DRAF |
 | Pilih jenjangmu. | Lanjut tanpa memilih jenjang | DRAF |
 | Daftar prodi belum bisa dimuat. Kamu tetap bisa memilih belum. | Daftar prodi gagal dimuat | DRAF (diadaptasi dari v1) |
 | Ada langkah yang belum diisi. | Buat akun saat ada langkah kosong | DRAF |
