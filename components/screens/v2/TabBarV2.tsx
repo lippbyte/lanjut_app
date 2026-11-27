@@ -66,8 +66,8 @@ export function TabBarV2({
                 varian="keterangan"
                 warna={sedang ? 'aksen' : 'teksSekunder'}
                 rata="center"
-                baris={1}
-                gaya={sedang ? s.labelAktif : undefined}
+                baris={2}
+                gaya={sedang ? [s.labelTab, s.labelAktif] : s.labelTab}
               >
                 {t.label}
               </Teks>
@@ -83,7 +83,7 @@ const s = StyleSheet.create({
   wadah: {
     borderTopWidth: garis.tipis,
     paddingTop: ruang.r1,
-    paddingHorizontal: ruang.r1,
+    paddingHorizontal: 0,
   },
   baris: {
     flexDirection: 'row',
@@ -106,6 +106,9 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   pilAktif: {},
+  labelTab: {
+    width: '100%',
+  },
   labelAktif: {
     fontFamily: keluargaHuruf.badanTebal,
   },

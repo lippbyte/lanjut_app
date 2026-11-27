@@ -86,7 +86,7 @@ export const TEKS_JELAJAH_V2 = {
   ubahProfil: 'Ubah',
   lihatRiwayat: 'Lihat perubahan',
   tutupRiwayat: 'Tutup perubahan',
-  bagianDataAkun: 'Data Akun',
+  bagianDataAkun: 'Akun & Privasi',
   labelMinatRumpun: 'Minat',
   labelMapelPilihan: 'Mapel',
   bagianJalurTujuan: 'Jalur & tujuan',

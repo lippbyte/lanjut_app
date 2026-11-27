@@ -29,6 +29,7 @@ import { ruang, tataLetak } from '../../../theme/v2';
 import { useTemaV2 } from '../../../theme/v2/konteks';
 import { Centang, HeaderLayar, IndikatorLangkah, Isian, Kartu, PesanStatus, Pilihan, Teks, Tombol } from '../../v2';
 import { IsiKebijakan } from '../KebijakanPrivasiScreen';
+import { IsiKebijakanV2 } from './KebijakanV2';
 import { KerangkaV2 } from './KerangkaV2';
 
 /**
@@ -378,9 +379,9 @@ function LangkahProdi({ isian, ubah, galat, onKembali }: { isian: IsianDaftar; u
   );
 }
 
-/** Teks kebijakan lengkap, IsiKebijakan v1 (lib/kebijakan-privasi.json) tanpa perubahan. */
+/** Teks kebijakan lengkap dari lib/kebijakan-privasi.json tanpa perubahan; mode gelap memakai token v2 (LANJUT_039). */
 function ModalKebijakanV2({ buka, onTutup }: { buka: boolean; onTutup: () => void }) {
-  const { warna } = useTemaV2();
+  const { mode, warna } = useTemaV2();
   const { top, bottom } = useSafeAreaInsets();
   const kurangiGerak = useKurangiGerak();
   return (
@@ -388,7 +389,7 @@ function ModalKebijakanV2({ buka, onTutup }: { buka: boolean; onTutup: () => voi
       <View style={StyleSheet.flatten([s.modal, { backgroundColor: warna.halaman, paddingTop: top, paddingBottom: bottom }])}>
         <ScrollView contentContainerStyle={s.modalIsi}>
           <Teks varian="h1">{TEKS_DAFTAR.persetujuan.judulLengkap}</Teks>
-          <IsiKebijakan />
+          {mode === 'gelap' ? <IsiKebijakanV2 /> : <IsiKebijakan />}
           <Tombol label={TEKS_DAFTAR.persetujuan.tutup} penuh onPress={onTutup} />
         </ScrollView>
       </View>

@@ -17,7 +17,7 @@ Kartu pengantar ketiga hanya menyebut hal yang benar menurut kode:
 - kebijakan privasi bisa dibaca lengkap sebelum daftar;
 - pilihan "Tetap masuk di HP ini".
 
-Kalimat "Data bisa diunduh atau dihapus di Data Akun." **hanya tampil bila** `EXPO_PUBLIC_KELOLA_DATA_AKUN=1` pada build yang sama.
+Kalimat "Data bisa diunduh atau dihapus di Akun & Privasi." **hanya tampil bila** `EXPO_PUBLIC_KELOLA_DATA_AKUN=1` pada build yang sama.
 
 ## Teks per layar
 
@@ -59,7 +59,7 @@ Kata di layar: **27 (dengan kalimat unduh/hapus data: 35)** dari batas 60.
 |---|---|
 | Lewati | DRAF |
 | Pilihanmu | DRAF |
-| Email boleh kosong. Kebijakan privasi bisa dibaca lengkap. Tetap masuk di HP ini, kamu yang memilih. Data bisa diunduh atau dihapus di Data Akun. | DRAF |
+| Email boleh kosong. Kebijakan privasi bisa dibaca lengkap. Tetap masuk di HP ini, kamu yang memilih. Data bisa diunduh atau dihapus di Akun & Privasi. | DRAF |
 | Kartu 3 dari 3 | DRAF |
 | Mulai | DRAF |
 | Saya sudah punya akun | DRAF |

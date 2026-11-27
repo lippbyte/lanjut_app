@@ -101,27 +101,62 @@ function auditKontras() {
     });
   }
 
-  // Pemeriksaan nyata kebocoran warna v1 pada modal v2 di mode gelap (DaftarV2 -> ModalKebijakanV2 -> IsiKebijakan v1)
-  const modalKebijakanGelap = [
-    {
-      komponen: 'DaftarV2 -> ModalKebijakanV2 -> IsiKebijakan (v1)',
-      pasangan: 'color.textBody (#1A1A1A) di atas warnaGelap.halaman (#0C1B33)',
-      rasio: rasioTertulis('#1A1A1A', warnaGelap.halaman),
-      lolos: lolos('#1A1A1A', warnaGelap.halaman, 'teks'),
-    },
-    {
-      komponen: 'DaftarV2 -> ModalKebijakanV2 -> IsiKebijakan (v1)',
-      pasangan: 'color.ink700 (#3D4450) di atas warnaGelap.halaman (#0C1B33)',
-      rasio: rasioTertulis('#3D4450', warnaGelap.halaman),
-      lolos: lolos('#3D4450', warnaGelap.halaman, 'teks'),
-    },
-    {
-      komponen: 'DaftarV2 -> ModalKebijakanV2 -> IsiKebijakan (v1)',
-      pasangan: 'color.textMuted (#6B7480) di atas warnaGelap.halaman (#0C1B33)',
-      rasio: rasioTertulis('#6B7480', warnaGelap.halaman),
-      lolos: lolos('#6B7480', warnaGelap.halaman, 'teks'),
-    },
-  ];
+  // Pemeriksaan nyata perbaikan LANJUT_039 pada modal kebijakan, /kebijakan-privasi, dan 18 rute v1 di shell gelap
+  const navV2 = muatModulApp('lib/navigasiV2');
+  const daftarSrc = baca('components/screens/v2/DaftarV2.tsx');
+  const shellSrc = baca('components/screens/v2/AppShellV2.tsx');
+  const pengantarSrc = baca('components/screens/v2/PengantarV2.tsx');
+  const tabBarSrc = baca('components/screens/v2/TabBarV2.tsx');
+  const kebRuteSrc = baca('app/kebijakan-privasi.tsx');
+  const terimaRuteSrc = baca('app/(app)/terima-kebijakan.tsx');
+
+  const modalPakaiV2Gelap = /mode === 'gelap'\s*\?\s*<IsiKebijakanV2\s*\/>/.test(daftarSrc);
+  const latarModalGelap = warnaGelap.halaman;
+  const tintaModalGelap = modalPakaiV2Gelap
+    ? [
+        { nama: 'warnaGelap.teks di halaman', depan: warnaGelap.teks, latar: latarModalGelap },
+        { nama: 'warnaGelap.teks di permukaan', depan: warnaGelap.teks, latar: warnaGelap.permukaan },
+        { nama: 'warnaGelap.teksSekunder di halaman', depan: warnaGelap.teksSekunder, latar: latarModalGelap },
+      ]
+    : [
+        { nama: 'color.textBody (#1A1A1A) di halaman gelap', depan: '#1A1A1A', latar: latarModalGelap },
+        { nama: 'color.ink700 (#3D4450) di halaman gelap', depan: '#3D4450', latar: latarModalGelap },
+        { nama: 'color.textMuted (#6B7480) di halaman gelap', depan: '#6B7480', latar: latarModalGelap },
+      ];
+  const modalKebijakanGelap = tintaModalGelap.map((t) => ({
+    komponen: modalPakaiV2Gelap
+      ? 'DaftarV2 -> ModalKebijakanV2 -> IsiKebijakanV2 (gelap)'
+      : 'DaftarV2 -> ModalKebijakanV2 -> IsiKebijakan (v1)',
+    pasangan: `${t.nama} (${t.depan} / ${t.latar})`,
+    rasio: rasioTertulis(t.depan, t.latar),
+    lolos: lolos(t.depan, t.latar, 'teks'),
+  }));
+
+  const saklarPenuh = { discover: true, jalurTujuan: true, portofolio: true, kelolaDataAkun: true };
+  const shellBungkusV1 =
+    /butuhWadahTerangV1\(pathname,\s*SAKLAR\)/.test(shellSrc) &&
+    /ruteV1Terang\s*\?\s*warnaTerang\.halaman\s*:\s*warna\.halaman/.test(shellSrc);
+  const ruteV1Diukur = (navV2.RUTE_V1_DI_SHELL_V2 ?? []).map((rute) => {
+    if (rute === '/terima-kebijakan' && /TerimaKebijakanV2/.test(terimaRuteSrc)) {
+      const rasio = rasioTertulis(warnaGelap.teks, warnaGelap.permukaan);
+      return { rute, modeGelap: 'token-v2', latarGelap: warnaGelap.permukaan, rasioMinTeks: rasio, lolos: lolos(warnaGelap.teks, warnaGelap.permukaan, 'teks') };
+    }
+    const dibungkusTerang = shellBungkusV1 && navV2.butuhWadahTerangV1(rute, saklarPenuh);
+    const latar = dibungkusTerang ? warnaTerang.halaman : warnaGelap.halaman;
+    const rasioTerendah = Math.min(
+      rasioTertulis('#1A1A1A', latar),
+      rasioTertulis('#3D4450', latar),
+      rasioTertulis('#6B7480', latar),
+      rasioTertulis('#456A8C', latar)
+    );
+    return {
+      rute,
+      modeGelap: dibungkusTerang ? 'wadah-terang-v1' : 'gelap-tanpa-wadah',
+      latarGelap: latar,
+      rasioMinTeks: rasioTerendah,
+      lolos: rasioTerendah >= AMBANG.teks,
+    };
+  });
 
   const ringkas = kontrasToken.tabelRingkasDuaMode();
   return {
@@ -130,6 +165,14 @@ function auditKontras() {
     pasanganKomponenGagal: gagalKomponen,
     pasanganTambahan: hasilTambahan,
     kebocoranV1DiModalGelap: modalKebijakanGelap,
+    ruteV1DalamShellGelap: {
+      total: ruteV1Diukur.length,
+      gagal: ruteV1Diukur.filter((r) => !r.lolos).length,
+      rincian: ruteV1Diukur,
+    },
+    kebijakanPrivasiDuaMode: /KebijakanPrivasiV2/.test(kebRuteSrc),
+    maskotPengantarPakaiLatarMaskot: /backgroundColor:\s*warna\.latarMaskot/.test(pengantarSrc),
+    tabBarDuaBaris: /baris=\{2\}/.test(tabBarSrc) && !/baris=\{1\}/.test(tabBarSrc),
   };
 }
 

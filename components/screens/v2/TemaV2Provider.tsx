@@ -18,6 +18,8 @@ import {
 import { TEMA_WARNA } from '../../../theme/v2';
 import { TemaV2Context, useTemaV2 } from '../../../theme/v2/konteks';
 
+export { useTemaV2 };
+
 const SAKLAR_MODE_GELAP = modeGelapAktif(Constants.expoConfig?.extra);
 
 function bacaSkemaWeb(): SkemaSistem {
