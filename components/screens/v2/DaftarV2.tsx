@@ -17,11 +17,13 @@ import {
   TEKS_MASUK,
   TEKS_V1,
   bentukKirimanDaftar,
+  indeksLangkahAman,
   langkahDaftar,
   periksaLangkah,
   type IsianDaftar,
   type Jenjang,
   type LangkahDaftar,
+  type StatusUsia,
 } from '../../../lib/alurMasukV2';
 import { JENIS_SEKOLAH_MENENGAH, LABEL_JENIS_SEKOLAH, type JenisSekolahMenengah, type Kelas } from '../../../lib/jenjang';
 import { RINGKASAN_KEBIJAKAN, VERSI_KEBIJAKAN } from '../../../lib/kebijakanPrivasi';
@@ -44,7 +46,17 @@ import { KerangkaV2 } from './KerangkaV2';
 export function DaftarV2() {
   const router = useRouter();
   const { register, registerKode, loading, error, medan } = useAuth();
-  const [isian, setIsian] = useState<IsianDaftar>({ namaPengguna: '', kataSandi: '', email: '', sudahBaca: false, kelas: null, jenis: null, prodi: null });
+  const [isian, setIsian] = useState<IsianDaftar>({
+    usia: null,
+    orangTuaSetuju: false,
+    namaPengguna: '',
+    kataSandi: '',
+    email: '',
+    sudahBaca: false,
+    kelas: null,
+    jenis: null,
+    prodi: null,
+  });
   const [jenjang, setJenjang] = useState<Jenjang | null>(null);
   const [tetapMasuk, setTetapMasuk] = useState(true);
   const [indeks, setIndeks] = useState(0);
@@ -58,18 +70,19 @@ export function DaftarV2() {
   const [infoKode, setInfoKode] = useState<string | null>(null);
   const [galatKode, setGalatKode] = useState<string | null>(null);
 
-  const daftarLangkah = langkahDaftar(isian.kelas);
-  const langkah = daftarLangkah[Math.min(indeks, daftarLangkah.length - 1)];
+  const daftarLangkah = langkahDaftar(isian.kelas, isian.usia);
+  const indeksAktif = indeksLangkahAman(indeks, isian);
+  const langkah = daftarLangkah[indeksAktif];
   const ubah = (sebagian: Partial<IsianDaftar>) => setIsian((i) => ({ ...i, ...sebagian }));
 
   // Galat medan dari server → kembali ke langkah tempat medan itu diisi.
   useEffect(() => {
     const kunci = Object.keys(medan).find((k) => LANGKAH_MEDAN[k]);
     if (!kunci) return;
-    const ke = langkahDaftar(isian.kelas).indexOf(LANGKAH_MEDAN[kunci]);
+    const ke = langkahDaftar(isian.kelas, isian.usia).indexOf(LANGKAH_MEDAN[kunci]);
     if (ke >= 0) {
       setKiriman(null);
-      setIndeks(ke);
+      setIndeks(indeksLangkahAman(ke, isian));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [medan]);
@@ -82,12 +95,12 @@ export function DaftarV2() {
     const g = langkah === 'jenjang' && !jenjang ? { jenjang: TEKS_DAFTAR.jenjang.pilihDulu } : periksaLangkah(langkah, isian);
     setGalatLangkah(g);
     if (Object.keys(g).length) return;
-    setIndeks((i) => Math.min(i + 1, daftarLangkah.length - 1));
+    setIndeks(indeksLangkahAman(indeksAktif + 1, isian));
   };
 
   const kembali = () => {
     setGalatLangkah({});
-    setIndeks((i) => Math.max(0, i - 1));
+    setIndeks(Math.max(0, indeksAktif - 1));
   };
 
   const kirimKode = async (data: DataDaftar & { email: string }, ulang: boolean) => {
@@ -104,7 +117,7 @@ export function DaftarV2() {
       setGalatKirim(err instanceof ApiError && err.kode === 'OTP_TIDAK_TERSEDIA' ? TEKS_DAFTAR.kode.tidakTersedia : authApi.pesanUntuk(err));
       if (err instanceof ApiError && err.medan) {
         const k = Object.keys(err.medan).find((m) => LANGKAH_MEDAN[m]);
-        if (k) setIndeks(langkahDaftar(isian.kelas).indexOf(LANGKAH_MEDAN[k]));
+        if (k) setIndeks(indeksLangkahAman(langkahDaftar(isian.kelas, isian.usia).indexOf(LANGKAH_MEDAN[k]), isian));
       }
     } finally {
       setMengirimKode(false);
@@ -116,7 +129,7 @@ export function DaftarV2() {
     setGalatLangkah(g);
     if (Object.keys(g).length) {
       const pertama = Object.keys(g).map((k) => daftarLangkah.indexOf(LANGKAH_MEDAN[k])).filter((i) => i >= 0);
-      if (pertama.length) setIndeks(Math.min(...pertama));
+      if (pertama.length) setIndeks(indeksLangkahAman(Math.min(...pertama), isian));
       return;
     }
     const k = bentukKirimanDaftar(isian, VERSI_KEBIJAKAN);
@@ -168,8 +181,10 @@ export function DaftarV2() {
   }
 
   // ---------- Langkah ----------
-  const pertama = indeks === 0;
+  const pertama = indeksAktif === 0;
   const terakhir = langkah === 'siap';
+  const tombolLanjutNonaktif =
+    (langkah === 'usia' && !isian.usia) || (langkah === 'orang_tua' && !isian.orangTuaSetuju);
   const galatUmum = terakhir ? galatKirim ?? error : null;
   return (
     <KerangkaV2
@@ -180,13 +195,17 @@ export function DaftarV2() {
           {terakhir ? (
             <Tombol label={TEKS_DAFTAR.siap.buatAkun} penuh memuat={loading || mengirimKode} onPress={buatAkun} />
           ) : (
-            <Tombol label={TEKS_DAFTAR.lanjut} penuh onPress={lanjut} />
+            <Tombol label={TEKS_DAFTAR.lanjut} penuh nonaktif={tombolLanjutNonaktif} onPress={lanjut} />
           )}
-          {pertama ? <Tombol varian="teks" label={TEKS_DAFTAR.sudahPunya} penuh onPress={() => router.replace('/masuk')} /> : null}
+          {pertama ? (
+            <Tombol varian="teks" label={TEKS_DAFTAR.sudahPunya} penuh onPress={() => router.replace('/masuk')} />
+          ) : langkah === 'orang_tua' ? (
+            <Tombol varian="teks" label={TEKS_DAFTAR.orangTua.kembaliMasuk} penuh onPress={() => router.replace('/masuk')} />
+          ) : null}
         </>
       }
     >
-      <IndikatorLangkah ke={indeks + 1} total={daftarLangkah.length} teks={TEKS_DAFTAR.langkahKe(indeks + 1, daftarLangkah.length)} />
+      <IndikatorLangkah ke={indeksAktif + 1} total={daftarLangkah.length} teks={TEKS_DAFTAR.langkahKe(indeksAktif + 1, daftarLangkah.length)} />
       <IsiLangkah
         langkah={langkah}
         isian={isian}
@@ -232,6 +251,36 @@ function IsiLangkah({
 }) {
   const t = TEKS_DAFTAR;
   switch (langkah) {
+    case 'usia':
+      return (
+        <>
+          <HeaderLayar tanpaTepi judul={t.usia.judul} ringkasan={t.usia.ringkasan} />
+          <Pilihan
+            judul={t.usia.judul}
+            mode="satu"
+            judulTersembunyi
+            opsi={[
+              { nilai: 'ya', label: t.usia.ya },
+              { nilai: 'belum', label: t.usia.belum },
+            ]}
+            terpilih={isian.usia ? [isian.usia] : []}
+            galat={galat.usia}
+            onUbah={([u]) => ubah({ usia: u as StatusUsia, orangTuaSetuju: false })}
+          />
+        </>
+      );
+    case 'orang_tua':
+      return (
+        <>
+          <HeaderLayar tanpaTepi judul={t.orangTua.judul} ringkasan={t.orangTua.ringkasan} onKembali={onKembali} />
+          <Centang
+            label={t.orangTua.setuju}
+            dicentang={isian.orangTuaSetuju}
+            onUbah={(v) => ubah({ orangTuaSetuju: v })}
+            galat={galat.orang_tua}
+          />
+        </>
+      );
     case 'akun':
       return (
         <>

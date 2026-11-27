@@ -141,11 +141,16 @@ describe('Kontrak pendaftaran: payload v2 identik dengan v1', () => {
   }
 
   const MATRIKS = [];
-  for (const kelas of ['7', '8', '9', '10', '11', '12']) {
-    for (const jenis of [null, 'SMA', 'SMK', 'MA']) {
-      for (const prodi of ['belum', 'informatika']) {
-        for (const email of ['', '  siswa@contoh.com  ']) {
-          MATRIKS.push({ namaPengguna: '  Budi.SMK_12 ', kataSandi: 'sandi-uji-1234', email, sudahBaca: true, kelas, jenis, prodi });
+  for (const [usia, orangTuaSetuju] of [
+    ['ya', false],
+    ['belum', true],
+  ]) {
+    for (const kelas of ['7', '8', '9', '10', '11', '12']) {
+      for (const jenis of [null, 'SMA', 'SMK', 'MA']) {
+        for (const prodi of ['belum', 'informatika']) {
+          for (const email of ['', '  siswa@contoh.com  ']) {
+            MATRIKS.push({ usia, orangTuaSetuju, namaPengguna: '  Budi.SMK_12 ', kataSandi: 'sandi-uji-1234', email, sudahBaca: true, kelas, jenis, prodi });
+          }
         }
       }
     }
@@ -333,7 +338,7 @@ describe('Sesi tersimpan yang aman', () => {
 
 // ---------------------------------------------------------------------------------------------
 describe('Persetujuan tidak bergeser dan tidak bisa dilewati', () => {
-  const isianLengkap = { namaPengguna: 'budi.smk', kataSandi: 'sandi-uji-1234', email: '', sudahBaca: true, kelas: '12', jenis: 'SMK', prodi: 'belum' };
+  const isianLengkap = { usia: 'ya', orangTuaSetuju: false, namaPengguna: 'budi.smk', kataSandi: 'sandi-uji-1234', email: '', sudahBaca: true, kelas: '12', jenis: 'SMK', prodi: 'belum' };
 
   test('Persetujuan diminta sebelum akun dibuat, di semua jenjang', () => {
     for (const kelas of [null, '7', '9', '10', '12']) {

@@ -485,6 +485,31 @@ Layar **Jelajah** (`/discover`, `/discover-refleksi`) dan **Profil Eksplorasi** 
 3. **Uji saat `EXPO_PUBLIC_NAVIGASI_V2` mati (v1 utuh):**
    - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2` (dan `$env:EXPO_PUBLIC_ALAT_BELAJAR`), jalankan `npx expo start --go --lan --clear`: pastikan seluruh 5 tab v1 (termasuk Jenjang Saya, Ngobrol, Pilih Mapel) dan seluruh layar v1 bekerja persis seperti sebelumnya.
 
+---
+
+## 20. Gerbang Usia & Konfirmasi Orang Tua di Daftar v2 (LANJUT_041)
+
+> Belum dicoba di HP fisik oleh agen — daftar langkah manual untuk dicoba di Expo Go / peramban dev.
+
+1. **Jalankan dengan `EXPO_PUBLIC_ALUR_MASUK_V2="1"`:**
+   ```powershell
+   cd LANJUT_App
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2="1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2="1"
+   $env:EXPO_PUBLIC_MODE_GELAP="1"
+   npx expo start --go --lan --clear
+   ```
+2. **Alur "Belum" (di bawah 18 tahun):**
+   - Dari Pengantar (atau Masuk → Daftar), buka **Daftar**: layar pertama menanyakan *"Umurmu sudah 18 tahun atau lebih?"* dengan tombol **Lanjut** nonaktif sampai pilihan dipilih.
+   - Pilih **Belum**, lalu tekan **Lanjut**: tampil layar **"Persetujuan orang tua atau wali"** dengan kotak centang kosong dan tombol **Lanjut** nonaktif.
+   - Pastikan tidak bisa lanjut sebelum mencentang kotak, dan tombol **Kembali ke Masuk** serta tombol panah **Kembali** bekerja normal.
+   - Centang kotak pernyataan, lalu tekan **Lanjut**: masuk ke langkah **Buat akun** dan lanjut sampai selesai seperti biasa.
+3. **Alur "Ya" (18 tahun atau lebih):**
+   - Ulangi dari Daftar, pilih **Ya**, tekan **Lanjut**: langsung menuju langkah **Buat akun** tanpa layar konfirmasi orang tua/wali.
+4. **Uji saklar mati:**
+   - Kosongkan `$env:EXPO_PUBLIC_ALUR_MASUK_V2` lalu jalankan `npx expo start --go --lan --clear`: layar Daftar kembali ke formulir v1 utuh (tanpa layar usia).
+
+
 
 
 
