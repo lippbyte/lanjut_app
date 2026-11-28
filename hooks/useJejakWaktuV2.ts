@@ -5,7 +5,7 @@ import type { ApiError } from '../api/client';
 import { untukPersiapanEvent } from '../lib/eventSekolah';
 import { navigasiV2Aktif } from '../lib/fiturApp';
 import { susunJejakWaktu, type HasilJejakWaktu } from '../lib/jejakWaktuV2';
-import { untukKelas12 } from '../lib/jenjang';
+import { untukKelas12, type Kelas } from '../lib/jenjang';
 import { useSesi } from '../providers/AuthProvider';
 import { useEventSekolah } from './useEventSekolah';
 import { useMapel } from './useMapel';
@@ -17,6 +17,7 @@ const NAVIGASI_V2 = navigasiV2Aktif(Constants.expoConfig?.extra);
 const bukanGalatJaringan = (e: ApiError | null) => !!e && (e.status === 403 || e.status === 404);
 
 export type DataJejakWaktuV2 = {
+  kelas: Kelas | null;
   memuat: boolean;
   galatJaringan: boolean;
   muatUlang: () => void;
@@ -69,5 +70,5 @@ export function useJejakWaktuV2(): DataJejakWaktuV2 {
     [kelas, tahapanQuery.isError, tahapanQuery.data, eventQuery.isError, eventQuery.data, namaMapel]
   );
 
-  return { memuat, galatJaringan, muatUlang, jadwal };
+  return { kelas, memuat, galatJaringan, muatUlang, jadwal };
 }

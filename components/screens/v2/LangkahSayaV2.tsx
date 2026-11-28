@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import type {
   ButirDaftarPeriksa,
@@ -9,7 +9,9 @@ import type {
   IsiEvent,
   JenisEvent,
   KategoriDaftarPeriksa,
+  Prodi,
 } from '../../../api/types';
+import { useKurangiGerak } from '../../../hooks/useKurangiGerak';
 import { useLangkahSayaV2, type DataLangkahSayaV2 } from '../../../hooks/useLangkahSayaV2';
 import { CATATAN_KATEGORI, type Progres } from '../../../lib/daftarPeriksa';
 import {
@@ -29,20 +31,25 @@ import {
   OPSI_KELAS_LANGKAH,
   TEKS_LANGKAH_SAYA,
   aksiKosongLangkahSaya,
+  aksiTambahRisetProdi,
   kalimatProgresLangkah,
+  kelompokkanProdiPerRumpun,
   labelHapusButirPribadi,
   persenProgres,
+  pesanGalatRisetProdi,
+  saringDaftarProdi,
   teksRingkasanProgres,
 } from '../../../lib/langkahSayaV2';
 import { formatTanggal } from '../../../lib/linimasa';
 import { useSesi } from '../../../providers/AuthProvider';
-import { elevasi, garis, keluargaHuruf, radius, ruang, ukuran } from '../../../theme/v2';
+import { elevasi, garis, keluargaHuruf, radius, ruang, tataLetak, ukuran } from '../../../theme/v2';
 import { useTemaV2 } from '../../../theme/v2/konteks';
 import {
   Ikon,
   Isian,
   Kartu,
   KeadaanGalat,
+  KeadaanKosong,
   PesanStatus,
   PlaceholderMemuat,
   Sentuh,
@@ -52,6 +59,7 @@ import {
 
 const UKURAN_KOTAK_CENTANG = ukuran.ikon + garis.fokus * 2;
 const ALAT_BELAJAR = alatBelajarAktif(Constants.expoConfig?.extra);
+const PERILAKU_PAPAN_KETIK = Platform.OS === 'ios' ? 'padding' : undefined;
 
 /**
  * Layar Langkah Saya v2 (`/langkah-saya`, LANJUT_032, saklar EXPO_PUBLIC_NAVIGASI_V2).
@@ -63,25 +71,37 @@ const ALAT_BELAJAR = alatBelajarAktif(Constants.expoConfig?.extra);
  */
 export function LangkahSayaV2() {
   const { warna } = useTemaV2();
+  const kurangiGerak = useKurangiGerak();
   const router = useRouter();
   const { pengguna } = useSesi();
   const data = useLangkahSayaV2();
   const [konfirmasiHapusId, setKonfirmasiHapusId] = useState<string | null>(null);
   const [formEventSmp, setFormEventSmp] = useState<{ event?: EventSekolah } | null>(null);
+  const [modalRisetTerbuka, setModalRisetTerbuka] = useState(false);
 
   const aksiKosong = aksiKosongLangkahSaya({
     kelas: pengguna?.kelas,
     bisaEventSmp: data.smp.bisaEvent,
     alatBelajar: ALAT_BELAJAR,
   });
+  const aksiRisetProdi = aksiTambahRisetProdi(pengguna?.kelas);
 
+  const bukaModalRiset = () => {
+    data.risetProdi.resetGalatSimpan();
+    setModalRisetTerbuka(true);
+  };
+
+  const labelTombolKosong = aksiKosong?.label ?? aksiRisetProdi?.label;
   const jalankanAksiKosong = () => {
-    if (!aksiKosong) return;
-    if (aksiKosong.jenis === 'tambah_jadwal') {
-      setFormEventSmp({});
-    } else {
-      router.push(aksiKosong.href as any);
+    if (aksiKosong) {
+      if (aksiKosong.jenis === 'tambah_jadwal') {
+        setFormEventSmp({});
+      } else {
+        router.push(aksiKosong.href as any);
+      }
+      return;
     }
+    if (aksiRisetProdi) bukaModalRiset();
   };
 
   const tidakAdaIsiSamaSekali =
@@ -134,8 +154,8 @@ export function LangkahSayaV2() {
         <KartuKosongMaskot
           judul={TEKS_LANGKAH_SAYA.kosongJudul}
           teks={TEKS_LANGKAH_SAYA.kosongTeks}
-          labelTombol={aksiKosong?.label}
-          onTekan={aksiKosong ? jalankanAksiKosong : undefined}
+          labelTombol={labelTombolKosong}
+          onTekan={labelTombolKosong ? jalankanAksiKosong : undefined}
         />
       ) : (
         <>
@@ -143,6 +163,8 @@ export function LangkahSayaV2() {
             <KartuKosongMaskot
               judul={TEKS_LANGKAH_SAYA.pilihJalurJudul}
               teks={TEKS_LANGKAH_SAYA.pilihJalurTeks}
+              labelTombol={aksiRisetProdi?.label}
+              onTekan={aksiRisetProdi ? bukaModalRiset : undefined}
             />
           ) : null}
 
@@ -180,6 +202,12 @@ export function LangkahSayaV2() {
                 </Teks>
               ) : null}
 
+              {aksiRisetProdi ? (
+                <View style={s.barisPintuBawah}>
+                  <Tombol varian="sekunder" label={aksiRisetProdi.label} onPress={bukaModalRiset} />
+                </View>
+              ) : null}
+
               {ALAT_BELAJAR ? (
                 <View style={s.barisPintuBawah}>
                   <Tombol
@@ -207,6 +235,15 @@ export function LangkahSayaV2() {
           ) : null}
         </>
       )}
+
+      {aksiRisetProdi ? (
+        <ModalRisetProdiV2
+          terbuka={modalRisetTerbuka}
+          kurangiGerak={kurangiGerak}
+          risetProdi={data.risetProdi}
+          onTutup={() => setModalRisetTerbuka(false)}
+        />
+      ) : null}
     </View>
   );
 }
@@ -870,6 +907,188 @@ function FormJadwalSmpV2({
   );
 }
 
+function ModalRisetProdiV2({
+  terbuka,
+  kurangiGerak,
+  risetProdi,
+  onTutup,
+}: {
+  terbuka: boolean;
+  kurangiGerak: boolean;
+  risetProdi: DataLangkahSayaV2['risetProdi'];
+  onTutup: () => void;
+}) {
+  const { warna } = useTemaV2();
+  const [kataKunci, setKataKunci] = useState('');
+  const [prodiDipilih, setProdiDipilih] = useState<Prodi | null>(null);
+
+  const tutupBersih = () => {
+    setKataKunci('');
+    setProdiDipilih(null);
+    risetProdi.resetGalatSimpan();
+    onTutup();
+  };
+
+  const pilihProdi = (p: Prodi) => {
+    risetProdi.resetGalatSimpan();
+    setProdiDipilih(p);
+  };
+
+  const kembaliKeDaftar = () => {
+    risetProdi.resetGalatSimpan();
+    setProdiDipilih(null);
+  };
+
+  const tersaring = saringDaftarProdi(risetProdi.daftarProdi, kataKunci);
+  const perRumpun = kelompokkanProdiPerRumpun(tersaring);
+
+  return (
+    <Modal
+      visible={terbuka}
+      animationType={kurangiGerak ? 'none' : 'slide'}
+      onRequestClose={tutupBersih}
+    >
+      <KeyboardAvoidingView
+        behavior={PERILAKU_PAPAN_KETIK}
+        style={StyleSheet.flatten([s.modalAkar, { backgroundColor: warna.halaman }])}
+      >
+        <View
+          style={StyleSheet.flatten([
+            s.modalBilahAtas,
+            { backgroundColor: warna.permukaan, borderBottomColor: warna.garisHalus },
+          ])}
+        >
+          <Teks varian="judulKecil" gaya={s.fleks}>
+            {prodiDipilih ? TEKS_LANGKAH_SAYA.risetKonfirmasiJudul : TEKS_LANGKAH_SAYA.risetJudulPilih}
+          </Teks>
+          <Tombol varian="teks" label={TEKS_LANGKAH_SAYA.batal} onPress={tutupBersih} />
+        </View>
+
+        <ScrollView contentContainerStyle={s.modalGulir} keyboardShouldPersistTaps="handled">
+          <View style={s.modalKolom}>
+            {prodiDipilih ? (
+              <View style={s.seksi}>
+                <Kartu judul={prodiDipilih.nama} keterangan={prodiDipilih.rumpun}>
+                  <Teks varian="badanKecil" warna="teksSekunder">
+                    {TEKS_LANGKAH_SAYA.risetKonfirmasiTeks}
+                  </Teks>
+                </Kartu>
+
+                {risetProdi.galatSimpan ? (
+                  <PesanStatus jenis="galat" berlatar>
+                    {pesanGalatRisetProdi(risetProdi.galatSimpan)}
+                  </PesanStatus>
+                ) : null}
+
+                <View style={s.seksi}>
+                  <Tombol
+                    varian="utama"
+                    label={TEKS_LANGKAH_SAYA.risetSimpan}
+                    memuat={risetProdi.sedangSimpan}
+                    onPress={() => risetProdi.simpan(prodiDipilih.id, tutupBersih)}
+                  />
+                  <Tombol
+                    varian="teks"
+                    label={TEKS_LANGKAH_SAYA.risetGantiProdi}
+                    nonaktif={risetProdi.sedangSimpan}
+                    onPress={kembaliKeDaftar}
+                  />
+                </View>
+              </View>
+            ) : risetProdi.memuatProdi ? (
+              <View style={s.seksi}>
+                <PlaceholderMemuat baris={3} label={TEKS_LANGKAH_SAYA.risetMemuatLabel} />
+                <PlaceholderMemuat baris={3} label={TEKS_LANGKAH_SAYA.risetMemuatLabel} />
+              </View>
+            ) : risetProdi.galatProdi ? (
+              <KeadaanGalat
+                judul={TEKS_LANGKAH_SAYA.risetGalatMuatJudul}
+                pesan={TEKS_LANGKAH_SAYA.risetGalatMuatPesan}
+                onCobaLagi={risetProdi.muatUlangProdi}
+              />
+            ) : risetProdi.daftarProdi.length === 0 ? (
+              <KeadaanKosong
+                ikon="info"
+                judul={TEKS_LANGKAH_SAYA.risetKosongJudul}
+                teks={TEKS_LANGKAH_SAYA.risetKosongTeks}
+              />
+            ) : (
+              <View style={s.seksi}>
+                <Teks varian="badanKecil" warna="teksSekunder">
+                  {TEKS_LANGKAH_SAYA.risetRingkasPilih}
+                </Teks>
+
+                <Isian
+                  label={TEKS_LANGKAH_SAYA.risetCariLabel}
+                  petunjuk={TEKS_LANGKAH_SAYA.risetCariPetunjuk}
+                  nilai={kataKunci}
+                  onUbah={setKataKunci}
+                  maksPanjang={64}
+                />
+
+                {perRumpun.length === 0 ? (
+                  <KeadaanKosong
+                    ikon="jelajah"
+                    judul={TEKS_LANGKAH_SAYA.risetCariKosongJudul}
+                    teks={TEKS_LANGKAH_SAYA.risetCariKosongTeks}
+                  />
+                ) : (
+                  perRumpun.map((grup) => (
+                    <View key={grup.rumpun} style={s.seksi}>
+                      <Teks varian="judulKecil" warna="teksSekunder">
+                        {grup.rumpun}
+                      </Teks>
+                      <View
+                        style={StyleSheet.flatten([
+                          s.kartuKelompok,
+                          { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
+                        ])}
+                      >
+                        {grup.anggota.map((p, indeks) => {
+                          const sudahAda = risetProdi.prodiSudahTersimpanIds.has(p.id);
+                          const labelAkses = sudahAda
+                            ? `${p.nama}, ${TEKS_LANGKAH_SAYA.risetSudahAda}`
+                            : p.nama;
+                          return (
+                            <Sentuh
+                              key={p.id}
+                              peran="button"
+                              label={labelAkses}
+                              onPress={() => pilihProdi(p)}
+                              gaya={({ ditekan }) => [
+                                s.barisProdi,
+                                indeks > 0 && {
+                                  borderTopWidth: garis.tipis,
+                                  borderTopColor: warna.garisHalus,
+                                },
+                                ditekan && { backgroundColor: warna.permukaanLembut },
+                              ]}
+                            >
+                              <Teks varian="badan" gaya={s.fleks}>
+                                {p.nama}
+                              </Teks>
+                              {sudahAda ? (
+                                <Teks varian="keterangan" warna="aksen" gaya={s.teksTebal}>
+                                  {TEKS_LANGKAH_SAYA.risetSudahAda}
+                                </Teks>
+                              ) : null}
+                              <Ikon nama="panah" ukuran={ukuran.ikon} warna={warna.teksSekunder} />
+                            </Sentuh>
+                          );
+                        })}
+                      </View>
+                    </View>
+                  ))
+                )}
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
 const s = StyleSheet.create({
   wadah: {
     paddingHorizontal: ruang.tepi,
@@ -1026,5 +1245,32 @@ const s = StyleSheet.create({
     paddingVertical: ruang.r1,
     borderRadius: radius.sedang,
     borderWidth: garis.tipis,
+  },
+  modalAkar: {
+    flex: 1,
+  },
+  modalBilahAtas: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: ruang.r2,
+    paddingHorizontal: ruang.tepi,
+    paddingVertical: ruang.r1,
+    borderBottomWidth: garis.tipis,
+  },
+  modalGulir: {
+    paddingHorizontal: ruang.tepi,
+    paddingVertical: ruang.r3,
+    alignItems: 'center',
+  },
+  modalKolom: {
+    width: '100%',
+    maxWidth: tataLetak.lebarMaks,
+  },
+  barisProdi: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: ruang.r2,
+    paddingHorizontal: ruang.r2,
+    paddingVertical: ruang.r2,
   },
 });

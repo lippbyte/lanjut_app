@@ -509,6 +509,35 @@ Layar **Jelajah** (`/discover`, `/discover-refleksi`) dan **Profil Eksplorasi** 
 4. **Uji saklar mati:**
    - Kosongkan `$env:EXPO_PUBLIC_ALUR_MASUK_V2` lalu jalankan `npx expo start --go --lan --clear`: layar Daftar kembali ke formulir v1 utuh (tanpa layar usia).
 
+---
+
+## 21. Jejak Waktu Jujur & Langkah Saya Semua Jenjang (LANJUT_042)
+
+> Belum dicoba di HP fisik oleh agen — daftar langkah manual untuk dicoba di Expo Go / peramban dev (semua jenjang: SMP, kelas 10, kelas 11, kelas 12).
+
+1. **Jalankan dengan saklar v2 menyala dan `EXPO_PUBLIC_ALAT_BELAJAR` mati:**
+   ```powershell
+   cd LANJUT_App
+   $env:EXPO_PUBLIC_ALUR_MASUK_V2="1"
+   $env:EXPO_PUBLIC_NAVIGASI_V2="1"
+   $env:EXPO_PUBLIC_MODE_GELAP="1"
+   $env:EXPO_PUBLIC_DISCOVER="1"
+   $env:EXPO_PUBLIC_JALUR_TUJUAN="1"
+   $env:EXPO_PUBLIC_PORTOFOLIO="1"
+   Remove-Item Env:EXPO_PUBLIC_ALAT_BELAJAR -ErrorAction SilentlyContinue
+   npx expo start --go --lan --clear
+   ```
+2. **Uji Jejak Waktu (`/jejak-waktu`) per jenjang:**
+   - **Kelas 12 (`demo_kelas12`):** hingga 29 Nov 2026 tampil entri aktif `Pelaksanaan susulan TKA`; sesudah 29 Nov 2026 (saat tidak ada jadwal aktif) tampil kartu jujur *"Jadwal seleksi 2027 belum diumumkan"* dengan tanggal periksa dari data (`Dicek 27 November 2026 · snpmb.id (beranda)`), tombol **Langkah Saya**, dan lipatan `Sudah lewat (3)` di bawahnya.
+   - **Kelas 10 (`demo_kelas10`) & Kelas 11 (`uji_belum_memilih`):** tampil kartu jujur *"Jadwal kelas 10–11 belum tersedia"* dengan tombol **Langkah Saya** (bukan Jelajah atau Jalur Saya).
+   - **SMP (`uji_smp`):** tampil kartu jujur *"Jadwal SMP belum tersedia"* dengan tombol **Langkah Saya**.
+3. **Uji Langkah Saya (`/langkah-saya`) per jenjang:**
+   - **Kelas 10 (`demo_kelas10`) & Kelas 11 (`uji_belum_memilih`):** saat kosong tampil tombol **Tambah langkah riset prodi** → ketuk → cari/pilih satu prodi → ketuk **Simpan langkah** → langkah `"Cari tahu lebih lanjut soal [prodi]"` muncul di Langkah Saya dan bisa dicentang, batal-centang, serta dihapus.
+   - **Kelas 12 (`demo_kelas12`):** tombol **Tambah langkah riset prodi** tampil di bawah daftar langkah dan berfungsi dengan alur yang sama (tanpa membuka rute v1).
+   - **SMP (`uji_smp`):** tombol **Tambah langkah riset prodi** **tidak muncul**; tombol lokal **Tambah jadwal** tetap seperti sebelumnya saat fitur jadwal sekolah menyala.
+4. **Uji saklar mati:**
+   - Kosongkan `$env:EXPO_PUBLIC_NAVIGASI_V2` lalu jalankan `npx expo start --go --lan --clear`: layar Beranda v1 (`/linimasa`) dan Daftar Periksa v1 (`/daftar-periksa`) tidak berubah.
+
 
 
 

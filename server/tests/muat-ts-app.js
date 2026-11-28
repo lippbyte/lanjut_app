@@ -27,6 +27,10 @@ function typescriptApp() {
 
 /** `relatif` dari akar LANJUT_App, mis. 'lib/beranda' atau 'lib/beranda.ts'. */
 function muatModulApp(relatif) {
+  if (relatif.endsWith('.json')) {
+    const berkasJson = path.resolve(AKAR_APP, relatif);
+    return JSON.parse(fs.readFileSync(berkasJson, 'utf8'));
+  }
   const berkas = path.resolve(AKAR_APP, relatif.endsWith('.ts') ? relatif : `${relatif}.ts`);
   if (cache.has(berkas)) return cache.get(berkas).exports;
 

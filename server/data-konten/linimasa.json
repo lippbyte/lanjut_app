@@ -8,6 +8,12 @@
   "sumber": "resmi",
   "pemilik": "tim",
   "diperiksa_pada": null,
+  "status_jadwal_berikutnya": {
+    "judul": "Jadwal seleksi 2027",
+    "status": "belum_resmi",
+    "sumber": "snpmb.id (beranda)",
+    "diperiksa_pada": "2026-11-27"
+  },
   "data": [
     {
       "id": "sosialisasi",

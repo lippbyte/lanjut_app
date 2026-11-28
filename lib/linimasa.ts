@@ -1,5 +1,69 @@
 import type { TahapanLinimasa } from '../api/types';
+import linimasaData from '../server/data-konten/linimasa.json';
 import { kelompokJenjang, type Kelas } from './jenjang';
+
+export type StatusJadwalBerikutnya = {
+  readonly judul: string;
+  readonly status: 'belum_resmi' | 'resmi';
+  readonly sumber: string;
+  readonly diperiksa_pada: string;
+};
+
+/**
+ * Fakta kesegaran jadwal seleksi berikutnya dari sumber tunggal data linimasa
+ * (`server/data-konten/linimasa.json`, LANJUT_042). Tidak ditulis tetap di komponen UI.
+ */
+export const STATUS_JADWAL_BERIKUTNYA: StatusJadwalBerikutnya = {
+  judul: linimasaData.status_jadwal_berikutnya.judul,
+  status: linimasaData.status_jadwal_berikutnya.status as 'belum_resmi' | 'resmi',
+  sumber: linimasaData.status_jadwal_berikutnya.sumber,
+  diperiksa_pada: linimasaData.status_jadwal_berikutnya.diperiksa_pada,
+};
+
+/** Ambang kesegaran pemeriksaan jadwal (LANJUT_042): lewat 14 hari → peringatan non-gagal. */
+export const BATAS_SEGAR_JADWAL_HARI = 14;
+export const PERINGATAN_JADWAL_USANG = 'jadwal perlu diperiksa ulang';
+
+export type HasilKesegaranJadwal = {
+  segar: boolean;
+  umurHari: number | null;
+  batasHari: number;
+  diperiksaPada: string;
+  sumber: string;
+  peringatan: string | null;
+};
+
+/**
+ * Memeriksa apakah tanggal `diperiksa_pada` pada fakta jadwal lebih tua dari 14 hari kalender WIB.
+ * Hanya menghasilkan peringatan (bukan galat) agar pemeriksa data mengingatkan pemeriksaan ulang.
+ */
+export function periksaKesegaranJadwal(
+  status: Pick<StatusJadwalBerikutnya, 'diperiksa_pada' | 'sumber'> = STATUS_JADWAL_BERIKUTNYA,
+  sekarangMs: number = Date.now()
+): HasilKesegaranJadwal {
+  const diperiksaMs = uraiTanggal(status.diperiksa_pada);
+  const hariIni = hariIniWib(sekarangMs);
+  if (Number.isNaN(diperiksaMs)) {
+    return {
+      segar: false,
+      umurHari: null,
+      batasHari: BATAS_SEGAR_JADWAL_HARI,
+      diperiksaPada: status.diperiksa_pada,
+      sumber: status.sumber,
+      peringatan: PERINGATAN_JADWAL_USANG,
+    };
+  }
+  const umurHari = Math.round((hariIni - diperiksaMs) / 86_400_000);
+  const segar = umurHari <= BATAS_SEGAR_JADWAL_HARI;
+  return {
+    segar,
+    umurHari,
+    batasHari: BATAS_SEGAR_JADWAL_HARI,
+    diperiksaPada: status.diperiksa_pada,
+    sumber: status.sumber,
+    peringatan: segar ? null : PERINGATAN_JADWAL_USANG,
+  };
+}
 
 export type StatusTahapan = 'done' | 'soon' | 'idle';
 

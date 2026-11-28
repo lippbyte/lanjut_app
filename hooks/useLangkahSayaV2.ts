@@ -9,13 +9,15 @@ import type {
   KategoriDaftarPeriksa,
   Mapel,
   PilihanKartuEvent,
+  Prodi,
 } from '../api/types';
 import { gabungButirPribadi, hitungProgres, perluCatatanSnpmb, type Progres } from '../lib/daftarPeriksa';
 import { untukPersiapanEvent } from '../lib/eventSekolah';
 import { navigasiV2Aktif } from '../lib/fiturApp';
-import { modeLangkahSaya, rencanakanAlihButir } from '../lib/langkahSayaV2';
+import { bentukKirimanRisetProdi, modeLangkahSaya, rencanakanAlihButir } from '../lib/langkahSayaV2';
 import { useSesi } from '../providers/AuthProvider';
 import { useButirPribadi, useHapusButirPribadi, useTandaiButirPribadi } from './useButirPribadi';
+import { useSimpanButirPribadi } from './useButirPribadi';
 import { useEventSekolah, useHapusEvent, usePilihanKartuEvent, useSimpanEvent } from './useEventSekolah';
 import { useKemajuan, useTandaiKemajuan } from './useKemajuan';
 import { useMapel } from './useMapel';
@@ -47,6 +49,17 @@ export type DataLangkahSayaV2 = {
   hapusButirPribadi: (id: string) => void;
   sedangHapusButir: boolean;
   galatAksiButir: boolean;
+  risetProdi: {
+    daftarProdi: Prodi[];
+    memuatProdi: boolean;
+    galatProdi: boolean;
+    muatUlangProdi: () => void;
+    prodiSudahTersimpanIds: ReadonlySet<string>;
+    simpan: (prodiId: string, onSukses: () => void) => void;
+    sedangSimpan: boolean;
+    galatSimpan: { status?: number; kode?: string } | null;
+    resetGalatSimpan: () => void;
+  };
   smp: {
     bisaEvent: boolean;
     daftarEvent: EventSekolah[];
@@ -86,6 +99,7 @@ export function useLangkahSayaV2(): DataLangkahSayaV2 {
   const tandaiKemajuan = useTandaiKemajuan();
   const tandaiPribadi = useTandaiButirPribadi();
   const hapusPribadi = useHapusButirPribadi();
+  const simpanPribadi = useSimpanButirPribadi();
 
   const eventQuery = useEventSekolah(aktif && untukSmp);
   const mapelQuery = useMapel();
@@ -139,12 +153,37 @@ export function useLangkahSayaV2(): DataLangkahSayaV2 {
   const muatUlang = useCallback(() => {
     void pribadiQuery.refetch();
     void kemajuanQuery.refetch();
-    if (mode === 'kelas12') void prodiQuery.refetch();
+    if (mode === 'kelas12' || mode === 'sma1011') void prodiQuery.refetch();
     if (untukSmp) {
       void eventQuery.refetch();
       void mapelQuery.refetch();
     }
   }, [pribadiQuery, kemajuanQuery, prodiQuery, eventQuery, mapelQuery, mode, untukSmp]);
+
+  const prodiSudahTersimpanIds = useMemo(
+    () =>
+      new Set(
+        (pribadiQuery.data ?? [])
+          .filter((b) => b.jenis === 'riset_kampus' && Boolean(b.prodi_id))
+          .map((b) => b.prodi_id)
+      ),
+    [pribadiQuery.data]
+  );
+
+  const simpanRisetProdi = useCallback(
+    (prodiId: string, onSukses: () => void) => {
+      const kiriman = bentukKirimanRisetProdi(prodiId);
+      if (!kiriman) return;
+      simpanPribadi.mutate(kiriman, { onSuccess: onSukses });
+    },
+    [simpanPribadi]
+  );
+
+  const galatSimpanRisetProdi = simpanPribadi.isError
+    ? simpanPribadi.error instanceof ApiError
+      ? { status: simpanPribadi.error.status, kode: simpanPribadi.error.kode }
+      : {}
+    : null;
 
   const memuat =
     mode === 'kelas12'
@@ -184,6 +223,19 @@ export function useLangkahSayaV2(): DataLangkahSayaV2 {
     hapusButirPribadi,
     sedangHapusButir: hapusPribadi.isPending,
     galatAksiButir: tandaiKemajuan.isError || tandaiPribadi.isError || hapusPribadi.isError,
+    risetProdi: {
+      daftarProdi: prodiQuery.data ?? [],
+      memuatProdi: prodiQuery.isPending,
+      galatProdi: prodiQuery.isError,
+      muatUlangProdi: () => {
+        void prodiQuery.refetch();
+      },
+      prodiSudahTersimpanIds,
+      simpan: simpanRisetProdi,
+      sedangSimpan: simpanPribadi.isPending,
+      galatSimpan: galatSimpanRisetProdi,
+      resetGalatSimpan: () => simpanPribadi.reset(),
+    },
     smp: {
       bisaEvent: untukSmp && !eventQuery.isError && Boolean(eventQuery.data),
       daftarEvent: eventQuery.data ?? [],

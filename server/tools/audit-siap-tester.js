@@ -354,6 +354,19 @@ function auditGerbangRilis() {
   };
 }
 
+// 5b. KESEGARAN PEMERIKSAAN JADWAL SELEKSI BERIKUTNYA (LANJUT_042 — PERINGATAN NON-GAGAL)
+function auditKesegaranJadwal(sekarangMs = Date.now(), dataLinimasa) {
+  const linimasaMod = muatModulApp('lib/linimasa');
+  const sumberData =
+    dataLinimasa ?? JSON.parse(baca('server/data-konten/linimasa.json')).status_jadwal_berikutnya;
+  const hasil = linimasaMod.periksaKesegaranJadwal(sumberData, sekarangMs);
+  return {
+    judul: sumberData?.judul ?? null,
+    status: sumberData?.status ?? null,
+    ...hasil,
+  };
+}
+
 // 6. KESIAPAN KONTEN DI BASIS DATA DEV (HANYA SELECT)
 async function auditKontenDb() {
   process.chdir(path.join(AKAR_APP, 'server'));
@@ -421,6 +434,12 @@ async function auditKontenDb() {
 
 async function main() {
   const tanpaDb = process.argv.includes('--tanpa-db');
+  const kesegaranJadwal = auditKesegaranJadwal();
+  if (!kesegaranJadwal.segar && kesegaranJadwal.peringatan) {
+    console.warn(
+      `[audit-siap-tester] PERINGATAN: ${kesegaranJadwal.peringatan} (diperiksa ${kesegaranJadwal.diperiksaPada}, umur ${kesegaranJadwal.umurHari} hari > ${kesegaranJadwal.batasHari} hari).`
+    );
+  }
   const hasil = {
     kontras: auditKontras(),
     gerak: auditGerak(),
@@ -428,6 +447,7 @@ async function main() {
     rute: auditRute(),
     alatBelajar: auditAlatBelajar(),
     gerbangRilis: auditGerbangRilis(),
+    kesegaranJadwal,
     kontenDb: tanpaDb ? null : await auditKontenDb(),
   };
   console.log(JSON.stringify(hasil, null, 2));
@@ -440,4 +460,13 @@ if (require.main === module) {
   });
 }
 
-module.exports = { auditKontras, auditGerak, auditBahasaDanTeks, auditRute, auditAlatBelajar, auditGerbangRilis, auditKontenDb };
+module.exports = {
+  auditKontras,
+  auditGerak,
+  auditBahasaDanTeks,
+  auditRute,
+  auditAlatBelajar,
+  auditGerbangRilis,
+  auditKesegaranJadwal,
+  auditKontenDb,
+};

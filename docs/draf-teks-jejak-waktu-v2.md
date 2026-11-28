@@ -38,10 +38,15 @@
 | `bukaLangkah` | `Buka Langkah Saya` | Tautan di rincian butir menuju `/langkah-saya` |
 | `tutupRincian` | `Sembunyikan rincian` | Petunjuk pembaca layar saat rincian terbuka |
 | `lihatRincian` | `Lihat rincian` | Petunjuk pembaca layar saat rincian tertutup |
-| `kosongJudul` | `Belum ada jadwal saat ini` | Judul keadaan kosong (bersama maskot di lingkaran `#B4E1EB`) |
-| `kosongTeks` | `Siapkan langkahmu pelan saja.` | Kalimat penjelas keadaan kosong |
-| `kosongTombolJelajah` | `Jelajah` | Tombol keadaan kosong bila `EXPO_PUBLIC_DISCOVER=1` |
-| `kosongTombolLangkah` | `Langkah Saya` | Tombol keadaan kosong bila `EXPO_PUBLIC_DISCOVER` mati |
+| `kosongJudul` | `Belum ada jadwal saat ini` | Judul keadaan kosong bawaan (kelas belum terisi) |
+| `kosongTeks` | `Siapkan langkahmu pelan saja.` | Kalimat penjelas keadaan kosong bawaan |
+| `kosongKelas12Judul` | `Jadwal seleksi 2027 belum diumumkan` | Judul keadaan kosong kelas 12 saat tidak ada jadwal aktif (LANJUT_042) |
+| `kosongKelas12Teks` | `SNPMB belum merilis jadwal resmi 2027. Tanggal yang belum resmi tidak kami tampilkan.` | Kalimat jujur kelas 12; didampingi tanggal periksa & sumber dari `server/data-konten/linimasa.json` (`Dicek … · snpmb.id (beranda)`) |
+| `kosongSma1011Judul` | `Jadwal kelas 10–11 belum tersedia` | Judul keadaan kosong kelas 10–11 (LANJUT_042) |
+| `kosongSma1011Teks` | `Jadwal resmi untuk jenjangmu belum tersedia di LANJUT. Kamu bisa mulai dari Langkah Saya.` | Kalimat jujur kelas 10–11; tidak menunjuk layar kosong Jalur Saya / Jelajah |
+| `kosongSmpJudul` | `Jadwal SMP belum tersedia` | Judul keadaan kosong SMP kelas 7–9 (LANJUT_042) |
+| `kosongSmpTeks` | `Jadwal resmi untuk SMP belum tersedia di LANJUT. Kamu bisa mulai dari Langkah Saya.` | Kalimat jujur SMP kelas 7–9; menunjuk ke Langkah Saya |
+| `kosongTombolLangkah` | `Langkah Saya` | Tombol tunggal keadaan kosong Jejak Waktu menuju `/langkah-saya` |
 | `memuatLabel` | `Memuat Jejak Waktu` | Label pembaca layar pada kerangka memuat |
 | `galatJudul` | `Belum bisa memuat jadwal` | Judul `KeadaanGalat` |
 | `galatPesan` | `Periksa sambunganmu, lalu coba lagi.` | Pesan `KeadaanGalat` |
@@ -49,7 +54,9 @@
 
 ### Hitungan kata teks tetap Jejak Waktu
 - **Keadaan berisi (ketiga kelompok tampil):** `11 kata` (`≤ 40`).
-- **Keadaan kosong:** `18 kata` (`≤ 40`).
+- **Keadaan kosong kelas 12 (termasuk label `Dicek` & lipatan `Sudah lewat`):** `30 kata` teks tetap (`35 kata` termasuk tanggal & sumber data, `≤ 40`).
+- **Keadaan kosong kelas 10–11:** `28 kata` (`≤ 40`).
+- **Keadaan kosong SMP (termasuk `Sudah lewat` bila ada):** `29 kata` (`≤ 40`).
 - **Keadaan galat:** `18 kata` (`≤ 40`).
 
 ---
@@ -89,14 +96,34 @@
 | `kosongTombolTambahJadwal` | `Tambah jadwal` | Tombol keadaan kosong SMP saat fitur `event_sekolah_aktif` menyala |
 | `jadwalSmpJudul` | `Jadwal sekolah` | Judul seksi pengelolaan `event_sekolah` SMP (memakai ulang `TEKS_EVENT` untuk formulir) |
 | `tambahJadwal` | `Tambah jadwal` | Tombol membuka formulir tambah jadwal SMP |
+| `tambahRisetProdi` | `Tambah langkah riset prodi` | Tombol lokal kelas 10–11 (kosong & bawah daftar) serta kelas 12 (bawah daftar) (LANJUT_042 — DRAF) |
+| `risetJudulPilih` | `Pilih prodi` | Judul bilah atas langkah 1 modal riset prodi (LANJUT_042 — DRAF) |
+| `risetRingkasPilih` | `Pilih prodi yang ingin kamu cari tahu.` | Pengantar singkat langkah pilih prodi (LANJUT_042 — DRAF) |
+| `risetCariLabel` | `Cari prodi` | Label kolom pencarian daftar prodi (LANJUT_042 — DRAF) |
+| `risetCariPetunjuk` | `Ketik nama prodi atau bidang.` | Petunjuk kolom pencarian prodi (LANJUT_042 — DRAF) |
+| `risetSudahAda` | `Sudah ada` | Penanda tertulis bila prodi sudah tersimpan sebagai langkah riset (LANJUT_042 — DRAF) |
+| `risetKosongJudul` | `Prodi belum tersedia` | Judul keadaan kosong bila daftar prodi kosong (LANJUT_042 — DRAF) |
+| `risetKosongTeks` | `Coba lagi nanti.` | Keterangan keadaan kosong daftar prodi (LANJUT_042 — DRAF) |
+| `risetCariKosongJudul` | `Prodi tidak ditemukan` | Judul saat kata pencarian tidak cocok (LANJUT_042 — DRAF) |
+| `risetCariKosongTeks` | `Coba kata kunci lain.` | Keterangan saat kata pencarian tidak cocok (LANJUT_042 — DRAF) |
+| `risetMemuatLabel` | `Memuat daftar prodi` | Label pembaca layar saat daftar prodi dimuat (LANJUT_042 — DRAF) |
+| `risetGalatMuatJudul` | `Daftar prodi belum bisa dimuat` | Judul galat muat daftar prodi (LANJUT_042 — DRAF) |
+| `risetGalatMuatPesan` | `Periksa sambunganmu, lalu coba lagi.` | Pesan galat muat daftar prodi (LANJUT_042 — DRAF) |
+| `risetKonfirmasiJudul` | `Tambah ke Langkah Saya?` | Judul bilah atas langkah 2 konfirmasi riset prodi (LANJUT_042 — DRAF) |
+| `risetKonfirmasiTeks` | `Langkah riset ini akan masuk ke daftarmu.` | Kalimat konfirmasi singkat sebelum menyimpan (LANJUT_042 — DRAF) |
+| `risetSimpan` | `Simpan langkah` | Tombol utama konfirmasi menyimpan ke `POST /butir-pribadi` (LANJUT_042 — DRAF) |
+| `risetGantiProdi` | `Pilih prodi lain` | Tombol kembali memilih prodi lain (LANJUT_042 — DRAF) |
+| `risetGalatBatasLaju` | `Terlalu banyak percobaan. Tunggu sebentar, lalu coba lagi.` | Pesan galat batas laju (`429`) saat menyimpan (LANJUT_042 — DRAF) |
+| `risetGalatSimpan` | `Langkah belum tersimpan. Periksa sambunganmu, lalu coba lagi.` | Pesan galat jaringan saat menyimpan (LANJUT_042 — DRAF) |
 | `memuatLabel` | `Memuat Langkah Saya` | Label pembaca layar pada kerangka memuat |
 | `galatJudul` | `Belum bisa memuat langkah` | Judul `KeadaanGalat` |
 | `galatPesan` | `Periksa sambunganmu, lalu coba lagi.` | Pesan `KeadaanGalat` |
 | `cobaLagi` | `Coba lagi` | Label tombol muat ulang |
 
 ### Hitungan kata teks tetap Langkah Saya
-- **Kelas 12 berisi (kasus terpanjang: semua selesai + catatan SNPMB):** `32 kata` (`≤ 40`).
-- **Kelas 12 belum memilih jalur seleksi:** `16 kata` (`≤ 40`).
-- **Butir pribadi saja:** `22 kata` (`≤ 40`).
-- **Keadaan kosong:** `16 kata` (`≤ 40`).
+- **Kelas 12 berisi (kasus terpanjang: semua selesai + catatan SNPMB + tombol riset prodi):** `36 kata` (`≤ 40`).
+- **Kelas 12 belum memilih jalur seleksi (+ tombol riset prodi):** `20 kata` (`≤ 40`).
+- **Butir pribadi saja (+ tombol riset prodi):** `26 kata` (`≤ 40`).
+- **Keadaan kosong kelas 10–11 (+ tombol riset prodi):** `18 kata` (`≤ 40`).
+- **Modal riset prodi — pilih prodi:** `19 kata` (`≤ 40`); **kosong:** `9 kata`; **cari kosong:** `17 kata`; **galat muat:** `15 kata`; **konfirmasi (+ galat):** `25 kata` (`≤ 40`).
 - **Keadaan galat:** `16 kata` (`≤ 40`).

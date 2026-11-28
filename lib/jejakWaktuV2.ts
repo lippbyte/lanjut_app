@@ -14,7 +14,14 @@ import type { EventSekolah, TahapanLinimasa } from '../api/types';
 import { hitungKata } from './arahSaya';
 import { labelJenis, untukPersiapanEvent } from './eventSekolah';
 import { kelompokJenjang, type Kelas } from './jenjang';
-import { formatRentang, formatTanggal, hariIniWib, uraiTanggal } from './linimasa';
+import {
+  STATUS_JADWAL_BERIKUTNYA,
+  formatRentang,
+  formatTanggal,
+  hariIniWib,
+  uraiTanggal,
+  type StatusJadwalBerikutnya,
+} from './linimasa';
 import { lembagaSumber } from './sumber';
 
 const SEHARI_MS = 86_400_000;
@@ -57,7 +64,13 @@ export const TEKS_JEJAK_WAKTU = {
 
   kosongJudul: 'Belum ada jadwal saat ini',
   kosongTeks: 'Siapkan langkahmu pelan saja.',
-  kosongTombolJelajah: 'Jelajah',
+  // LANJUT_042 (TEKS DRAF): keadaan kosong jujur per jenjang tanpa menunjuk layar kosong (Jalur Saya / Jelajah).
+  kosongKelas12Judul: 'Jadwal seleksi 2027 belum diumumkan',
+  kosongKelas12Teks: 'SNPMB belum merilis jadwal resmi 2027. Tanggal yang belum resmi tidak kami tampilkan.',
+  kosongSma1011Judul: 'Jadwal kelas 10–11 belum tersedia',
+  kosongSma1011Teks: 'Jadwal resmi untuk jenjangmu belum tersedia di LANJUT. Kamu bisa mulai dari Langkah Saya.',
+  kosongSmpJudul: 'Jadwal SMP belum tersedia',
+  kosongSmpTeks: 'Jadwal resmi untuk SMP belum tersedia di LANJUT. Kamu bisa mulai dari Langkah Saya.',
   kosongTombolLangkah: 'Langkah Saya',
 
   memuatLabel: 'Memuat Jejak Waktu',
@@ -361,17 +374,80 @@ export function susunJejakWaktu(p: {
   };
 }
 
-/** Tujuan satu tombol pada keadaan kosong Jejak Waktu: Jelajah bila aktif, selain itu Langkah Saya. */
-export function aksiKosongJejakWaktu(discoverAktif: boolean): { label: string; href: '/discover' | '/langkah-saya' } {
-  return discoverAktif
-    ? { label: TEKS_JEJAK_WAKTU.kosongTombolJelajah, href: '/discover' }
-    : { label: TEKS_JEJAK_WAKTU.kosongTombolLangkah, href: '/langkah-saya' };
+/** True bila masih ada jadwal aktif (`segera` atau `berikutnya`). Butir `sudahLewat` saja = tidak ada jadwal aktif. */
+export function adaJadwalAktif(jadwal: Pick<HasilJejakWaktu, 'segera' | 'berikutnya'>): boolean {
+  return jadwal.segera.length > 0 || jadwal.berikutnya.length > 0;
+}
+
+export type KeadaanKosongJejakWaktu = {
+  judul: string;
+  teks: string;
+  metaPeriksa: string | null;
+  tombolLabel: string;
+  tombolHref: '/langkah-saya';
+};
+
+/**
+ * Keadaan kosong jujur per jenjang saat tidak ada jadwal aktif (LANJUT_042).
+ * - Kelas 12: membaca tanggal periksa & sumber dari `statusJadwal` (sumber data linimasa, bukan komponen).
+ * - Kelas 10–11 & SMP: menyatakan jujur jadwal jenjang belum tersedia; tombol selalu menuju Langkah Saya,
+ *   tidak pernah mengarahkan ke Jalur Saya atau Jelajah.
+ */
+export function keadaanKosongJejakWaktu(
+  kelas: Kelas | null | undefined,
+  statusJadwal: StatusJadwalBerikutnya = STATUS_JADWAL_BERIKUTNYA
+): KeadaanKosongJejakWaktu {
+  const jenjang = kelompokJenjang(kelas);
+  if (jenjang === 'kelas12') {
+    const tanggalPeriksa = formatTanggal(statusJadwal.diperiksa_pada);
+    const metaPeriksa = tanggalPeriksa
+      ? `${TEKS_JEJAK_WAKTU.awalanDicek} ${tanggalPeriksa} · ${statusJadwal.sumber}`
+      : null;
+    return {
+      judul: TEKS_JEJAK_WAKTU.kosongKelas12Judul,
+      teks: TEKS_JEJAK_WAKTU.kosongKelas12Teks,
+      metaPeriksa,
+      tombolLabel: TEKS_JEJAK_WAKTU.kosongTombolLangkah,
+      tombolHref: '/langkah-saya',
+    };
+  }
+  if (jenjang === 'kelas10_11') {
+    return {
+      judul: TEKS_JEJAK_WAKTU.kosongSma1011Judul,
+      teks: TEKS_JEJAK_WAKTU.kosongSma1011Teks,
+      metaPeriksa: null,
+      tombolLabel: TEKS_JEJAK_WAKTU.kosongTombolLangkah,
+      tombolHref: '/langkah-saya',
+    };
+  }
+  if (jenjang === 'smp') {
+    return {
+      judul: TEKS_JEJAK_WAKTU.kosongSmpJudul,
+      teks: TEKS_JEJAK_WAKTU.kosongSmpTeks,
+      metaPeriksa: null,
+      tombolLabel: TEKS_JEJAK_WAKTU.kosongTombolLangkah,
+      tombolHref: '/langkah-saya',
+    };
+  }
+  return {
+    judul: TEKS_JEJAK_WAKTU.kosongJudul,
+    teks: TEKS_JEJAK_WAKTU.kosongTeks,
+    metaPeriksa: null,
+    tombolLabel: TEKS_JEJAK_WAKTU.kosongTombolLangkah,
+    tombolHref: '/langkah-saya',
+  };
+}
+
+/** Tujuan satu tombol pada keadaan kosong Jejak Waktu: selalu Langkah Saya (tidak pernah layar kosong Jalur/Jelajah). */
+export function aksiKosongJejakWaktu(_discoverAktif?: boolean): { label: string; href: '/langkah-saya' } {
+  return { label: TEKS_JEJAK_WAKTU.kosongTombolLangkah, href: '/langkah-saya' };
 }
 
 /** Daftar teks tetap di layar Jejak Waktu untuk verifikasi batas maksimal 40 kata. */
 export function teksTetapJejakWaktu(p: {
   keadaan: 'isi' | 'kosong' | 'galat';
   discoverAktif: boolean;
+  kelas?: Kelas | null;
   adaSegera?: boolean;
   adaBerikutnya?: boolean;
   adaSudahLewat?: boolean;
@@ -382,7 +458,10 @@ export function teksTetapJejakWaktu(p: {
     return daftar;
   }
   if (p.keadaan === 'kosong') {
-    daftar.push(TEKS_JEJAK_WAKTU.kosongJudul, TEKS_JEJAK_WAKTU.kosongTeks, aksiKosongJejakWaktu(p.discoverAktif).label);
+    const kosong = keadaanKosongJejakWaktu(p.kelas);
+    daftar.push(kosong.judul, kosong.teks, kosong.tombolLabel);
+    if (kosong.metaPeriksa) daftar.push(TEKS_JEJAK_WAKTU.awalanDicek);
+    if (p.adaSudahLewat) daftar.push(TEKS_JEJAK_WAKTU.sudahLewatJudul);
     return daftar;
   }
   if (p.adaSegera !== false) daftar.push(TEKS_JEJAK_WAKTU.segeraJudul);

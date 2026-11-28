@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
-import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { useJejakWaktuV2 } from '../../../hooks/useJejakWaktuV2';
-import { discoverAktif } from '../../../lib/fiturApp';
 import {
   TEKS_JEJAK_WAKTU,
-  aksiKosongJejakWaktu,
+  adaJadwalAktif,
+  keadaanKosongJejakWaktu,
   type ButirJejakWaktu,
 } from '../../../lib/jejakWaktuV2';
 import { elevasi, garis, keluargaHuruf, radius, ruang, ukuran } from '../../../theme/v2';
 import { useTemaV2 } from '../../../theme/v2/konteks';
 import { HeaderLayar, Ikon, KeadaanGalat, PlaceholderMemuat, Sentuh, Teks, Tombol } from '../../v2';
 
-const DISCOVER_AKTIF = discoverAktif(Constants.expoConfig?.extra);
-const AKSI_KOSONG = aksiKosongJejakWaktu(DISCOVER_AKTIF);
-
 /**
- * Layar Jejak Waktu v2 (`/jejak-waktu`, LANJUT_032, saklar EXPO_PUBLIC_NAVIGASI_V2).
+ * Layar Jejak Waktu v2 (`/jejak-waktu`, LANJUT_032, diperbarui LANJUT_042, saklar EXPO_PUBLIC_NAVIGASI_V2).
  * - Mengelompokkan jadwal menjadi Segera, Berikutnya, dan Sudah lewat (terlipat bawaan).
+ * - Bila tidak ada jadwal aktif (`segera` & `berikutnya` kosong), selalu menampilkan keadaan kosong jujur
+ *   sesuai jenjang (tanggal periksa kelas 12 dibaca dari data, tidak ditulis tetap di komponen),
+ *   sekalipun masih ada riwayat di bagian `Sudah lewat`.
  * - Jarak waktu ditampilkan sebagai angka hari statis tanpa pewaktu berdetak.
  * - Tenggat mendekat dibedakan lewat bobot huruf dan penanda teks "Segera", tanpa merah/oranye.
  * - Keadaan kosong memakai maskot kelinci di dalam lingkaran `warna.latarMaskot` di kedua mode.
@@ -35,6 +34,8 @@ export function JejakWaktuV2() {
   const keLangkah = () => router.push('/langkah-saya' as any);
 
   const labelLipatLewat = `${TEKS_JEJAK_WAKTU.sudahLewatJudul} (${data.jadwal.sudahLewat.length})`;
+  const punyaJadwalAktif = adaJadwalAktif(data.jadwal);
+  const kosong = keadaanKosongJejakWaktu(data.kelas);
 
   return (
     <View style={s.wadah}>
@@ -51,39 +52,46 @@ export function JejakWaktuV2() {
           pesan={TEKS_JEJAK_WAKTU.galatPesan}
           onCobaLagi={data.muatUlang}
         />
-      ) : data.jadwal.total === 0 ? (
-        <View
-          style={StyleSheet.flatten([
-            s.kosongKartu,
-            { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
-          ])}
-        >
-          <View
-            style={StyleSheet.flatten([s.lingkaranMaskot, { backgroundColor: warna.latarMaskot }])}
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-          >
-            <Image
-              source={require('../../../assets/mascot-blue.png')}
-              style={s.maskot}
-              resizeMode="contain"
-              accessible={false}
-            />
-          </View>
-          <Teks varian="judulKecil" rata="center">
-            {TEKS_JEJAK_WAKTU.kosongJudul}
-          </Teks>
-          <Teks varian="badanKecil" warna="teksSekunder" rata="center">
-            {TEKS_JEJAK_WAKTU.kosongTeks}
-          </Teks>
-          <Tombol
-            varian="utama"
-            label={AKSI_KOSONG.label}
-            onPress={() => router.push(AKSI_KOSONG.href as any)}
-          />
-        </View>
       ) : (
         <>
+          {!punyaJadwalAktif ? (
+            <View
+              style={StyleSheet.flatten([
+                s.kosongKartu,
+                { backgroundColor: warna.permukaan, borderColor: warna.garisHalus },
+              ])}
+            >
+              <View
+                style={StyleSheet.flatten([s.lingkaranMaskot, { backgroundColor: warna.latarMaskot }])}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              >
+                <Image
+                  source={require('../../../assets/mascot-blue.png')}
+                  style={s.maskot}
+                  resizeMode="contain"
+                  accessible={false}
+                />
+              </View>
+              <Teks varian="judulKecil" rata="center">
+                {kosong.judul}
+              </Teks>
+              <Teks varian="badanKecil" warna="teksSekunder" rata="center">
+                {kosong.teks}
+              </Teks>
+              {kosong.metaPeriksa ? (
+                <Teks varian="keterangan" warna="teksSekunder" rata="center">
+                  {kosong.metaPeriksa}
+                </Teks>
+              ) : null}
+              <Tombol
+                varian="utama"
+                label={kosong.tombolLabel}
+                onPress={() => router.push(kosong.tombolHref as any)}
+              />
+            </View>
+          ) : null}
+
           {data.jadwal.segera.length > 0 ? (
             <View style={s.seksi}>
               <Teks varian="h2">{TEKS_JEJAK_WAKTU.segeraJudul}</Teks>
